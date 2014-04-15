@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<swing:Application xmlns:swing="http://www.flashapi.org/2011/swing" >
+	<swing:Label text="Hello World!" />
+</swing:Application>

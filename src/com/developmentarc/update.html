@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=is
+
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+	<style>
+		H2 {
+			border-bottom:1px solid #000000;
+		}
+		H4 {
+			font-weight:normal;
+			font-style:italic; 
+			margin-bottom:5px;
+			
+		}
+		P {
+				margin-top:5px;
+		}
+		
+		span.package {
+			font-style:italic;
+			font-weight:bold;
+			color:#E96800;
+			
+		}
+		
+	</style>
+</head>
+<body>
+
+<h1>DevelopmentArc <sup>TM</sup> Core 0.09 Updates</h1>
+
+<h2>New Features</h2>
+
+<h3>Service Request Delegation (SRD) </h3>
+
+<h4>Description</h4>
+<p>The Service Request Delegation (SRD) layer of DevelopmentArc Core provides a componentized architecture to solving your application's data access needs.</p>
+
+<h4>Introduction and How-to</h4>
+<p>See the SRD <a href="http://code.google.com/p/developmentarc-core/wiki/ServiceRequestDelegation">wiki page</a> for an introduction and how-to guide. </p>
+
+
+<h2>Updates</h2>
+
+<h3>Package Renaming</h3>
+<p>
+	DevelopmentArc Core has renamed its package structure from <span class="package">com.developmentarc.framework</span> to <span class="package">com.developmentarc.core</span>. There has also been some re-organization of the various micro-architectures into seperate packages.  Going forward each new system (micro-architecture) will be organized in a similar manner.  Below is a breakdown of each change.
+	<ul>
+		<li>Command and Action Delegation - Has been organized under the <span class="package">com.developmentarc.core.actions</span> package</li>
+		<li>Task System - Is now located in <span class="package">com.developmentarc.core.tasks</span> package</li>
+		<li>Service Request Delegation<sup style="color:red">NEW</sup> - Is located under <span class="package">com.developmentarc.core.services</span> package</li>
+	</ul>
+</p>
+<h3>LocalConnectionManager</h3>
+<ul>
+	<li>Added a disconnect() method to disconnect from the current session and removes all event handlers.  This addition is to address bug <a href="http://code.google.com/p/developmentarc-core/issues/detail?id=1&can=1" >#1</a></li>
+</ul>
+
+
+</body>
+</html>

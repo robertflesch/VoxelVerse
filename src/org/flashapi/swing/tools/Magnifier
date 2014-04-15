@@ -1,0 +1,237 @@
+////////////////////////////////////////////////////////////////////////////////
+//    
+//    Swing Package for Actionscript 3.0 (SPAS 3.0)
+//    Copyright (C) 2004-2011 BANANA TREE DESIGN & Pascal ECHEMANN.
+//    
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//    
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//    
+//    You should have received a copy of the GNU General Public License
+//    along with this program. If not, see <http://www.gnu.org/licenses/>.
+//    
+////////////////////////////////////////////////////////////////////////////////
+
+package org.flashapi.swing.tools {
+	
+	// -----------------------------------------------------------
+	// Magnifier.as
+	// -----------------------------------------------------------
+
+	/**
+	* @author Pascal ECHEMANN
+	* @version 1.0.2, 18/06/2009 21:58
+	* @see http://www.flashapi.org/
+	*/
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.DisplayObject;
+	import flash.display.PixelSnapping;
+	import flash.display.Sprite;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+	import org.flashapi.swing.containers.UIContainer;
+	import org.flashapi.swing.core.spas_internal;
+	import org.flashapi.swing.core.UIObject;
+	import org.flashapi.swing.draw.Figure;
+	
+	use namespace spas_internal;
+	
+	/**
+	 * 	@langversion ActionScript 3.0
+	 * 	@playerversion Flash Player 9
+	 */
+	public class Magnifier extends UIObject {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Constructor
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Constructor.
+		 * 
+		 * 	@param	src
+		 * 	@param	zoom
+		 * 	@param	width
+		 * 	@param	height
+		 */
+		public function Magnifier(src:*, zoom:Number = 2.0, width:Number = 100, height:Number = 100) {
+			super();
+			_src = src;
+			_zoom = zoom;
+			$width = width;
+			$height = height;
+			$content = new Sprite();
+			_bmp = new Bitmap(null, PixelSnapping.AUTO, true);
+			this.zoom = zoom;
+			$content.addChild(_bmp);
+			$content.cacheAsBitmap = true;
+			spas_internal::CONTAINER.addChild($content);
+			_mask = new Sprite();
+			spas_internal::CONTAINER.addChild(_mask);
+			$content.mask = _mask;
+			_zoomPos = new Point();
+			_view = new Rectangle();
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Getter / setter properties
+		//
+		//--------------------------------------------------------------------------
+		
+		private var _src:*;
+		/**
+		 * 	
+		 */
+		public function get source():* {
+			return _src;
+		}
+		public function set source(value:*):void {
+			_src = value;
+		}
+		
+		private var _zoom:Number;
+		/**
+		 * 	Sets or gets the zoom factor for the magnification effect.
+		 * 
+		 * 	@default 2.0
+		 */
+		public function get zoom():Number {
+			return _zoom;
+		}
+		public function set zoom(value:Number):void {
+			_zoom = value;
+			_bmp.scaleX = _bmp.scaleY = _zoom;
+		}
+		
+		/**
+		 * 
+		 */
+		public function set zoomX(value:Number):void {
+			_zoomPos.x = value;
+			definePosition();
+		}
+		
+		/**
+		 * 
+		 */
+		public function set zoomY(value:Number):void {
+			_zoomPos.y = value;
+			definePosition();
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * @private
+		 */
+		override public function display(x:Number = undefined, y:Number = undefined):void {
+			if (!$displayed) {
+				drawBitmap();
+				drawMask();
+				($target is UIContainer) ? 
+					$target.addElement(spas_internal::CONTAINER) :
+					$target.addChild(spas_internal::CONTAINER);
+				$displayed = true;
+			}
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function finalize():void {
+			if (_bmpData) _bmpData.dispose();
+			this.remove();
+			super.finalize();
+		}
+		
+		/**
+		 * @private
+		 */
+		override public function remove():void {
+			if ($displayed) {
+				($target is UIContainer) ?
+					$target.removeElement(spas_internal::CONTAINER) :
+					$target.removeChild(spas_internal::CONTAINER);
+				$displayed = false;
+			}
+		}
+		
+		/**
+		 * 
+		 * 	@param	x
+		 * 	@param	y
+		 */
+		public function zoomMove(x:Number, y:Number):void {
+			_zoomPos.x = x;
+			_zoomPos.y = y;
+			definePosition();
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
+		//
+		//--------------------------------------------------------------------------
+		
+		private var _bmp:Bitmap;
+		private var _bmpData:BitmapData;
+		private var _view:Rectangle;
+		private var _mask:Sprite;
+		private var _zoomPos:Point;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+		
+		private function drawBitmap():void {
+			if(_bmpData) _bmpData.dispose();
+			var r:Rectangle = _src.getBounds(null);
+			var drawableObj:DisplayObject = _src is UIObject ? _src.content : _src;
+			_bmpData = new BitmapData(r.width, r.height, true, 0xFFFFFF);
+			_bmpData.draw(drawableObj);
+			_bmp.bitmapData = _bmpData;
+			_view.width = r.width;
+			_view.height = r.height;
+			scroll();
+		}
+		
+		private function drawMask():void {
+			var f:Figure = Figure.setFigure(_mask);
+			f.clear();
+			f.beginFill(0);
+			f.drawRectangle(0, 0, $width, $height);
+			f.endFill();
+		}
+		
+		private function definePosition():void {
+			var xPos:Number = (_zoomPos.x - _src.x) * _zoom;
+			var yPos:Number = (_zoomPos.y -_src.y) * _zoom;
+			var pt:Point = new Point(xPos, yPos);
+			//_mask.globalToLocal(pt);
+			_view.x = pt.x - $width / 2;
+			_view.y = pt.y - $height / 2;
+			scroll();
+		}
+		
+		private function scroll():void {
+			$content.scrollRect = _view;
+		}
+	}
+}

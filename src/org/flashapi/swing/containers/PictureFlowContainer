@@ -1,0 +1,139 @@
+﻿////////////////////////////////////////////////////////////////////////////////
+//    
+//    Swing Package for Actionscript 3.0 (SPAS 3.0)
+//    Copyright (C) 2004-2011 BANANA TREE DESIGN & Pascal ECHEMANN.
+//    
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//    
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//    
+//    You should have received a copy of the GNU General Public License
+//    along with this program. If not, see <http://www.gnu.org/licenses/>.
+//    
+////////////////////////////////////////////////////////////////////////////////
+
+package org.flashapi.swing.containers {
+	
+	// -----------------------------------------------------------
+	// PictureFlowContainer.as
+	// -----------------------------------------------------------
+	
+	/**
+	* @author Pascal ECHEMANN
+	* @version 1.0.0, 18/11/2010 08:57
+	* @see http://www.flashapi.org/
+	*/
+	
+	import flash.display.Sprite;
+	import org.flashapi.swing.Box;
+	import org.flashapi.swing.core.spas_internal;
+	import org.flashapi.swing.Element;
+	import org.flashapi.swing.layout.Layout;
+	
+	use namespace spas_internal;
+	
+	/**
+	 * 	@langversion ActionScript 3.0
+	 * 	@playerversion Flash Player 9
+	 * 	@productversion SPAS 3.0 alpha 5.5
+	 */
+	public class PictureFlowContainer extends Sprite {
+		
+		//--------------------------------------------------------------------------
+		//
+		// Constructor
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 
+		 * 	@param	bitmapData
+		 * 	@param	bitmapFlow
+		 * 	@param	width
+		 * 	@param	height
+		 */
+		public function PictureFlowContainer(width:Number = 150, height:Number = 150) {
+			super();
+			_box = new Box(width, height);
+			var lyt:Layout = _box.layout;
+			
+			_box.padding = 0;
+			_box.backgroundAlpha = .25;
+			_box.target = this;
+			_box.display(0, 0);
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Getter / setter properties
+		//
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected properties
+		//
+		//--------------------------------------------------------------------------
+		
+		spas_internal var flowIndex:int;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@private
+		 */
+		public function finalize():void {
+			_box.finalize();
+			_box = null;
+		}
+		
+		public function addElement(value:*):Element {
+			return _box.addElement(value);
+		}
+		
+		public function move(x:Number, y:Number):void {
+			this.x = x;
+			this.y = y;
+		}
+		
+		public function setRotY(value:Number):void {
+			var c:Sprite = _box.spas_internal::CONTAINER;
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Protected methods
+		//
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private constants
+		//
+		//--------------------------------------------------------------------------
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
+		//
+		//--------------------------------------------------------------------------
+		
+		private var _box:Box;
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private methods
+		//
+		//--------------------------------------------------------------------------
+	}
+}

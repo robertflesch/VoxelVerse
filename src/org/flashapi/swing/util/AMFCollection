@@ -1,0 +1,80 @@
+﻿////////////////////////////////////////////////////////////////////////////////
+//    
+//    Swing Package for Actionscript 3.0 (SPAS 3.0)
+//    Copyright (C) 2004-2011 BANANA TREE DESIGN & Pascal ECHEMANN.
+//    
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//    
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//    
+//    You should have received a copy of the GNU General Public License
+//    along with this program. If not, see <http://www.gnu.org/licenses/>.
+//    
+////////////////////////////////////////////////////////////////////////////////
+
+package org.flashapi.swing.util {
+	
+	// -----------------------------------------------------------
+	// AMFCollection.as
+	// -----------------------------------------------------------
+
+	/**
+	* @author Pascal ECHEMANN
+	* @version 1.0.0, 06/04/2009 01:36
+	* @see http://www.flashapi.org/
+	*/
+	
+	import flash.events.EventDispatcher;
+	
+	/**
+	 * 	@langversion ActionScript 3.0
+	 * 	@playerversion Flash Player 9
+	 * 	@productversion SPAS 3.0 alpha
+	 */
+	public class AMFCollection extends EventDispatcher  { //implements List
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Constructor
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	Constructor
+		 * 	@param	list
+		 */
+		public function AMFCollection(source:Object = null) {
+			super();
+			this.source = source;
+			//_iterator = new ListIterator(this);
+		}
+		
+		//http://blog.jacksay.com/index.php?post/2008/05/29/19-weborb-les-base-d-un-service-amf-en-php
+		private var _source:Object;
+		/**
+		 * 
+		 */
+		public function get source():Object { return _source; }
+		public function set source(value:Object):void {
+			_source = value;
+			var values:Array = _source.serverInfo.initialData;
+			var category:Array = _source.serverInfo.columnNames;
+
+			var aArr:Array = [];
+			for (var i:int=0; i < values.length; i++) {
+				aArr[i] = new Object();
+				for (var aIndex:* in category) {
+					
+					aArr[i][category[aIndex]] = values[i][aIndex];
+				}
+				trace(aArr[i].summary)
+			}
+		}
+	}
+}

@@ -1,0 +1,789 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
+<meta content="AbstractTask,com.developmentarc.core.controllers.abstracts.AbstractTask,TASK_CREATED,currentOverrides,currentPhase,isBlocker,phase,priority,ready,selfOverride,taskOverrides,type,uid,cancel,complete,error,ignore,inQueue,inWaitingForReady,pause,start" name="keywords">
+<title>com.developmentarc.core.controllers.abstracts.AbstractTask</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'AbstractTask - DevelopmentArc Core API Documentation';
+				var baseRef = '../../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">DevelopmentArc Core API</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../../all-classes.html')" href="../../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../../all-classes.html')" href="../../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../../index-list.html')" href="../../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../../index.html?com/developmentarc/framework/controllers/abstracts/AbstractTask.html&amp;com/developmentarc/framework/controllers/abstracts/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AbstractTask</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AbstractTask"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.developmentarc.core.controllers.abstracts</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class AbstractTask</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">AbstractTask <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="../interfaces/ITask.html">ITask</a></td>
+</tr>
+</table>
+<p></p>
+  The AbstractTask is the base class to extend all Tasks from.
+  The TaskController does not require a Task to extend from AbstractTask, 
+  but looks for an ITask.  The AbstractTask is provided as a starting
+  point to define basic types, events and implementations of the required
+  interface API.
+  
+  <p>The core structure of the Task follows the same basic design of a Flash
+  Event.  Like an Event, the Task has a default type and priority that is
+  used by the TaskController and the TaskGroup to manage and organize the order
+  of the active tasks.</p>
+  
+  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../../controllers/TaskController.html" target="">com.developmentarc.core.controllers.TaskController</a>
+<br>
+<a href="../../datastructures/tasks/TaskGroup.html" target="">com.developmentarc.core.datastructures.tasks.TaskGroup</a>
+</div>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isBlocker">isBlocker</a> : Boolean<div class="summaryTableDescription">[read-only]
+   Determines if the Task blocks all other items
+   in the TaskController.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#phase">phase</a> : String<div class="summaryTableDescription">[read-only]
+   Defines what phase the Task is currently in.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#priority">priority</a> : uint<div class="summaryTableDescription">[read-only]
+   Defines the priority value of the task defined at construction.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ready">ready</a> : Boolean<div class="summaryTableDescription">[read-only]
+   Defines if the task is in a ready state.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#selfOverride">selfOverride</a> : Boolean<div class="summaryTableDescription">
+   Defines if the Task is self-overriding when added to a TaskGroup
+   or the TaskController.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#taskOverrides">taskOverrides</a> : Array<div class="summaryTableDescription">[read-only]
+   Defines the currently applied overrides for the Task.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#type">type</a> : String<div class="summaryTableDescription">[read-only]
+   Defines the Task type.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#uid">uid</a> : Object<div class="summaryTableDescription">[read-only]
+   Stores the unique identification value of the Task which was defined
+   at construction.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#currentOverrides">currentOverrides</a> : Array<div class="summaryTableDescription">
+   Stores the list of overrides for the Task.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#currentPhase">currentPhase</a> : String<div class="summaryTableDescription">
+   Stores the Task's internal current phase state value.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#AbstractTask()">AbstractTask</a>(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false, blocking:Boolean = false)</div>
+<div class="summaryTableDescription">
+   The Abstract Task constructor is used to define the base settings for the task.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#cancel()">cancel</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a previously started Task needs to be cancelled.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#complete()">complete</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a previously started Task is completed.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#error()">error</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a task recieves an error or generates an error.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#ignore()">ignore</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a previously started Task needs to be set to ignore.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#inQueue()">inQueue</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a Task is added to a queue (TaskController or TaskGroup).</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#inWaitingForReady()">inWaitingForReady</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a task is waiting to be set to ready before starting.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#pause()">pause</a>():void</div>
+<div class="summaryTableDescription">
+   Called when a previously started Task needs to be paused.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#start()">start</a>():void</div>
+<div class="summaryTableDescription">
+   Starts the Task's functionality.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+</table>
+</div>
+<a name="eventSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Events</div>
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskCancel">taskCancel</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskCompelte">taskCompelte</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskError">taskError</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskPause">taskPause</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskQueued">taskQueued</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskReady">taskReady</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:taskStart">taskStart</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TASK_CREATED">TASK_CREATED</a> : String = "TASK_CREATED"<div class="summaryTableDescription">[static]
+   Used as the flag for the current phase when a Task
+   has been constructed.</div>
+</td><td class="summaryTableOwnerCol">AbstractTask</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="currentOverrides"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">currentOverrides</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var currentOverrides:Array</code><p>
+   Stores the list of overrides for the Task.
+   </p></div>
+<a name="currentPhase"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">currentPhase</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var currentPhase:String</code><p>
+   Stores the Task's internal current phase state value.
+   This property is protected and intended to be accessible
+   from extended Classes.  The value is publicly read-able
+   via the phase getter.
+   </p></div>
+<a name="isBlocker"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isBlocker</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>isBlocker:Boolean</code>&nbsp;&nbsp;[read-only]<p>
+   Determines if the Task blocks all other items
+   in the TaskController.  If the Task is set as
+   a blocking task, the controller will load no more
+   items from the queue until this Task is complete,
+   cancelled or errors. The default is false.
+    
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get isBlocker():Boolean</code>
+<br>
+</div>
+<a name="phase"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">phase</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>phase:String</code>&nbsp;&nbsp;[read-only]<p>
+   Defines what phase the Task is currently in. When a task is
+   created the default phase is TASK_CREATED.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get phase():String</code>
+<br>
+</div>
+<a name="priority"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">priority</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>priority:uint</code>&nbsp;&nbsp;[read-only]<p>
+   Defines the priority value of the task defined at construction.
+   0 is the highest priority, int.MAX_VALUE is the lowest.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get priority():uint</code>
+<br>
+</div>
+<a name="ready"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ready</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>ready:Boolean</code>&nbsp;&nbsp;[read-only]<p>
+   Defines if the task is in a ready state.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get ready():Boolean</code>
+<br>
+</div>
+<a name="selfOverride"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">selfOverride</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>selfOverride:Boolean</code>&nbsp;&nbsp;[read-write]<p>
+   Defines if the Task is self-overriding when added to a TaskGroup
+   or the TaskController. Tasks with matching uid's will be overridden.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get selfOverride():Boolean</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set selfOverride(value:Boolean):void</code>
+<br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../../controllers/TaskController.html" target="">com.developmentarc.core.controllers.TaskController</a>
+<br>
+<a href="../../datastructures/tasks/TaskGroup.html" target="">com.developmentarc.core.datastructures.tasks.TaskGroup</a>
+</div>
+</div>
+<a name="taskOverrides"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskOverrides</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>taskOverrides:Array</code>&nbsp;&nbsp;[read-only]<p>
+   Defines the currently applied overrides for the Task. Overrides
+   are used by the TaskController and the TaskGroup to determine
+   if the current task is responsible for removing/canceling existing
+   tasks in the system.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get taskOverrides():Array</code>
+<br>
+</div>
+<a name="type"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">type</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>type:String</code>&nbsp;&nbsp;[read-only]<p>
+   Defines the Task type. 
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get type():String</code>
+<br>
+</div>
+<a name="uid"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">uid</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>uid:Object</code>&nbsp;&nbsp;[read-only]<p>
+   Stores the unique identification value of the Task which was defined
+   at construction.  The uid is used by the TaskController and TaskGroup
+   to determine what if the Task should be overridden well self override is
+   set to true. Tasks with matching uid's will be overridden.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get uid():Object</code>
+<br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../../controllers/TaskController.html" target="">com.developmentarc.core.controllers.TaskController</a>
+<br>
+<a href="../../datastructures/tasks/TaskGroup.html" target="">com.developmentarc.core.datastructures.tasks.TaskGroup</a>
+</div>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="AbstractTask()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">AbstractTask</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function AbstractTask(type:String, priority:int = 5, uid:Object = null, selfOverride:Boolean = false, blocking:Boolean = false)</code><p>
+   The Abstract Task constructor is used to define the base settings for the task.
+   The only required argument is the type parameter which defines the Task type
+   similar to an Event type.
+    
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">type</span>:String</code> &mdash; The Task type.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">priority</span>:int</code> (default = <code>5</code>)<code></code> &mdash; The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">uid</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; The unique identification id of the task used during the override process.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">selfOverride</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; Defines of the task is self overriding.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">blocking</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; Defines if the task is blocking.
+   
+   </td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="cancel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">cancel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function cancel():void</code><p>
+   Called when a previously started Task needs to be cancelled.  This is
+   an optional method that must be overridden by the extending class
+   to implement the cancel ability. By default the cancel() method sets
+   the current phase to TaskEvent.TASK_CANCEL and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.cancel() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="complete()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">complete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function complete():void</code><p>
+   Called when a previously started Task is completed.  This is
+   an optional method that must be overridden by the extending class
+   to implement the complete ability. By default the complete() method sets
+   the current phase to TaskEvent.TASK_COMPLETE and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.complete() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="error()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">error</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function error():void</code><p>
+   Called when a task recieves an error or generates an error.  By default 
+   the error() method sets the current phase to TaskEvent.TASK_ERROR and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.error() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="ignore()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ignore</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function ignore():void</code><p>
+   Called when a previously started Task needs to be set to ignore.  This is
+   an optional method that must be overridden by the extending class
+   to implement the cancel ability. By default the ignore() method sets
+   the current phase to TaskEvent.TASK_IGNORED and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.ignore() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="inQueue()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">inQueue</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function inQueue():void</code><p>
+   Called when a Task is added to a queue (TaskController or TaskGroup).  
+   This is an optional method that must be overridden by the extending class
+   to implement the inQueue functionality. By default the inQueue() method sets
+   the current phase to TaskEvent.TASK_QUEUED and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.inQueue() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="inWaitingForReady()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">inWaitingForReady</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function inWaitingForReady():void</code><p>
+   Called when a task is waiting to be set to ready before starting.  This is
+   an optional method that must be overridden by the extending class
+   to implement the waiting ability. By default the inWaitingForReady() method sets
+   the current phase to TaskEvent.TASK_WAITING_FOR_READY and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.inWaitingForReady() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="pause()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">pause</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function pause():void</code><p>
+   Called when a previously started Task needs to be paused.  This is
+   an optional method that must be overridden by the extending class
+   to implement the pause ability. By default the pause() method sets
+   the current phase to TaskEvent.TASK_PAUSE and then dispatches a
+   TaskEvent informing any listener that the Task has now been paused.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.pause() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<a name="start()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">start</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function start():void</code><p>
+   Starts the Task's functionality.  When the TaskController or
+   TaskGroup is ready to start the Task, the start() method is
+   called.  The AbstractTask sets the current Phase to TaskEvent.TASK_START
+   and then dispatches a TaskEvent informing any listener that the Task
+   has now been started.
+   
+   </p><p>When extending the AbstractTask, this method must be overridden to
+   define the functionality of the task.  It is recommended that calling
+   super.start() is added as the last step of the overridden method so that
+   the phase and TaskEvent is dispatched correctly.</p>
+   
+   </div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:taskCancel"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskCancel</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:taskCompelte"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskCompelte</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:taskError"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskError</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:taskPause"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskPause</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:taskQueued"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskQueued</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:taskReady"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskReady</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:taskStart"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">taskStart</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/TaskEvent.html"><code>com.developmentarc.core.controllers.events.TaskEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="TASK_CREATED"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">TASK_CREATED</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const TASK_CREATED:String = "TASK_CREATED"</code><p>
+   Used as the flag for the current phase when a Task
+   has been constructed.
+   </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->

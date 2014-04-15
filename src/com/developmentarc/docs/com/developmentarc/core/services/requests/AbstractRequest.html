@@ -1,0 +1,921 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
+<meta content="AbstractRequest,com.developmentarc.core.services.requests.AbstractRequest,MODE_LIVE,MODE_MOCK,currentPhase,dispatcherClass,mockClass,mode,params,parserClass,phase,source,type,uri,cancel,complete,create,dispatch,error,failure,parsing,returned,saveData,start,stop" name="keywords">
+<title>com.developmentarc.core.services.requests.AbstractRequest</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'AbstractRequest - DevelopmentArc Core API Documentation';
+				var baseRef = '../../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">DevelopmentArc Core API</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../../all-classes.html')" href="../../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../../all-classes.html')" href="../../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../../index-list.html')" href="../../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../../index.html?com/developmentarc/core/services/requests/AbstractRequest.html&amp;com/developmentarc/core/services/requests/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;AbstractRequest</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class AbstractRequest"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.developmentarc.core.services.requests</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class AbstractRequest</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">AbstractRequest <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="IRequest.html">IRequest</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../requests/HTTPRequest.html">HTTPRequest</a></td>
+</tr>
+</table>
+<p></p>
+  <p>Abstract class used as the base for all request inside of the DevelopmentArc service layer.
+  The responsibility of the Request is to define all of the detailed information for a given instance of a service call. A Request is simply a custom data object
+  that is used by the RequestDelegate and the Request's Dispatcher. The Request's other responsiblity is to save
+  the data passed back from the RequestDelegate (after it has been parsed) to a paticular location in the application.    
+  
+  <p>
+  <b>Properties</b>
+  A request can define 5 properties during construction of the Request. The goal is for developers to define their own Requests and provide the default into the
+  AbstractRequest constructor.  The first three properties are custom properties that are used in conjunction with the dispatcher that is associated with this request. It is 
+  up to the developer to define each to meet the purpose of the request and dispatcher. For an example of usage, look how HTTPRequestDispatcher's use each parameter.  
+  The final two properties are used to link the request with a Dispatcher (IDispatcher) and a Parser (IParser)
+  </p>
+  <p> Breakdown Below</p>
+  <ul>
+    <li>type - A request can define a type which can be used to toggle between different variables when invoking a service request.  If the type is not needed, set it to a blank string.</li>
+    <li>uri - Is used as the root of the service path, which would be the root url in a HTTPService or to define the DB path used when connection to a local SQLLite DB in AIR.</li>
+    <li>source - Can be used to define the the details of a uri. Example, for a HTTPService this would be the specific API of a service or for a DB connection the table.</li>
+    <li>dispatcherClass - Class reference to the associated Dispatcher (IDispather). A dispather is responsible for encapsulating a service type and instance and executing this paticular request
+  through the service layer</li>
+  <li>parserClass - Class reference to the Parser (IParser) which is responsible for parsing the raw data returned from the dispather</li>
+  </ul>
+  </p>
+  
+  <p>
+  <b>Mock</b>
+  A Request class can define an IMockDispatcher via a class reference which when the Request and the RequestDelegate are in "mock" mode, will be used
+  to fake, the service request and simple return data in the format expected.  This is useful when developing a system that does not yet have a complete service api
+  or database constructed.  By having a seperate switch in both the RequestDelegate and the AbstractRequest, developers can toggle on and off from an application and a Request level
+  their mock implementation. This allows for easier Unit Testing and parallel development with server teams that are creating the service API.
+   </p>
+   
+  <p>
+  <b>LifeCycle</b>
+  As a request moves through the service layer the request will will enter various lifecycle phases, each of which are defined in this class. See RequestDelegate 
+  for definition of each event.
+  </p>
+  
+  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../../services/RequestDelegate.html" target="">RequestDelegate</a>
+<br>
+<a href="../dispatchers/AbstractDispatcher.html" target="">AbstractDispatcher</a>
+<br>
+<a href="../parsers/AbstractParser.html" target="">AbstractParser</a>
+<br>
+<a href="../requests/HTTPRequest.html" target="">HTTPRequest</a>
+</div>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#dispatcherClass">dispatcherClass</a> : Class<div class="summaryTableDescription">[read-only]
+   Class reference to the dispatcher used to dispatch the request.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#mockClass">mockClass</a> : Class<div class="summaryTableDescription">[read-only]
+   Reference to the IMockDispatcher used to mock this disptacher.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#mode">mode</a> : String<div class="summaryTableDescription">[read-only]
+   The current mode of the application.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#params">params</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#parserClass">parserClass</a> : Class<div class="summaryTableDescription">[read-only]
+   Class reference to the parser used to parse the request's raw data into application an
+   application specific format.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#phase">phase</a> : String<div class="summaryTableDescription">[read-only]
+   The current phase the request lifeccyle that a paticular request is currently in.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#source">source</a> : String<div class="summaryTableDescription">[read-only]
+   Property defining the source of this request.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#type">type</a> : String<div class="summaryTableDescription">[read-only]
+   <p>Defines the type of request.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#uri">uri</a> : String<div class="summaryTableDescription">[read-only]
+   Defined the uri for this request.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#currentPhase">currentPhase</a> : String<div class="summaryTableDescription"> Stores the request's internal current phase state value.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#AbstractRequest()">AbstractRequest</a>(type:String, uri:String, source:String, dispatcherClass:Class, parserClass:Class, mode:String, mockClass:Class = null)</div>
+<div class="summaryTableDescription">
+   Constructor.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#cancel()">cancel</a>():void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegate when a request is cancled.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#complete()">complete</a>():void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegate when a request has completed its parsing and has succcessfully saved it's data to the application.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#create()">create</a>():void</div>
+<div class="summaryTableDescription">
+   <p>The method sets the current phase to RequestEvent.CREATE marking that request has been created.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#dispatch()">dispatch</a>():void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegate when a request has been sent to it's dispatcher.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#error()">error</a>(originalError:Error):void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegate when a request has errored while parsing the raw data of a resulting Request.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#failure()">failure</a>(originalEvent:Event):void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegates when the Request's dispatcher faults.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#parsing()">parsing</a>():void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegate when the raw data from a request is being parsed.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#returned()">returned</a>():void</div>
+<div class="summaryTableDescription">
+   <p>This method is invoked through the RequestDelegate when a dispatcher has returned with a result from the request.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#saveData()">saveData</a>(data:*):void</div>
+<div class="summaryTableDescription">
+   Method takes the parsed data and saves it to the appropriate area of the application.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#start()">start</a>():void</div>
+<div class="summaryTableDescription">
+   Method executes this request based on the given dispatcher and parser.</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#stop()">stop</a>():void</div>
+<div class="summaryTableDescription">
+   Method attempts to stop this request by communicating with the RequestDelegate
+   </div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+</table>
+</div>
+<a name="eventSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Events</div>
+<table id="summaryTableEvent" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Event</th><th>Summary</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:cancel">cancel</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:complete">complete</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:created">created</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:dispatched">dispatched</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:error">error</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:failure">failure</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:parsing">parsing</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#event:returned">returned</a>
+</div>
+</td><td class="summaryTableDescription summaryTableCol">&nbsp;</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MODE_LIVE">MODE_LIVE</a> : String = "MODE_LIVE"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MODE_MOCK">MODE_MOCK</a> : String = "MODE_MOCK"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">AbstractRequest</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="currentPhase"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">currentPhase</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var currentPhase:String</code><p> Stores the request's internal current phase state value.
+   This property is protected and intended to be accessible
+   from extended Classes.  The value is publicly read-able
+   via the phase getter.
+   </p></div>
+<a name="dispatcherClass"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dispatcherClass</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>dispatcherClass:Class</code>&nbsp;&nbsp;[read-only]<p>
+   Class reference to the dispatcher used to dispatch the request. The dispatcher encapsulates a
+   paticular service and executes the request based on the state of the request.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get dispatcherClass():Class</code>
+<br>
+</div>
+<a name="mockClass"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">mockClass</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>mockClass:Class</code>&nbsp;&nbsp;[read-only]<p>
+   Reference to the IMockDispatcher used to mock this disptacher.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get mockClass():Class</code>
+<br>
+</div>
+<a name="mode"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">mode</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>mode:String</code>&nbsp;&nbsp;[read-only]<p>
+   The current mode of the application. Default is MOCK_LIVE
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get mode():String</code>
+<br>
+</div>
+<a name="params"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">params</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>params:Object</code>&nbsp;&nbsp;[read-write]<span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get params():Object</code>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function set params(value:Object):void</code>
+<br>
+</div>
+<a name="parserClass"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parserClass</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>parserClass:Class</code>&nbsp;&nbsp;[read-only]<p>
+   Class reference to the parser used to parse the request's raw data into application an
+   application specific format.
+      </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get parserClass():Class</code>
+<br>
+</div>
+<a name="phase"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">phase</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>phase:String</code>&nbsp;&nbsp;[read-only]<p>
+   The current phase the request lifeccyle that a paticular request is currently in.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get phase():String</code>
+<br>
+</div>
+<a name="source"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">source</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>source:String</code>&nbsp;&nbsp;[read-only]<p>
+   Property defining the source of this request. The source's usage is defined
+   but child classes in conjunction with the referenced dispatcher class and it's usage.
+   
+   </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get source():String</code>
+<br>
+</div>
+<a name="type"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">type</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>type:String</code>&nbsp;&nbsp;[read-only]<p>
+   </p><p>Defines the type of request. A type's purpose is defined
+   by child classes in conjunction with the associated dispatcher and it's required usage 
+   of the type property. </p>
+   
+   <p>NOTE: This property is read-only and defined 
+   via the constructor.</p>
+   
+   <span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get type():String</code>
+<br>
+</div>
+<a name="uri"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">uri</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>uri:String</code>&nbsp;&nbsp;[read-only]<p>
+   Defined the uri for this request. A uri's usage is to be defined
+   by child classes with a direct correlation with the associated dispathcer and it's required usage.  
+   
+   </p><p>NOTE: This property is read-only and defined 
+   via the constructor.</p>
+   
+   <span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get uri():String</code>
+<br>
+</div>
+<a name="constructorDetail"></a>
+<div class="detailSectionHeader">Constructor detail</div>
+<a name="AbstractRequest()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">AbstractRequest</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">constructor</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function AbstractRequest(type:String, uri:String, source:String, dispatcherClass:Class, parserClass:Class, mode:String, mockClass:Class = null)</code><p>
+   Constructor.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">type</span>:String</code> &mdash; String used to define a specific type this request will be.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">uri</span>:String</code> &mdash; String for root address to use for this request.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">source</span>:String</code> &mdash; String for unique parts of the address that may be unique for a paticular instance.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dispatcherClass</span>:Class</code> &mdash; Class reference to the dispatcher used by this request.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">parserClass</span>:Class</code> &mdash; Class reference to the parser used to translate raw data from the result of this request in to application specific data.
+   </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">mode</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">mockClass</span>:Class</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="cancel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">cancel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function cancel():void</code><p>
+   </p><p>This method is invoked through the RequestDelegate when a request is cancled.
+   The method sets the current phase to RequestEvent.CANCEL marking that request has been canceled. The method will
+   also dispatch a RequestEvent.CANCEL event updating all listeners.</p>
+   
+   <p>
+   NOTE: Method should not to be called outside of this class, it's children or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed  after a request has been canceled, overrideing this method is acceptable, but be 
+   sure to call super.cancel() to insure the phase is set and the event is dispatched.
+   </p>
+   </div>
+<a name="complete()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">complete</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function complete():void</code><p>
+   </p><p>This method is invoked through the RequestDelegate when a request has completed its parsing and has succcessfully saved it's data to the application.
+   The method sets the current phase to RequestEvent.COMPLETE marking that request has been completed. The method will
+   also dispatch a RequestEvent.COMPLETE event updating all listeners.</p>
+   
+   <p>
+   NOTE: Method should not to be called outside of this class, it's children or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed  after a request has been completed, overrideing this method is acceptable, but be 
+   sure to call super.complete() to insure the phase is set and the event is dispatched.
+   </p>
+   </div>
+<a name="create()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">create</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function create():void</code><p>
+   </p><p>The method sets the current phase to RequestEvent.CREATE marking that request has been created. The method will
+   also dispatch a RequestEvent.CREATED.</p>
+   
+   <p>
+   NOTE: Method is not to be called outside of this class, it's children or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed during creation of a request, overrideing this method is acceptable, but be 
+   sure to call super.create() to insure the phase is set and the event is dispatched.
+   </p>
+   </div>
+<a name="dispatch()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dispatch</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function dispatch():void</code><p>
+   </p><p>This method is invoked through the RequestDelegate when a request has been sent to it's dispatcher.
+   The method sets the current phase to RequestEvent.DIPATCHED marking that request has been dispatched. The method will
+   also dispatch a RequestEvent.DIPATCHED event updating all listeners.</p>
+   
+   <p>
+   NOTE: Method should not to be called outside of this class, it's children or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed  after a request has been dispatched, overrideing this method is acceptable, but be 
+   sure to call super.dispatch() to insure the phase is set and the event is dispatched.
+   </p>
+   </div>
+<a name="error()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">error</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function error(originalError:Error):void</code><p>
+   </p><p>This method is invoked through the RequestDelegate when a request has errored while parsing the raw data of a resulting Request.
+   The method sets the current phase to RequestEvent.ERROR marking that request has experienced an error. The method will
+   dispatch a RequestEvent.ERROR event updating all listeners, providing the original Error object.</p>
+   
+   <p>
+   NOTE: Method should not to be called outside of this class, it's children, or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed  after a request has errored, overrideing this method is acceptable, but be 
+   sure to call super.error() to insure the phase is set and the event is dispatched.
+   </p>
+   
+   <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">originalError</span>:Error</code> &mdash; Error from the origin.
+   </td>
+</tr>
+</table>
+</div>
+<a name="failure()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">failure</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function failure(originalEvent:Event):void</code><p>
+   </p><p>This method is invoked through the RequestDelegates when the Request's dispatcher faults.
+   The RequestDelegate will bundle the orignal event from the service that is encapsulated inside of the Dispatcher and pass it to this method.  The method will create a new 
+   RequestEvent of type FAILURE and add the original event and then dispatch. The current phase will also be changed to Failure.</p>
+   <p>
+   If more functionality is needed  after a request has failed, overrideing this method is acceptable, but be 
+   sure to call super.failure() to insure the phase is set and the event is dispatched.
+   </p>
+   
+   <span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">originalEvent</span>:Event</code> &mdash; Event of the originating fault event from the dispatcher.
+   </td>
+</tr>
+</table>
+</div>
+<a name="parsing()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parsing</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function parsing():void</code><p>
+   </p><p>This method is invoked through the RequestDelegate when the raw data from a request is being parsed.
+   The method sets the current phase to RequestEvent.PARSING marking that request is currently in the parsing stage. The method will
+   also dispatch a RequestEvent.PARSING event updating all listeners.</p>
+   
+   <p>
+   NOTE: Method should not to be called outside of this class, it's children or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed  when a request enters the parsing phase, overrideing this method is acceptable, but be 
+   sure to call super.parsing() to insure the phase is set and the event is dispatched.
+   </p>
+   </div>
+<a name="returned()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">returned</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function returned():void</code><p>
+   </p><p>This method is invoked through the RequestDelegate when a dispatcher has returned with a result from the request.
+   The method sets the current phase to RequestEvent.RETURNED marking that request has been returned successfully. The method will
+   also dispatch a RequestEvent.RETURNED event updating all listeners.</p>
+   
+   <p>
+   NOTE: Method should not to be called outside of this class, it's children or the RequestDispatcher.
+   </p>
+   
+   <p>
+   If more functionality is needed  after a request has been returned, overrideing this method is acceptable, but be 
+   sure to call super.returned() to insure the phase is set and the event is dispatched.
+   </p>
+   </div>
+<a name="saveData()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">saveData</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function saveData(data:*):void</code><p>
+   Method takes the parsed data and saves it to the appropriate area of the application.
+   This method must be overriden by children classes or an error will be thrown.
+   
+   </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">data</span>:*</code></td>
+</tr>
+</table>
+</div>
+<a name="start()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">start</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function start():void</code><p>
+   Method executes this request based on the given dispatcher and parser. The method
+   has direct communcication with the RequestDelegate.
+   </p></div>
+<a name="stop()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">stop</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function stop():void</code><p>
+   Method attempts to stop this request by communicating with the RequestDelegate
+   </p></div>
+<div class="detailSectionHeader">Event detail</div>
+<a name="event:cancel"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">cancel</td><td class="detailHeaderType">event&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:complete"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">complete</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:created"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">created</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:dispatched"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">dispatched</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:error"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">error</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:failure"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">failure</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:parsing"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parsing</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="event:returned"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">returned</td><td class="detailHeaderType">event&nbsp;</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<span class="label">Event object type: </span><a href="../events/RequestEvent.html"><code>com.developmentarc.core.services.events.RequestEvent</code></a>
+<br>
+<p></p>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="MODE_LIVE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MODE_LIVE</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const MODE_LIVE:String = "MODE_LIVE"</code>
+</div>
+<a name="MODE_MOCK"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">MODE_MOCK</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const MODE_MOCK:String = "MODE_MOCK"</code>
+</div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright"> 
+</center>
+</div>
+</body>
+</html>
+<!-- -->

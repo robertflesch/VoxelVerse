@@ -1,0 +1,167 @@
+﻿////////////////////////////////////////////////////////////////////////////////
+//    
+//    Swing Package for Actionscript 3.0 (SPAS 3.0)
+//    Copyright (C) 2004-2011 BANANA TREE DESIGN & Pascal ECHEMANN.
+//    
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//    
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//    
+//    You should have received a copy of the GNU General Public License
+//    along with this program. If not, see <http://www.gnu.org/licenses/>.
+//    
+////////////////////////////////////////////////////////////////////////////////
+
+package org.flashapi.swing.plaf.basic {
+	
+	// -----------------------------------------------------------
+	// BasicProgressPanelUI.as
+	// -----------------------------------------------------------
+
+	/**
+	* @author Pascal ECHEMANN
+	* @version 2.0.0, 19/03/2011 13:59
+	* @see http://www.flashapi.org/
+	*/
+
+	import flash.display.GradientType;
+	import org.flashapi.swing.draw.Figure;
+	import org.flashapi.swing.draw.MatrixUtil;
+	import org.flashapi.swing.plaf.core.LafDTO;
+	import org.flashapi.swing.plaf.ProgressPanelUI;
+	
+	/**
+	 * 	The <code>BasicProgressPanelUI</code> class is the SPAS 3.0 "flex-like" look and feel
+	 * 	for <code>ProgressPanel</code> instances.
+	 * 
+	 * 	@see org.flashapi.swing.ProgressPanel
+	 * 	@see org.flashapi.swing.plaf.ProgressPanelUI
+	 * 
+	 * 	@langversion ActionScript 3.0
+	 * 	@playerversion Flash Player 9
+	 * 	@productversion SPAS 3.0 alpha 5.5
+	 */
+	public class BasicProgressPanelUI extends BasicUI implements ProgressPanelUI {
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Constructor
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 * 	@copy org.flashapi.swing.plaf.spas.SpasBoxHelpUI#SpasBoxHelpUI()
+		 */
+		public function BasicProgressPanelUI(dto:LafDTO):void {
+			super(dto);
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Public methods
+		//
+		//--------------------------------------------------------------------------
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getColor():uint {
+			return COLOR;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getDefaultLabelColor():uint {
+			return 0x000000;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function drawBar():void {
+			var c:uint = dto.color;
+			var p:Number = dto.progressValue;
+			var f:Figure = Figure.setFigure(dto.currentTarget);
+			f.clear();
+			f.beginGradientFill(GradientType.LINEAR, [c, c], [.4, 1], [0, 230], MatrixUtil.getMatrix(p, 4, 0));
+			f.drawRectangle(.7, .5, p, 3.7);
+			f.endFill();	
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function drawTrack():void {
+			var f:Figure = Figure.setFigure(dto.currentTarget);
+			f.clear();
+			f.lineStyle(1, 0X999999, 1, true);
+			f.beginFill(0XCCCCCC, 1);
+			f.drawRectangle(0, 0, dto.barLength, 4);
+			f.endFill();
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getLabelDelay():Number {
+			return 5;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getTopOffset():Number {
+			return 20;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getLeftOffset():Number {
+			return 20;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getRightOffset():Number {
+			return 20;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getBottomOffset():Number {
+			return 20;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getPanelLaf():Class {
+			return BasicPanelUI;
+		}
+		
+		/**
+		 *  @inheritDoc 
+		 */
+		public function getLabelLaf():Class {
+			return BasicLabelUI;
+		}
+		
+		//--------------------------------------------------------------------------
+		//
+		//  Private properties
+		//
+		//--------------------------------------------------------------------------
+		
+		private const COLOR:uint = 0xFFFFFF;
+	}
+}
