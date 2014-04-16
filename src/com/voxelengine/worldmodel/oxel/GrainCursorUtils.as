@@ -289,7 +289,7 @@ public class GrainCursorUtils
 		return true;
 	}
 	
-	static public function is_inside_sphere( gc:GrainCursor, x:int, y:int, z:int,  rad:int ):Boolean
+	static public function is_inside_sphere( gc:GrainCursor, x:int, y:int, z:int,  rad:Number ):Boolean
 	{
 		// find the farthest distance amongst the grain corners
 		// from the center of the sphere
@@ -300,10 +300,8 @@ public class GrainCursorUtils
 		return dSquared < (rad * rad);
 	}
 	
-	static public function is_outside_sphere( gc:GrainCursor, x:int, y:int, z:int,  rad:int ):Boolean
+	static public function is_outside_sphere( gc:GrainCursor, x:int, y:int, z:int,  radius:int ):Boolean
 	{		
-		var K:int = rad;
-
 		// for this grain to be entirely outside of the sphere
 		// all of the major sphere endpoints must be outside the grain
 		
@@ -314,16 +312,16 @@ public class GrainCursorUtils
 		if (true == gc.contains_g0_point( x	, y		, z		)) return false;
 
 		// tangents on the x axis
-		if (true == gc.contains_g0_point( x+K	, y		, z		)) return false;
-		if (true == gc.contains_g0_point( x-K	, y		, z		)) return false;
+		if (true == gc.contains_g0_point( x+radius	, y		, z		)) return false;
+		if (true == gc.contains_g0_point( x-radius	, y		, z		)) return false;
 		
 		// tangents on the y axis
-		if (true == gc.contains_g0_point( x	, y+K	, z		)) return false;
-		if (true == gc.contains_g0_point( x	, y-K	, z		)) return false;
+		if (true == gc.contains_g0_point( x	, y+radius	, z		)) return false;
+		if (true == gc.contains_g0_point( x	, y-radius	, z		)) return false;
 		
 		// tangents on the z axis
-		if (true == gc.contains_g0_point( x	, y		, z+K	)) return false;
-		if (true == gc.contains_g0_point( x	, y		, z - K	)) return false;
+		if (true == gc.contains_g0_point( x	, y		, z+radius	)) return false;
+		if (true == gc.contains_g0_point( x	, y		, z-radius	)) return false;
 
 		// ok so none of the major sphere axis points are inside the grain
 		// so we have covered the case where a large grain encloses the sphere
@@ -340,7 +338,7 @@ public class GrainCursorUtils
 		// the distance from the center of the sphere
 		// to the nearest corner of the grain
 		// must be more than the radius of the sphere
-		return d > rad;
+		return d > radius;
 	}
 
 	static public function contains_sphere( gc:GrainCursor, x:int, y:int, z:int,  rad:int ):Boolean

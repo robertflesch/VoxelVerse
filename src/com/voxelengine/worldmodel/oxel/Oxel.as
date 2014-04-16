@@ -2008,7 +2008,7 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 		
-		public function empty_sphere( $guid:String, cx:int, cy:int, cz:int, radius:int, gmin:uint=0 ):void {
+		public function empty_sphere( $guid:String, cx:int, cy:int, cz:int, radius:Number, gmin:uint=0 ):void {
 			if ( true == GrainCursorUtils.is_inside_sphere( gc, cx, cy, cz, radius ))
 			{
 				write( $guid, gc, Globals.AIR );

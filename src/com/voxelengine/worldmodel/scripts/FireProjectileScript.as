@@ -98,7 +98,7 @@ package com.voxelengine.worldmodel.scripts
 				var pe:ProjectileEvent = new ProjectileEvent( ProjectileEvent.PROJECTILE_SHOT );
 				pe.ammo = ammo.clone();
 				pe.owner = gunModel.instanceInfo.instanceGuid;
-				pe.positionSet = bulletWSLocation;
+				pe.position = bulletWSLocation;
 				pe.direction = dr;
 				
 				Globals.g_app.dispatchEvent( pe );
@@ -150,7 +150,7 @@ package com.voxelengine.worldmodel.scripts
 //			trace( "bulletPool: changing type to: " + Globals.Info[pe.ammo.oxelType].name );
 			pm.oxel.changeAllButAirToType( pe.ammo.oxelType );
 			
-			pm.instanceInfo.positionSet = pe.positionGet;
+			pm.instanceInfo.positionSet = pe.position;
 //			Log.out( "FireProjectileScript.bulletPool ProjectileEvent: " + pe );
 			var dr:Vector3D = pe.direction.clone();
 			var accuracy:Number = pe.ammo.accuracy;

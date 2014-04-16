@@ -360,25 +360,46 @@ package com.voxelengine.GUI
 			if  ( !Globals.active )
 				return;
 				
-			if ( -1 != _lastItemSelection )
+			if ( !event.ctrlKey )
 			{
-				if ( 0 < event.delta && _lastItemSelection < (ITEM_COUNT - 1)  )
+				if ( -1 != _lastItemSelection )
 				{
-					selectItemByIndex( _lastItemSelection + 1 );
-				}
-				else if ( 0 < event.delta && ( ITEM_COUNT -1 ) == _lastItemSelection )
-				{
-					selectItemByIndex( 0 );
-				}
-				else if ( 0 > event.delta && 0 == _lastItemSelection )
-				{
-					selectItemByIndex( ITEM_COUNT - 1 );
-				}
-				else if ( 0 < _lastItemSelection )
-				{
-					selectItemByIndex( _lastItemSelection - 1 );
+					if ( 0 < event.delta && _lastItemSelection < (ITEM_COUNT - 1)  )
+					{
+						selectItemByIndex( _lastItemSelection + 1 );
+					}
+					else if ( 0 < event.delta && ( ITEM_COUNT -1 ) == _lastItemSelection )
+					{
+						selectItemByIndex( 0 );
+					}
+					else if ( 0 > event.delta && 0 == _lastItemSelection )
+					{
+						selectItemByIndex( ITEM_COUNT - 1 );
+					}
+					else if ( 0 < _lastItemSelection )
+					{
+						selectItemByIndex( _lastItemSelection - 1 );
+					}
 				}
 			}
+			else
+			{
+				var curSelection:int = QuickInventory.currentItemSelection;
+				if ( 0 > event.delta )
+				{
+					curSelection--;
+					if ( curSelection < 0 )
+						curSelection = 0;
+				}
+				else
+				{
+					curSelection++;
+					if ( 6 < curSelection )
+						curSelection = 6;
+				}
+				processGrainSelection( _toolSize.getBoxFromIndex( curSelection ) );
+			}
+				
 		}
 		
 		public function resizeHub(event:Event):void 

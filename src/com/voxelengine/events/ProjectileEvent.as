@@ -27,57 +27,40 @@ package com.voxelengine.events
 		private var _ammo:Ammo = null;
 		private var _ownerGuid:String = "NOT SET";
 		
-		public function get positionGet():Vector3D { return _position; }
+		public function get position():Vector3D { return _position; }
 		public function get direction():Vector3D { return _direction; }
+		public function get ammo():Ammo { return _ammo;}
 		public function get owner():String { return _ownerGuid; }
 		
-		public function set positionSet(val:Vector3D):void { _position = val; }
+		public function set position(val:Vector3D):void { _position = val; }
 		public function set direction(val:Vector3D):void { _direction = val; }
+		public function set ammo(value:Ammo):void  { _ammo = value; }
 		public function set owner(val:String):void { _ownerGuid = val; }
-		
-		public function get ammo():Ammo 
-		{
-			return _ammo;
-		}
-		
-		public function set ammo(value:Ammo):void 
-		{
-			_ammo = value;
-		}
 		
 		public function ProjectileEvent( $type:String, $bubbles:Boolean = true, $cancellable:Boolean = false )
 		{
 			super( $type, $bubbles, $cancellable );
 		}
-
-		public function buildFromAmmo( ammo:Ammo ):void {
-			_ammo = ammo.clone();
-		}
-
 		
 		public override function clone():Event
 		{
-			var pe:ProjectileEvent = new ProjectileEvent(type, bubbles, cancelable);
-			pe.positionSet = positionGet.clone();
-			pe.ammo = _ammo.clone();
-			pe.direction = direction.clone();
-			pe.owner = owner;
-			return pe;
+			// Use the change type method, but use the same type
+			return changeType( type );
 		}
 	   
-		public function changeType( newType:String ):ProjectileEvent
+		public function changeType( $newType:String ):ProjectileEvent
 		{
-			var pe:ProjectileEvent = new ProjectileEvent( newType, bubbles, cancelable);
-			pe.positionSet = positionGet.clone();
-			pe.direction = direction.clone();
+			var pe:ProjectileEvent = new ProjectileEvent( $newType, bubbles, cancelable);
+			pe.position = position.clone();
 			pe.ammo = _ammo.clone();
+			pe.direction = direction.clone();
 			pe.owner = owner;
 			return pe;
 		}
 	   
 		public override function toString():String
 		{
-			return formatToString("ProjectileEvent", "bubbles", "cancelable") + " ownerId: " + owner + "  position: " + positionGet + "  direction: " + direction + " ammo: " + ammo;
+			return formatToString("ProjectileEvent", "bubbles", "cancelable") + " ownerId: " + owner + "  position: " + position + "  direction: " + direction + " ammo: " + ammo;
 		}
 		
 	}

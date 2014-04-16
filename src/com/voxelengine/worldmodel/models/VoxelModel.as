@@ -599,10 +599,10 @@ package com.voxelengine.worldmodel.models
 			Log.out( "VoxelModel.effect_sphere - radius: " + ie.radius + " gmin: " + ie.detail + " took: " + (getTimer() - _timer) );
 			//oxel.mergeRecursive(); // Causes bad things to happen since we dont regen faces!
 		}
-		public function empty_sphere(cx:int, cy:int, cz:int, radius:int, gmin:uint = 0):void {
+		public function empty_sphere(cx:int, cy:int, cz:int, radius:Number, gmin:uint = 0):void {
 			//_timer = getTimer();
 			_modified = true;
-			oxel.empty_sphere( instanceInfo.instanceGuid, cx, cy, cz, radius, gmin);
+			oxel.empty_sphere( instanceInfo.instanceGuid, cx, cy - 1, cz, radius - 1.5, gmin);
 			Log.out( "VoxelModel.empty_sphere - radius: " + radius + " gmin: " + gmin + " took: " + (getTimer() - _timer) );
 			//oxel.mergeRecursive(); // Causes bad things to happen since we dont regen faces!
 		}
