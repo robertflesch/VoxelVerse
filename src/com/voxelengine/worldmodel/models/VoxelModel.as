@@ -1433,7 +1433,7 @@ package com.voxelengine.worldmodel.models
 			{
 				var newGci:GrainCursorIntersection = new GrainCursorIntersection();
 				newGci.point = modelSpaceStartPoint;
-				newGci.oxel = oxel;
+				newGci.oxel = oxel; // This is the root oxel of the model
 				newGci.model = this;
 				newGci.gc.copyFrom( gct );
 				//public var axis:int;

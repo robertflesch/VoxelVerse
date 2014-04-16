@@ -580,32 +580,37 @@ package com.voxelengine.worldmodel.oxel
 				// dispatch event starting light removal
 			}
 			
-			if ( Globals.Info[$newType].flowable )
+			if ( Globals.Info[$newType] )
 			{
-				if ( null == _flowInfo ) // if it doesnt have flow info, get some! This is from placement of flowable oxels
+				if ( Globals.Info[$newType].flowable )
 				{
-					_flowInfo = Globals.Info[$newType].flowInfo.clone();
+					if ( null == _flowInfo ) // if it doesnt have flow info, get some! This is from placement of flowable oxels
+					{
+						_flowInfo = Globals.Info[$newType].flowInfo.clone();
+					}
 				}
-			}
-			else
-			{
-				if ( Globals.getTypeId( "obsidian" ) != $newType )
-					_flowInfo = null;  // If it has flow info, release it, no need to check first
-			}
-			
-			if ( Globals.Info[$newType].light )
-			{
-				if ( "" == $guid )
-					throw new Error( "Oxel.type - no active model guid" );
-				if ( EditCursor.EDIT_CURSOR != $guid )
+				else
 				{
-					if ( !_brightness ) {
-						_brightness = BrightnessPool.poolGet();
-						_brightness.copyFrom( Globals.Info[$newType].brightness, Brightness.FIXED );
+					if ( Globals.getTypeId( "obsidian" ) != $newType )
+						_flowInfo = null;  // If it has flow info, release it, no need to check first
+				}
+				
+				if ( Globals.Info[$newType].light )
+				{
+					if ( "" == $guid )
+						throw new Error( "Oxel.type - no active model guid" );
+					if ( EditCursor.EDIT_CURSOR != $guid )
+					{
+						// keep any existing brightness Info
+						if ( !_brightness ) {
+							_brightness = BrightnessPool.poolGet();
+							_brightness.copyFrom( Globals.Info[$newType].brightness, Brightness.FIXED );
+						}
 					}
 				}
 			}
-			// keep any existing brightness Info
+			else
+				Log.out( "Oxel.writeInternal - No type information found for typeID: " + $newType, Log.ERROR );
 			
 			additionalDataClear();
 			
@@ -1919,9 +1924,12 @@ package com.voxelengine.worldmodel.oxel
 				throw new Error( "No kids");
 			for each ( var child:Oxel in _children )
 			{
-				result = child.writeCylinder( $guid, cx, cy, cz, radius, $newType, axis, gmin, startTime, runTime, startingSize );
-				if ( !result )
-					return result;
+				if ( child )
+				{
+					result = child.writeCylinder( $guid, cx, cy, cz, radius, $newType, axis, gmin, startTime, runTime, startingSize );
+					if ( !result )
+						return result;
+				}
 			}
 			
 			return result
@@ -2029,7 +2037,7 @@ package com.voxelengine.worldmodel.oxel
 				
 			for each ( var child:Oxel in _children )
 			{
-				if ( child.gc )
+				if ( child && child.gc )
 					child.empty_sphere( $guid, cx, cy, cz, radius, gmin );
 			}
 		}
