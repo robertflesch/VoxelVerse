@@ -32,7 +32,7 @@
 	"gravity": false,
 	"playerPosition": {
                     "x": 47,
-                    "y": 125,
+                    "y": 145,
                     "z": 101
                 },
 	"playerRotation": 0,
