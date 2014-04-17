@@ -10,6 +10,7 @@ package com.voxelengine.worldmodel.models
 	import com.voxelengine.events.GUIEvent;
 	import com.voxelengine.worldmodel.models.CameraLocation;
 	import com.voxelengine.worldmodel.models.CollisionPoint;
+	import com.voxelengine.worldmodel.MouseKeyboardHandler;
 	import flash.display3D.Context3D;
 	import flash.geom.Vector3D;
 	import flash.geom.Matrix3D;
@@ -175,6 +176,63 @@ package com.voxelengine.worldmodel.models
 		override public function loseControl( $vm:VoxelModel ):void	{
 			super.loseControl( $vm );
 			$vm.stateLock( false );
+		}
+	
+		override public function updateVelocity( $elapsedTimeMS:int, $clipFactor:Number ):Boolean
+		{
+			var changed:Boolean = false;
+			
+			// if app is not active, we still need to clip velocitys, but we dont need keyboard or mouse movement
+			if ( this == Globals.controlledModel && Globals.active )
+			{
+				var vel:Vector3D = instanceInfo.velocityGet;
+				var speedVal:Number = instanceInfo.speed( $elapsedTimeMS ) / 4;
+				
+				// Add in movement factors
+				if ( MouseKeyboardHandler.forward )	{ 
+					if ( instanceInfo.velocityGet.length < mMaxSpeed )
+					{
+						instanceInfo.velocitySetComp( vel.x, vel.y, vel.z + speedVal ); 
+						changed = true; 
+						mForward = true; }
+				}
+				else	
+					{ mForward = false; }
+				if ( MouseKeyboardHandler.backward )	{ instanceInfo.velocitySetComp( vel.x, vel.y, vel.z - speedVal ); changed = true; }
+				if ( onSolidGround )
+				{
+					// Only allow slide left and right when on ground
+					if ( MouseKeyboardHandler.leftSlide )	{ instanceInfo.velocitySetComp( vel.x + speedVal, vel.y, vel.z ); changed = true; }
+					if ( MouseKeyboardHandler.rightSlide )	{ instanceInfo.velocitySetComp( vel.x - speedVal, vel.y, vel.z ); changed = true; }
+				}
+			}
+			
+			/*
+			if ( !onSolidGround && instanceInfo.usesCollision && this == Globals.controlledModel )
+			{
+				if ( mStallSpeed > instanceInfo.velocityGet.z && instanceInfo.velocityGet.length < mMaxSpeed  )
+				{
+					//Log.out( "Dragon.updateVelocity - stalled: " + instanceInfo. velocityGet.y + "  time: " + $elapsedTimeMS + "  tval: " + 0.0033333333333333 * $elapsedTimeMS );
+					if ( mMaxFallRate > instanceInfo.velocityGet.y )
+						instanceInfo.velocitySetComp( instanceInfo.velocityGet.x, instanceInfo.velocityGet.y + (0.001 * $elapsedTimeMS), instanceInfo.velocityGet.z );
+				}
+			}
+			*/
+			
+			// clip factor can scale quickly when diving.
+			// so if it increases the speed, make sure speed is not over max
+			if ( $clipFactor < 1 )
+				instanceInfo.velocityScaleBy( $clipFactor );
+			else
+			{
+				if ( instanceInfo.velocityGet.length < mMaxSpeed ) 				
+					instanceInfo.velocityScaleBy( $clipFactor );
+			}
+			
+			instanceInfo.velocityClip();
+			
+			//trace( "InstanceInfo.updateVelocity: " + velocity );
+			return changed;	
 		}
 	}
 }

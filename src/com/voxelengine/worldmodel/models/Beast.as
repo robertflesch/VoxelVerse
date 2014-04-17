@@ -381,16 +381,7 @@ package com.voxelengine.worldmodel.models
 
 		override public function updateVelocity( $elapsedTimeMS:int, $clipFactor:Number ):Boolean 
 		{
-			if ( !onSolidGround && instanceInfo.usesCollision && this == Globals.controlledModel )
-			{
-				if ( mStallSpeed > instanceInfo.velocityGet.z && instanceInfo.velocityGet.length < mMaxSpeed  )
-				{
-					//Log.out( "Beast.updateVelocity - stalled: " + instanceInfo. velocityGet.y + "  time: " + $elapsedTimeMS + "  tval: " + 0.0033333333333333 * $elapsedTimeMS );
-					if ( mMaxFallRate > instanceInfo.velocityGet.y )
-						instanceInfo.velocitySetComp( instanceInfo.velocityGet.x, instanceInfo.velocityGet.y + (0.00111 * $elapsedTimeMS), instanceInfo.velocityGet.z );
-				}
-			}
-			
+			// TODO What should default behavoir be for a beast?
 			return super.updateVelocity( $elapsedTimeMS, $clipFactor );
 		}
 		
