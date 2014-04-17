@@ -218,12 +218,15 @@ package com.voxelengine {
 			g_appPath = val; 
 			g_modelPath = g_appPath + "assets/models/";
 			g_soundPath = g_appPath + "assets/sounds/";
+			g_regionPath = g_appPath + "assets/regions/";
 		}
 		
 		private static var g_modelPath:String;
 		public static function get modelPath():String{ return g_modelPath; }
 		private static var g_soundPath:String;
-		public static function get soundPath():String{ return g_soundPath; }
+		public static function get soundPath():String { return g_soundPath; }
+		private static var g_regionPath:String;
+		public static function get regionPath():String { return g_regionPath; }
 		
 		private static var g_player:Player = null;
 		public static function get player():Player { return g_player; }

@@ -196,27 +196,32 @@ package com.voxelengine.worldmodel
 				Log.out( "Region.loadRegion - loading from DB: " + regionId );
 				Persistance.loadObject( Persistance.DB_TABLE_REGIONS
 								, regionId
-								, successHandler
-								, function (e:PlayerIOError):void {  Log.out( "Region.errorHandler - e: " + e ); } );					
+								, successHandlerDBO
+								, errorHandlerDBO );					
 			}
 			else
 			{
 				var _urlLoader:URLLoader = new URLLoader();
 				var fileNameWithExt:String = $regionId + ".rjson"
-				Log.out( "Region.new - loading: " + Globals.appPath + fileNameWithExt );
-				_urlLoader.load(new URLRequest( Globals.appPath + fileNameWithExt ));
+				Log.out( "Region.new - loading: " + Globals.regionPath + fileNameWithExt );
+				_urlLoader.load(new URLRequest( Globals.regionPath + fileNameWithExt ));
 				_urlLoader.addEventListener(Event.COMPLETE, onRegionLoadedAction);
 				_urlLoader.addEventListener(IOErrorEvent.IO_ERROR, errorAction);			
 				_urlLoader.addEventListener(ProgressEvent.PROGRESS, onProgressAction);
 			}
 		}
 
-		static private 	function successHandler(o:DatabaseObject):void 
+		static private 	function successHandlerDBO(o:DatabaseObject):void 
 		{ 
 			Log.out( "Region.successHandler - e: " + o );
 			var newRegion:Region = new Region();
 			loadFromDBO( newRegion, o );
 		}	
+		
+		static private function errorHandlerDBO(e:PlayerIOError):void
+		{  
+			Log.out( "Region.errorHandler - e: " + e, Log.ERROR );
+		}					
 		
 		static public function loadFromDBO( newRegion:Region, dbo:DatabaseObject):void
 		{
