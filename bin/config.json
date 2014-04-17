@@ -1,0 +1,9 @@
+{
+	"config" : {
+		"region": { "startingRegion":"CollisionTest"  },
+		"typeName" : "types.json",
+		"showHelp" : false,
+		"showButtons" : true,
+		"showEditMenu" : true
+	}
+}

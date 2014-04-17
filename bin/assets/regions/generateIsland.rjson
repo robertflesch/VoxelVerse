@@ -1,0 +1,40 @@
+{
+    "region": [
+        {
+             "model": {
+                "fileName": "GenerateIslandTest",
+                "grainSize" : 12,
+				"location": {
+                    "x": -1020,
+                    "y": -4000,
+                    "z": -3000
+                }
+            }
+		},
+        {
+             "model": {
+                "fileName": "Raptor",
+                "location": {
+                    "x": -720,
+                    "y": 720,
+                    "z": -651
+                },
+				"critical":true
+            }
+		}
+    ],
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": -711,
+                    "y": 753,
+                    "z": -643
+                },
+	"playerRotation": 0,
+	"name": "Collision Test",
+	"desc": "Used to make sure avatar collide works as expected"
+}

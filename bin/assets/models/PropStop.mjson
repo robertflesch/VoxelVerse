@@ -1,0 +1,18 @@
+{
+	"animation": [
+		{
+			"attachmentName": "Propeller",
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 1,
+					"type": "rotate_to"
+				}
+			]
+		}		
+	]			
+}

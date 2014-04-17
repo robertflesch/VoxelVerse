@@ -1,0 +1,43 @@
+{
+    "region": [
+		{
+             "model": {
+                "fileName": "Dragon",
+                "name": "Smuag",
+                "location": {
+                    "x": 0,
+                    "y": 90,
+                    "z": 150
+                },
+				"collision": false,
+				"critical" : "true"
+            }
+		},
+        {
+            "model": {
+                "fileName": "G14Island",
+                "location": {
+                    "x": 0,
+                    "y": -13000,
+                    "z": -11000
+                }
+
+            }
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 16,
+                    "y": 122,
+                    "z": 160
+                },
+	"playerRotation": 0,
+	"name": "Cube Test",
+	"desc": ""
+}

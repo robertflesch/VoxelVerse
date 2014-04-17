@@ -1,0 +1,56 @@
+{
+    "region": [
+        {
+            "model": {
+                "fileName": "Zeppelin190",
+				"location": {
+                    "x": -408,
+                    "y": -410,
+                    "z": -642
+                }
+            }
+        },
+        {
+             "model": {
+                "fileName": "Raptor",
+                "location": {
+                    "x": -720,
+                    "y": 238,
+                    "z": -651
+                },
+			 "critical":true
+            }
+		},
+		{
+			"model": {
+				"instanceGuid": 23,
+				"fileName": "BjornCastle",
+				"location": {
+					"x": -2104,
+					"y": -1712,
+					"z": -1028
+				},
+				"rotation": {
+					"x": 0,
+					"y": 180,
+					"z": 0
+				}
+			}
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": true,
+	"playerPosition": {
+                    "x": -711,
+                    "y": 263,
+                    "z": -643
+                },
+	"playerRotation": 0,
+	"name": "Collision Test",
+	"desc": "Used to make sure avatar collide works as expected"
+}

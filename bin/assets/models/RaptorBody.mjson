@@ -1,0 +1,14 @@
+{
+    "model": {
+	    "editable": true,
+        "modelClass": "Ship",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "Raptor",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }		
+    }
+}

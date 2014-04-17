@@ -1,0 +1,40 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "TargetLarge"
+                }
+            ]
+        },
+        "template": false,
+        "editable": true,
+        "children": [
+            {
+                "collidable": true,
+                "script": "",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "transforms": [],
+                "fileName": "CannonFKey",
+                "instanceGuid": "5CB17212-6FA3-A0C3-405A-F11D8F05473C",
+                "location": {
+                    "x": 128,
+                    "y": 76,
+                    "z": 53
+                },
+                "name": "Default Name",
+                "critical": false,
+                "grainSize": 5
+            }
+        ],
+        "name": "Default Name",
+        "modelClass": "Target",
+        "grainSize": 0,
+        "guid": "TargetLarge"
+    }
+}

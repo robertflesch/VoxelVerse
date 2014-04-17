@@ -1,0 +1,33 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "EngineBlock"
+                }
+            ]
+        },
+        "animations": [
+            { "name": "PropRotate" },
+			{ "name": "PropStop" }
+		],
+        "modelClass": "Prop",
+		"engine" :{
+			"maxThrust": 1
+			},
+        "grainSize": 5,
+        "template": false,
+		"children": [
+            {
+                "name": "Propeller",
+                "fileName": "Propeller",
+                "location": {
+                    "z": -4,
+                    "y": 0,
+                    "x": 0
+                }
+            }
+		]
+    }	
+}

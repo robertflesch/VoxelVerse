@@ -1,0 +1,71 @@
+{
+    "attachment": [
+		{
+			"fileName": "PickTest",
+			"attachsTo": "RightArm",
+			"location": {
+				"x": 0,
+				"y": -8,
+				"z": 6
+			},
+			"rotation": {
+				"x": 90,
+				"y": 0,
+				"z": 0
+			}
+		}
+	],
+	"animation": [
+		{
+			"attachmentName": "LeftArm",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "RightArm",
+			"rotation": {
+				"x": -90,
+				"y": 0,
+				"z": 15
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 90,
+						"y": 0,
+						"z": 30
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "LeftThigh",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "RightThigh",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "PlayerFoot",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		}		
+	]			
+}

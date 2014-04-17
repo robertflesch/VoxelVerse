@@ -1,0 +1,79 @@
+{
+    "model": {
+        "name": "GunPlatform",
+        "template": false,
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "TargetLarge"
+                }
+            ]
+        },
+        "children": [
+            {
+                "script": "",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "instanceGuid": "272D7F80-ED44-D5E1-6DAB-EE4BB494322D",
+                "collidable": true,
+                "fileName": "EngineWithPropeller",
+                "transforms": [],
+                "location": {
+                    "x": 116,
+                    "y": 64,
+                    "z": 64
+                },
+                "name": "Default Name",
+                "critical": false,
+                "grainSize": 5
+            },
+            {
+                "script": "",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "instanceGuid": "B6C2DF2A-F63D-2A15-3EA7-4490B812238F",
+                "collidable": true,
+                "fileName": "ShipControlTrigger",
+                "transforms": [],
+                "location": {
+                    "x": 114,
+                    "y": 64,
+                    "z": 114
+                },
+                "name": "Ship Control Trigger",
+                "critical": false,
+                "grainSize": 0
+            },
+            {
+                "script": "",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "instanceGuid": "A23554E6-517D-8EEB-256B-D5E3DD9E65C6",
+                "collidable": true,
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "x": 0,
+                    "y": 64,
+                    "z": 64
+                },
+                "name": "right - gun port 1",
+                "critical": false,
+                "grainSize": 0
+            }
+        ],
+        "modelClass": "Ship",
+        "editable": true,
+        "grainSize": 0
+    }
+}

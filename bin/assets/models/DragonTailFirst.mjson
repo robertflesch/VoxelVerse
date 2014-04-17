@@ -1,0 +1,22 @@
+{
+    "model": {
+	    "editable": true,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "DragonTail",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "children": [
+            {
+                "fileName": "DragonTailSecond",
+                "name": "DragonTailSecond",
+                "location": { "x": 8, "y": 8, "z": 30 },
+                "center": { "x": 16, "y": 32, "z": 0 },
+                "scale": { "x": 2, "y": 2, "z": 1 }
+            }
+		]
+    }
+}

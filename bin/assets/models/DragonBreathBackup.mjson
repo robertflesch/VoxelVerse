@@ -1,0 +1,94 @@
+{
+    "model": {
+        "template": true,
+        "editable": false,
+        "modelClass": "Gun",
+		"name": "Breath",
+		"desc": "Stinky",
+		"grainSize": 5,
+		"gun": 
+		{ 
+			"reloadSpeed": 10,
+			"ammos" : [
+			{
+				"name" : "dragonFire",
+				"accuracy" : 0.2,
+				"velocity" : 100,
+				"type" : 1,
+				"count" : 20,
+				"oxelType" : "dragonFire",
+				"life" : 5,
+				"grain" : 2,
+				"model" : "CannonBall",
+				"launchSoundFile" : "Cannon.mp3",
+				"impactSoundFile" : "CannonBallExploding.mp3",
+				"contactScript" : "MeltScript"
+			},
+			{
+				"name" : "dragonIce",
+				"accuracy" : 0.05,
+				"velocity" : 200,
+				"type" : 2,
+				"count" : 10,
+				"oxelType" : "dragonIce",
+				"life" : 5,
+				"grain" : 2,
+				"model" : "CannonBall",
+				"launchSoundFile" : "Cannon.mp3",
+				"impactSound" : "CannonBallExploding.mp3",
+				"contactScript" : "IceScript"
+			},
+			{
+				"name" : "dragonEarth",
+				"accuracy" : 0.05,
+				"velocity" : 200,
+				"type" : 1,
+				"count" : 10,
+				"oxelType" : "STONE",
+				"life" : 5,
+				"grain" : 2,
+				"model" : "CannonBall",
+				"launchSoundFile" : "Cannon.mp3",
+				"impactSound" : "CannonBallExploding.mp3",
+				"contactScript" : "ExplosionScript"
+			},
+			{
+				"name" : "dragonAcid",
+				"accuracy" : 0.1,
+				"velocity" : 400,
+				"type" : 1,
+				"count" : 0,
+				"oxelType" : "dragonAcid",
+				"life" : 5,
+				"grain" : 2,
+				"model" : "CannonBall",
+				"launchSoundFile" : "Cannon.mp3",
+				"impactSound" : "CannonBallExploding.mp3",
+				"contactScript" : "AcidScript"
+			}
+			]
+		},
+		
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "TestSolid",
+                    "type": "AIR",
+                    "range": "0",
+                    "offset": "0"
+                }
+            ]
+        },
+		"children": [
+            {
+                "name": "Barrel",
+                "fileName": "CannonBarrelCopper",
+                "location": {
+                    "z": 0,
+                    "y": 0,
+                    "x": 0
+                }
+            }
+		]
+	}
+}

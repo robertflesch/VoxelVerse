@@ -1,0 +1,62 @@
+{
+    "model": {
+		"grainSize" : 12,
+        "editable": "true",
+        "template": "true",
+        "biomes": {
+            "layers": [
+                {
+					"functionName" : "GenerateLayer",
+					"type": "DIRT",
+					"range": 90,
+					"offset": 65,
+					"optionalInt": 4
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "AIR",
+					"range": 70,
+					"offset": 0,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "GRAVEL",
+					"range": 20,
+					"offset": 50,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "AIR",
+					"range": 55,
+					"offset": 0,
+					"optionalInt": 6
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "STONE",
+					"range": 20,
+					"offset": 25,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "AIR",
+					"range": 30,
+					"offset": 0,
+					"optionalInt": 6
+				},
+                {
+					"functionName" : "CarveOutsideSurface",
+					"range": 95,
+					"offset": 10,
+					"optionalInt": 6
+				},
+                {
+					"functionName" : "GenerateGrassAndTrees"
+				}
+            ]
+        }
+    }
+}

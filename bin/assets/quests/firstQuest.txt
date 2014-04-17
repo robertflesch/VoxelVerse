@@ -1,0 +1,1 @@
+Your first quest is to become captain of the ship. This will let you drive the ship and fire the cannons. To become captain, turn around using right mouse button down, and use the WASD keys to walk to the rear of the ship. There you will find a steering wheel. When standing with the steering wheel in front of you a button will pop up asking you if you want to become captain. 

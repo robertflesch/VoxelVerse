@@ -1,0 +1,14 @@
+{
+    "model": {
+        "template": false,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "CollisionTest",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "editable": true
+    }
+}

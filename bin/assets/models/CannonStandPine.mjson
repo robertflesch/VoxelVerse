@@ -1,0 +1,18 @@
+{
+    "model": {
+        "editable": false,
+        "template": false,
+		"modelClass": "Stand",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "CannonStandPine",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+		"stand" : {
+			"reloadSpeed" : 5000
+		}		
+    }
+}

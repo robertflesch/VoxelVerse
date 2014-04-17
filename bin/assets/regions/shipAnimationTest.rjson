@@ -1,0 +1,29 @@
+{
+    "region": [
+        {
+            "model": {
+                "fileName": "Zeppelin190",
+				"location": {
+                    "x": -408,
+                    "y": -410,
+                    "z": -642
+                }
+            }
+        }
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": true,
+	"playerPosition": {
+                    "x": 0,
+                    "y": 20,
+                    "z": 0
+                },
+	"playerRotation": 0,
+	"name": "Prop animation Test",
+	"desc": ""
+}

@@ -1,0 +1,1083 @@
+{
+    "types": [
+        {   "name": "AIR",
+            "image": "invalid.png",
+            "id": 100,
+            "category": "AIR",
+			"placeable" : "false",
+            "solid": "false",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            },
+            "comment": "Air is not alpha, since if it is, it makes me allocate a alpha vertex buffer"
+        },
+        {   "name": "GRASS",
+            "image": "grass.png",
+            "id": 101,
+            "category": "EARTH",
+			"interactions": [
+				{ "PICK"	: [ "AIR", 25, "collect" ] },
+				{ "SHOVEL"	: [ "AIR", 50, "collect" ] },
+				{ "AXE"		: [ "DIRT", 100, "change" ] },
+				{ "BUCKET"	: [ "GRASS", 100, "change" ] },
+				{ "DFIRE"	: [ "DIRT", 100, "change" ] },
+				{ "DICE"	: [ "DIRT", 100, "change" ] },
+				{ "WATER"   : [ "GRASS", 25, "change" ] },
+				{ "AIR"     : [ "AIR", 25, "change" ] },
+				{ "EARTH"   : [ "AIR", 25, "change" ] }
+			],
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 2,
+				"bottom": 1,
+                "ut": 0.125,
+                "vt": 0,
+                "us": 0.125,
+                "vs": 0.125,
+                "ub": 0.25,
+                "vb": 0
+            },
+            "comment": "Grass uses a different tiling system on the sides, 2 is sample around vertical center"
+        },
+        {   "name": "DIRT",
+			"image": "dirt.png",
+            "id": 102,
+            "category": "EARTH",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.25,
+                "vt": 0,
+                "us": 0.25,
+                "vs": 0,
+                "ub": 0.25,
+                "vb": 0
+            }
+        },
+        {   "name": "SAND",
+            "image": "sand.png",
+            "id": 103,
+            "category": "EARTH",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0,
+                "us": 0.375,
+                "vs": 0,
+                "ub": 0.375,
+                "vb": 0
+            }
+        },
+        {   "name": "STONE",
+            "image": "stone.png",
+            "id": 104,
+            "category": "EARTH",
+			"interactions": [
+				{ "PICK"	: [ "AIR", 0, "collect" ] },
+				{ "SHOVEL"	: [ "STONE", 0, "change" ] },
+				{ "AXE"		: [ "STONE", 0, "change" ] },
+				{ "BUCKET"	: [ "STONE", 100, "change" ] },
+				{ "DFIRE"	: [ "LAVA", 100, "melt" ] },
+				{ "DICE"	: [ "STONE", 0, "freeze" ] },
+				{ "WATER"   : [ "STONE", 0, "change" ] },
+				{ "AIR"     : [ "AIR", 25, "change" ] },
+				{ "EARTH"   : [ "AIR", 25, "change" ] }	
+			],
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.5,
+                "vt": 0,
+                "us": 0.5,
+                "vs": 0,
+                "ub": 0.5,
+                "vb": 0
+            }
+        },
+        {   "name": "GRAVEL",
+            "image": "gravel.png",
+            "id": 105,
+            "category": "EARTH",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.625,
+                "vt": 0,
+                "us": 0.625,
+                "vs": 0,
+                "ub": 0.625,
+                "vb": 0
+            }
+        },
+        {   "name": "PLANK",
+            "image": "plank.png",
+            "id": 106,
+            "category": "PLANT",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 3,
+				"side": 3,
+				"bottom": 3,
+                "ut": 0.375,
+                "vt": 0.25,
+                "us": 0.375,
+                "vs": 0.25,
+                "ub": 0.375,
+                "vb": 0.25
+            }
+        },
+        {   "name": "WATER",
+            "image": "water.png",
+            "id": 107,
+            "category": "LIQUID",
+            "solid": "false",
+			"flowable": [ 2, 8, 255 ],
+            "animated": "true",
+			"interactions": [
+				{ "PICK"		: [ "WATER", 25, "change" ] },
+				{ "SHOVEL"		: [ "WATER", 50, "change" ] },
+				{ "AXE"			: [ "DIRT", 100, "change" ] },
+				{ "BUCKET"		: [ "AIR", 100, "collectInBucket" ] },
+				{ "DFIRE"		: [ "AIR", 100, "change" ] },
+				{ "DICE"		: [ "ICE", 100, "change" ] },
+				{ "WATER"  		: [ "WATER", 25, "change" ] },
+				{ "AIR"    		: [ "AIR", 25, "change" ] },
+				{ "EARTH"  		: [ "STONE", 25, "change" ] },
+				{ "ASH_BURNING" : [ "COAL", 25, "change" ] },
+				{ "LAVA"    	: [ "OBSIDIAN", 25, "change" ] },
+				{ "FLOATIUM"   	: [ "WATER", 25, "change" ] }
+			],			
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.9
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.9765625,
+                "vt": 0.953125,
+                "us": 0.9765625,
+                "vs": 0.953125,
+                "ub": 0.9765625,
+                "vb": 0.953125
+            }
+        },
+        {   "name": "LEAF",
+            "image": "leaf.png",
+            "id": 109,
+            "category": "PLANT",
+            "solid": "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 32,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.25,
+                "vt": 0.25,
+                "us": 0.25,
+                "vs": 0.25,
+                "ub": 0.25,
+                "vb": 0.25
+            }
+        },
+        {   "name": "BARK",
+            "image": "bark.png",
+            "id": 110,
+            "category": "PLANT",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 1,
+				"top": 5,
+				"side": 6,
+				"bottom": 5,
+                "ut": 0.21875,
+                "vt": 0.3125,
+                "us": 0.75,
+                "vs": 0,
+                "ut": 0.21875,
+                "vt": 0.3125
+            }
+        },
+        {   "name": "LAVA",
+            "image": "lava.png",
+            "id": 111,
+            "category": "LIQUID",
+			"light" : "true",
+            "solid": "false",
+			"flowable": [ 2, 8, 255 ],
+            "animated": "true",
+			"interactions": [
+				{ "PICK"		: [ "LAVA", 25, "na" ] },
+				{ "SHOVEL"		: [ "LAVA", 50, "na" ] },
+				{ "AXE"			: [ "LAVA", 100, "na" ] },
+				{ "BUCKET"		: [ "AIR", 100, "collectInBucket" ] },
+				{ "DFIRE"		: [ "LAVA", 100, "na" ] },
+				{ "DICE"		: [ "STONE", 100, "na" ] },
+				{ "WATER"  		: [ "OBSIDIAN", 25, "na" ] },
+				{ "AIR"    		: [ "AIR", 25, "change" ] },
+				{ "EARTH"  		: [ "AIR", 25, "na" ] },
+				{ "ASH_BURNING" : [ "LAVA", 25, "na" ] },
+				{ "LAVA"    	: [ "LAVA", 25, "na" ] }
+			],			
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.984375,
+                "vt": 0.953125,
+                "us": 0.984375,
+                "vs": 0.953125,
+                "ub": 0.984375,
+                "vb": 0.953125
+            }
+        },
+        {   "name": "RED",
+            "image": "red.png",
+            "id": 112,
+            "category": "UTIL",
+            "color": {
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {   "name": "BLUE",
+            "image": "blue.png",
+            "id": 113,
+            "category": "UTIL",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {   "name": "GREEN",
+            "image": "green.png",
+            "id": 114,
+            "category": "UTIL",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {   "name": "CLOUD",
+            "image": "cloud.png",
+            "id": 115,
+            "category": "AIR",
+            "solid": "false",
+            "light": "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.25,
+                "vt": 0.375,
+                "us": 0.25,
+                "vs": 0.375,
+                "ub": 0.25,
+                "vb": 0.375
+
+            }
+        },
+        {   "name": "BALLOON",
+            "image": "balloon.png",
+            "id": 116,
+            "category": "UTIL",
+            "color": {
+                "r": 0.86078,
+                "g": 0.86078,
+                "b": 0.76275,
+                "a": 1
+            }
+        },
+        {   "name": "ROPE", 
+            "image": "rope.png",
+            "id": 117,
+            "category": "UTIL",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.15625,
+                "vt": 0.25,
+                "us": 0.15625,
+                "vs": 0.25,
+                "ub": 0.15625,
+                "vb": 0.25
+            }
+        },
+        {   "name": "IRON",
+            "image": "iron.png",
+            "id": 118,
+            "category": "METAL",
+            "color": {
+                "r": 0.2,
+                "g": 0.2,
+                "b": 0.3,
+                "a": 1
+            }
+        },
+        {   "name": "WALL",
+            "image": "stonewall.png",
+            "id": 120,
+            "category": "EARTH",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.1875,
+                "vt": 0.25,
+                "us": 0.1875,
+                "vs": 0.25,
+                "ub": 0.1875,
+                "vb": 0.25
+            }
+        },
+        {   "name": "COPPER",
+            "image": "copper.png",
+            "id": 121,
+            "category": "METAL",
+            "color": {
+                "r": 0.72156862745098039215686274509804,
+                "g": 0.45098039215686274509803921568627,
+                "b": 0.2,
+                "a": 1
+            }
+        },
+        {   "name": "BRONZE",
+            "image": "bronze.png",
+            "id": 122,
+            "category": "METAL",
+			"color": {
+                "r": 0.54901960784313725490196078431373,
+                "g": 0.47058823529411764705882352941176,
+                "b": 0.32549019607843137254901960784314,
+                "a": 1
+            }
+        },
+        {   "name": "STEEL",
+            "image": "steel.png",
+            "id": 123,
+            "category": "METAL",
+            "color": {
+                "r": 0.87843137254901960784313725490196,
+                "g": 0.87450980392156862745098039215686,
+                "b": 0.85882352941176470588235294117647,
+                "a": 1
+            }
+        },
+        {   "name": "GLASS",
+            "image": "glass.png",
+            "id": 124,
+            "category": "UTIL",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
+            }
+        },
+        {   "name": "BRAND",
+            "image": "yourbrandhere.png",
+            "id": 129,
+            "category": "UTIL",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 256,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.375,
+                "vt": 0.125,
+                "us": 0.375,
+                "vs": 0.125,
+                "ub": 0.375,
+                "vb": 0.125
+            }
+
+
+        },
+        {   "name": "SKIN",
+            "image": "skin.png",
+            "id": 130,
+            "category": "AVATAR",
+            "color": {
+                "r": 0.89,
+                "g": 0.76,
+                "b": 0.48,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0.125,
+                "us": 0,
+                "vs": 0.125,
+                "ub": 0,
+                "vb": 0.125
+            }
+			
+        },
+        {   "name": "SCLRED",
+            "image": "scaleRed.png",
+            "id": 131,
+            "category": "DRAGON",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.21875,
+                "vt": 0.25,
+                "us": 0.21875,
+                "vs": 0.25,
+                "ub": 0.21875,
+                "vb": 0.25
+            }
+        },
+        {   "name": "SCLREDT", 
+            "image": "scaleRedT.png",
+            "id": 132,
+            "category": "DRAGON",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.21875,
+                "vt": 0.28125,
+                "us": 0.21875,
+                "vs": 0.28125,
+                "ub": 0.21875,
+                "vb": 0.28125
+            }
+        },
+        {   "name": "SCLWHT",
+            "image": "scaleWhite.png",
+            "id": 133,
+            "category": "DRAGON",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.1875,
+                "vt": 0.28125,
+                "us": 0.1875,
+                "vs": 0.28125,
+                "ub": 0.1875,
+                "vb": 0.28125
+            }
+        },
+        {   "name": "SCLWHTT",
+            "image": "scaleWhite.png",
+            "id": 134,
+            "category": "DRAGON",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.1875,
+                "vt": 0.28125,
+                "us": 0.1875,
+                "vs": 0.28125,
+                "ub": 0.1875,
+                "vb": 0.28125
+            }
+        },
+        {   "name": "DragonFire",
+            "image": "dragonFire.png",
+            "id": 135,
+            "category": "DRAGON",
+            "light": "true",
+			"placeable" : "false",
+            "animated": "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.984375,
+                "vt": 0.953125,
+                "us": 0.984375,
+                "vs": 0.953125,
+                "ub": 0.984375,
+                "vb": 0.953125
+            }
+        },
+        {   "name": "DragonIce",
+            "image": "dragonIce.png",
+            "id": 136,
+            "category": "DRAGON",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {   "name": "DragonAcid", 
+            "image": "dragonAcid.png",
+            "id": 137,
+            "category": "DRAGON",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {   "name": "DragonWater",
+            "image": "water.png",
+            "id": 138,
+            "category": "UTIL",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {   "name": "DragonEarth",
+            "image": "stone.png",
+            "id": 139,
+            "category": "UTIL",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 0.5,
+                "a": 1
+            }
+        },
+        {   "name": "DragonAcid",
+            "image": "stone.png",
+            "id": 140,
+            "category": "UTIL",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 0.5,
+                "g": 1,
+                "b": 0.5,
+                "a": 1
+            }
+        },
+        {   "name": "MUD",
+            "image": "mud.png",
+            "id": 141,
+            "category": "EARTH",
+			"placeable" : "true",
+			"solid" : "false",
+            "color": {
+                "r": 0.6784313725490196,
+                "g": 0.5058823529411765,
+                "b": 0.3137254901960784,
+                "a": 1
+            }
+        },
+        {   "name": "QUICKSAND",
+            "image": "quicksand.png",
+            "id": 142,
+            "category": "EARTH",
+			"solid": "false",
+            "color": {
+                "r": 0.8,
+                "g": 0.8,
+                "b": 0.8,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0,
+                "us": 0.375,
+                "vs": 0,
+                "ub": 0.375,
+                "vb": 0
+            }
+        },
+        {   "name": "OBSIDIAN",
+            "image": "obsidian.png",
+            "id": 143,
+            "category": "EARTH",
+			"solid": "true",
+            "uv": {
+                "maxpix": 128,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0.375,
+                "us": 0.375,
+                "vs": 0.375,
+                "ub": 0.375,
+                "vb": 0.375
+            }
+        },
+        {   "name": "FLOATIUM",
+            "image": "floatium.png",
+            "id": 144,
+            "category": "AIR",
+			"solid": "false",
+			"light": "true",
+			"flowable": [ 2, 8, 8 ],
+			"interactions": [
+				{ "PICK"		: [ "FLOATIUM", 25, "na" ] },
+				{ "SHOVEL"		: [ "FLOATIUM", 50, "na" ] },
+				{ "AXE"			: [ "FLOATIUM", 100, "na" ] },
+				{ "BUCKET"		: [ "AIR", 100, "collectInBucket" ] },
+				{ "DFIRE"		: [ "FLOATIUM", 100, "na" ] },
+				{ "DICE"		: [ "FLOATIUM", 100, "na" ] },
+				{ "WATER"  		: [ "FLOATIUM", 25, "na" ] },
+				{ "AIR"    		: [ "FLOATIUM", 25, "na" ] },
+				{ "EARTH"  		: [ "FLOATIUM", 25, "na" ] },
+				{ "ASH_BURNING" : [ "FLOATIUM", 25, "na" ] },
+				{ "LAVA"    	: [ "FLOATIUM", 25, "na" ] }
+			],			
+			"color": {
+                "r": 0.6,
+                "g": 0.7,
+                "b": 0.8,
+                "a": 0.99
+            },
+			"uv": {
+                "maxpix": 4,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0.375,
+                "us": 0.375,
+                "vs": 0.375,
+                "ub": 0.375,
+                "vb": 0.375
+            }			
+        },
+        {   "name": "ASH_BURNING",
+            "image": "ash_burning.png",
+            "id": 145,
+            "category": "PLANT",
+            "light": "true",
+            "flame": "true",
+            "solid": "false",
+			"flowable": [ 2, 8, 8 ],
+            "animated": "true",
+			"interactions": [
+				{ "PICK"		: [ "ASH_BURNING", 25, "change" ] },
+				{ "SHOVEL"		: [ "ASH_BURNING", 50, "change" ] },
+				{ "AXE"			: [ "ASH_BURNING", 100, "change" ] },
+				{ "BUCKET"		: [ "ASH_BURNING", 100, "collectInBucket" ] },
+				{ "DFIRE"		: [ "ASH_BURNING", 100, "change" ] },
+				{ "DICE"		: [ "COAL", 100, "change" ] },
+				{ "WATER"  		: [ "COAL", 25, "change" ] },
+				{ "AIR"    		: [ "AIR", 25, "change" ] },
+				{ "EARTH"  		: [ "ASH_BURNING", 25, "change" ] },
+				{ "ASH_BURNING" : [ "ASH_BURNING", 25, "change" ] },
+				{ "LAVA"    	: [ "LAVA", 25, "change" ] },
+				{ "FLOATIUM"   	: [ "ASH_BURNING", 25, "change" ] }
+			],			
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 7,
+				"side": 0,
+				"bottom": 7,
+                "ut": 0.9921875,
+                "vt": 0,
+                "us": 0.9921875,
+                "vs": 0,
+                "ub": 0.9921875,
+                "vb": 0
+            }
+        },
+		{   "name": "DIAMOND",
+            "image": "diamond.png",
+            "id": 146,
+            "category": "GEM",
+			"placeable" : "true",
+            "color": {
+                "r": 0.5784313725490196,
+                "g": 0.5058823529411765,
+                "b": 0.8137254901960784,
+                "a": 1
+            }
+        },
+        {   "name": "COAL",
+            "image": "coal.png",
+            "id": 147,
+            "category": "STONE",
+            "color": {
+                "r": 0.8,
+                "g": 0.8,
+                "b": 0.8,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 16,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.15625,
+                "vt": 0.28125,
+                "us": 0.15625,
+                "vs": 0.28125,
+                "ub": 0.15625,
+                "vb": 0.28125
+            }
+        },
+		{   "name": "ICE",
+            "image": "ice.png",
+            "id": 148,
+            "category": "LIQUID",
+            "color": {
+                "r": 0.95,
+                "g": 0.95,
+                "b": 0.99,
+                "a": 1
+            }
+        },
+        {   "name": "MIST",
+            "image": "mist.png",
+            "id": 149,
+            "category": "AIR",
+			"light" : "true",
+            "solid": "false",
+			"flowable": [ 2, 8, 8 ],
+            "animated": "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.9
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.96875,
+                "vt": 0.953125,
+                "us": 0.96875,
+                "vs": 0.953125,
+                "ub": 0.96875,
+                "vb": 0.953125
+            }
+        },
+        {   "name": "EYE_LEFT",
+            "image": "eye.png",
+            "id": 150,
+            "category": "AIR",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.125,
+                "vt": 0.28125,
+                "us": 0.125,
+                "vs": 0.28125,
+                "ub": 0.125,
+                "vb": 0.28125
+            }
+        },
+        {   "name": "EYE_RIGHT",
+            "image": "eye.png",
+            "id": 151,
+            "category": "AIR",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.125,
+                "vt": 0.3125,
+                "us": 0.125,
+                "vs": 0.3125,
+                "ub": 0.125,
+                "vb": 0.3125
+            }
+        },
+        {   "name": "VINE",
+            "image": "invalid.png",
+            "id": 152,
+            "category": "PLANT",
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.125,
+                "vt": 0.3125,
+                "us": 0.125,
+                "vs": 0.3125,
+                "ub": 0.125,
+                "vb": 0.3125
+            }
+        },
+		{   "name": "UNKNOWN",
+            "image": "invalid.png",
+            "id": 166,
+            "category": "UTIL",
+			"placeable" : "false",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 256,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.875,
+                "vt": 0.875,
+                "us": 0.875,
+                "vs": 0.875,
+                "ub": 0.875,
+                "vb": 0.875
+            }
+        },
+        {   "name": "EDITCURSOR_SQUARE",
+            "image": "invalid.png",
+            "id": 1000,
+            "category": "INTERNAL",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
+            }
+        },
+        {   "name": "EDITCURSOR_ROUND",
+            "image": "invalid.png",
+            "id": 1001,
+            "category": "INTERNAL",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2890625,
+                "us": 0,
+                "vs": 0.2890625,
+                "ub": 0,
+                "vb": 0.2890625
+            }
+        },
+        {   "name": "EDITCURSOR_CYLINDER", 
+            "image": "invalid.png",
+            "id": 1002,
+            "category": "INTERNAL",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2734375,
+                "us": 0,
+                "vs": 0.2734375,
+                "ub": 0,
+                "vb": 0.2734375
+            }
+        },
+        {   "name": "EDITCURSOR_CYLINDER_ANIMATED", 
+            "image": "invalid.png",
+            "id": 1003,
+            "category": "INTERNAL",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2734375,
+                "us": 0,
+                "vs": 0.2734375,
+                "ub": 0,
+                "vb": 0.2734375
+            }
+        },
+        {   "name": "EDITCURSOR_INVALID",
+            "image": "invalid.png",
+            "id": 1004,
+            "category": "INTERNAL",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.0078125,
+                "vt": 0.2734375,
+                "us": 0.0078125,
+                "vs": 0.2734375,
+                "ub": 0.0078125,
+                "vb": 0.2734375
+            }
+        }		
+   ]
+}

@@ -1,0 +1,13 @@
+{
+    "model": {
+		"modelClass": "Particle",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "Particle",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "Zeppelin190"
+                }
+            ]
+        },
+        "guid": "Zeppelin190",
+        "name": "Default Name",
+        "editable": true,
+        "template": false,
+        "modelClass": "Ship"
+    }
+}

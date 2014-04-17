@@ -1,0 +1,24 @@
+{
+    "model": {
+        "modelClass": "Trigger",
+        "editable": "true",
+        "template": "true",
+        "grainSize": 7,
+        "script": [
+            {
+                "name": "ControlBeastScript"
+            }
+        ],
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "TestSolid",
+					"grainSize": 6,
+                    "type": "AIR",
+                    "range": "0",
+                    "offset": "0"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,66 @@
+Welcome to VoxelVerse
+
+VoxelVerse is a Steam Punk SandBox RPG unlike anything that has been created before. 
+Think of it as a cross between minecraft, second life, and Skyrim.
+Its a world where you can build, dig, or destroy anything you can imagine.
+In this world you can change anything, and everything you change will be the same as you left it.
+
+VoxelVerse is going to be a solar system made up of predominately user generated content.
+But for the purpose of this demo I generated some resources like the islands, and the zeppelins to show what is possible.
+but before we get started on the tour, I would like to spend a minute showing you a couple of features of my next generation voxel engine.
+
+I loved building in minecraft,
+but I was always frustrated that I only had one size block to build from and to created my own models I needed to hack the code.
+I am not one to let things like that stop me, since I have been architecting and building virtual worlds for the last 12 years.
+So for VoxelVerse I designed and built from scratch what I call an Oxel Engine. When you are done with the video, you can give it a try.
+
+There are a number of new and unique things about voxelverse, the oxel engine, the independant Voxel models, and the crafting system.
+First lets talk about the Oxel engine and how it allows you to build with a huge range of block sizes.
+What this means is you can add an incredible amount detail to any object. 
+Every pixel is editable, so lets walk up to this block and demonstrate.
+To remove materials from the world you use your pick. 
+To add materials you choose that material from the material quickbar.
+Pretty standard so far. So you might notice and additional bar above the materials. 
+This bar allows you choose the size of the material you wish to add or remove.
+Lets start out placing a 4 meter block of rock. 
+And we can surround it with a few more, build ourselves a strong home that we cant get out of.
+So lets cut a doorway. The room is a bit small, lets open it up by cutting out some 2 meter blocks. 
+Change block size to 2 meter, select the pick.
+Now lets put in a doorway.
+How about some side windows by that door.
+Moving along, you see a flat wall ahead of me. I am going to cut a spherical depression in it. 
+Now this shape could be a sphere, cylinder, triangle, a heart shape, or anything.
+The power of oxel engine opens up a whole new realm of creating.
+
+356 368 600
+
+So we are going to move out to the Zeppelin for the next section.
+So you have created this great shape, do you really want to do it over and over again?
+Thats where the power of the Independant Voxel Models comes in.
+Any shape you can create, you can create a Independant Voxel Model out of.
+I don't have this exposed via the user interface yet. But I can show you the results.
+We are going to add a cannon to the zeppelin. I will bring up the editor, and add a child model to the zeppelin.
+Here is a cannon IVM I created based on the gun template. Any model created with the gun template can shoot.
+So now my zeppelin has another cannon.
+The Zeppelin its self it a IVM based on the ship template. So you can create your own ship, in what ever shape or configuration can imagine.
+Just like the cannons, the engines on the ships are IVMs. And the engines and cannons are all crafted out of materials you find in the world.
+So if you find better metals, you can make better pistons for your engine, or a better barrel for your gun. Or a faster better pick or sword.
+Everything is buildable or craftable. What you build it out of makes a difference.
+
+So now lets go up and fly the zeppelin, I look for the steering wheel, when I stand behind the steering wheel is asks me if I want to become captain.
+when I choose yes, I now have the ablity to fly the zeppelin, and to shoot the cannons on the zeppelin.
+Just like everything is buildable, everything is destructable. Lets head over to the enemy zeppelin and take a few shots.
+Currently I can destroy this zeppelin, but in the future, if it loses enough of its balloon, it will start to sink.
+If I destroy the engines, it will be stuck until they are repaired, if I take out the cannons, it will be powerless to fight back.
+
+VoxelVerse will be a freemium browser based game that will be split into 3 phases.
+Phase 1 is planned to be a massively single player game
+Phase 2 will be massively multiplayer, this phase will add an arena where your fortress and ships can compete.
+Phase 3 will be massively multiplayer, adding a real money auction house, and a focus on user generated quests and themes.
+The gold you find while exploring is the same gold that will be used to purchase items from the shop. 
+Gold is a way to accellerate your play, let you buy that rare mineral, rather then searching for it.
+VoxelVerse needs your support and real money if possible on kickstarter to accellerate our progress.
+If you cant afford to support VoxelVerse by donating, then support us by spreading the word! 
+Tweet about us, post a link to our kickstarter project on a website, give someone a call.
+To paraphrase Abraham Lincon. VoxelVerse shall be the birth of a new world, by the people, for the people!
+

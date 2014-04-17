@@ -1,0 +1,14 @@
+{
+    "model": {
+        "editable": "true",
+        "template": "false",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "1MeterRedBlock",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }
+    }
+}

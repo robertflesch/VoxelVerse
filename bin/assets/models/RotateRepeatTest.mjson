@@ -1,0 +1,44 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "TargetLarge"
+                }
+            ]
+        },
+        "children": [
+            {
+                "script": "",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "instanceGuid": "272D7F80-ED44-D5E1-6DAB-EE4BB494322D",
+                "collidable": true,
+                "fileName": "EngineWithPropeller",
+                "transforms": [
+                    {
+                        "delta": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 20
+                        },
+                        "time": 2,
+                        "type": "rotation_repeating"
+                    }
+				],
+                "location": {
+                    "x": 116,
+                    "y": 64,
+                    "z": 64
+                },
+                "name": "Default Name",
+                "critical": false,
+                "grainSize": 5
+            }
+		]			
+    }
+}

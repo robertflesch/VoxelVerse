@@ -1,0 +1,22 @@
+{
+    "region": [
+		{
+             "model": {
+                "fileName": "PlayerHeadNew"
+            }
+
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 0,
+                    "y": 0,
+                    "z": -100
+                }
+}

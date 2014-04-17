@@ -1,0 +1,51 @@
+{
+    "model": {
+        "editable": "true",
+        "template": "false",
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "TestSolid",
+                    "type": "AIR",
+                    "range": "0",
+                    "offset": "0"
+                }
+            ]
+        },
+		"scale": { 
+			"x": 8,
+			"y": 8,
+			"z": 1
+		},
+		"children": [
+            {
+                "fileName": "1meterIronBlock",
+				"name" : "PickHead",
+                "location": {
+                    "x": 8,
+                    "y": 16,
+                    "z": 0
+                },
+				"scale": { 
+                    "x": 8,
+                    "y": 8,
+                    "z": 1
+                }
+            },
+            {
+                "fileName": "1meterPlankBlock",
+				"name" : "PickHandle",
+                "location": {
+                    "x": 8,
+                    "y": 0,
+                    "z": 8
+                },
+				"scale": { 
+                    "x": 8,
+                    "y": 1,
+                    "z": 7
+                }
+            }
+		]
+    }
+}

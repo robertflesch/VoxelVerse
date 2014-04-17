@@ -1,0 +1,18 @@
+{
+    "model": {
+        "editable": false,
+        "template": "false",
+        "modelClass": "Player",
+        "biomes": {
+            "layers": [
+                {
+					"functionName" : "GenerateCube",
+					"type": "RED",
+					"range": "0",
+					"offset": "0"
+				}
+            ]
+        }
+
+	}
+}

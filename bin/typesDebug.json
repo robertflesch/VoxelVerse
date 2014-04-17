@@ -1,0 +1,482 @@
+{
+    "types": [
+        {
+            "thumbnail": "assets/textures/invalid.png",
+            "id": 100,
+            "category": "AIR",
+            "name": "AIR",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 0
+            },
+			"solid": "false"
+        },
+        {
+            "thumbnail": "assets/textures/grass.png",
+            "id": 101,
+            "category": "STONE",
+            "name": "GRASS",
+            "color": {
+                "r": 0.30078125,
+                "g": 0.74117647,
+                "b": 0.2,
+                "a": 1.00
+            }
+        },
+        {
+            "thumbnail": "assets/textures/dirt.png",
+            "id": 102,
+            "category": "STONE",
+            "name": "DIRT",
+            "color": {
+                "r": 0.94117647,
+                "g": 0.84705882,
+                "b": 0.65882352,
+                "a": 1.00
+            }
+        },
+        {
+            "thumbnail": "assets/textures/sand.png",
+            "id": 103,
+            "category": "STONE",
+            "name": "SAND",
+            "color": {
+                "r": 0.94117647,
+                "g": 0.90196078,
+                "b": 0.52156862,
+                "a": 1.00
+            }
+        },
+        {
+            "thumbnail": "assets/textures/stone.png",
+            "id": 104,
+            "category": "STONE",
+            "name": "STONE",
+            "color": {
+                "r": 0.54117647,
+                "g": 0.54117647,
+                "b": 0.52156862,
+                "a": 1.00
+            }
+        },
+        {
+            "thumbnail": "assets/textures/gravel.png",
+            "id": 105,
+            "category": "STONE",
+            "name": "GRAVEL",
+            "color": {
+                "r": 0.5,
+                "g": 0.6,
+                "b": 0.7,
+                "a": 1.00
+            }
+        },
+        {
+            "thumbnail": "assets/textures/wood.png",
+            "id": 106,
+            "category": "PLANT",
+            "name": "WOOD",
+            "color": {
+                "r": 0.65,
+                "g": 0.5,
+                "b": 0.39,
+                "a": 1.00
+            }
+        }	,
+        {
+            "thumbnail": "assets/textures/water.png",
+            "id": 107,
+            "category": "STONE",
+            "name": "WATER",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 1.00
+            }
+        },
+        {
+            "thumbnail": "assets/textures/leaf.png",
+            "id": 109,
+            "category": "PLANT",
+            "name": "LEAF",
+            "color": {
+                "r": 0.25,
+                "g": 1,
+                "b": 0.25,
+                "a": 1.00
+            }
+        },
+        {
+            "image": "assets/textures/red.png",
+            "id": 112,
+            "category": "UTIL",
+            "name": "RED",
+            "color": {
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {
+            "image": "assets/textures/blue.png",
+            "id": 113,
+            "category": "UTIL",
+            "name": "BLUE",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {
+            "image": "assets/textures/green.png",
+            "id": 114,
+            "category": "UTIL",
+            "name": "GREEN",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {
+            "image": "assets/textures/cloud.png",
+            "id": 115,
+            "category": "AIR",
+            "name": "CLOUD",
+			"color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "solid": "true",
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.0625,
+                "vt": 0.25,
+                "us": 0.0625,
+                "vs": 0.25,
+                "ub": 0.0625,
+                "vb": 0.25
+            }
+        },
+        {
+            "image": "assets/textures/balloon.png",
+            "id": 116,
+            "category": "UTIL",
+            "name": "BALLOON",
+            "color": {
+                "r": 0.86078,
+                "g": 0.86078,
+                "b": 0.76275,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "image": "assets/textures/rope.png",
+            "id": 117,
+            "category": "UTIL",
+            "name": "ROPE",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.15625,
+                "vt": 0.25,
+                "us": 0.15625,
+                "vs": 0.25,
+                "ub": 0.15625,
+                "vb": 0.25
+            }
+        },
+        {
+            "thumbnail": "assets/textures/iron.png",
+            "id": 118,
+            "category": "UTIL",
+            "name": "IRON",
+            "color": {
+                "r": 0.125,
+                "g": 0.125,
+                "b": 0.125,
+                "a": 1.00
+            }
+        }	,
+        {
+            "thumbnail": "assets/textures/cloud.png",
+            "id": 119,
+            "category": "UTIL",
+            "name": "RED",
+            "color": {
+                "r": 0.5,
+                "g": 0.5,
+                "b": 0.5,
+                "a": 0.99
+            }
+        },
+        {
+            "image": "assets/textures/stonewall.png",
+            "id": 120,
+            "category": "UTIL",
+            "name": "STONE_WALL",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 256,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.25,
+                "vt": 0.25,
+                "us": 0.25,
+                "vs": 0.25,
+                "ub": 0.25,
+                "vb": 0.25
+            }
+        },
+        {
+            "image": "assets/textures/copper.png",
+            "id": 121,
+            "category": "METAL",
+            "name": "COPPER",
+            "color": {
+                "r": 0.72156862745098039215686274509804,
+                "g": 0.45098039215686274509803921568627,
+                "b": 0.2,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "image": "assets/textures/bronze.png",
+            "id": 122,
+            "category": "METAL",
+            "name": "BRONZE",
+            "color": {
+                "r": 0.54901960784313725490196078431373,
+                "g": 0.47058823529411764705882352941176,
+                "b": 0.32549019607843137254901960784314,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "image": "assets/textures/steel.png",
+            "id": 123,
+            "category": "METAL",
+            "name": "STEEL",
+            "color": {
+                "r": 0.87843137254901960784313725490196,
+                "g": 0.87450980392156862745098039215686,
+                "b": 0.85882352941176470588235294117647,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "image": "assets/textures/glass.png",
+            "id": 124,
+            "category": "UTIL",
+            "name": "GLASS",
+			"placeable" : "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
+            }
+
+        },
+        {
+            "image": "assets/textures/invalid.png",
+            "id": 125,
+            "category": "UTIL",
+            "name": "EDITCURSOR_SQUARE",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
+            }
+
+        },
+        {
+            "image": "assets/textures/invalid.png",
+            "id": 126,
+            "category": "UTIL",
+            "name": "EDITCURSOR_ROUND",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2890625,
+                "us": 0,
+                "vs": 0.2890625,
+                "ub": 0,
+                "vb": 0.2890625
+            }
+
+        },
+        {
+            "image": "assets/textures/invalid.png",
+            "id": 127,
+            "category": "UTIL",
+            "name": "EDITCURSOR_CYLINDER",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2734375,
+                "us": 0,
+                "vs": 0.2734375,
+                "ub": 0,
+                "vb": 0.2734375
+            }
+       },
+        {
+            "image": "assets/textures/invalid.png",
+            "id": 128,
+            "category": "UTIL",
+            "name": "EDITCURSOR_CYLINDER_ANIMATED",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 1,
+				"top": 5,
+				"side": 5,
+				"bottom": 5,
+                "ut": 0.09375,
+                "vt": 0.25,
+                "us": 0.09375,
+                "vs": 0.25,
+                "ub": 0.09375,
+                "vb": 0.25
+            }
+        }			
+    ]
+}

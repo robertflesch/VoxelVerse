@@ -1,0 +1,12 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "data": "Torch",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }			
+    }
+}

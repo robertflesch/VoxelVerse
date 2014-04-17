@@ -1,0 +1,18 @@
+{
+    "model": {
+		"grainSize" : 11,
+        "editable": "true",
+        "template": "true",
+        "biomes": {
+            "layers": [
+                {
+					"functionName" : "GenerateLayer",
+					"type": "DIRT",
+					"range": 50,
+					"offset": 50,
+					"optionalInt": 4
+				}
+            ]
+        }
+    }
+}

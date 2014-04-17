@@ -1,0 +1,22 @@
+{
+    "model": {
+        "modelClass": "Trigger",
+        "editable": "true",
+        "template": "true",
+        "grainSize": 7,
+        "script": [
+            {
+                "name": "ControlBeastScript"
+            }
+        ],
+        "biomes": {
+            "layers": [
+                {
+                    "data": "Saddle6",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }		
+
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "model": {
+		"grainSize" : 12,
+        "editable": "true",
+        "template": "true",
+        "biomes": {
+            "layers": [
+                                {
+					"functionName" : "GenerateVolcano",
+					"type": "STONE",
+					"range": 30,
+					"offset": 10,
+					"optionalInt": 6
+				}
+            ]
+        }
+    }
+}

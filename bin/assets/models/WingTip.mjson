@@ -1,0 +1,13 @@
+{
+ "model": {
+		"editable": true,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "WingTip",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }
+    }
+}

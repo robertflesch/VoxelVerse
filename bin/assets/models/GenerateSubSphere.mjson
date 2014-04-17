@@ -1,0 +1,18 @@
+{
+    "model": {
+		"grainSize" : 6,
+        "editable"  : "true",
+        "template"  : "true",
+        "biomes": {
+            "layers": [
+                {
+					"functionName" : "GenerateSubSphere",
+					"type": "RED",
+					"range": 40,
+					"offset": 45,
+					"optionalInt": 6
+				}
+            ]
+        }
+    }
+}

@@ -1,0 +1,29 @@
+{
+    "model": {
+        "editable": "true",
+        "template": "false",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "AlexaIsland",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "children": [
+            {
+                "fileName": "PlayerHeadNew",
+                "location": {
+                    "x": 604,
+                    "y": 1790,
+                    "z": 1980
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                }
+            }
+		]
+    }
+}

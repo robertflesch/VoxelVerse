@@ -1,0 +1,358 @@
+{
+    "types": [
+        {
+            "thumbnail": "assets/textures/invalid.png",
+            "id": 100,
+            "category": "AIR",
+            "name": "AIR",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 0
+            },
+            "solid": "false"
+        },
+        {
+            "thumbnail": "assets/textures/grass.png",
+            "id": 101,
+            "category": "STONE",
+            "name": "GRASS",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.125,
+                "vt": 0,
+                "us": 0.125,
+                "vs": 0.125,
+                "ub": 0.25,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/dirt.png",
+            "id": 102,
+            "category": "STONE",
+            "name": "DIRT",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.25,
+                "vt": 0,
+                "us": 0.25,
+                "vs": 0,
+                "ub": 0.25,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/sand.png",
+            "id": 103,
+            "category": "STONE",
+            "name": "SAND",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.375,
+                "vt": 0,
+                "us": 0.375,
+                "vs": 0,
+                "ub": 0.375,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/stone.png",
+            "id": 104,
+            "category": "STONE",
+            "name": "STONE",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.5,
+                "vt": 0,
+                "us": 0.5,
+                "vs": 0,
+                "ub": 0.5,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/gravel.png",
+            "id": 105,
+            "category": "STONE",
+            "name": "GRAVEL",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.625,
+                "vt": 0,
+                "us": 0.625,
+                "vs": 0,
+                "ub": 0.625,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/wood.png",
+            "id": 106,
+            "category": "PLANT",
+            "name": "WOOD",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 1,
+                "ut": 0.046875,
+                "vt": 0.25,
+                "us": 0.046875,
+                "vs": 0.25,
+                "ub": 0.046875,
+                "vb": 0.25
+            }
+        },
+        {
+            "thumbnail": "assets/textures/water.png",
+            "id": 107,
+            "category": "STONE",
+            "name": "WATER",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 0.99
+            },
+            "solid": "true",
+            "flowable": "false",
+            "animated": "false",
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "ut": 0.03125,
+                "vt": 0.25,
+                "us": 0.03125,
+                "vs": 0.25,
+                "ub": 0.03125,
+                "vb": 0.25
+            }
+        },
+        {
+            "thumbnail": "assets/textures/leaf.png",
+            "id": 109,
+            "category": "PLANT",
+            "name": "LEAF",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "solid": "true",
+            "flowable": "false",
+            "animated": "false",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.25,
+                "vt": 0.125,
+                "us": 0.25,
+                "vs": 0.125,
+                "ub": 0.25,
+                "vb": 0.125
+            }
+        },
+        {
+            "thumbnail": "assets/textures/red.png",
+            "id": 112,
+            "category": "UTIL",
+            "name": "BORDER_RED",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "ut": 0,
+                "vt": 0.25,
+                "us": 0,
+                "vs": 0.25,
+                "ub": 0,
+                "vb": 0.25
+            }
+        },
+        {
+            "thumbnail": "assets/textures/blue.png",
+            "id": 113,
+            "category": "UTIL",
+            "name": "BORDER_BLUE",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "ut": 0.0078125,
+                "vt": 0.25,
+                "us": 0.0078125,
+                "vs": 0.25,
+                "ub": 0.0078125,
+                "vb": 0.25
+            }
+        },
+        {
+            "thumbnail": "assets/textures/green.png",
+            "id": 114,
+            "category": "UTIL",
+            "name": "BORDER_GREEN",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "ut": 0.015625,
+                "vt": 0.25,
+                "us": 0.015625,
+                "vs": 0.25,
+                "ub": 0.015625,
+                "vb": 0.25
+            }
+        },
+        {
+            "thumbnail": "assets/textures/cloud.png",
+            "id": 115,
+            "category": "AIR",
+            "name": "CLOUD",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "solid": "true",
+            "flowable": "false",
+            "animated": "false",
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "ut": 0.0390625,
+                "vt": 0.25,
+                "us": 0.0390625,
+                "vs": 0.25,
+                "ub": 0.0390625,
+                "vb": 0.25
+            }
+
+        },
+        {
+            "thumbnail": "assets/textures/invalid.png",
+            "id": 116,
+            "category": "UTIL",
+            "name": "BALLOON",
+            "color": {
+                "r": 0.96078,
+                "g": 0.96078,
+                "b": 0.86275,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/invalid.png",
+            "id": 117,
+            "category": "UTIL",
+            "name": "ROPE",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "thumbnail": "assets/textures/invalid.png",
+            "id": 118,
+            "category": "UTIL",
+            "name": "IRON",
+            "color": {
+                "r": 0.125,
+                "g": 0.125,
+                "b": 0.125,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "ut": 0.1875,
+                "vt": 0.25,
+                "us": 0.1875,
+                "vs": 0.25,
+                "ub": 0.1875,
+                "vb": 0.25
+            }
+        }
+    ]
+}

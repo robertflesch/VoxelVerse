@@ -1,0 +1,29 @@
+{
+    "region": [
+        {
+             "model": {
+                "fileName": "CollisionTest",
+				"location": {
+                    "x": -265,
+                    "y": -16,
+                    "z": -440
+                }
+            }
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"playerPosition": {
+                    "x": 0,
+                    "y": 100,
+                    "z": 140
+                },
+	"playerRotation": 0,
+	"gravity": true,
+	"name": "Collision Test",
+	"desc": "Used to make sure avatar collide works as expected"
+}

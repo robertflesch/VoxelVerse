@@ -1,0 +1,29 @@
+{
+    "region": [
+        {
+            "model": {
+                "fileName": "AllTypes",
+                "location": {
+                    "x": -9,
+                    "y": -100,
+                    "z": -20
+                }
+            }
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 64,
+                    "y": 100,
+                    "z": 245
+                },
+	"playerRotation": 0,
+	"name": "Cube Test",
+	"desc": ""
+}

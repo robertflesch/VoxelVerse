@@ -1,0 +1,23 @@
+{
+    "model": {
+	    "editable": true,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "DragonNeck",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "children": [
+            {
+                "fileName": "DragonHead",
+                "name": "DragonHead",
+                "center": { "x": 16, "y": 16, "z": 32 },
+                "location": { "x": 0, "y": 0, "z": -30 }
+            }
+		]
+		
+		
+    }
+}

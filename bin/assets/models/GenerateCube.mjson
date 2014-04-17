@@ -1,0 +1,17 @@
+{
+    "model": {
+        "editable": "true",
+        "template": "true",
+		"grainSize": 4,
+        "biomes": {
+            "layers": [
+                {
+					"functionName" : "GenerateCube",
+					"type": "SAND",
+					"range": "0",
+					"offset": "0"
+				}
+            ]
+        }
+    }
+}

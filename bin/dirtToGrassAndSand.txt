@@ -1,0 +1,29 @@
+public function dirtToGrassAndSand():void {
+			if ( childrenHas() )
+			{
+				for each ( var child:Oxel in children )
+					child.dirtToGrassAndSand();
+			}
+			else if ( Globals.DIRT == type )
+			{
+				var upperNeighbor:Oxel = neighbor( Globals.POSY );
+				if ( Globals.BAD_OXEL == upperNeighbor )
+					return;
+					
+				var upType:int = upperNeighbor.type;
+				if ( Globals.DIRT == upType )
+					return;
+				if ( Globals.WATER == upType )
+					type = Globals.SAND;
+				else if ( Globals.AIR == upType )
+					type = Globals.GRASS;
+				else if ( upperNeighbor.childrenHas() )
+				{
+					if ( upperNeighbor.faceHasWater( Globals.NEGY ) )
+						type = Globals.SAND;
+					else if ( upperNeighbor.faceHasAlpha( Globals.NEGY ) )
+						type = Globals.GRASS;
+				}
+			}
+			throw new Error( "Oxel.dirtToGrass - What condition did I miss" );
+		}

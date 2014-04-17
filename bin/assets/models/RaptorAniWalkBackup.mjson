@@ -1,0 +1,83 @@
+{
+    "sound": 
+	{
+		"name" : "assets/sounds/Flapping.mp3",
+		"soundRangeMax" : 2000,
+		"soundRangeMin" : 10
+	},
+	"animation": [
+		{
+			"attachmentName": "WingRight",
+			"location": {
+				"x": -8,
+				"y": -18,
+				"z": -16
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 90,
+						"y": 90,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotate_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingLeft",
+			"location": {
+				"x": -24,
+				"y": -18,
+				"z": -16
+			},
+			"rotation": {
+				"x": 180,
+				"y": 0,
+				"z": 170
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 90,
+						"y": 90,
+						"z": 180
+					},
+					"time": 0.5,
+					"type": "rotate_to"
+				}
+			]
+			
+		},
+		{
+			"attachmentName": "WingTip",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"location": {
+				"x": 32,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.1,
+					"type": "rotate_to"
+				}
+			]
+		}
+	]			
+}

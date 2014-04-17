@@ -1,0 +1,99 @@
+{
+    "model": {
+        "editable": false,
+        "template": "false",
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "TestSolid",
+                    "type": "AIR",
+                    "range": "0",
+                    "offset": "0"
+                }
+            ]
+        },
+        "animations": [
+			{ "name": "PlayerAniStand" },
+			{ "name": "PlayerAniJump" },
+			{ "name": "PlayerAniFall" },
+			{ "name": "PlayerAniWalk" },
+			{ "name": "PlayerAniPick" },
+			{ "name": "PlayerAniRaptorRide" },
+			{ "name": "PlayerAniSlide" }
+		],
+        "children": [
+            {
+                "fileName": "1meterRedBlock"
+            },
+            {
+                "fileName": "PlayerTorso",
+                "location": {
+                    "x": 0,
+                    "y": 16,
+                    "z": 5
+                },
+				"scale": { 
+                    "x": 1,
+                    "y": 1.5,
+                    "z": 1.5
+                }
+            },
+            {
+                "fileName": "PlayerThigh",
+				"name" : "LeftArm",
+                "location": {
+                    "x": -1,
+                    "y": 18,
+                    "z": 4
+                },
+				"scale": { 
+                    "x": 2,
+                    "y": 2,
+                    "z": 2
+                }
+            },
+            {
+                "fileName": "PlayerThigh",
+				"name" : "RightArm",
+                "location": {
+                    "x": 9,
+                    "y": 18,
+                    "z": 4
+                },
+				"scale": { 
+                    "x": 2,
+                    "y": 2,
+                    "z": 2
+                }
+            },
+            {
+                "fileName": "PlayerThigh",
+				"name" : "LeftThigh",
+                "location": {
+                    "x": -2,
+                    "y": 8,
+                    "z": 0
+                },
+                "rotation": {
+                    "x": 1.5,
+                    "y": 0,
+                    "z": 1.5
+                }
+            },
+            {
+                "fileName": "PlayerThigh",
+				"name" : "RightThigh",
+                "location": {
+                    "x": 2,
+                    "y": 8,
+                    "z": 0
+                },
+                "rotation": {
+                    "x": 1.5,
+                    "y": 0,
+                    "z": 1.5
+                }
+            }
+		]
+	}
+}

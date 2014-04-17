@@ -1,0 +1,28 @@
+{
+    "model": {
+	    "editable": true,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "DragonTail",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "children": [
+            {
+                "fileName": "DragonTailRight",
+                "name": "DragonTailRight",
+                "scale": { "x": 0.25, "y": 0.25, "z": 1 },
+                "location": { "x": 16, "y": -112, "z": -8 }
+            },	
+            {
+                "fileName": "DragonTailRight",
+                "name": "DragonTailLeft",
+                "scale": { "x": 0.25, "y": 0.25, "z": 1 },
+                "location": { "x": -240, "y": -108, "z": -8 },                "rotation": { "x": 0, "y": 0, "z": 180 }
+            }			
+
+		]
+    }
+}

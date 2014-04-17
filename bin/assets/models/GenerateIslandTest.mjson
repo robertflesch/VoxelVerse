@@ -1,0 +1,59 @@
+{
+    "model": {
+		"grainSize" : 12,
+        "editable": "true",
+        "template": "true",
+        "biomes": {
+            "layers": [
+                                {
+					"functionName" : "GenerateLayer",
+					"type": "STONE",
+					"range": 90,
+					"offset": 45,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "GRAVEL",
+					"range": 70,
+					"offset": 50,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "STONE",
+					"range": 70,
+					"offset": 55,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "SAND",
+					"range": 70,
+					"offset": 60,
+					"optionalInt": 7
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "DIRT",
+					"range": 90,
+					"offset": 70,
+					"optionalInt": 8
+				},
+                {
+					"functionName" : "GenerateWater",
+					"offset": 78,
+					"optionalInt": 8
+				},
+                {
+					"functionName" : "DirtToGrassAndSand"
+				},
+                {
+					"functionName" : "GrowTreesOn",
+					"range": 90,
+					"type": "DIRT"
+				}
+            ]
+        }
+    }
+}

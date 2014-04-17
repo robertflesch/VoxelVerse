@@ -1,0 +1,30 @@
+{
+    "region": [
+        {
+            "model": {
+                "fileName": "LightTest",
+                "location": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                }
+
+            }
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 0,
+                    "y": 200,
+                    "z": 150
+                },
+	"playerRotation": 0,
+	"name": "Cube Test",
+	"desc": ""
+}

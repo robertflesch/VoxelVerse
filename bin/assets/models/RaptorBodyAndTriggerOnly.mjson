@@ -1,0 +1,81 @@
+{
+    "model": {
+	    "editable": true,
+        "modelClass": "Beast",
+        "collidable": true,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "Raptor",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "children": [
+            {
+                "name": "RaptorControlTrigger",
+                "fileName": "RaptorControlTrigger",
+                "location": {
+                    "z": 0,
+                    "y": 21,
+                    "x": 0
+                }
+            }
+		],			
+        "animations": [
+			{
+				"animationName" : "fly",
+				"animationTransforms" :[
+					{
+						"attachmentName": "Wing",
+						"location": {
+							"x": 0,
+							"y": 0,
+							"z": 0
+						},
+						"rotation": {
+							"x": 0,
+							"y": 0,
+							"z": 0
+						},
+						"transforms": [
+							{
+								"delta": {
+									"x": 0,
+									"y": 0,
+									"z": 20
+								},
+								"time": 0.5,
+								"type": "rotation_repeating"
+							}
+							]
+					},
+					{
+						"attachmentName": "WingTip",
+						"location": {
+							"x": 0,
+							"y": 0,
+							"z": 0
+						},
+						"rotation": {
+							"x": 0,
+							"y": 0,
+							"z": 0
+						},
+						"transforms": [
+							{
+								"delta": {
+									"x": 0,
+									"y": 0,
+									"z": 20
+								},
+								"time": 0.5,
+								"type": "rotation_repeating"
+							}
+						]
+					}
+				]
+			}
+		]
+    }
+}

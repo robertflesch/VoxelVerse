@@ -1,0 +1,253 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "ZeppelinEnemy"
+                }
+            ]
+        },
+        "guid": "ZeppelinEnemy",
+        "name": "Default Name",
+        "editable": true,
+        "template": false,
+        "grainSize": 0,
+        "children": [
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 0,
+                    "x": 0
+                },
+                "name": "Default Name",
+                "script": "",
+                "fileName": "EngineWithPropeller",
+                "transforms": [],
+                "location": {
+                    "z": 776,
+                    "y": 380,
+                    "x": 324
+                },
+                "instanceGuid": "DE732E90-5163-9384-3DB0-FED09447107B",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 0,
+                    "x": 0
+                },
+                "name": "Default Name",
+                "script": "",
+                "fileName": "EngineWithPropeller",
+                "transforms": [],
+                "location": {
+                    "z": 776,
+                    "y": 380,
+                    "x": 492
+                },
+                "instanceGuid": "7DCFF97B-AC16-433F-561C-FED09447BBC6",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 0,
+                    "x": 0
+                },
+                "name": "Ship Control Trigger",
+                "script": "",
+                "fileName": "ShipControlTrigger",
+                "transforms": [],
+                "location": {
+                    "z": 702,
+                    "y": 416,
+                    "x": 408
+                },
+                "instanceGuid": "9A134285-EF9B-301C-04A2-FED094475814",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "right - gun port 1",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 434,
+                    "y": 320,
+                    "x": 442
+                },
+                "instanceGuid": "C29C0CF7-190E-F43C-8B33-FED094477E95",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "right - gun port 2",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 500,
+                    "y": 320,
+                    "x": 442
+                },
+                "instanceGuid": "CA12A173-1235-12AD-CCFD-FED09447D5BE",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "right - gun port 3",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 562,
+                    "y": 320,
+                    "x": 442
+                },
+                "instanceGuid": "757C603B-4F78-CF8C-BEB1-FED09447232E",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "right - gun port 4",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 628,
+                    "y": 320,
+                    "x": 442
+                },
+                "instanceGuid": "825B5998-3C58-6D28-30F8-FED09447799D",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "right - gun port 5",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 692,
+                    "y": 320,
+                    "x": 442
+                },
+                "instanceGuid": "E82517B7-00B6-A82C-D8B7-FED0944709A1",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "left - gun port 1",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 434,
+                    "y": 320,
+                    "x": 356
+                },
+                "instanceGuid": "9ABED1AF-7A96-13F9-6CFB-FED094470105",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "left - gun port 2",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 500,
+                    "y": 320,
+                    "x": 356
+                },
+                "instanceGuid": "233ED39E-860C-F5D2-2E16-FED094471671",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "left - gun port 3",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 564,
+                    "y": 320,
+                    "x": 356
+                },
+                "instanceGuid": "4C9BF3AD-9E49-D7AA-471C-FED094471AE8",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "left - gun port 4",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 628,
+                    "y": 320,
+                    "x": 356
+                },
+                "instanceGuid": "28D2DBEF-AA09-D873-54F1-FED09447DB98",
+                "grainSize": 5
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "left - gun port 5",
+                "script": "",
+                "fileName": "Cannon",
+                "transforms": [],
+                "location": {
+                    "z": 692,
+                    "y": 320,
+                    "x": 356
+                },
+                "instanceGuid": "4EBD0A67-0B7B-9973-6379-FED094475292",
+                "grainSize": 5
+            }
+        ]
+    }
+}

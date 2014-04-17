@@ -1,0 +1,1479 @@
+{
+    "types": [
+        {
+            "image": "invalid.png",
+            "id": 100,
+            "category": "AIR",
+            "name": "AIR",
+			"placeable" : "false",
+            "solid": "false",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            },
+            "comment": "Air is not alpha, since if it is, it makes me allocate a alpha vertex buffer"
+        },
+        {
+            "image": "grass.png",
+            "id": 101,
+            "category": "EARTH",
+            "name": "GRASS",
+			"interactions": [
+				{
+					"pick": [
+						"AIR",
+						25,
+						"collectOxel"
+					]
+				},
+				{
+					"shovel": [
+						"AIR",
+						50,
+						666,
+						"collectOxel"
+					]
+				},
+				{
+					"axe": [
+						"AIR",
+						50,
+						"collectOxel"
+					]
+				}
+			],
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 2,
+				"bottom": 1,
+                "ut": 0.125,
+                "vt": 0,
+                "us": 0.125,
+                "vs": 0.125,
+                "ub": 0.25,
+                "vb": 0
+            },
+            "comment": "Grass uses a different tiling system on the sides, 2 is sample around vertical center"
+        },
+        {
+            "image": "dirt.png",
+            "id": 102,
+            "category": "EARTH",
+            "name": "DIRT",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "AIR",
+					"ice" : "AIR",
+					"water" : "MUD",
+					"air" : "AIR",
+					"earth" : "AIR" 
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "AIR",
+					"mace" : "AIR"
+				},
+				"alchemy" : {
+				}
+			},
+			"color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.25,
+                "vt": 0,
+                "us": 0.25,
+                "vs": 0,
+                "ub": 0.25,
+                "vb": 0
+            }
+        },
+        {
+            "image": "sand.png",
+            "id": 103,
+            "category": "EARTH",
+            "name": "SAND",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "GLASS",
+					"ice" : "SAND",
+					"water" : "QUICKSAND",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "SAND",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "SAND",
+					"mace" : "SAND"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0,
+                "us": 0.375,
+                "vs": 0,
+                "ub": 0.375,
+                "vb": 0
+            }
+        },
+        {
+            "image": "stone.png",
+            "id": 104,
+            "category": "EARTH",
+            "name": "STONE",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "LAVA",
+					"ice" : "GRAVEL",
+					"water" : "STONE",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "STONE"
+				},
+				"weapons" : {
+					"sword" : "STONE",
+					"mace" : "STONE"
+				},
+				"alchemy" : {
+				}
+			},
+			"color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.5,
+                "vt": 0,
+                "us": 0.5,
+                "vs": 0,
+                "ub": 0.5,
+                "vb": 0
+            }
+        },
+        {
+            "image": "gravel.png",
+            "id": 105,
+            "category": "EARTH",
+            "name": "GRAVEL",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "LAVA",
+					"ice" : "SAND",
+					"water" : "GRAVEL",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "GRAVEL",
+					"mace" : "GRAVEL"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.625,
+                "vt": 0,
+                "us": 0.625,
+                "vs": 0,
+                "ub": 0.625,
+                "vb": 0
+            }
+        },
+        {
+            "image": "plank.png",
+            "id": 106,
+            "category": "PLANT",
+            "name": "PLANK",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "ASH_BURNING",
+					"ice" : "PLANK",
+					"water" : "PLANK",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "PLANK",
+					"shovel" : "PLANK"
+				},
+				"weapons" : {
+					"sword" : "PLANK",
+					"mace" : "PLANK"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 3,
+				"side": 3,
+				"bottom": 3,
+                "ut": 0.375,
+                "vt": 0.25,
+                "us": 0.375,
+                "vs": 0.25,
+                "ub": 0.375,
+                "vb": 0.25
+            }
+        },
+        {
+            "image": "water.png",
+            "id": 107,
+            "category": "LIQUID",
+            "name": "WATER",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "WATER",
+					"ice" : "ICE",
+					"water" : "WATER",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "WATER",
+					"shovel" : "WATER"
+				},
+				"weapons" : {
+					"sword" : "WATER",
+					"mace" : "WATER"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.9
+            },
+            "solid": "false",
+            "flowable": "true",
+            "animated": "true",
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.9765625,
+                "vt": 0.953125,
+                "us": 0.9765625,
+                "vs": 0.953125,
+                "ub": 0.9765625,
+                "vb": 0.953125
+            }
+        },
+        {
+            "image": "leaf.png",
+            "id": 109,
+            "category": "PLANT",
+            "name": "LEAF",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "ASH_BURNING",
+					"ice" : "AIR",
+					"water" : "LEAF",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "solid": "true",
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.25,
+                "vt": 0.125,
+                "us": 0.25,
+                "vs": 0.125,
+                "ub": 0.25,
+                "vb": 0.125
+            }
+        },
+        {
+            "image": "bark.png",
+            "id": 110,
+            "category": "PLANT",
+            "name": "BARK",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "ASH",
+					"ice" : "BARK",
+					"water" : "BARK",
+					"air" : "BARK",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+			"color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 6,
+				"bottom": 1,
+                "ut": 0.75,
+                "vt": 0,
+                "us": 0.75,
+                "vs": 0,
+                "ub": 0.75,
+                "vb": 0
+            }
+        },
+        {
+            "image": "lava.png",
+            "id": 111,
+            "category": "LIQUID",
+            "name": "LAVA",
+			"light" : "true",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "AIR",
+					"ice" : "STONE",
+					"water" : "STONE",
+					"air" : "STONE",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "changesTo": {
+				"fire" : "LAVA",
+				"ice" : "STONE",
+				"water" : "AIR",
+				"air" : "AIR",
+				"earth" : "AIR"
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "solid": "false",
+            "flowable": "true",
+            "animated": "true",
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.984375,
+                "vt": 0.953125,
+                "us": 0.984375,
+                "vs": 0.953125,
+                "ub": 0.984375,
+                "vb": 0.953125
+            }
+        },
+        {
+            "image": "red.png",
+            "id": 112,
+            "category": "UTIL",
+            "name": "RED",
+            "color": {
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {
+            "image": "blue.png",
+            "id": 113,
+            "category": "UTIL",
+            "name": "BLUE",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {
+            "image": "green.png",
+            "id": 114,
+            "category": "UTIL",
+            "name": "GREEN",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {
+            "image": "cloud.png",
+            "id": 115,
+            "category": "AIR",
+            "name": "CLOUD",
+            "solid": "false",
+            "light": "true",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "AIR",
+					"ice" : "CLOUD",
+					"water" : "CLOUD",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.25,
+                "vt": 0.375,
+                "us": 0.25,
+                "vs": 0.375,
+                "ub": 0.25,
+                "vb": 0.375
+
+            }
+        },
+        {
+            "image": "balloon.png",
+            "id": 116,
+            "category": "UTIL",
+            "name": "BALLOON",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "AIR",
+					"ice" : "BALLOON",
+					"water" : "BALLOON",
+					"air" : "BALLOON",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 0.86078,
+                "g": 0.86078,
+                "b": 0.76275,
+                "a": 1
+            }
+        },
+        {
+            "image": "rope.png",
+            "id": 117,
+            "category": "UTIL",
+            "name": "ROPE",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "AIR",
+					"ice" : "ROPE",
+					"water" : "ROPE",
+					"air" : "ROPE",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.15625,
+                "vt": 0.25,
+                "us": 0.15625,
+                "vs": 0.25,
+                "ub": 0.15625,
+                "vb": 0.25
+            }
+        },
+        {
+            "image": "iron.png",
+            "id": 118,
+            "category": "METAL",
+            "name": "IRON",
+            "color": {
+                "r": 0.125,
+                "g": 0.125,
+                "b": 0.125,
+                "a": 1
+            }
+        },
+        {
+            "image": "stonewall.png",
+            "id": 120,
+            "category": "EARTH",
+            "name": "WALL",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.1875,
+                "vt": 0.25,
+                "us": 0.1875,
+                "vs": 0.25,
+                "ub": 0.1875,
+                "vb": 0.25
+            }
+        },
+        {
+            "image": "copper.png",
+            "id": 121,
+            "category": "METAL",
+            "name": "COPPER",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "COPPER",
+					"ice" : "COPPER",
+					"water" : "COPPER",
+					"air" : "COPPER",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 0.72156862745098039215686274509804,
+                "g": 0.45098039215686274509803921568627,
+                "b": 0.2,
+                "a": 1
+            }
+        },
+        {
+            "image": "bronze.png",
+            "id": 122,
+            "category": "METAL",
+            "name": "BRONZE",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "BRONZE",
+					"ice" : "BRONZE",
+					"water" : "BRONZE",
+					"air" : "BRONZE",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+			"color": {
+                "r": 0.54901960784313725490196078431373,
+                "g": 0.47058823529411764705882352941176,
+                "b": 0.32549019607843137254901960784314,
+                "a": 1
+            }
+        },
+        {
+            "image": "steel.png",
+            "id": 123,
+            "category": "METAL",
+            "name": "STEEL",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "STEEL",
+					"ice" : "STEEL",
+					"water" : "STEEL",
+					"air" : "STEEL",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 0.87843137254901960784313725490196,
+                "g": 0.87450980392156862745098039215686,
+                "b": 0.85882352941176470588235294117647,
+                "a": 1
+            }
+        },
+        {
+            "image": "glass.png",
+            "id": 124,
+            "category": "UTIL",
+            "name": "GLASS",
+			"placeable" : "true",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "AIR",
+					"ice" : "AIR",
+					"water" : "GLASS",
+					"air" : "GLASS",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
+            }
+        },
+        {
+            "image": "yourbrandhere.png",
+            "id": 129,
+            "category": "UTIL",
+            "name": "BRAND",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "BRAND",
+					"ice" : "BRAND",
+					"water" : "BRAND",
+					"air" : "BRAND",
+					"earth" : "BRAND"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 256,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.375,
+                "vt": 0.125,
+                "us": 0.375,
+                "vs": 0.125,
+                "ub": 0.375,
+                "vb": 0.125
+            }
+
+
+        },
+        {
+            "image": "skin.png",
+            "id": 130,
+            "category": "AVATAR",
+            "name": "SKIN",
+            "color": {
+                "r": 0.89,
+                "g": 0.76,
+                "b": 0.48,
+                "a": 1
+            }
+        },
+        {
+            "image": "scaleRed.png",
+            "id": 131,
+            "category": "DRAGON",
+            "name": "SCLRED",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.21875,
+                "vt": 0.25,
+                "us": 0.21875,
+                "vs": 0.25,
+                "ub": 0.21875,
+                "vb": 0.25
+            }
+        },
+        {
+            "image": "scaleRedT.png",
+            "id": 132,
+            "category": "DRAGON",
+            "name": "SCLREDT",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.21875,
+                "vt": 0.28125,
+                "us": 0.21875,
+                "vs": 0.28125,
+                "ub": 0.21875,
+                "vb": 0.28125
+            }
+        },
+        {
+            "image": "scaleWhite.png",
+            "id": 133,
+            "category": "DRAGON",
+            "name": "SCLWHT",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.1875,
+                "vt": 0.28125,
+                "us": 0.1875,
+                "vs": 0.28125,
+                "ub": 0.1875,
+                "vb": 0.28125
+            }
+        },
+        {
+            "image": "scaleWhite.png",
+            "id": 134,
+            "category": "DRAGON",
+            "name": "SCLWHTT",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 64,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.1875,
+                "vt": 0.28125,
+                "us": 0.1875,
+                "vs": 0.28125,
+                "ub": 0.1875,
+                "vb": 0.28125
+            }
+
+        },
+        {
+            "image": "dragonFire.png",
+            "id": 135,
+            "category": "DRAGON",
+            "name": "DragonFire",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {
+            "image": "dragonIce.png",
+            "id": 136,
+            "category": "DRAGON",
+            "name": "DragonIce",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {
+            "image": "dragonAcid.png",
+            "id": 137,
+            "category": "DRAGON",
+            "name": "DragonAcid",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 1
+            }
+        },
+        {
+            "image": "water.png",
+            "id": 138,
+            "category": "UTIL",
+            "name": "DragonWater",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            }
+        },
+        {
+            "image": "stone.png",
+            "id": 139,
+            "category": "UTIL",
+            "name": "DragonEarth",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 0.5,
+                "a": 1
+            }
+        },
+        {
+            "image": "stone.png",
+            "id": 140,
+            "category": "UTIL",
+            "name": "DragonAcid",
+            "light": "true",
+			"placeable" : "false",
+            "color": {
+                "r": 0.5,
+                "g": 1,
+                "b": 0.5,
+                "a": 1
+            }
+        },
+        {
+            "image": "mud.png",
+            "id": 141,
+            "category": "EARTH",
+            "name": "MUD",
+			"placeable" : "true",
+			"solid" : "false",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "DIRT",
+					"ice" : "ICE",
+					"water" : "MUD",
+					"air" : "DIRT",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 0.6784313725490196,
+                "g": 0.5058823529411765,
+                "b": 0.3137254901960784,
+                "a": 1
+            }
+        },
+        {
+            "image": "quicksand.png",
+            "id": 142,
+            "category": "EARTH",
+            "name": "QUICKSAND",
+			"solid": "false",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "SAND",
+					"ice" : "ICE",
+					"water" : "QUICKSAND",
+					"air" : "SAND",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 0.8,
+                "g": 0.8,
+                "b": 0.8,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0,
+                "us": 0.375,
+                "vs": 0,
+                "ub": 0.375,
+                "vb": 0
+            }
+        },
+        {
+            "image": "obsidian.png",
+            "id": 143,
+            "category": "EARTH",
+            "name": "OBSIDIAN",
+			"solid": "true",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "OBSIDIAN",
+					"ice" : "OBSIDIAN",
+					"water" : "OBSIDIAN",
+					"air" : "OBSIDIAN",
+					"earth" : "OBSIDIAN"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.375,
+                "vt": 0.375,
+                "us": 0.375,
+                "vs": 0.375,
+                "ub": 0.375,
+                "vb": 0.375
+            }
+        },
+        {
+            "image": "floatium.png",
+            "id": 144,
+            "category": "AIR",
+            "name": "FLOATIUM",
+			"solid": "false",
+			"flowable": "true",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "FLOATIUM",
+					"ice" : "FLOATIUM",
+					"water" : "FLOATIUM",
+					"air" : "FLOATIUM",
+					"earth" : "FLOATIUM"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+			"color": {
+                "r": 0.5,
+                "g": 0.6,
+                "b": 0.75,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "image": "ash_burning.png",
+            "id": 145,
+            "category": "PLANT",
+            "name": "ASH_BURNING",
+            "light": "true",
+            "flame": "true",
+            "interactions": {
+				"dragonBreaths" : {
+					"fire" : "ASH",
+					"ice" : "ASH",
+					"water" : "ASH",
+					"air" : "AIR",
+					"earth" : "AIR"
+				},
+				"tools" : {
+					"pick" : "COLLECT",
+					"shovel" : "COLLECT"
+				},
+				"weapons" : {
+					"sword" : "COLLECT",
+					"mace" : "COLLECT"
+				},
+				"alchemy" : {
+				}
+			},
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "solid": "false",
+            "flowable": "true",
+            "animated": "true",
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 7,
+				"side": 0,
+				"bottom": 7,
+                "ut": 0.9921875,
+                "vt": 0,
+                "us": 0.9921875,
+                "vs": 0,
+                "ub": 0.9921875,
+                "vb": 0
+            }
+        },
+		{
+            "image": "diamond.png",
+            "id": 146,
+            "category": "GEM",
+            "name": "DIAMOND",
+			"placeable" : "true",
+            "color": {
+                "r": 0.5784313725490196,
+                "g": 0.5058823529411765,
+                "b": 0.8137254901960784,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+        {
+            "image": "coal.png",
+            "id": 147,
+            "category": "STONR",
+            "name": "COAL",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 64,
+                "minpix": 16,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0.15625,
+                "vt": 0.28125,
+                "us": 0.15625,
+                "vs": 0.28125,
+                "ub": 0.15625,
+                "vb": 0.28125
+            }
+        },
+		{
+            "image": "ice.png",
+            "id": 148,
+            "category": "LIQUID",
+            "name": "ICE",
+            "color": {
+                "r": 0.9,
+                "g": 0.9,
+                "b": 0.9,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+				"top": 1,
+				"side": 1,
+				"bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+		{
+            "image": "invalid.png",
+            "id": 166,
+            "category": "UTIL",
+            "name": "UNKNOWN",
+			"placeable" : "false",
+             "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 256,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.875,
+                "vt": 0.875,
+                "us": 0.875,
+                "vs": 0.875,
+                "ub": 0.875,
+                "vb": 0.875
+            }
+
+
+        },
+        {
+            "image": "invalid.png",
+            "id": 1000,
+            "category": "INTERNAL",
+            "name": "EDITCURSOR_SQUARE",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
+            }
+
+        },
+        {
+            "image": "invalid.png",
+            "id": 1001,
+            "category": "INTERNAL",
+            "name": "EDITCURSOR_ROUND",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2890625,
+                "us": 0,
+                "vs": 0.2890625,
+                "ub": 0,
+                "vb": 0.2890625
+            }
+
+        },
+        {
+            "image": "invalid.png",
+            "id": 1002,
+            "category": "INTERNAL",
+            "name": "EDITCURSOR_CYLINDER",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0,
+                "vt": 0.2734375,
+                "us": 0,
+                "vs": 0.2734375,
+                "ub": 0,
+                "vb": 0.2734375
+            }
+        },
+        {
+            "image": "invalid.png",
+            "id": 1003,
+            "category": "INTERNAL",
+            "name": "EDITCURSOR_CYLINDER_ANIMATED",
+			"placeable" : "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.09375,
+                "vt": 0.25,
+                "us": 0.09375,
+                "vs": 0.25,
+                "ub": 0.09375,
+                "vb": 0.25
+            }
+        }		
+		
+   ]
+}

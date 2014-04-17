@@ -1,0 +1,14 @@
+{
+    "model": {
+        "editable": "true",
+        "template": "false",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "PartofGlassBlock",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }
+    }
+}

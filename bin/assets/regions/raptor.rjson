@@ -1,0 +1,63 @@
+{
+    "region": [
+        
+        {
+             "model": {
+                "fileName": "CollisionTest",
+                "critical": true,
+                "location": {
+                    "x": -64,
+                    "y": 0,
+                    "z": -128
+                }
+            }
+		},
+        {
+             "model": {
+                "fileName": "WingDragonRight",
+                "name": "Right",
+                "location": {
+                    "x": 64,
+                    "y": 100,
+                    "z": -90
+                }
+            }
+		},
+        {
+             "model": {
+                "fileName": "WingDragonLeft",
+                "name": "Left",
+                "location": {
+                    "x": 32,
+                    "y": 100,
+                    "z": -90
+                }
+            }
+		},
+        {
+             "model": {
+                "fileName": "Dragon",
+                "name": "Fireball",
+                "location": {
+                    "x": 200,
+                    "y": 100,
+                    "z": -90
+                }
+            }
+		}
+    ],
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 0,
+                    "y": 163,
+                    "z": -0
+                },
+	"playerRotation": 0,
+	"name": "Collision Test",
+	"desc": "Used to make sure avatar collide works as expected"
+}

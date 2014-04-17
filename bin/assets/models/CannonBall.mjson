@@ -1,0 +1,31 @@
+{
+	"biome_comment": {
+				"valid fields":"for a BIOME",
+				"functionName":"biome function to invoke",
+				"rootGrain":"root grain size",
+				"textureName":"./assets/textures/sky.png",
+				"textureScale":"1.0"
+	},
+	"layer_comment": {
+				"valid fields":"for a LAYER",
+				"functionName":"name of function to invoke",
+				"type":"document me",
+				"data":"document me",
+				"range":"document me",
+				"offset":"document me",
+				"optionalString":"document me",
+				"optionalInt":"document me"
+	},
+    "model": {
+        "template": "true",
+        "modelClass": "Projectile",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "CannonBall",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }
+    }
+}

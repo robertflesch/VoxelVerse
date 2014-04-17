@@ -1,0 +1,13 @@
+{
+    "model": {
+		"editable":true,
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "TargetLarge"
+                }
+            ]
+        }
+    }
+}

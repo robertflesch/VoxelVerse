@@ -1,0 +1,22 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "TestSolid",
+                    "type": "AIR",
+                    "range": "0",
+                    "offset": "0"
+                }
+            ]
+        },
+        "modelClass": "Wings",
+		"engine" :{
+			"maxThrust": 1,
+			"soundRangeMax" : 2000,
+			"soundRangeMin" : 10
+			},
+        "grainSize": 5,
+        "template": false
+    }	
+}

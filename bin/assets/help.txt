@@ -1,0 +1,37 @@
+Welcome to VoxelVerse - Where the world is yours to imagine, create, and destroy!
+This is a ALPHA engine, so please be forgiving of bugs you may encounter.
+KNOWN BUGS - SEE BOTTOM OF DOCUMENT
+*****VERY Basic Instuctions*****
+WASD keys move you around, as do arrow keys.
+Right mouse down allows camera to look around.
+*****BASIC BUILDING*****
+By selecting a material from the bottom bar you can place blocks of that material type.
+Just left click where you see the flashing square to build at the location. 
+You can change materials in three ways
+1) Clicking on the material picture.
+2) Mouse scroll wheel changes materials
+3) If you choose wood for instance, but then want to change to the pick to remove a block that you placed by accident. You can just hit the 1 key to change to the pick, remove the block, hit the 1 key again, and you will go back to the previous material.
+Note: Hotkeys only work thru item 9
+REMOVING BLOCKS - Left click to remove a block
+1) Use the pick (material 1)
+*****BASIC DESTRUCTION*****
+Hit the F key - this will fire a cannon sphere from your location.
+*****CHANGING BLOCK SIZE*****
+The f1 thru f7 keys change the block size.
+*****Other keys*****
+B takes a screen shot
+M save a model
+F fires a projectile
+Watch your head, jumping can put your body in invalid position
+*****The Console*****
+To bring up the console. Hit the ` or ~ key, same to hide it
+gravity - turns gravity on or off
+reset   - brings the avatar back to 0,0,0 handy if you are stuck or fall
+collision - turns collision on and off
+*****KNOWN BUGS*****
+Jumping into rock at head height can get you stuck. Try reset from console to fix it
+Gravity stops working if you fly up high enough.
+Cannon balls may stop showing up if you fire enough and something unknown happens. They will still fire, but you wont see them.
+Alpha oxels have some unusual faces in there, and water has border.
+
+FIXED - Cant always highlight the desired location, if this happens just move around to another angle.

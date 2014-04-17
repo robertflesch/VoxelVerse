@@ -1,0 +1,197 @@
+{
+    "model": {
+        "biomes": {
+            "layers": [
+                {
+                    "functionName": "LoadModelFromIVM",
+                    "data": "Zeppelin190"
+                }
+            ]
+        },
+        "guid": "Zeppelin190",
+        "name": "Default Name",
+        "editable": true,
+        "template": false,
+        "modelClass": "Ship",
+        "grainSize": 0,
+        "children": [
+            {
+                "name": "LeftEngine",
+                "fileName": "EngineWithPropeller",
+                "location": {
+                    "z": 776,
+                    "y": 380,
+                    "x": 336
+                },
+                "rotation": {
+                    "z": -90,
+                    "y": 0,
+                    "x": 0
+                }
+            },
+            {
+                "name": "RightEngine",
+                "fileName": "EngineWithPropeller",
+                "location": {
+                    "z": 776,
+                    "y": 380,
+                    "x": 480
+                },
+                "rotation": {
+                    "z": 90,
+                    "y": 0,
+                    "x": 0
+                }
+            },
+            {
+                "name": "Ship Control Trigger",
+                "fileName": "ShipControlTrigger",
+                "location": {
+                    "z": 702,
+                    "y": 416,
+                    "x": 408
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "right - gun port 1",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 434,
+                    "y": 320,
+                    "x": 442
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "right - gun port 2",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 500,
+                    "y": 320,
+                    "x": 442
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "right - gun port 3",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 562,
+                    "y": 320,
+                    "x": 442
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "right - gun port 4",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 628,
+                    "y": 320,
+                    "x": 442
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": 90,
+                    "x": 0
+                },
+                "name": "right - gun port 5",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 692,
+                    "y": 320,
+                    "x": 442
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "left - gun port 1",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 434,
+                    "y": 320,
+                    "x": 356
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "left - gun port 2",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 500,
+                    "y": 320,
+                    "x": 356
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "left - gun port 3",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 564,
+                    "y": 320,
+                    "x": 356
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "left - gun port 4",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 628,
+                    "y": 320,
+                    "x": 356
+                }
+            },
+            {
+                "rotation": {
+                    "z": 0,
+                    "y": -90,
+                    "x": 0
+                },
+                "name": "left - gun port 5",
+                "fileName": "Cannon",
+                "location": {
+                    "z": 692,
+                    "y": 320,
+                    "x": 356
+                }
+            }
+        ]
+    }
+}

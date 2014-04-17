@@ -1,0 +1,29 @@
+{
+ "model": {
+		"editable": true,
+        "biomes": {
+            "layers": [
+                {
+                    "data": "PlayerThigh",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        },
+        "children": [
+            {
+                "fileName": "PlayerFoot",
+				"name" : "PlayerFoot",
+                "location": {
+                    "x": 0,
+                    "y": -8,
+                    "z": 0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                }
+            }
+		]
+    }
+}

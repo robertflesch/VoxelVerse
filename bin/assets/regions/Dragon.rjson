@@ -1,0 +1,41 @@
+{
+    "region": [
+		{
+             "model": {
+                "fileName": "Dragon",
+                "name": "Bill",
+                "location": {
+                    "x": 32,
+                    "y": 100,
+                    "z": 90
+                },
+				"collision": false,
+				"state" :"DragonAniFly"
+            }
+		},
+        {
+            "model": {
+                "fileName": "BjornCastle",
+                "location": {
+                    "x": -500,
+                    "y": -2000,
+                    "z": -1500
+                }
+            }
+		}
+    ],
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 47,
+                    "y": 125,
+                    "z": 101
+                },
+	"playerRotation": 0,
+	"name": "Collision Test",
+	"desc": "Used to make sure avatar collide works as expected"
+}
