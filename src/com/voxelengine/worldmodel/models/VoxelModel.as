@@ -712,14 +712,14 @@ package com.voxelengine.worldmodel.models
 				if (oxel && oxel.dirty)
 				{
 					_timer = getTimer();
-					Log.out( "VoxelModel.internal_update - starting facing and quad building" );					
+					//Log.out( "VoxelModel.internal_update - starting facing and quad building" );					
 					var newFacesFound:Boolean = oxel.faces_build(_timer);
-					Log.out( "VoxelModel.internal_update - faces_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
+					//Log.out( "VoxelModel.internal_update - faces_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					if (newFacesFound)
 					{
 						_timer = getTimer();
 						oxel.quadsBuild();
-						Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
+						//Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					}
 				}
 			}
@@ -1816,7 +1816,7 @@ package com.voxelengine.worldmodel.models
 			if (_anim && _anim.name == $state)
 				return;
 			
-			//Log.out( "VoxelModel.stateSet: " + $state ); 
+			Log.out( "VoxelModel.stateSet: " + $state ); 
 			if (_anim)
 			{
 				//Log.out( "VoxelModel.stateSet - Stopping anim: " + _anim.name + "  starting: " + $state ); 
