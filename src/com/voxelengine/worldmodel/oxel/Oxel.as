@@ -1600,7 +1600,7 @@ package com.voxelengine.worldmodel.oxel
 			if ( OxelData.data_is_parent( newData ) )
 			{
 				_children = ChildOxelPool.poolGet();
-				var gct:GrainCursor = GrainCursorPool.poolGet( $stats.largest );
+				var gct:GrainCursor = GrainCursorPool.poolGet( $stats.rootSize );
 				for ( var i:int = 0; i < OXEL_CHILD_COUNT; i++ )
 				{
 					_children[i]  = OxelPool.poolGet();
