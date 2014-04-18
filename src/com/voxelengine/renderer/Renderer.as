@@ -213,18 +213,6 @@ package com.voxelengine.renderer
 			Log.out( "Renderer.onStage3DError !!!!!!!!!!!!!!!!!!!!!!!!!!!!Stage3DError occured!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", Log.ERROR );
 		}		
 	
-		public function update( elapsedTimeMS:int ):void {
-			
-			// Make sure to call this before the model update, so that models have time to repair them selves.
-			if ( 0 == Globals.g_landscapeTaskController.VVNextTask() )
-			{
-				Globals.g_flowTaskController.VVNextTask();
-				//while ( 0 < Globals.g_lightTaskController.queueSize() )
-					Globals.g_lightTaskController.VVNextTask();
-			}
-			
-			Globals.g_modelManager.update( _context, elapsedTimeMS );
-		}
 		
 		public function render( screenShot:BitmapData = null ):void 
 		{
