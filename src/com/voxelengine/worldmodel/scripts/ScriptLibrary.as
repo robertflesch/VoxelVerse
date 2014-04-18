@@ -31,6 +31,7 @@ package com.voxelengine.worldmodel.scripts
 			AcidScript;
 			IceScript;
 			FireScript;
+			DragonFireScript;
 			var asset:Class = Class ( getDefinitionByName ( "com.voxelengine.worldmodel.scripts.DefaultScript" ) );
 			try 
 			{
