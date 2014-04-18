@@ -29,11 +29,11 @@
                     "g": 172,
                     "b": 238
                 },
-	"gravity": false,
+	"gravity": true,
 	"playerPosition": {
                     "x": 47,
-                    "y": 145,
-                    "z": 101
+                    "y": 141,
+                    "z": 103
                 },
 	"playerRotation": 0,
 	"name": "Collision Test",

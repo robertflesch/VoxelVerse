@@ -14,13 +14,13 @@
             ]
         },
         "animations": [
-			{ "name": "PlayerAniStand" },
-			{ "name": "PlayerAniJump" },
-			{ "name": "PlayerAniFall" },
-			{ "name": "PlayerAniWalk" },
-			{ "name": "PlayerAniPick" },
-			{ "name": "PlayerAniRaptorRide" },
-			{ "name": "PlayerAniSlide" }
+			{ "name": "Stand" },
+			{ "name": "Jump" },
+			{ "name": "Fall" },
+			{ "name": "Walk" },
+			{ "name": "Pick" },
+			{ "name": "Ride" },
+			{ "name": "Slide" }
 		],
         "children": [
             {

@@ -16,13 +16,13 @@
 				"velocity" : 200,
 				"type" : 2,
 				"count" : 10,
-				"oxelType" : "RED",
+				"oxelType" : "LAVA",
 				"life" : 5,
 				"grain" : 2,
 				"model" : "CannonBall",
 				"launchSoundFile" : "Dragonfire.mp3",
-				"impactSoundFile" : "CannonBallExploding.mp3",
-				"contactScript" : "FireScript"
+				"impactSoundFile" : "",
+				"contactScript" : "DragonFireScript"
 			},
 			{
 				"name" : "dragonIce",

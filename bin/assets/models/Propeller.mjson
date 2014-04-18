@@ -2,7 +2,11 @@
  "model": {
         "editable": true,
         "template": false,
-        "biomes": {
+        "animations": [
+            { "name": "Rotate" },
+			{ "name": "Stop" }
+		],
+		"biomes": {
             "layers": [
                 {
                     "data": "Propeller",

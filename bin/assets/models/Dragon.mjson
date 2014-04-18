@@ -14,18 +14,18 @@
 		{ 
 		  "moveSpeed": 40,
 		  "maxSpeed": 15,
-		  "maxTurnRate": 40,
-		  "maxClimbAngle": 45,
+		  "maxTurnRate": 20,
+		  "maxClimbAngle": 40,
 		  "climbRate": 70,
 		  "clipFactor": 99,
 		  "seatLocation": { "x":8, "y":12, "z":23 }
 		},
         "animations": [
-            { "name": "DragonAniFly" },
-			{ "name": "DragonAniGlide" },
-			{ "name": "DragonAniLand" },
-			{ "name": "DragonAniWalk" },
-			{ "name": "DragonAniDive" }
+            { "name": "Fly" },
+			{ "name": "Glide" },
+			{ "name": "Land" },
+			{ "name": "Walk" },
+			{ "name": "Dive" }
 		],
         "children": [
             {

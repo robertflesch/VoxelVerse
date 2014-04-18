@@ -8,10 +8,6 @@
                 }
             ]
         },
-        "animations": [
-            { "name": "PropRotate" },
-			{ "name": "PropStop" }
-		],
         "modelClass": "Prop",
 		"engine" :{
 			"maxThrust": 1
