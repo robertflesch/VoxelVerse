@@ -61,6 +61,9 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 		}
 		
 		override public function start():void {
+			
+			//var timeStart:int = getTimer();
+			
 			super.start();
 			
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
@@ -91,6 +94,7 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 				Log.out( "Flow.start - VoxelModel not found: " + _guid, Log.ERROR );
 			}	
 			super.complete();
+			//Log.out( "Flow.start - Complete time: " + (getTimer() - timeStart) );
 		}
 		
 		public function flowTerminal( flowOxel:Oxel ):void {

@@ -593,17 +593,17 @@ package com.voxelengine.worldmodel.models
 		}
 		
 		public function effect_sphere(cx:int, cy:int, cz:int, ie:ImpactEvent ):void {
-			//_timer = getTimer();
+			_timer = getTimer();
 			_modified = true;
 			oxel.effect_sphere( instanceInfo.instanceGuid, cx, cy, cz, ie );
-			Log.out( "VoxelModel.effect_sphere - radius: " + ie.radius + " gmin: " + ie.detail + " took: " + (getTimer() - _timer) );
+			//Log.out( "VoxelModel.effect_sphere - radius: " + ie.radius + " gmin: " + ie.detail + " took: " + (getTimer() - _timer) );
 			//oxel.mergeRecursive(); // Causes bad things to happen since we dont regen faces!
 		}
 		public function empty_sphere(cx:int, cy:int, cz:int, radius:Number, gmin:uint = 0):void {
-			//_timer = getTimer();
+			_timer = getTimer();
 			_modified = true;
 			oxel.empty_sphere( instanceInfo.instanceGuid, cx, cy - 1, cz, radius - 1.5, gmin);
-			Log.out( "VoxelModel.empty_sphere - radius: " + radius + " gmin: " + gmin + " took: " + (getTimer() - _timer) );
+			//Log.out( "VoxelModel.empty_sphere - radius: " + radius + " gmin: " + gmin + " took: " + (getTimer() - _timer) );
 			//oxel.mergeRecursive(); // Causes bad things to happen since we dont regen faces!
 		}
 		
@@ -711,13 +711,13 @@ package com.voxelengine.worldmodel.models
 				
 				if (oxel && oxel.dirty)
 				{
-					_timer = getTimer();
+					//_timer = getTimer();
 					//Log.out( "VoxelModel.internal_update - starting facing and quad building" );					
 					var newFacesFound:Boolean = oxel.faces_build(_timer);
 					//Log.out( "VoxelModel.internal_update - faces_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					if (newFacesFound)
 					{
-						_timer = getTimer();
+						//_timer = getTimer();
 						oxel.quadsBuild();
 						//Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					}
