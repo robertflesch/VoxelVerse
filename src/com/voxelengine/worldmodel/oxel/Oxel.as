@@ -160,7 +160,44 @@ package com.voxelengine.worldmodel.oxel
 				if ( 8 < gc.bound  )
 				{
 					if ( 4 <= $stats.range )
-						_vertMan.minGrain = $stats.largest + 2;
+						_vertMan.minGrain = $stats.largest; 
+						// TODO I still dont like how this causes delay if too large.
+						// On g12 island, if 
+						//minGrain is 10
+						//VoxelVerse.enterFrame - update time: 16
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 34800(98280)  _vertices:278400(786240)  quadsToProcess: 16380  took: 37
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 24222(98280)  _vertices:193776(786240)  quadsToProcess: 16380  took: 27
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 25458(98280)  _vertices:203664(786240)  quadsToProcess: 16380  took: 30
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 27792(98280)  _vertices:222336(786240)  quadsToProcess: 16380  took: 31
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 33504(98280)  _vertices:268032(786240)  quadsToProcess: 16380  took: 70
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 1164(2016)  _vertices:9312(16128)  quadsToProcess: 336  took: 6
+						//VertexIndexBuilder.buffersBuildFromOxels -  processed 13706 oxels  took: 222
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 354(828)  _vertices:2832(6624)  quadsToProcess: 138  took: 1
+						//VertexIndexBuilder.buffersBuildFromOxels -  processed 23 oxels  took: 3
+						//VoxelVerse.enterFrame - render time: 231
+						//VoxelVerse.enterFrame - total time: 250
+						//
+						//minGrain is 9
+						//VoxelVerse.enterFrame - update time: 16
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 30744(98280)  _vertices:245952(786240)  quadsToProcess: 16380  took: 35
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 24918(98280)  _vertices:199344(786240)  quadsToProcess: 16380  took: 28
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 26352(98280)  _vertices:210816(786240)  quadsToProcess: 16380  took: 31
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 14352(47268)  _vertices:114816(378144)  quadsToProcess: 7878  took: 38
+						//VertexIndexBuilder.buffersBuildFromOxels -  processed 9503 oxels  took: 144
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 510(1152)  _vertices:4080(9216)  quadsToProcess: 192  took: 6
+						//VertexIndexBuilder.buffersBuildFromOxels -  processed 32 oxels  took: 8
+						//VoxelVerse.enterFrame - render time: 159
+						//VoxelVerse.enterFrame - total time: 179
+						//
+						// minGrain is 8
+						//VoxelVerse.enterFrame - update time: 19
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 4362(13536)  _vertices:34896(108288)  quadsToProcess: 2256  took: 6
+						//VertexIndexBuilder.buffersBuildFromOxels -  processed 376 oxels  took: 8
+						//VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: 384(900)  _vertices:3072(7200)  quadsToProcess: 150  took: 1
+						//VertexIndexBuilder.buffersBuildFromOxels -  processed 25 oxels  took: 3
+						//VoxelVerse.enterFrame - render time: 22
+						//VoxelVerse.enterFrame - total time: 46
+						
 					else
 						_vertMan.minGrain = $stats.rootSize;
 				}
@@ -178,7 +215,7 @@ package com.voxelengine.worldmodel.oxel
 				{
 					// We should inherit the min grain size from our parent
 					var minGrain:int = vm_get().minGrain
-					//Log.out( "Oxel.vm_initialize - Grabbing sub vertex manager: gc.grain: " + gc.grain + "  vm_get().minGrain: " + vm_get().minGrain );
+					Log.out( "Oxel.vm_initialize - Grabbing sub vertex manager: gc.grain: " + gc.grain + "  vm_get().minGrain: " + vm_get().minGrain );
 					_vertMan = new VertexManager();
 					_vertMan.minGrain = minGrain;
 				}
