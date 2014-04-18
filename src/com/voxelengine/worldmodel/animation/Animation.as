@@ -32,7 +32,8 @@ package com.voxelengine.worldmodel.animation
 		private var _name:String;
 		private var _transforms:Vector.<AnimationTransform> = new Vector.<AnimationTransform>;
 		private var _attachments:Vector.<AnimationAttachment> = new Vector.<AnimationAttachment>;
-		private var _loader:CustomURLLoader = null;
+		private var _loader:CustomURLLoader;
+		private var _owner:String;
 		
 		private var _sound:AnimationSound = null;
 		
@@ -40,8 +41,9 @@ package com.voxelengine.worldmodel.animation
 		public function get transforms():Vector.<AnimationTransform> { return _transforms; }
 		public function get loaded():Boolean { return _loaded; }
 		
-		public function Animation( $animationName:Object ) 
+		public function Animation( $animationName:Object, $owner:String ) 
 		{ 
+			_owner = $owner;
 			if ( $animationName.name )
 			{
 				_name = $animationName.name;
@@ -120,11 +122,11 @@ package com.voxelengine.worldmodel.animation
 				_sound.update( $val / 3 );
 		}
 		
-		static private const ANIMATION_FILE_EXT:String = ".mjson"
+		static private const ANIMATION_FILE_EXT:String = ".ajson"
 		private function load( $fileName:String ):void
 		{
 			var fileName:String = $fileName + ANIMATION_FILE_EXT
-			var aniNameAndLoc:String = Globals.modelPath + fileName;
+			var aniNameAndLoc:String = Globals.modelPath + _owner + "/" + fileName;
 			//Log.out( "Animation.load - loading: " + aniNameAndLoc );
 			var request:URLRequest = new URLRequest( aniNameAndLoc );
 			_loader = new CustomURLLoader(request);
