@@ -582,21 +582,29 @@ package com.voxelengine.worldmodel.models
 			Globals.g_modelManager.create( instanceInfo );
 		}
 		
-		public function update( $context:Context3D, $elapsedTimeMS:int ):void {
+		public function update( $elapsedTimeMS:int ):void {
 			
 			worldSpaceStartAndEndPointCalculate();
+			
+			// Make sure to call this before the model update, so that models have time to repair them selves.
+			if ( 0 == Globals.g_landscapeTaskController.VVNextTask() )
+			{
+				Globals.g_flowTaskController.VVNextTask();
+				//while ( 0 < Globals.g_lightTaskController.queueSize() )
+					Globals.g_lightTaskController.VVNextTask();
+			}
 
 			if ( Globals.g_app.toolOrBlockEnabled )
 				highLightEditableOxel();
 
 			for each ( var instanceDyn:VoxelModel in _modelDynamicInstances )
 			{
-				instanceDyn.update( $context, $elapsedTimeMS );	
+				instanceDyn.update( Globals.g_renderer.context,  $elapsedTimeMS );	
 			}
 			
 			for each ( var instance:VoxelModel in _modelInstances )
 			{
-				instance.update( $context, $elapsedTimeMS );	
+				instance.update( Globals.g_renderer.context, $elapsedTimeMS );	
 			}
 		}
 		
