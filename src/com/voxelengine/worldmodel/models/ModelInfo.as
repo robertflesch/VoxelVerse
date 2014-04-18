@@ -257,7 +257,7 @@ package com.voxelengine.worldmodel.models
 				var animationsObj:Object = json.animations;
 				for each ( var a:Object in animationsObj )		   
 				{
-					var animation:Animation = new Animation( a );
+					var animation:Animation = new Animation( a, $fileNameNoExt );
 					_animations.push( animation )
 				}
 			}

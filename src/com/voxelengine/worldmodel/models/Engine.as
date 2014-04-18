@@ -74,7 +74,7 @@ package com.voxelengine.worldmodel.models
 				$parentModel.instanceInfo.addNamedTransform( ms, 0, ms, ModelTransform.INFINITE_TIME, ModelTransform.VELOCITY, SHIP_VELOCITY );
 			
 			// Animation plays the sound
-			updateAnimations( "PropRotate", ms );
+			updateAnimations( "Rotate", ms );
 
 			//emitterTest();
 		}
@@ -84,7 +84,7 @@ package com.voxelengine.worldmodel.models
 			if ( $useThrust )
 				$parentModel.instanceInfo.removeNamedTransform( ModelTransform.VELOCITY, SHIP_VELOCITY );
 
-			updateAnimations( "PropStop", 0 );
+			updateAnimations( "Stop", 0 );
 		}
 		
 		/*

@@ -109,27 +109,27 @@
 		override protected function setAnimation():void	{
 			if ( Globals.g_app.toolOrBlockEnabled )
 			{
-				stateSet( "PlayerAniPick", 1 );
+				stateSet( "Pick", 1 );
 			}
 			else if ( -0.4 > instanceInfo.velocityGet.y )
 			{
-				updateAnimations( "PlayerAniJump", 1 );
+				updateAnimations( "Jump", 1 );
 			}
 			else if ( 0.4 < instanceInfo.velocityGet.y )
 			{
-				updateAnimations( "PlayerAniFall", 1 );
+				updateAnimations( "Fall", 1 );
 			}
 			else if ( 0.2 < Math.abs( instanceInfo.velocityGet.z )  )
 			{
-				updateAnimations( "PlayerAniWalk", 2 );
+				updateAnimations( "Walk", 2 );
 			}
 			else if ( 0.2 < Math.abs( instanceInfo.velocityGet.x )  )
 			{
-				updateAnimations( "PlayerAniSlide", 1 );
+				updateAnimations( "Slide", 1 );
 			}
 			else
 			{
-				stateSet( "PlayerAniStand", 1 );
+				stateSet( "Stand", 1 );
 			}
 			//trace( "Player.update - end" );
 		}
@@ -169,11 +169,12 @@
 		}
 
 		override protected function cameraAddLocations():void {
-//			camera.addLocation( new CameraLocation( true, 0, 0, 0 ) );
+			camera.addLocation( new CameraLocation( true, 0, 0, 0 ) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 0 ) );
+			camera.addLocation( new CameraLocation( true, 0, Globals.AVATAR_HEIGHT - 4, 0) );
 			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, 10, 50) );
-			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT + 20, 50) );
+//			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT + 20, 50) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 100) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 250) );
 		}

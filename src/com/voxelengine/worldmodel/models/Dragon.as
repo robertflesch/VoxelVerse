@@ -128,25 +128,25 @@ package com.voxelengine.worldmodel.models
 			var climbFactor:Number = ( mMaxClimbAngle + instanceInfo.rotationGet.x) / mMaxClimbAngle;
 			if ( onSolidGround )
 			{
-				updateAnimations( "DragonAniWalk", 0.5 );
+				updateAnimations( "Walk", 0.5 );
 				instanceInfo.velocityReset();
 				stateLock( true, 500 );
 			}
 			else if ( mStallSpeed > instanceInfo.velocityGet.z )
 			{
-				updateAnimations( "DragonAniLand", 0.5 );
+				updateAnimations( "Land", 0.5 );
 				clipVelocityFactor = 0.95;
 			}
 			else if ( -5 > instanceInfo.rotationGet.x )
 			{
-				updateAnimations( "DragonAniFly", 1 - climbFactor );
+				updateAnimations( "Fly", 1 - climbFactor );
 				mSpeedMultiplier = 0.35;
 				//clipVelocityFactor = 0.95;
 			}
 			else if ( 15 < instanceInfo.rotationGet.x )
 			{
-				stateSet( "DragonAniDive" );
-				clipVelocityFactor = 1.01;
+				stateSet( "Dive" );
+				clipVelocityFactor = 1;
 				mSpeedMultiplier = 1;
 			}
 			// Be fun to make this have the avatar put their arms out to the side
@@ -155,12 +155,12 @@ package com.voxelengine.worldmodel.models
 				clipVelocityFactor = 0.995;
 				if ( mForward )
 				{
-					updateAnimations( "DragonAniFly", 0.5 );
+					updateAnimations( "Fly", 0.5 );
 					mSpeedMultiplier = 0.50;
 				}
 				else
 				{
-					stateSet( "DragonAniGlide" );
+					stateSet( "Glide" );
 					mSpeedMultiplier = 0.50;
 				}
 			}
@@ -169,7 +169,7 @@ package com.voxelengine.worldmodel.models
 		override public function takeControl( $vm:VoxelModel ):void { 
 			//Log.out( "Dragon.takeControl - starting position: " + $vm.instanceInfo.positionGet );
 			super.takeControl( $vm );
-			$vm.stateSet( "PlayerAniDragonRide");
+			$vm.stateSet( "Ride");
 			$vm.stateLock( true );
 		}
 	
@@ -192,7 +192,7 @@ package com.voxelengine.worldmodel.models
 				if ( MouseKeyboardHandler.forward )	{ 
 					if ( instanceInfo.velocityGet.length < mMaxSpeed )
 					{
-						instanceInfo.velocitySetComp( vel.x, vel.y, vel.z + speedVal ); 
+						instanceInfo.velocitySetComp( 0, 0, vel.z + speedVal ); 
 						changed = true; 
 						mForward = true; }
 				}
@@ -205,6 +205,11 @@ package com.voxelengine.worldmodel.models
 					if ( MouseKeyboardHandler.leftSlide )	{ instanceInfo.velocitySetComp( vel.x + speedVal, vel.y, vel.z ); changed = true; }
 					if ( MouseKeyboardHandler.rightSlide )	{ instanceInfo.velocitySetComp( vel.x - speedVal, vel.y, vel.z ); changed = true; }
 				}
+				else
+				{
+					if ( MouseKeyboardHandler.down )	  	{ instanceInfo.velocitySetComp( vel.x, vel.y + speedVal, vel.z ); changed = true; }
+				}
+				if ( MouseKeyboardHandler.up )          { instanceInfo.velocitySetComp( vel.x, vel.y - speedVal, vel.z ); changed = true; }
 			}
 			
 			/*

@@ -386,46 +386,7 @@ package com.voxelengine.worldmodel.models
 		}
 		
 		override protected function setAnimation():void	{
-			
-			var climbFactor:Number = ( mMaxClimbAngle + instanceInfo.rotationGet.x) / mMaxClimbAngle;
-			if ( onSolidGround )
-			{
-				updateAnimations( "RaptorAniWalk", 0.5 );
-				instanceInfo.velocityReset();
-				stateLock( true, 500 );
-			}
-			else if ( mStallSpeed > instanceInfo.velocityGet.z )
-			{
-				updateAnimations( "RaptorAniLand", 0.5 );
-				clipVelocityFactor = 0.95;
-			}
-			else if ( -5 > instanceInfo.rotationGet.x )
-			{
-				updateAnimations( "RaptorAniFly", 1 - climbFactor );
-				mSpeedMultiplier = 0.35;
-				//clipVelocityFactor = 0.95;
-			}
-			else if ( 15 < instanceInfo.rotationGet.x )
-			{
-				stateSet( "RaptorAniDive" );
-				clipVelocityFactor = 1.01;
-				mSpeedMultiplier = 1;
-			}
-			// Be fun to make this have the avatar put their arms out to the side
-			else	
-			{
-				clipVelocityFactor = 0.995;
-				if ( mForward )
-				{
-					updateAnimations( "RaptorAniFly", 0.5 );
-					mSpeedMultiplier = 0.50;
-				}
-				else
-				{
-					stateSet( "RaptorAniGlide" );
-					mSpeedMultiplier = 0.50;
-				}
-			}
+			throw new Error( "Beast.setAnimation - OVERRIDE THIS FUNCTION" );
 		}
 
 		override public function takeControl( $vm:VoxelModel ):void { 
@@ -440,7 +401,7 @@ package com.voxelengine.worldmodel.models
 			//Log.out( "Beast.takeControl - after position set: " + $vm.instanceInfo.positionGet );
 			Globals.g_app.addEventListener( ShipEvent.THROTTLE_CHANGED, throttleEvent );
 			instanceInfo.usesCollision = true;
-			$vm.stateSet( "PlayerAniRaptorRide");
+			$vm.stateSet( "Ride");
 			camera.index = 2;	
 			Globals.g_app.dispatchEvent(new GUIEvent(GUIEvent.TOOLBAR_HIDE));
 		}
