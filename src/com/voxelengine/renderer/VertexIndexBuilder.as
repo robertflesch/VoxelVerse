@@ -177,6 +177,7 @@ public class VertexIndexBuilder
 	}
 	
 	private function quadsCopyToBuffers( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
+//		var timer:int = getTimer();
 		//trace("VertexIndexBuilder.quadsCopyToBuffers - startingIndex: " + oxelStartingIndex + " oxelsToProcess:" +  oxelsToProcess + " quadsToProcess: " + quadsToProcess );
 		try {
 			var vb:VertexBuffer3D = context.createVertexBuffer( quadsToProcess * Quad.VERTICES / Quad.DATA_PER_VERTEX , Quad.DATA_PER_VERTEX);
@@ -240,7 +241,7 @@ public class VertexIndexBuilder
 
 		_buffers++;
 		
-//		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess );
+//		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
 	
 	// We need to break the quads in ~ 16k sized chunks. since that is the limit for each VertexBuffer
@@ -252,8 +253,8 @@ public class VertexIndexBuilder
 			return;
 		}
 			
+//		var timer:int = getTimer();
 		dispose();
-		var timer:int = getTimer();
 		//trace( "VertexIndexBuilder.buffersBuildFromOxels - total oxels - " + _oxels.length );
 		if ( 0 < _oxels.length ) 
 		{
@@ -292,13 +293,13 @@ public class VertexIndexBuilder
 		_s_totalIndexMemory += _bufferIndexMemory;
 
 		dirty = false;
-		//trace ( "VertexIndexBuilder.buffersBuildFromOxels - took: "  + (getTimer() - timer) + "  to process " + _oxels.length + " oxels" );			
+//		trace ( "VertexIndexBuilder.buffersBuildFromOxels -  processed " + _oxels.length + " oxels  took: "  + (getTimer() - timer) );			
 	}
 	
 	public function BufferCopyToGPU( context:Context3D ) : void 
 	{
-		// This function is realatively trivial..
-		var timer:int = getTimer();
+		// This function is takes less the 1 ms per call when logged in debugger
+		//var timer:int = getTimer();
 		var vb:VertexBuffer3D;
 		var ib:IndexBuffer3D;
 		for (var i:int = 0; i < _buffers; i++) {
@@ -318,6 +319,7 @@ public class VertexIndexBuilder
 			ib = _indexBuffers[i];
 			context.drawTriangles(ib);
 		}
+		//trace ( "VertexIndexBuilder.BufferCopyToGPU - took: "  + (getTimer() - timer) );			
 	}
 
 	//////////////////////////////////

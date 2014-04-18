@@ -36,8 +36,8 @@ public class VertexManager {
 	//private var _name:String;
 	public function VertexManager()
 	{
-		//_name = NameUtil.createUniqueName( this );
-		//Log.out( "----------VertexManager.construct---------- " + _name );
+		//var name:String = NameUtil.createUniqueName( this );
+		//Log.out( "----------VertexManager.construct---------- " + name );
 	}
 	
 	public function release():void
