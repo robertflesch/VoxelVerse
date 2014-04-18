@@ -36,7 +36,6 @@ package {
 	
 	public class VoxelVerse extends Sprite 
 	{
-		private var _timeCurrent:int = getTimer();
 		private var _timePrevious:int = getTimer();
 		
 		private var _configManager:ConfigManager = null;
@@ -122,20 +121,30 @@ package {
 			Globals.g_regionManager = new RegionManager();
 			_configManager = new ConfigManager();
 			
-			addEventListener(Event.ENTER_FRAME, enter_frame);
+			addEventListener(Event.ENTER_FRAME, enterFrame);
 			addEventListener(Event.DEACTIVATE, deactivate);
 			addEventListener(Event.ACTIVATE, activate);
 		}
 
-		private function enter_frame(e:Event):void 
+		private function enterFrame(e:Event):void 
 		{
 			MemoryManager.update();
-			_timeCurrent = getTimer();
-			Globals.g_renderer.update( _timeCurrent - _timePrevious );
+			var timeEntered:int = getTimer();
+			var elapsed:int = timeEntered - _timePrevious;
+			_timePrevious = timeEntered;
+			
+			var timeUpdate:int = getTimer();
+			Globals.g_modelManager.update( elapsed );
+			Log.out( "VoxelVerse.enterFrame - update time: " + ( getTimer() - timeUpdate ) );
+			
+			var timeRender:int = getTimer();
 			Globals.g_renderer.render();
-			_timePrevious = _timeCurrent;
+			Log.out( "VoxelVerse.enterFrame - render time: " +  + ( getTimer() - timeRender ) );
+			
 			if ( showConsole )
 				toggleConsole();
+			Log.out( "VoxelVerse.enterFrame - render + update : " + ( timeUpdate + timeRender ) + "  total time: " +  + ( getTimer() - _timePrevious ) );
+			_timePrevious = getTimer();
 		}
 		
 		private function deactivate(e:Event):void 
