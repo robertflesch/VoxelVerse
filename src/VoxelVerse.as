@@ -128,22 +128,23 @@ package {
 
 		private function enterFrame(e:Event):void 
 		{
-			MemoryManager.update();
 			var timeEntered:int = getTimer();
 			var elapsed:int = timeEntered - _timePrevious;
 			_timePrevious = timeEntered;
 			
+			MemoryManager.update();
+			
 			var timeUpdate:int = getTimer();
 			Globals.g_modelManager.update( elapsed );
-			Log.out( "VoxelVerse.enterFrame - update time: " + ( getTimer() - timeUpdate ) );
+			timeUpdate = getTimer() - timeUpdate;
 			
 			var timeRender:int = getTimer();
 			Globals.g_renderer.render();
-			Log.out( "VoxelVerse.enterFrame - render time: " +  + ( getTimer() - timeRender ) );
+			timeRender = getTimer() - timeRender;
 			
 			if ( showConsole )
 				toggleConsole();
-			Log.out( "VoxelVerse.enterFrame - render + update : " + ( timeUpdate + timeRender ) + "  total time: " +  + ( getTimer() - _timePrevious ) );
+			Log.out( "VoxelVerse.enterFrame - render: " + timeRender + "  timeUpdate: " + timeUpdate + "  total time: " +  + ( getTimer() - timeEntered ) + "  time to get back to app: " + elapsed );
 			_timePrevious = getTimer();
 		}
 		
