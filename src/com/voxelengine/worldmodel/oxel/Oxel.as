@@ -58,7 +58,7 @@ package com.voxelengine.worldmodel.oxel
 		private static		const ALL_NEGX_CHILD:uint						= 0x55;
 		private static		const ALL_POSX_CHILD:uint						= 0xaa;
 		
-		private static		const MAX_TIME:int                           	= 15000;
+		private static		const MAX_BUILD_TIME:int                           	= 14000;
 		
 		static private 		var _s_scratchGrain:GrainCursor 				= new GrainCursor();
 		static private 		var _s_scratchVector:Vector3D 					= null;
@@ -1056,11 +1056,10 @@ package com.voxelengine.worldmodel.oxel
 			faces_mark_all_dirty();
 		}
 		
-		public function faces_build( elapsedTimeMS:int ):Boolean {
-			var timer:int = getTimer();
-			// This is only spot $gc we return false, meaning we need to move on.
-			if ( elapsedTimeMS  + MAX_TIME < timer )
-				return false;
+		public var timeBuilding:int;
+		public function faces_build():Boolean {
+//			if ( MAX_BUILD_TIME < getTimer() - timeBuilding )
+//				return false;
 				
 			var continueProcessing:Boolean = true;
 			if ( dirty )
@@ -1074,7 +1073,7 @@ package com.voxelengine.worldmodel.oxel
 					for each ( var child:Oxel in _children ) {
 						if ( child.dirty )
 						{
-							continueProcessing = child.faces_build( elapsedTimeMS );
+							continueProcessing = child.faces_build();
 							// We have timed out in one of the children, get out.
 							if ( !continueProcessing )
 								return false;

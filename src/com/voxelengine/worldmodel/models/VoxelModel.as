@@ -689,7 +689,6 @@ package com.voxelengine.worldmodel.models
 		}
 		
 		private static const _sZERO_VEC:Vector3D = new Vector3D();
-		
 		protected function internal_update($context:Context3D, $elapsedTimeMS:int):void
 		{
 			if (!initialized)
@@ -709,14 +708,17 @@ package com.voxelengine.worldmodel.models
 				
 				_instanceInfo.update($elapsedTimeMS);
 				
+				
 				if (oxel && oxel.dirty)
 				{
 					//_timer = getTimer();
-					//Log.out( "VoxelModel.internal_update - starting facing and quad building" );					
-					var newFacesFound:Boolean = oxel.faces_build(_timer);
+					//Log.out( "VoxelModel.internal_update - starting facing and quad building" );	
+					oxel.timeBuilding = getTimer();
+					var newFacesFound:Boolean = oxel.faces_build();
 					//Log.out( "VoxelModel.internal_update - faces_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					if (newFacesFound)
 					{
+//Log.out( "VoxelModel.internal_update - new faces found - faces_build - model guid: " + modelInfo.fileName + " time: " + oxel.timeBuilding );					
 						//_timer = getTimer();
 						oxel.quadsBuild();
 						//Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
