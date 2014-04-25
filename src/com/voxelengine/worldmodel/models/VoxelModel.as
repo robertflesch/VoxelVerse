@@ -1813,7 +1813,7 @@ package com.voxelengine.worldmodel.models
 		{
 			if ( _stateLock )
 				return;
-			if (_anim && _anim.name == $state)
+			if ( (_anim && _anim.name == $state) || 0 == modelInfo.animations.length )
 				return;
 			
 			Log.out( "VoxelModel.stateSet: " + $state ); 
