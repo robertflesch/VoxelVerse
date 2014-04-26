@@ -883,7 +883,7 @@
         {   "name": "EYE_LEFT",
             "image": "eye.png",
             "id": 150,
-            "category": "AIR",
+            "category": "AVATAR",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
@@ -901,7 +901,7 @@
         {   "name": "EYE_RIGHT",
             "image": "eye.png",
             "id": 151,
-            "category": "AIR",
+            "category": "AVATAR",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
@@ -951,6 +951,25 @@
                 "vs": 0.875,
                 "ub": 0.875,
                 "vb": 0.875
+            }
+        },
+        {   "name": "LIGHT",
+            "image": "invalid.png",
+            "id": 990,
+            "category": "LIQUID",
+			"light" : "true",
+            "solid": "false",
+			"interactions": [
+				{ "PICK"		: [ "AIR", 100, "na" ] },
+				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
+				{ "AXE"			: [ "AIR", 100, "na" ] }
+			],			
+			"placeable" : "true",
+            "color": {
+                "r": 0.75,
+                "g": 0.75,
+                "b": 0.75,
+                "a": 1
             }
         },
         {   "name": "EDITCURSOR_SQUARE",
