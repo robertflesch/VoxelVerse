@@ -762,7 +762,7 @@
                 "vb": 0.375
             }			
         },
-        {   "name": "ASH_BURNING",
+        {   "name": "BURNING",
             "image": "ash_burning.png",
             "id": 145,
             "category": "PLANT",
@@ -880,7 +880,7 @@
                 "vb": 0.953125
             }
         },
-        {   "name": "EYE_LEFT",
+        {   "name": "LEFT",
             "image": "eye.png",
             "id": 150,
             "category": "AVATAR",
@@ -898,7 +898,7 @@
                 "vb": 0.28125
             }
         },
-        {   "name": "EYE_RIGHT",
+        {   "name": "RIGHT",
             "image": "eye.png",
             "id": 151,
             "category": "AVATAR",
@@ -917,7 +917,7 @@
             }
         },
         {   "name": "VINE",
-            "image": "invalid.png",
+            "image": "vine.png",
             "id": 152,
             "category": "PLANT",
             "uv": {
@@ -953,8 +953,8 @@
                 "vb": 0.875
             }
         },
-        {   "name": "LIGHT",
-            "image": "invalid.png",
+        {   "name": "RED",
+            "image": "lightRed.png",
             "id": 990,
             "category": "LIQUID",
 			"light" : "true",
@@ -966,10 +966,48 @@
 			],			
 			"placeable" : "true",
             "color": {
-                "r": 0.75,
-                "g": 0.75,
-                "b": 0.75,
-                "a": 1
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 0.99
+            }
+        },
+        {   "name": "BLUE",
+            "image": "lightBlue.png",
+            "id": 991,
+            "category": "LIQUID",
+			"light" : "true",
+            "solid": "false",
+			"interactions": [
+				{ "PICK"		: [ "AIR", 100, "na" ] },
+				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
+				{ "AXE"			: [ "AIR", 100, "na" ] }
+			],			
+			"placeable" : "true",
+            "color": {
+                "r": 0,
+                "g": 0,
+                "b": 1,
+                "a": 0.99
+            }
+        },
+        {   "name": "GREEN",
+            "image": "lightGreen.png",
+            "id": 992,
+            "category": "LIQUID",
+			"light" : "true",
+            "solid": "false",
+			"interactions": [
+				{ "PICK"		: [ "AIR", 100, "na" ] },
+				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
+				{ "AXE"			: [ "AIR", 100, "na" ] }
+			],			
+			"placeable" : "true",
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 0.99
             }
         },
         {   "name": "EDITCURSOR_SQUARE",
