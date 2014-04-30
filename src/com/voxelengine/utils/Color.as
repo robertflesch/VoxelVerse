@@ -1,7 +1,83 @@
 package com.voxelengine.utils {
-     
+
+import flash.geom.Vector3D;
+	
     public class Color {
 
+		public static function combineRGBA( c1:Vector3D, c2:Vector3D ):Vector3D {
+			// Determine RGBA colour received by combining two colours
+			// http://stackoverflow.com/questions/10781953/determine-rgba-colour-received-by-combining-two-colours
+			// Alpha result
+			// αr = αa + αb (1 - αa)
+			// Resulting color components:
+			// Cr = (Ca αa + Cb αb (1 - αa)) / αr
+			var αa:Number = c1.w;
+			var αb:Number = c2.w;
+			var newTint:Vector3D = new Vector3D();
+			newTint.w = αa + αb * ( 1 - αa );
+			newTint.x = (c1.x * αa + c2.x * αb * ( 1 - αa )) / newTint.w;
+			newTint.y = (c1.y * αa + c2.y * αb * ( 1 - αa )) / newTint.w;
+			newTint.z = (c1.z * αa + c2.z * αb * ( 1 - αa )) / newTint.w;
+			
+			return newTint;
+		}
+		
+		public static function combineRGBAndIntensity( c1:Vector3D, c1Int:Number, c2:Vector3D, c2Int:Number ):Vector3D {
+			// Determine RGBA colour received by combining two colours
+			// http://stackoverflow.com/questions/10781953/determine-rgba-colour-received-by-combining-two-colours
+			// Alpha result
+			// αr = αa + αb (1 - αa)
+			// Resulting color components:
+			// Cr = (Ca αa + Cb αb (1 - αa)) / αr
+			var αa:Number = c1Int;
+			var αb:Number = c2Int;
+			var newTint:Vector3D = new Vector3D();
+			newTint.w = αa + αb * ( 1 - αa );
+			newTint.x = (c1.x * αa + c2.x * αb * ( 1 - αa )) / newTint.w;
+			newTint.y = (c1.y * αa + c2.y * αb * ( 1 - αa )) / newTint.w;
+			newTint.z = (c1.z * αa + c2.z * αb * ( 1 - αa )) / newTint.w;
+			
+			return newTint;
+		}
+		
+		public static function combineRGB( c1:Vector3D, c2:Vector3D ):Vector3D {
+			var newTint:Vector3D = new Vector3D(1,1,1,1);
+			newTint.x = ( c1.x + c2.x ) / 2;
+			newTint.y = ( c1.y + c2.y ) / 2;
+			newTint.z = ( c1.z + c2.z ) / 2;
+			
+			return newTint;
+		}
+		
+		public static function extractAlpha(c:uint):uint {
+			return (( c >> 24 ) & 0xFF);
+		}
+
+		public static function extractRed(c:uint):uint {
+			return (( c >> 16 ) & 0xFF);
+		}
+
+		public static function extractGreen(c:uint):uint {
+			return ( (c >> 8) & 0xFF );
+		}
+
+		public static function extractBlue(c:uint):uint {
+			return ( c & 0xFF );
+		}		
+
+		public static function displayInHex(c:uint):String {
+			var r:String=extractRed(c).toString(16).toUpperCase();
+			var g:String=extractGreen(c).toString(16).toUpperCase();
+			var b:String=extractBlue(c).toString(16).toUpperCase();
+			var hs:String="";
+			var zero:String="0";
+			if(r.length==1){ r=zero.concat(r); }
+			if (g.length == 1) { g = zero.concat(g); }
+			if(b.length==1){ b=zero.concat(b);}
+			hs=r+g+b;
+			return hs;
+		}		
+		
 		public static function RGBToHex(r:uint, g:uint, b:uint):uint
 		{
 			var hex:uint = (r << 16 | g << 8 | b);

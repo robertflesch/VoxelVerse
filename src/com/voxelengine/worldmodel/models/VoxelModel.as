@@ -551,29 +551,32 @@ package com.voxelengine.worldmodel.models
 		{
 			var result:Boolean;
 		// Was the old oxel here a light? if so we need to send out a light event
-			var co:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
-			if ( Globals.BAD_OXEL != co )
+			var changedOxel:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
+			if ( Globals.BAD_OXEL != changedOxel )
 			{
 				_modified = true;
 				result = true;
+				var typeInfo:TypeInfo = Globals.Info[$type];
 			
-				if ( Globals.Info[$type].flowable )
+				if ( typeInfo.flowable )
 				{
-					co.flowInfo = Globals.Info[$type].flowInfo.clone();
+					changedOxel.flowInfo = typeInfo.flowInfo.clone();
 					if ( Globals.autoFlow && EditCursor.EDIT_CURSOR != instanceInfo.instanceGuid )
 					{
-						Flow.addTask( instanceInfo.instanceGuid, co.gc, co.type, co.flowInfo, 1 );
+						Flow.addTask( instanceInfo.instanceGuid, changedOxel.gc, changedOxel.type, changedOxel.flowInfo, 1 );
 					}
 				}
 					
-				if ( result && Globals.Info[$type].light )
+				if ( typeInfo.light )
 				{
-					if ( !co.brightness )
-						co.brightness = BrightnessPool.poolGet();
+					if ( !changedOxel.brightness )
+						changedOxel.brightness = BrightnessPool.poolGet();
 					else
-						co.brightness.setAll( 1.0, Brightness.FIXED );
+						changedOxel.brightness.setAll( 1.0, Brightness.FIXED );
 						
-					Light.addTask( instanceInfo.instanceGuid, $gc, Globals.getUID() );
+					changedOxel.brightness.color = typeInfo.color;
+					changedOxel.brightness.lastLight = Globals.getUID();
+					Light.addTask( instanceInfo.instanceGuid, $gc, changedOxel.brightness.lastLight, typeInfo.color );
 				}
 			}
 			

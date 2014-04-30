@@ -8,6 +8,7 @@
 
 package com.voxelengine.worldmodel.tasks.lighting
 {
+	import flash.geom.Vector3D;
 	import com.developmentarc.core.tasks.events.TaskEvent;
 	
 	import com.voxelengine.Log;
@@ -27,84 +28,263 @@ package com.voxelengine.worldmodel.tasks.lighting
 	 */
 	public class Light extends LightTask 
 	{		
-		
 		/**
 		 *  
 		 * @param $instanceGuid - guid of parent model
 		 * @param $gc of oxel that HAS light attributes
 		 * @param $id a light id
+		 * @param $color a light color
 		 * 
 		 */
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $taskPriority:int = 1 ):void {
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskPriority:int = 1 ):void {
 			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var tt:String = $gc.toID();
-			var lt:Light = new Light( $instanceGuid, $gc, $id, tt, $gc.grain )
+			var lt:Light = new Light( $instanceGuid, $gc, $id, $color )
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
 		
 		// NEVER use this, use the static function
-		public function Light( $instanceGuid:String, $gc:GrainCursor, $id:String, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
-			super( $instanceGuid, $gc, $id, $taskType, $taskPriority );
+		public function Light( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
+			super( $instanceGuid, $gc, $id, $color, $gc.toID(), $gc.grain );
 		}
 		
 		override public function start():void {
 			super.start();
 			
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
-			main:if ( vm )
-			{
-				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
-				if ( null == lo.gc )
-					break main; 
-				if ( null == lo.brightness )
-					break main; 
-					
-//				Log.out( "=================================================================================================================" );
-//				Log.out( "Light.start - taskType: " + taskType + " oxel: " + lo.toStringShort() + " brightness: " + lo.brightness.toString() );
+			main:if ( vm ) {
 				
-//				if ( lo.gc.eval( 5, 0, 4, 0 ) )
-//					trace( " measure" );
-//				if ( lo.gc.grain == 5 )
-//					trace( " check parent" );
-				//trace( "Light lo: " + lo.brightness.toString() );
-				lightOxel( lo );
+				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
+				if ( lightValid( lo ) )
+					spreadToNeighbors( lo );
+				else
+					Log.out( "Light.start - lightValid failed", Log.ERROR );
+
 			}
 			else
-			{
 				Log.out( "Light.start - VoxelModel not found: " + _guid, Log.ERROR );
-			}	
+				
 			super.complete();
 		}
 		
-		private function lightOxel( $lo:Oxel ):void {
+		static private function lightValid( o:Oxel ):Boolean {
+			
+			if ( null == o.gc )
+				return false; 
+			if ( null == o.brightness )
+				return false; 
+			if ( null == o.brightness.lastLight )
+				return false; 
+			
+			return true;
+		}
+		
+		static private function neighborValid( o:Oxel ):Boolean {
+			
+			if ( Globals.BAD_OXEL == o ) // This is possible, if oxel is on edge of model
+			{
+				Log.out( "Light.neighborValid - o == Global s.BAD_OXEL - continue" );
+				return false;
+			}
+			else if ( Globals.Info[o.type].light ) // dont try to light a light? what if light source is stronger?
+			{
+				Log.out( "Light.neighborValid - o == LIGHT - continue" );
+				return false;
+			}
+
+			if ( !o.brightness ) // does this oxel already have a brightness?
+				o.brightness = BrightnessPool.poolGet();
+
+			return true;
+		}
+		
+		private function spreadToNeighbors( $lo:Oxel ):void {
 				
+			Log.out( "Light.spreadToNeighbors - $lo: " + $lo.toStringShort() );
+			//$lo.brightness.color = color;
+			
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
 				var no:Oxel = $lo.neighbor(face);
-				if ( Globals.BAD_OXEL == no ) // This is expected, if oxel is on edge of model
-					continue;
-				else if ( Globals.Info[no.type].light ) // dont try to light a light? what if light source is stronger?
-					continue;
-						
 				
-				if ( no.brightness ) { // does this oxel already have a brightness?
-					if ( no.gc.grain == $lo.gc.grain )
-						no.brightness.addInfluence( $lo.brightness, face, no.hasAlpha, no.gc.size() );
-					if ( no.brightness.lastLight == id ) // dont reevaluate an oxel that already has the influence from this light
+				if ( !neighborValid( no ) )
+					continue;
+				
+//				if ( no.gc.eval( 5, 1, 2 , 6 ) )
+//					Log.out ( "light spreading too much to this one" );
+					
+				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
+				{
+					if ( projectOnLargerGrain( $lo, no, face ) )
 						continue;
 				}
-				
-				// wait for parent to handle it
-				if ( no.gc.grain > $lo.gc.grain )
-					continue;
-					
-				lightNeighbor( no, $lo, face );
+				else if ( no.gc.grain == $lo.gc.grain ) // equal grain can have children
+				{ 
+					if ( projectOnEqualGrain( $lo, no, face ) )
+						continue;
+				}
+				else {
+					Log.out( "Light.spreadToNeighbors - NEIGHBOR GRAIN IS SMALLER: ", Log.ERROR );
+				}					
 			}
-			// do this after the oxel has been lit
-			addToParent( $lo );
 		}
 		
+		// returns true if continue
+		private function projectOnEqualGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
+			
+			if ( $no.brightness.lastLight == $lo.brightness.lastLight ) // dont reevaluate an oxel that already has the influence from this light
+			{
+				// Should I allow this to happen multiple times, but not add new tasks for it?
+//				if ( $no.brightness.addInfluence( $lo.brightness, $face, false, no.gc.size() ) )
+//					$no.brightness.rebuildFace( $face, $no );
+				Log.out( "Light.projectOnEqualGrain - ALREADY LIT BY SAME LIGHT  - continue face: " + Globals.Plane[$face].name );
+				return true;
+			}
+			else if ( $no.childrenHas() ) 
+			{
+				Log.out( "Light.projectOnEqualGrain - projectOnNeighborChildren" );
+				projectOnNeighborChildren( $no, $lo, $face );
+			}					
+			else if ( false == $no.hasAlpha ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
+			{
+				Log.out( "Light.projectOnEqualGrain - solid - addInfluence and rebuildFace" );
+				if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size() ) )
+					$no.brightness.rebuildFace( $face, $no );
+			}					
+			else 
+			{
+				if ( Globals.AIR == $no.type ) { // this oxel does not have faces, and transmits light
+					Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size() ) )
+						add( $no );
+				}
+				else { // this oxel has faces and transmits light (water and leaves)
+					// this is a solid object which does not transmit light (leaves are exception)
+					Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size() ) )
+					{
+						$no.brightness.rebuildFace( $face, $no );
+						add( $no );
+					}
+				}
+			}
+			
+			return false;
+		}
+		
+		// returns true if continue
+		private function projectOnLargerGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
+			
+			//Log.out( "Light.projectOnLargerGrain" );
+			if ( $no.childrenHas() )
+			{
+				Log.out( "Light.projectOnLargerGrain - NEIGHBOR GRAIN HAS CHILDEN!: ", Log.ERROR );
+				return true;
+			} 
+			else if ( $no.isSolid ) 
+			{
+				Log.out( "Light.projectOnLargerGrain - no.gc.grain > $lo.gc.grain - calculateEffect - DOES THIS WORK FROM SMALLER OXEL?" );
+				$no.brightness.setFromSmallerOxel( $no, $lo, $face );
+				$no.brightness.rebuildFace( $face, $no );
+			}
+			else
+			{
+				if ( $no.brightness.lastLight != $lo.brightness.lastLight ) // dont reevaluate an oxel that already has the influence from this light
+				{
+					$no.brightness.setFromSmallerOxel( $no, $lo, $face );
+					add( $no );
+				}
+				else
+					Log.out( "Light.projectOnLargerGrain - ALREADY LIT BY SAME LIGHT  - continue face: " + Globals.Plane[$face].name );
+			}
+
+			return false;
+		}
+		
+		private function projectOnNeighborChildren( $no:Oxel, $lo:Oxel, $face:int ):void {
+			
+			//Log.out( "Light.projectOnNeighborChildren - no: " + $no.toStringShort() + "  " + $lo.brightness.toString() );
+			
+			var gct:GrainCursor = GrainCursorPool.poolGet( $no.gc.bound );
+			var oxelt:Oxel = OxelPool.poolGet(); // forced to create a temp oxel to use for projection
+			var bt:Brightness = BrightnessPool.poolGet();
+			
+			var of:int = Oxel.face_get_opposite( $face );
+			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
+			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
+			{
+				$lo.brightness.subfaceGet( $face, childIndex, bt );
+				if ( bt.valuesHas() )
+				{
+					// create temp oxel as light source for lighting purposes
+					gct.copyFrom( dchild[childIndex].gc );
+					// move to location of fake light oxel
+					gct.move( of );
+					// dont care the type, since it is only temp, just has to be transparent
+					oxelt.initialize( $no, gct, Globals.AIR, null );
+					oxelt.brightness = bt;
+					
+					var  noChild:Oxel = dchild[childIndex];
+					var  loChild:Oxel = oxelt;
+					if ( !neighborValid( noChild ) )
+						continue;
+					
+					projectOnEqualGrain( loChild, noChild, $face );	
+				}
+			}
+			GrainCursorPool.poolDispose( gct );
+			OxelPool.poolDispose( oxelt );
+			BrightnessPool.poolReturn( bt );
+		}
+/*		
+		private function projectOnChildren( $no:Oxel, $lo:Oxel, $face:int ):void {
+			
+			//Log.out( "Light.projectOnChildren - no: " + $no.toStringShort() + "  " + $lo.brightness.toString() );
+			var of:int = Oxel.face_get_opposite( $face );
+			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
+			var gct:GrainCursor = GrainCursorPool.poolGet( $no.gc.bound );
+			// forced to create a temp oxel to use for projection
+			var oxelt:Oxel = OxelPool.poolGet();
+			var bt:Brightness = BrightnessPool.poolGet();
+			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
+			{
+				$lo.brightness.subfaceGet( $face, childIndex, bt );
+				if ( bt.valuesHas() )
+				{
+					// create temp oxel as light source for lighting purposes
+					gct.copyFrom( dchild[childIndex].gc );
+					// move to location of fake light oxel
+					gct.move( of );
+					// dont care the type, since it is only temp, just has to be transparent
+					oxelt.initialize( $no, gct, Globals.AIR, null );
+					oxelt.brightness = bt;
+					
+					lightNeighbor( dchild[childIndex], oxelt, $face ); 
+				}
+				
+			}
+			GrainCursorPool.poolDispose( gct );
+			OxelPool.poolDispose( oxelt );
+			BrightnessPool.poolReturn( bt );
+		}
+*/
+		private function add( $no:Oxel ):void {
+			
+			if ( $no.isSolid )
+			{
+				Log.out( "Light.add - SOLID", Log.ERROR );
+				return;
+			}
+			
+			if ( $no.brightness.valuesHas() )
+			{
+				Light.addTask( _guid, $no.gc, id, color, $no.gc.grain );
+				Log.out( "Light.add - ID: " + id );
+			}
+		}
+		
+		
+/*		
 		private function addToParent( $lo:Oxel ):void {
 			if ( !$lo.parent )
 				return; 
@@ -155,95 +335,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				po.brightness.lastLight = id;
 			}
 		}
-		
-		private function lightNeighbor( $no:Oxel, $lo:Oxel, $face:int ):void {
-			
-			if ( $no.gc.grain != $lo.gc.grain )
-				throw new Error( "Light.lightNeighbor - neighbor is larger then light" );
-
-			if ( Globals.hasAlpha( $no.type ) && !$no.childrenHas() )
-			{
-				if ( !$no.brightness )
-					$no.brightness = BrightnessPool.poolGet();
-					
-				if ( $no.brightness.calculateEffect( $face, $lo.brightness, $no, id ) )
-				{
-					lightOxel( $no )
-					add( $no );
-				}
-			}
-			// neighbor might be the parent of smaller oxel, so project onto them
-			else if ( Globals.AIR == $no.type && $no.childrenHas() )
-			{
-				projectOnChildren( $no, $lo, $face );
-			}
-			// I see a face, light it!
-			else if ( $no.facesHas() )
-			{
-				$no.brightness.calculateEffect( $face, $lo.brightness, $no, id ); 
-			}
-			// Should never hit these.
-			else if ( !$no.facesHas() && !$no.childrenHas() && Globals.AIR != $no.type )
-			{
-				// Ran into a solid oxel with no faces, stop here.
-				//Log.out( "Light.lightNeighbor ---------------- solid oxel with no faces, no children, and is NOT AIR, stop here." + $no.toStringShort() );
-			}
-			else
-			{
-				throw new Error( "Light.lightNeighbor - invalid condition" );
-			}
-		}
-		
-		private function add( $no:Oxel ):void {
-			//if ( $no.brightness.valuesHas() )
-			{
-				if ( $no.brightness.valuesHas() )
-				{
-					Light.addTask( _guid, $no.gc, id, $no.gc.grain );
-					//Log.out( "Light.addTask - brightness: " + $no.brightness.toString() );
-				}
-				//else
-				//	Log.out( "Light.addTask - No values" );
-			}
-			//else
-			//	Log.out( "Light.add - Not adding task with default values" );
-		}
-		
-		private function projectOnChildren( $no:Oxel, $lo:Oxel, $face:int ):void {
-			
-			//Log.out( "Light.projectOnChildren - no: " + $no.toStringShort() + "  " + $lo.brightness.toString() );
-			var of:int = Oxel.face_get_opposite( $face );
-			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
-			var gct:GrainCursor = GrainCursorPool.poolGet( $no.gc.bound );
-			// forced to create a temp oxel to use for projection
-			var oxelt:Oxel = OxelPool.poolGet();
-			var bt:Brightness = BrightnessPool.poolGet();
-			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
-			{
-				$lo.brightness.subfaceGet( $face, childIndex, bt );
-				if ( bt.valuesHas() )
-				{
-					// create temp oxel as light source for lighting purposes
-					gct.copyFrom( dchild[childIndex].gc );
-					// move to location of fake light oxel
-					gct.move( of );
-					// dont care the type, since it is only temp, just has to be transparent
-					oxelt.initialize( $no, gct, Globals.AIR, null );
-					oxelt.brightness = bt;
-					
-					lightNeighbor( dchild[childIndex], oxelt, $face ); 
-				}
-				
-			}
-			GrainCursorPool.poolDispose( gct );
-			OxelPool.poolDispose( oxelt );
-			BrightnessPool.poolReturn( bt );
-		}
-
-		override public function cancel():void {
-			// TODO stop this somehow?
-			super.cancel();
-		}
+*/	
 		
 	}
 }

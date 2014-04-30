@@ -204,6 +204,8 @@ package com.voxelengine.worldmodel
 			{
 				var color:Vector3D = new Vector3D( typesJson.color.r, typesJson.color.g, typesJson.color.b, typesJson.color.a );
 				_color = color;
+				if ( _brightness )
+					_brightness.color.copyFrom( _color );
 			}
 			
 			if ( typesJson.uv )

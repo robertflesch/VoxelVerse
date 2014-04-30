@@ -46,7 +46,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		public function LightSunCheck( $instanceGuid:String, $gc:GrainCursor, $id:String, $face:int, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
 			//Log.out( "LightSunCheck.create" );
 			_face = $face;
-			super( $instanceGuid, $gc, $id, $taskType, $taskPriority );
+			super( $instanceGuid, $gc, $id, new Vector3D(1,1,1,1), $taskType, $taskPriority );
 		}
 		
 		override public function start():void {

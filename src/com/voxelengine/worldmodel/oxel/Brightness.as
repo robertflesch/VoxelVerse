@@ -7,8 +7,10 @@
 ==============================================================================*/
 package com.voxelengine.worldmodel.oxel
 {
+	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
-	
+
+	import com.voxelengine.utils.Color;
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
 	import com.voxelengine.pools.GrainCursorPool;
@@ -34,27 +36,47 @@ public class Brightness extends BrightnessData {
 	 *        \/
 	 */
 	static private var _s_sb:Brightness = new Brightness(); // scratchBrightness
+	static private var _s_sb2:Brightness = new Brightness(); // scratchBrightness 2
 	static public function scratch():Brightness { return _s_sb; }
 
-	private var _lastLight:String;
+	private var _lastLight:String = "";
 	public function get lastLight():String { return _lastLight; }
 	public function set lastLight(value:String):void { _lastLight = value; }
 	
 	static public const FIXED:String = "FIXED";
-	public const DEFAULT:Number = 0.7;
-	public const DEFAULT_SIGMA:Number = 0.11;
+	public const DEFAULT:Number = 0.2;
+	public const DEFAULT_SIGMA:Number = 0.01;
 	public const DEFAULT_ATTEN:Number = 0.1;
 	public const DEFAULT_PER_DISTANCE:int = 16;
 	private var _atten:Number = DEFAULT_ATTEN;  // down 1 per meter
 	private var _sunlit:Boolean;
-	public var b000:Number = DEFAULT;
-	public var b001:Number = DEFAULT;
-	public var b100:Number = DEFAULT;
-	public var b101:Number = DEFAULT;
-	public var b010:Number = DEFAULT;
-	public var b011:Number = DEFAULT;
-	public var b110:Number = DEFAULT;
-	public var b111:Number = DEFAULT;
+	public var _b000:Number = DEFAULT;
+	public var _b001:Number = DEFAULT;
+	public var _b100:Number = DEFAULT;
+	public var _b101:Number = DEFAULT;
+	public var _b010:Number = DEFAULT;
+	public var _b011:Number = DEFAULT;
+	public var _b110:Number = DEFAULT;
+	public var _b111:Number = DEFAULT;
+	public var color:Vector3D = new Vector3D(1,1,1,1);
+	
+	public function get b000():Number { return _b000; }
+	public function get b001():Number { return _b001; }
+	public function get b100():Number { return _b100; }
+	public function get b101():Number { return _b101; }
+	public function get b010():Number { return _b010; }
+	public function get b011():Number { return _b011; }
+	public function get b110():Number { return _b110; }
+	public function get b111():Number { return _b111; }
+	
+	public function set b000( n:Number ):void { _b000 = setPrecision( n ); }
+	public function set b001( n:Number ):void { _b001 = setPrecision( n ); }
+	public function set b100( n:Number ):void { _b100 = setPrecision( n ); }
+	public function set b101( n:Number ):void { _b101 = setPrecision( n ); }
+	public function set b010( n:Number ):void { _b010 = setPrecision( n ); }
+	public function set b011( n:Number ):void { _b011 = setPrecision( n ); }
+	public function set b110( n:Number ):void { _b110 = setPrecision( n ); }
+	public function set b111( n:Number ):void { _b111 = setPrecision( n ); }
 	
 	public function get sunlit():Boolean { return _sunlit; }
 	// TODO this should be from the current sun object
@@ -90,47 +112,48 @@ public class Brightness extends BrightnessData {
 		
 		//var b000 = rnd( $ba.readFloat() );
 		//trace( "Brightness.fromByteArray b000: " + b000 );
-		b000 = setPrecision( $ba.readFloat() );
-		b001 = setPrecision( $ba.readFloat() );
-		b100 = setPrecision( $ba.readFloat() );
-		b101 = setPrecision( $ba.readFloat() );
-		b010 = setPrecision( $ba.readFloat() );
-		b011 = setPrecision( $ba.readFloat() );
-		b110 = setPrecision( $ba.readFloat() );
-		b111 = setPrecision( $ba.readFloat() );
+		b000 = $ba.readFloat();
+		b001 = $ba.readFloat();
+		b100 = $ba.readFloat();
+		b101 = $ba.readFloat();
+		b010 = $ba.readFloat();
+		b011 = $ba.readFloat();
+		b110 = $ba.readFloat();
+		b111 = $ba.readFloat();
 		return $ba;
 	}
 
 	public function toString():String {
-		return  "  b000: " + b000.toPrecision( 5 ) +
-				"  b001: " + b001.toPrecision( 5 ) +
-				"  b100: " + b100.toPrecision( 5 ) +
-				"  b101: " + b101.toPrecision( 5 ) +
-				"  b010: " + b010.toPrecision( 5 ) +
-				"  b011: " + b011.toPrecision( 5 ) +
-				"  b110: " + b110.toPrecision( 5 ) +
-				"  b111: " + b111.toPrecision( 5 );
+		return  "  b000: " + b000 +
+				"  b001: " + b001 +
+				"  b100: " + b100 +
+				"  b101: " + b101 +
+				"  b010: " + b010 +
+				"  b011: " + b011 +
+				"  b110: " + b110 +
+				"  b111: " + b111;
 	}
 	
-	public function copyFrom( $b:Brightness, $id:String ):void {
+	public function copyFrom( $b:Brightness ):void {
 		if ( sunlit )
 			return;
-		_lastLight = $id;	
-		b000 = setPrecision( $b.b000 );
-		b001 = setPrecision( $b.b010 ); 
-		b100 = setPrecision( $b.b011 );
-		b101 = setPrecision( $b.b001 ); 
-		b010 = setPrecision( $b.b100 ); 
-		b011 = setPrecision( $b.b110 ); 
-		b110 = setPrecision( $b.b111 ); 
-		b111 = setPrecision( $b.b101 );
+		_lastLight = $b.lastLight;
+		color.copyFrom( $b.color );
+		b000 = $b.b000;
+		b001 = $b.b001; 
+		b010 = $b.b010; 
+		b011 = $b.b011; 
+		b100 = $b.b100;
+		b101 = $b.b101; 
+		b110 = $b.b110; 
+		b111 = $b.b111;
 		_atten = $b._atten;
 	}
 	
 	public function setAll( $val:Number, $id:String ):void	{
 		if ( sunlit )
 			return;
-		_lastLight = $id;	
+		_lastLight = $id;
 		b000 = $val;
 		b001 = $val;
 		b100 = $val;
@@ -144,21 +167,21 @@ public class Brightness extends BrightnessData {
 	public function valuesHas():Boolean	{
 		if ( sunlit )
 			return true;
-		if ( DEFAULT_SIGMA < b000 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b000 )
 			return true;
-		if ( DEFAULT_SIGMA < b001 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b001 )
 			return true;
-		if ( DEFAULT_SIGMA < b100 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b100 )
 			return true;
-		if ( DEFAULT_SIGMA < b101 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b101 )
 			return true;
-		if ( DEFAULT_SIGMA < b010 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b010 )
 			return true;
-		if ( DEFAULT_SIGMA < b011 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b011 )
 			return true;
-		if ( DEFAULT_SIGMA < b110 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b110 )
 			return true;
-		if ( DEFAULT_SIGMA < b111 )
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < b111 )
 			return true;
 			
 		return false;
@@ -192,7 +215,7 @@ public class Brightness extends BrightnessData {
 			child7 = true; }
 	}
 	
-	public function restoreDefault( $id:String, $no:Oxel, $fromFace:int ):Boolean	{
+	public function restoreDefault( $id:String, $no:Oxel, $faceFrom:int ):Boolean	{
 		//Log.out( "Brightness.setDefault - id: " + $id + " no: " + $no.toStringShort() + toString() );			
 		if ( sunlit )
 			return false;
@@ -227,7 +250,7 @@ public class Brightness extends BrightnessData {
 					faceOnly = false;
 					
 				if ( faceOnly )
-					$no.quadDeleteFace( Oxel.face_get_opposite( $fromFace ) );
+					$no.quadDeleteFace( Oxel.face_get_opposite( $faceFrom ) );
 				else
 					$no.quadsDeleteAll( $no.type ); // All of the quads may have changed...
 			}
@@ -248,6 +271,10 @@ public class Brightness extends BrightnessData {
 		_lastLight = "";
 		_atten = DEFAULT_ATTEN;
 		_sunlit = false;
+		color.w = 1;
+		color.x = 1;
+		color.y = 1;
+		color.z = 1;
 	}
 	
 	public function setByFace( $face:int, $val:Number, $id:String, size:int ):void {
@@ -326,12 +353,12 @@ public class Brightness extends BrightnessData {
 	}
 
 	
-	public function restoreDefaultFromChildOxel( $id:String, $no:Oxel, $fromFace:int ):Boolean {
-		return restoreDefault( $id, $no, $fromFace );
+	public function restoreDefaultFromChildOxel( $id:String, $no:Oxel, $faceFrom:int ):Boolean {
+		return restoreDefault( $id, $no, $faceFrom );
 	}
 	
 	// This creates a virtual larger face that is then applied to the larger no.
-	public function setFromSmallerOxel( $no:Oxel, $lo:Oxel, $fromFace:int, $id:String ):Boolean {
+	public function setFromSmallerOxel( $no:Oxel, $lo:Oxel, $faceFrom:int ):Boolean {
 		//Log.out( "setFromSmallerOxel" );
 		// small lo being applied to larger no
 		// I need to find the position offset, by
@@ -357,8 +384,10 @@ public class Brightness extends BrightnessData {
 		var loSize:int = $lo.gc.size();
 		var noSize:int = $no.gc.size();
 		var lob:Brightness = $lo.brightness;
-		_s_sb.setAll( DEFAULT, "-1" );
-		if ( Globals.POSX == $fromFace ) {
+		_s_sb.reset();
+		_s_sb.lastLight = lob.lastLight;
+		_s_sb.colorMix( lob );
+		if ( Globals.POSX == $faceFrom ) {
 			_s_sb.b100 = Math.min( lob.b100 - ( _atten * (z / loSize) )
 							     , lob.b100 - ( _atten * (y / loSize) ) );
 								 
@@ -371,7 +400,7 @@ public class Brightness extends BrightnessData {
 			_s_sb.b111 = Math.max( lob.b111 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
 								 , lob.b111 - ( _atten * ((noSize - (y + loSize)) / loSize ) ) );
 		}
-		else if ( Globals.NEGX == $fromFace ) {
+		else if ( Globals.NEGX == $faceFrom ) {
 			_s_sb.b000 = Math.min( lob.b000 - ( _atten * ( z / loSize ) )
 								 , lob.b000 - ( _atten * ( y / loSize ) ) );
 								 
@@ -384,14 +413,7 @@ public class Brightness extends BrightnessData {
 			_s_sb.b011 = Math.max( lob.b011 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
 								 , lob.b011 - ( _atten * ((noSize - (y + loSize)) / loSize ) ) );
 		}
-		else if ( Globals.POSY == $fromFace ) {
-			//var tz:Number = _atten * ( z / loSize );
-			//var tx:Number = _atten * ( x / loSize );
-			//var tlob:Number = lob.b010;
-			//var nb:Number = tlob - tz;
-			//var nb:Number = tlob - tz;
-			//nb = Math.min( tlob - tz
-						 //, tlob - tx );
+		else if ( Globals.POSY == $faceFrom ) {
 			_s_sb.b010 = Math.min( lob.b010 - ( _atten * ( z / loSize ) )
 								 , lob.b010 - ( _atten * ( x / loSize ) ) );
 								 
@@ -404,7 +426,7 @@ public class Brightness extends BrightnessData {
 			_s_sb.b011 = Math.min( lob.b011 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
 			                     , lob.b110 - ( _atten * (x / loSize ) ) );
 		}
-		else if ( Globals.NEGY == $fromFace ) {
+		else if ( Globals.NEGY == $faceFrom ) {
 			_s_sb.b000 = Math.min( lob.b000 - ( _atten * ( z / loSize ) )
 								 , lob.b000 - ( _atten * ( x / loSize ) ) );
 								 
@@ -417,7 +439,7 @@ public class Brightness extends BrightnessData {
 			_s_sb.b001 = Math.min( lob.b001 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
 			                     , lob.b100 - ( _atten * (x / loSize ) ) );
 		}
-		else if ( Globals.POSZ == $fromFace ) {
+		else if ( Globals.POSZ == $faceFrom ) {
 			
 			_s_sb.b001 = Math.min( lob.b001 - ( _atten * ( y / loSize ) )
 								 , lob.b001 - ( _atten * ( x / loSize ) ) );
@@ -431,7 +453,7 @@ public class Brightness extends BrightnessData {
 			_s_sb.b101 = Math.min( lob.b101 - ( _atten * ( y / loSize ) )
 								 , lob.b101 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) );
 		}
-		else if ( Globals.NEGZ == $fromFace ) {
+		else if ( Globals.NEGZ == $faceFrom ) {
 			_s_sb.b000 = Math.min( lob.b000 - ( _atten * ( y / loSize ) )
 								 , lob.b000 - ( _atten * ( x / loSize ) ) );
 								 
@@ -445,13 +467,16 @@ public class Brightness extends BrightnessData {
 								 , lob.b100 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) );
 
 		}
-		Log.out( "Brightness.setFromSmallerOxel                     " + $no.toStringShort() + " brightness: " + _s_sb.toString() );			
-		return calculateEffect( $fromFace, _s_sb, $no, $id );
+		Log.out( "Brightness.setFromSmallerOxel                     " + $no.toStringShort() + " brightness: " + _s_sb.toString() );		
+		var faceOnly:Boolean = !$no.hasAlpha;
+		return addInfluence( _s_sb, $faceFrom, faceOnly, $no.gc.size() );
+		//return rebuildFace( $faceFrom, _s_sb, $no );
 	}
 	
-	// TODO uses NEW, would rather use the pool
+	// Brightness uses passed in value, which allows it to reuse a brightness
 	public function subfaceGet( $face:int, $child:int, $nb:Brightness ):void {
 		
+		$nb.lastLight = lastLight;
 		if ( Globals.POSX == $face ) {
 			if ( 0 == $child ) {
 				$nb.b100 = b100;
@@ -610,6 +635,7 @@ public class Brightness extends BrightnessData {
 		}				
 		else	
 			Log.out( "Brightness.subfaceGet: ERROR child index: " + $child );
+		$nb.color.copyFrom( color );	
 	}
 	
 	// grabs the light from a parent to a child brightness
@@ -707,145 +733,136 @@ public class Brightness extends BrightnessData {
 		  && b100 == $b.b100 
 		  && b110 == $b.b110 
 		  && b111 == $b.b111 
-		  && b101 == $b.b101 ) return true;
+		  && b101 == $b.b101
+		  && color.x == $b.color.x 
+		  && color.y == $b.color.y 
+		  && color.z == $b.color.z ) return true;
 		 
 		return false;  
 	}
 
 	// if changed return true, which can add a new light task for AIR oxels
-	public function calculateEffect( $fromFace:int, $lob:Brightness, $no:Oxel, $id:String ):Boolean {
-		if ( sunlit )
-			return false;
+	// this should only be called on solid oxels
+	public function rebuildFace( $faceFrom:int, $no:Oxel ):void {
 		
-		if ( !$lob.valuesHas() ) {
-			//Log.out( "Brightness.calculateEffect - fails valuesHas " );
-			return false;
-		}
-
-		if ( equals( $lob ) ) {
-			Log.out( "Brightness.calculateEffect - equal " );
-			return false;
-		}
-
-		var influence:Boolean;
-		if ( _lastLight == $id ) {
-			//Log.out( "Brightness.calculateEffect - already lit, adding influence: " + _lastLight + "  id: " +  $id + " this: " + toString() + "  influence: " + $lob.toString() );
-			influence = true;
-		}
+		if ( !$no.isSolid )
+			Log.out( "Brightness.calculateEffect - being called on non solid object", Log.ERROR );
 			
-		var faceOnly:Boolean = true;
-		if ( $no.hasAlpha )
-		{
-			// a oxel might be lit from multiple directions.
-			// so only let the alpha oxel restrict them selves to being lit once
-			_lastLight = $id;
-			faceOnly = false;
-		}
-
-		var c:Boolean = addInfluence( $lob, $fromFace, faceOnly, $no.gc.size() );
-
-		if ( c || faceOnly )
-		{
-			if ( faceOnly )
-				$no.quadRebuild( Oxel.face_get_opposite( $fromFace ) );
-			else
-				$no.quadsRebuildAll( $no.type ); // All of the quads may have changed...
-			//Log.out( "Brightness.calculateEffect - deleting quads" );					
-			//if ( faceOnly )
-				//$no.quadDeleteFace( Oxel.face_get_opposite( $fromFace ) );
-			//else
-				//$no.quadsDeleteAll( $no.type ); // All of the quads may have changed...
-		}
+		if ( sunlit )
+			return
 		
-		// this oxel has been previously lit, so dont add a new light for it.
-		if ( influence )
-			return false;
-		return c;
+		if ( !valuesHas() ) {
+			//Log.out( "Brightness.calculateEffect - fails valuesHas " );
+			return;
+		}
+
+		if ( $no.quads && 0 < $no.quads.length )
+		{
+				$no.quadRebuild( Oxel.face_get_opposite( $faceFrom ) );
+//			else
+//				$no.quadsRebuildAll( $no.type ); // All of the quads may have changed...
+		}
 	}
 	
-	public function addInfluence( $lob:Brightness, $fromFace:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
+	private function get avg():Number {
+		
+		return (b000 + b010 + b011 + b001 + b100 + b110 +  b111 + b101)/8
+	}
+	
+	private function colorMix( $lob:Brightness ):void {
+		
+		color = Color.combineRGBAndIntensity( color, avg, $lob.color, $lob.avg );
+	}
+	
+	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
+		_s_sb2.copyFrom( this );		
+		lastLight = $lob.lastLight;
+		
+		colorMix( $lob );
+		
 		const attenScaled:Number = _atten * ($grainUnits/16);
-		var c:Boolean = false;
-		if ( Globals.POSX == $fromFace ) {
+		if ( Globals.POSX == $faceFrom ) {
 			
-			if ( b000 < $lob.b100 ) { b000 = $lob.b100; c = true; }
-			if ( b010 < $lob.b110 ) { b010 = $lob.b110; c = true; }
-			if ( b011 < $lob.b111 ) { b011 = $lob.b111; c = true; }
-			if ( b001 < $lob.b101 ) { b001 = $lob.b101; c = true; }
+			if ( b000 < $lob.b100 ) { b000 = $lob.b100; }
+			if ( b010 < $lob.b110 ) { b010 = $lob.b110; }
+			if ( b011 < $lob.b111 ) { b011 = $lob.b111; }
+			if ( b001 < $lob.b101 ) { b001 = $lob.b101; }
 			if ( !$faceOnly ) {
-				if ( b100 < ( b000 - attenScaled ) ) { b100 = ( b000 - attenScaled ); c = true; }
-				if ( b110 < ( b010 - attenScaled ) ) { b110 = ( b010 - attenScaled ); c = true; }
-				if ( b111 < ( b011 - attenScaled ) ) { b111 = ( b011 - attenScaled ); c = true; }
-				if ( b101 < ( b001 - attenScaled ) ) { b101 = ( b001 - attenScaled ); c = true; }
+				if ( b100 < ( b000 - attenScaled ) ) { b100 = ( b000 - attenScaled ); }
+				if ( b110 < ( b010 - attenScaled ) ) { b110 = ( b010 - attenScaled ); }
+				if ( b111 < ( b011 - attenScaled ) ) { b111 = ( b011 - attenScaled ); }
+				if ( b101 < ( b001 - attenScaled ) ) { b101 = ( b001 - attenScaled ); }
 			}
 		}
-		else if ( Globals.NEGX == $fromFace ) {
+		else if ( Globals.NEGX == $faceFrom ) {
 
-			if ( b100 < $lob.b000 ) { b100 = $lob.b000; c = true; }
-			if ( b110 < $lob.b010 ) { b110 = $lob.b010; c = true; }
-			if ( b111 < $lob.b011 ) { b111 = $lob.b011; c = true; }
-			if ( b101 < $lob.b001 ) { b101 = $lob.b001; c = true; }
+			if ( b100 < $lob.b000 ) { b100 = $lob.b000; }
+			if ( b110 < $lob.b010 ) { b110 = $lob.b010; }
+			if ( b111 < $lob.b011 ) { b111 = $lob.b011; }
+			if ( b101 < $lob.b001 ) { b101 = $lob.b001; }
 			if ( !$faceOnly ) {
-				if ( b000 < ( b100 - attenScaled ) ) { b000 = ( b100 - attenScaled ); c = true; }
-				if ( b010 < ( b110 - attenScaled ) ) { b010 = ( b110 - attenScaled ); c = true; }
-				if ( b011 < ( b111 - attenScaled ) ) { b011 = ( b111 - attenScaled ); c = true; }
-				if ( b001 < ( b101 - attenScaled ) ) { b001 = ( b101 - attenScaled ); c = true; }
+				if ( b000 < ( b100 - attenScaled ) ) { b000 = ( b100 - attenScaled ); }
+				if ( b010 < ( b110 - attenScaled ) ) { b010 = ( b110 - attenScaled ); }
+				if ( b011 < ( b111 - attenScaled ) ) { b011 = ( b111 - attenScaled ); }
+				if ( b001 < ( b101 - attenScaled ) ) { b001 = ( b101 - attenScaled ); }
 			}
 		}
-		else if ( Globals.POSY == $fromFace ) {
+		else if ( Globals.POSY == $faceFrom ) {
 
-			if ( b000 < $lob.b010 ) { b000 = $lob.b010; c = true; }
-			if ( b100 < $lob.b110 ) { b100 = $lob.b110; c = true; }
-			if ( b101 < $lob.b111 ) { b101 = $lob.b111; c = true; }
-			if ( b001 < $lob.b011 ) { b001 = $lob.b011; c = true; }
+			if ( b000 < $lob.b010 ) { b000 = $lob.b010; }
+			if ( b100 < $lob.b110 ) { b100 = $lob.b110; }
+			if ( b101 < $lob.b111 ) { b101 = $lob.b111; }
+			if ( b001 < $lob.b011 ) { b001 = $lob.b011; }
 			if ( !$faceOnly ) {
-				if ( b010 < ( b000 - attenScaled ) ) { b010 = ( b000 - attenScaled ); c = true; }
-				if ( b110 < ( b100 - attenScaled ) ) { b110 = ( b100 - attenScaled ); c = true; }
-				if ( b111 < ( b101 - attenScaled ) ) { b111 = ( b101 - attenScaled ); c = true; }
-				if ( b011 < ( b001 - attenScaled ) ) { b011 = ( b001 - attenScaled ); c = true; }
+				if ( b010 < ( b000 - attenScaled ) ) { b010 = ( b000 - attenScaled ); }
+				if ( b110 < ( b100 - attenScaled ) ) { b110 = ( b100 - attenScaled ); }
+				if ( b111 < ( b101 - attenScaled ) ) { b111 = ( b101 - attenScaled ); }
+				if ( b011 < ( b001 - attenScaled ) ) { b011 = ( b001 - attenScaled ); }
 			}
 		}
-		else if ( Globals.NEGY == $fromFace ) {
+		else if ( Globals.NEGY == $faceFrom ) {
 
-			if ( b010 < $lob.b000 ) { b010 = $lob.b000; c = true; }
-			if ( b110 < $lob.b100 ) { b110 = $lob.b100; c = true; }
-			if ( b111 < $lob.b101 ) { b111 = $lob.b101; c = true; }
-			if ( b011 < $lob.b001 ) { b011 = $lob.b001; c = true; }
+			if ( b010 < $lob.b000 ) { b010 = $lob.b000; }
+			if ( b110 < $lob.b100 ) { b110 = $lob.b100; }
+			if ( b111 < $lob.b101 ) { b111 = $lob.b101; }
+			if ( b011 < $lob.b001 ) { b011 = $lob.b001; }
 			if ( !$faceOnly ) {
-				if ( b000 < ( b010 - attenScaled ) ) { b000 = ( b010 - attenScaled ); c = true; }
-				if ( b100 < ( b110 - attenScaled ) ) { b100 = ( b110 - attenScaled ); c = true; }
-				if ( b101 < ( b111 - attenScaled ) ) { b101 = ( b111 - attenScaled ); c = true; }
-				if ( b001 < ( b011 - attenScaled ) ) { b001 = ( b011 - attenScaled ); c = true; }
+				if ( b000 < ( b010 - attenScaled ) ) { b000 = ( b010 - attenScaled ); }
+				if ( b100 < ( b110 - attenScaled ) ) { b100 = ( b110 - attenScaled ); }
+				if ( b101 < ( b111 - attenScaled ) ) { b101 = ( b111 - attenScaled ); }
+				if ( b001 < ( b011 - attenScaled ) ) { b001 = ( b011 - attenScaled ); }
 			}
 		}
-		else if ( Globals.POSZ == $fromFace ) {
+		else if ( Globals.POSZ == $faceFrom ) {
 
-			if ( b000 < $lob.b001 ) { b000 = $lob.b001; c = true; }
-			if ( b010 < $lob.b011 ) { b010 = $lob.b011; c = true; }
-			if ( b110 < $lob.b111 ) { b110 = $lob.b111; c = true; }
-			if ( b100 < $lob.b101 ) { b100 = $lob.b101; c = true; }
+			if ( b000 < $lob.b001 ) { b000 = $lob.b001; }
+			if ( b010 < $lob.b011 ) { b010 = $lob.b011; }
+			if ( b110 < $lob.b111 ) { b110 = $lob.b111; }
+			if ( b100 < $lob.b101 ) { b100 = $lob.b101; }
 			if ( !$faceOnly ) {
-				if ( b001 < ( b000 - attenScaled ) ) { b001 = ( b000 - attenScaled ); c = true; }
-				if ( b011 < ( b010 - attenScaled ) ) { b011 = ( b010 - attenScaled ); c = true; }
-				if ( b111 < ( b110 - attenScaled ) ) { b111 = ( b110 - attenScaled ); c = true; }
-				if ( b101 < ( b100 - attenScaled ) ) { b101 = ( b100 - attenScaled ); c = true; }
+				if ( b001 < ( b000 - attenScaled ) ) { b001 = ( b000 - attenScaled ); }
+				if ( b011 < ( b010 - attenScaled ) ) { b011 = ( b010 - attenScaled ); }
+				if ( b111 < ( b110 - attenScaled ) ) { b111 = ( b110 - attenScaled ); }
+				if ( b101 < ( b100 - attenScaled ) ) { b101 = ( b100 - attenScaled ); }
 			}
 		}
-		else if ( Globals.NEGZ == $fromFace ) {
+		else if ( Globals.NEGZ == $faceFrom ) {
 			
-			if ( b001 < $lob.b000 ) { b001 = $lob.b000; c = true; }
-			if ( b011 < $lob.b010 ) { b011 = $lob.b010; c = true; }
-			if ( b111 < $lob.b110 ) { b111 = $lob.b110; c = true; }
-			if ( b101 < $lob.b100 ) { b101 = $lob.b100; c = true; }
+			if ( b001 < $lob.b000 ) { b001 = $lob.b000; }
+			if ( b011 < $lob.b010 ) { b011 = $lob.b010; }
+			if ( b111 < $lob.b110 ) { b111 = $lob.b110; }
+			if ( b101 < $lob.b100 ) { b101 = $lob.b100; }
 			if ( !$faceOnly ) {
-				if ( b000 < ( b001 - attenScaled ) ) { b000 = ( b001 - attenScaled ); c = true; }
-				if ( b010 < ( b011 - attenScaled ) ) { b010 = ( b011 - attenScaled ); c = true; }
-				if ( b110 < ( b111 - attenScaled ) ) { b110 = ( b111 - attenScaled ); c = true; }
-				if ( b100 < ( b101 - attenScaled ) ) { b100 = ( b101 - attenScaled ); c = true; }
+				if ( b000 < ( b001 - attenScaled ) ) { b000 = ( b001 - attenScaled ); }
+				if ( b010 < ( b011 - attenScaled ) ) { b010 = ( b011 - attenScaled ); }
+				if ( b110 < ( b111 - attenScaled ) ) { b110 = ( b111 - attenScaled ); }
+				if ( b100 < ( b101 - attenScaled ) ) { b100 = ( b101 - attenScaled ); }
 			}
 		}
-		return c;
+		
+		var changed:Boolean = !_s_sb2.equals( this );
+		return changed;
 	}
 	
 } // end of class FlowInfo

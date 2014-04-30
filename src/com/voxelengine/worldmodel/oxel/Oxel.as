@@ -613,8 +613,12 @@ package com.voxelengine.worldmodel.oxel
 				if ( "" == $guid )
 					throw new Error( "Oxel.type - no active model guid" );
 				if ( EditCursor.EDIT_CURSOR != $guid )
-					LightRemove.addTask( $guid, gc, Globals.getUID() );
-				// dispatch event starting light removal
+				{
+					var color:Vector3D = brightness.color;
+					var lightGuid:String = brightness.lastLight;
+					LightRemove.addTask( $guid, gc, lightGuid, color );
+					// TODO - dispatch event starting light regeneration from other lights
+				}
 			}
 			
 			if ( Globals.Info[$newType] )
@@ -641,7 +645,7 @@ package com.voxelengine.worldmodel.oxel
 						// keep any existing brightness Info
 						if ( !_brightness ) {
 							_brightness = BrightnessPool.poolGet();
-							_brightness.copyFrom( Globals.Info[$newType].brightness, Brightness.FIXED );
+							_brightness.copyFrom( Globals.Info[$newType].brightness );
 						}
 					}
 				}
@@ -1273,7 +1277,7 @@ package com.voxelengine.worldmodel.oxel
 				if ( Globals.Info[type].light ) // had & quads, but that doesnt matter with this style
 				{
 					_s_lightsFound++;
-					Light.addTask( $guid, gc, Globals.getUID() );
+					Light.addTask( $guid, gc, Globals.getUID(), new Vector3D(1,1,1,1) );
 				}
 			}
 		}

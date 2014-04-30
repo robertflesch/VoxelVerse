@@ -9,6 +9,7 @@
 package com.voxelengine.renderer {
 
 //import com.voxelengine.utils.Color;
+import com.voxelengine.utils.Color;
 import flash.geom.Vector3D;
 import flash.utils.getTimer;
 
@@ -476,7 +477,8 @@ public class Quad {
 		//Log.out( "Quad.addStraightVerticesNew temp: " + brightness );
 		//Log.out( "Quad.asvn - plane_facing: " + plane_facing );
 		var vertexIndex:int;
-		var tint:Vector3D = $ti.color;
+		var tint:Vector3D = Color.combineRGB( $ti.color, $brightness.color );
+		
 		var sideBrightness:Number = 0.5;
 		var normal:int = 1;
 		switch ( face ) 
@@ -541,6 +543,9 @@ public class Quad {
 			
 		buildIndices( normal );
 	}
+
+
+	
 	
 	///////////////////////
 	// DEPRECATED DEPRECATED DEPRECATED

@@ -9,6 +9,7 @@
 package com.voxelengine.worldmodel.tasks.lighting
 {
 	import com.developmentarc.core.tasks.events.TaskEvent;
+	import flash.geom.Vector3D;
 	
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
@@ -28,10 +29,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 	public class LightRemove extends LightTask 
 	{		
 		
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $taskPriority:int = 1 ):void 
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskPriority:int = 1 ):void 
 		{
 			Log.out( "LightRemove.addTask: for gc: " + $gc.toString() );
-			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $id, $gc.toID(), LightTask.TASK_PRIORITY + $taskPriority )
+			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $id, $color, $gc.toID(), LightTask.TASK_PRIORITY + $taskPriority )
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
@@ -40,8 +41,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 		 * @param $taskType The Task type.
 		 * @param $taskPriority The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
 		 */
-		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $id:String, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
-			super( $instanceGuid, $gc, $id, $taskType, $taskPriority );
+		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
+			super( $instanceGuid, $gc, $id, $color, TASK_TYPE, $taskPriority );
 		}
 		
 		override public function start():void {
@@ -50,6 +51,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
 			main:if ( vm )
 			{
+				// we are going to be getting the light oxel position, the light is gone.
+				// In that case how do I get its id, and colors??
 				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
 				if ( null == lo.gc )
 					break main; 
@@ -75,7 +78,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					else if ( null == no.gc ) // this happens if we run into a released oxel, should never happen
 						continue;
 	
-					LightRemoveNeighbor( no, lo, face );
+					lightRemoveNeighbor( no, lo, face );
 				}
 			}
 			else
@@ -84,8 +87,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 			}	
 			super.complete();
 		}
+
+		private function remove( $gc:GrainCursor, $id:String, $color:Vector3D, $priority:int ):void {
+			LightRemove.addTask( _guid, $gc, $id, $color, $priority );
+		}
 		
-		private function LightRemoveNeighbor( $no:Oxel, $lo:Oxel, $face:int ):void {
+		private function lightRemoveNeighbor( $no:Oxel, $lo:Oxel, $face:int ):void {
 			
 			if ( $no.brightness ) {
 				if ( $no.brightness.lastLight == id ) // dont relight something that already has the influence from this light
@@ -106,7 +113,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( $no.gc.grain == $lo.gc.grain )
 				{
 					if ( $no.brightness.restoreDefault( id, $no, $face ) )
-						LightRemove.addTask( _guid, $no.gc, id, priority + $no.gc.grain );
+						remove( $no.gc, id, color, priority + $lo.parent.gc.grain );
 				}
 					
 				else // no is larger (never smaller by definition)	
@@ -117,7 +124,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						if ( !$lo.parent.brightness )
 							$lo.parent.brightness = BrightnessPool.poolGet();
 						$lo.parent.brightness.restoreDefaultFromChildOxel( id, $lo.parent, $face );
-						LightRemove.addTask( _guid, $lo.parent.gc, id, priority + $lo.parent.gc.grain );
+						remove( $lo.parent.gc, id, color, priority + $lo.parent.gc.grain );
 					}
 					//propogate = $no.brightness.setToDefaultFromChildOxel( id, $no, $face );
 				}
@@ -145,7 +152,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						if ( !$lo.parent.brightness )
 							$lo.parent.brightness = BrightnessPool.poolGet();
 						$lo.parent.brightness.restoreDefaultFromChildOxel( id, $lo.parent, $face );
-						LightRemove.addTask( _guid, $lo.parent.gc, id, priority + $lo.parent.gc.grain );
+						remove( $lo.parent.gc, id, color, priority + $lo.parent.gc.grain );
 					}
 					//propogate = $no.brightness.setToDefaultFromChildOxel( id, $no, $face );
 				}
@@ -185,7 +192,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				oxelt.brightness = Brightness.scratch();
 				oxelt.brightness.restoreDefault( id, $no, $face );
 				
-				LightRemoveNeighbor( dchild[childIndex], oxelt, $face ); 
+				lightRemoveNeighbor( dchild[childIndex], oxelt, $face ); 
 				
 			}
 			GrainCursorPool.poolDispose( gct );
