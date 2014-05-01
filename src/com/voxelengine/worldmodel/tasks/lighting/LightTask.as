@@ -23,14 +23,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 		protected var _guid:String;
 		protected var _gc:GrainCursor;
 		private var _id:String;
-		private var _color:Vector3D;
+		private var _color:uint;
 		public function get id():String { return _id; }
-		public function get color():Vector3D { return _color; }
+		public function get color():uint { return _color; }
 		
 		public static const TASK_TYPE:String = "LIGHT_TASK";
         public static const TASK_PRIORITY:int = 1;
 		
-		public function LightTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
+		public function LightTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
 			// The model containing the grain 
 			_guid = $instanceGuid
 			// the grain id

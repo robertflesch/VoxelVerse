@@ -48,6 +48,7 @@ public class Brightness extends BrightnessData {
 	public const DEFAULT_SIGMA:Number = 0.01;
 	public const DEFAULT_ATTEN:Number = 0.1;
 	public const DEFAULT_PER_DISTANCE:int = 16;
+	public const DEFAULT_COLOR:int = 0xffffffff;
 	private var _atten:Number = DEFAULT_ATTEN;  // down 1 per meter
 	private var _sunlit:Boolean;
 	public var _b000:Number = DEFAULT;
@@ -58,7 +59,10 @@ public class Brightness extends BrightnessData {
 	public var _b011:Number = DEFAULT;
 	public var _b110:Number = DEFAULT;
 	public var _b111:Number = DEFAULT;
-	public var color:Vector3D = new Vector3D(1,1,1,1);
+	//public var color:Vector3D = new Vector3D(1, 1, 1, 1);
+	private var _color:uint = DEFAULT_COLOR;
+	public function get color():uint { return _color; }
+	public function set color( v:uint ):void { _color = v; }
 	
 	public function get b000():Number { return _b000; }
 	public function get b001():Number { return _b001; }
@@ -89,7 +93,7 @@ public class Brightness extends BrightnessData {
 	// trace(setPrecision(number,2)); //Result is 10.98
 	// trace(setPrecision(number,3)); //Result is 10.988 and so on
 	// http://stackoverflow.com/questions/632802/how-to-deal-with-number-precision-in-actionscript
-	private function setPrecision( $number:Number, $precision:int = 2):Number {
+	private function setPrecision( $number:Number, $precision:int = 3):Number {
 		$precision = Math.pow(10, $precision);
 		return Math.round( $number * $precision )/$precision;
 	}
@@ -138,7 +142,7 @@ public class Brightness extends BrightnessData {
 		if ( sunlit )
 			return;
 		_lastLight = $b.lastLight;
-		color.copyFrom( $b.color );
+		_color = $b.color;
 		b000 = $b.b000;
 		b001 = $b.b001; 
 		b010 = $b.b010; 
@@ -182,6 +186,12 @@ public class Brightness extends BrightnessData {
 		if ( ( DEFAULT + DEFAULT_SIGMA ) < b110 )
 			return true;
 		if ( ( DEFAULT + DEFAULT_SIGMA ) < b111 )
+			return true;
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractRed( color ) )
+			return true;
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractGreen( color ) )
+			return true;
+		if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractBlue( color ) )
 			return true;
 			
 		return false;
@@ -271,10 +281,7 @@ public class Brightness extends BrightnessData {
 		_lastLight = "";
 		_atten = DEFAULT_ATTEN;
 		_sunlit = false;
-		color.w = 1;
-		color.x = 1;
-		color.y = 1;
-		color.z = 1;
+		color = DEFAULT_COLOR;
 	}
 	
 	public function setByFace( $face:int, $val:Number, $id:String, size:int ):void {
@@ -358,7 +365,7 @@ public class Brightness extends BrightnessData {
 	}
 	
 	// This creates a virtual larger face that is then applied to the larger no.
-	public function setFromSmallerOxel( $no:Oxel, $lo:Oxel, $faceFrom:int ):Boolean {
+	public function setFromSmallerOxel( $no:Oxel, $lo:Oxel, $faceFrom:int, $lightColor:uint ):Boolean {
 		//Log.out( "setFromSmallerOxel" );
 		// small lo being applied to larger no
 		// I need to find the position offset, by
@@ -386,7 +393,7 @@ public class Brightness extends BrightnessData {
 		var lob:Brightness = $lo.brightness;
 		_s_sb.reset();
 		_s_sb.lastLight = lob.lastLight;
-		_s_sb.colorMix( lob );
+		//_s_sb.colorMix( lob, $lightColor );
 		if ( Globals.POSX == $faceFrom ) {
 			_s_sb.b100 = Math.min( lob.b100 - ( _atten * (z / loSize) )
 							     , lob.b100 - ( _atten * (y / loSize) ) );
@@ -469,7 +476,7 @@ public class Brightness extends BrightnessData {
 		}
 		Log.out( "Brightness.setFromSmallerOxel                     " + $no.toStringShort() + " brightness: " + _s_sb.toString() );		
 		var faceOnly:Boolean = !$no.hasAlpha;
-		return addInfluence( _s_sb, $faceFrom, faceOnly, $no.gc.size() );
+		return addInfluence( _s_sb, $faceFrom, faceOnly, $no.gc.size(), $lightColor );
 		//return rebuildFace( $faceFrom, _s_sb, $no );
 	}
 	
@@ -635,7 +642,7 @@ public class Brightness extends BrightnessData {
 		}				
 		else	
 			Log.out( "Brightness.subfaceGet: ERROR child index: " + $child );
-		$nb.color.copyFrom( color );	
+		$nb.color = color;	
 	}
 	
 	// grabs the light from a parent to a child brightness
@@ -734,52 +741,55 @@ public class Brightness extends BrightnessData {
 		  && b110 == $b.b110 
 		  && b111 == $b.b111 
 		  && b101 == $b.b101
-		  && color.x == $b.color.x 
-		  && color.y == $b.color.y 
-		  && color.z == $b.color.z ) return true;
+		  && color == $b.color ) return true;
 		 
 		return false;  
 	}
 
-	// if changed return true, which can add a new light task for AIR oxels
-	// this should only be called on solid oxels
-	public function rebuildFace( $faceFrom:int, $no:Oxel ):void {
-		
-		if ( !$no.isSolid )
-			Log.out( "Brightness.calculateEffect - being called on non solid object", Log.ERROR );
-			
-		if ( sunlit )
-			return
-		
-		if ( !valuesHas() ) {
-			//Log.out( "Brightness.calculateEffect - fails valuesHas " );
-			return;
-		}
-
-		if ( $no.quads && 0 < $no.quads.length )
-		{
-				$no.quadRebuild( Oxel.face_get_opposite( $faceFrom ) );
-//			else
-//				$no.quadsRebuildAll( $no.type ); // All of the quads may have changed...
-		}
-	}
-	
 	private function get avg():Number {
 		
 		return (b000 + b010 + b011 + b001 + b100 + b110 +  b111 + b101)/8
 	}
 	
-	private function colorMix( $lob:Brightness ):void {
+	private function get max():Number {
 		
-		color = Color.combineRGBAndIntensity( color, avg, $lob.color, $lob.avg );
+		var max:Number = DEFAULT;
+		if ( max < b000 )
+			max = b000;
+		if ( max < b001 )
+			max = b001;
+		if ( max < b010 )
+			max = b010;
+		if ( max < b011 )
+			max = b011;
+		if ( max < b100 )
+			max = b100;
+		if ( max < b101 )
+			max = b101;
+		if ( max < b110 )
+			max = b110;
+		if ( max < b111 )
+			max = b111;
+
+		return max;	
 	}
 	
-	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
+	private function colorMix( $lob:Brightness, $lightColor:uint ):void {
+		
+		// want to mix the default color * DEFAULT (intensity) + lob.color * $lob.avg
+		//color = Color.combineRGBAndIntensity( color, DEFAULT, $lob.color, $lob.avg );
+		Log.out( "Brightness.colorMix premix: " + Color.displayInHex( color ) + "  lightColor: " + Color.displayInHex( $lightColor ) );
+		//color = Color.test( color, DEFAULT, $lightColor, $lob.max );
+		color = Color.testInt( color, DEFAULT, $lightColor, $lob.max );
+		Log.out( "Brightness.colorMix postmx: " + Color.displayInHex( color ) );
+	}
+	
+	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int, $lightColor:uint ):Boolean
 	{
 		_s_sb2.copyFrom( this );		
 		lastLight = $lob.lastLight;
 		
-		colorMix( $lob );
+		colorMix( $lob, $lightColor );
 		
 		const attenScaled:Number = _atten * ($grainUnits/16);
 		if ( Globals.POSX == $faceFrom ) {

@@ -10,6 +10,7 @@ package com.voxelengine.worldmodel
 	import com.voxelengine.events.LoadingEvent;
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
+	import com.voxelengine.utils.Color;
 	import com.voxelengine.worldmodel.oxel.Brightness;
 	import com.voxelengine.worldmodel.oxel.FlowInfo;
 	import flash.geom.Vector3D;
@@ -31,7 +32,8 @@ package com.voxelengine.worldmodel
 		private var _typeId:uint				= Globals.INVALID;
 		private var _category:String 			= "INVALID";
 		private var _name:String 				= "INVALID"
-		private var _color:Vector3D 			= new Vector3D(1,1,1,1);
+		//private var _color:Vector3D 			= new Vector3D(1,1,1,1);
+		private var _color:uint					= 0xffffffff;
 		private var _maxpix:uint 				= 256;
 		private var _minpix:uint 				= 1;
 		private var _toptt:int					= TileType.TILE_FIXED;
@@ -61,7 +63,7 @@ package com.voxelengine.worldmodel
 		public function get type():uint 		{ return _typeId; }
 		public function get alpha():Boolean 		
 		{ 
-			if ( _color.w != 1 ) 
+			if ( Color.extractAlpha( _color ) != 255 ) 
 				return true 
 			else 
 				return false; 
@@ -78,7 +80,7 @@ package com.voxelengine.worldmodel
 		public function get solid():Boolean 		{ return _solid; }
 		public function get flowable():Boolean 		{ return _flowable; }
 		public function get animated():Boolean 		{ return _animated; }
-		public function get color():Vector3D 		{ return _color; }
+		public function get color():uint	 		{ return _color; }
 		public function get maxpix():uint 			{ return _maxpix; }
 		public function get minpix():uint 			{ return _minpix; }
 		public function set minpix(val:uint):void	{ _minpix = val; }
@@ -105,16 +107,16 @@ package com.voxelengine.worldmodel
 				_name = o.value;
 				break;
 			case "red":
-				_color.x = o.value;
+				Color.placeRedNumber( _color, o.value );
 				break;
 			case "green":
-				_color.y = o.value;
+				Color.placeGreenNumber( _color, o.value );
 				break;
 			case "blue":
-				_color.z = o.value;
+				Color.placeBlueNumber( _color, o.value );
 				break;
 			case "alpha":
-				_color.w = o.value;
+				Color.placeAlphaNumber( _color, o.value );
 				break;
 			case "class":
 				_category = o.value;
@@ -202,10 +204,12 @@ package com.voxelengine.worldmodel
 
 			if ( typesJson.color  )
 			{
-				var color:Vector3D = new Vector3D( typesJson.color.r, typesJson.color.g, typesJson.color.b, typesJson.color.a );
-				_color = color;
+				_color = Color.placeRedNumber( _color, typesJson.color.r );
+				_color = Color.placeGreenNumber( _color, typesJson.color.g );
+				_color = Color.placeBlueNumber( _color, typesJson.color.b );
+				_color = Color.placeAlphaNumber( _color, typesJson.color.a );
 				if ( _brightness )
-					_brightness.color.copyFrom( _color );
+					_brightness.color = _color;
 			}
 			
 			if ( typesJson.uv )

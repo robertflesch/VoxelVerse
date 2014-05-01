@@ -29,7 +29,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 	public class LightRemove extends LightTask 
 	{		
 		
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskPriority:int = 1 ):void 
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint, $taskPriority:int = 1 ):void 
 		{
 			Log.out( "LightRemove.addTask: for gc: " + $gc.toString() );
 			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $id, $color, $gc.toID(), LightTask.TASK_PRIORITY + $taskPriority )
@@ -41,7 +41,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		 * @param $taskType The Task type.
 		 * @param $taskPriority The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
 		 */
-		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:Vector3D, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
+		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
 			super( $instanceGuid, $gc, $id, $color, TASK_TYPE, $taskPriority );
 		}
 		
@@ -88,7 +88,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 
-		private function remove( $gc:GrainCursor, $id:String, $color:Vector3D, $priority:int ):void {
+		private function remove( $gc:GrainCursor, $id:String, $color:uint, $priority:int ):void {
 			LightRemove.addTask( _guid, $gc, $id, $color, $priority );
 		}
 		
