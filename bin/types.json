@@ -953,7 +953,7 @@
                 "vb": 0.875
             }
         },
-        {   "name": "RED",
+        {   "name": "REDL",
             "image": "lightRed.png",
             "id": 990,
             "category": "LIQUID",
@@ -972,7 +972,7 @@
                 "a": 0.99
             }
         },
-        {   "name": "BLUE",
+        {   "name": "BLUEL",
             "image": "lightBlue.png",
             "id": 991,
             "category": "LIQUID",
@@ -991,7 +991,7 @@
                 "a": 0.99
             }
         },
-        {   "name": "GREEN",
+        {   "name": "GREENL",
             "image": "lightGreen.png",
             "id": 992,
             "category": "LIQUID",
@@ -1007,6 +1007,25 @@
                 "r": 0,
                 "g": 1,
                 "b": 0,
+                "a": 0.99
+            }
+        },
+        {   "name": "WHITEL",
+            "image": "lightWhite.png",
+            "id": 993,
+            "category": "LIQUID",
+			"light" : "true",
+            "solid": "false",
+			"interactions": [
+				{ "PICK"		: [ "AIR", 100, "na" ] },
+				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
+				{ "AXE"			: [ "AIR", 100, "na" ] }
+			],			
+			"placeable" : "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
                 "a": 0.99
             }
         },
