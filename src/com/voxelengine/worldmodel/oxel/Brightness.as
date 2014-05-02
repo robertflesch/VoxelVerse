@@ -48,7 +48,7 @@ public class Brightness extends BrightnessData {
 	public const DEFAULT_SIGMA:Number = 0.01;
 	public const DEFAULT_ATTEN:Number = 0.1;
 	public const DEFAULT_PER_DISTANCE:int = 16;
-	public const DEFAULT_COLOR:int = 0xffffffff;
+	public const DEFAULT_COLOR:uint = 0xffffffff;
 	private var _atten:Number = DEFAULT_ATTEN;  // down 1 per meter
 	private var _sunlit:Boolean;
 	public var _b000:Number = DEFAULT;
@@ -135,7 +135,8 @@ public class Brightness extends BrightnessData {
 				"  b010: " + b010 +
 				"  b011: " + b011 +
 				"  b110: " + b110 +
-				"  b111: " + b111;
+				"  b111: " + b111 + 
+				" color: " + Color.displayInHex( color );
 	}
 	
 	public function copyFrom( $b:Brightness ):void {
@@ -187,12 +188,12 @@ public class Brightness extends BrightnessData {
 			return true;
 		if ( ( DEFAULT + DEFAULT_SIGMA ) < b111 )
 			return true;
-		if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractRed( color ) )
-			return true;
-		if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractGreen( color ) )
-			return true;
-		if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractBlue( color ) )
-			return true;
+		//if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractRed( color ) )
+			//return true;
+		//if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractGreen( color ) )
+			//return true;
+		//if ( ( DEFAULT + DEFAULT_SIGMA ) < Color.extractBlue( color ) )
+			//return true;
 			
 		return false;
 	}
@@ -780,7 +781,7 @@ public class Brightness extends BrightnessData {
 		//color = Color.combineRGBAndIntensity( color, DEFAULT, $lob.color, $lob.avg );
 		Log.out( "Brightness.colorMix premix: " + Color.displayInHex( color ) + "  lightColor: " + Color.displayInHex( $lightColor ) );
 		//color = Color.test( color, DEFAULT, $lightColor, $lob.max );
-		color = Color.testInt( color, DEFAULT, $lightColor, $lob.max );
+		color = Color.testInt( color, DEFAULT, $lightColor, $lob.max, DEFAULT_COLOR * DEFAULT );
 		Log.out( "Brightness.colorMix postmx: " + Color.displayInHex( color ) );
 	}
 	

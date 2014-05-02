@@ -252,7 +252,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( $no.brightness.valuesHas() )
 			{
 				Light.addTask( _guid, $no.gc, id, color, $no.gc.grain );
-				Log.out( "Light.add - ID: " + id );
+				Log.out( "Light.add - ID: " + id + $no.brightness.toString() );
 			}
 		}
 		

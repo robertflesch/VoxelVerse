@@ -52,11 +52,11 @@ import flash.geom.Vector3D;
 			return newTint;
 		}
 
-		public static function testInt( c1:uint, αa:Number, c2:uint, αb:Number ):uint {
+		public static function testInt( c1:uint, αa:Number, c2:uint, αb:Number, defaultColor:uint ):uint {
 			var newTint:uint;
-			newTint = RGBToHex( Math.max( extractRed(c1) * αa, extractRed(c2) * αb )
-			                  , Math.max( extractGreen(c1) * αa, extractGreen(c2) * αb ) 
-							  , Math.max( extractBlue(c1) * αa, extractBlue(c2) * αb ) );
+			newTint = RGBToHex( Math.max( extractRed(defaultColor),   Math.max( extractRed(c1) * αa, extractRed(c2) * αb ) )
+			                  , Math.max( extractGreen(defaultColor), Math.max( extractGreen(c1) * αa, extractGreen(c2) * αb ) )
+							  , Math.max( extractBlue(defaultColor), Math.max( extractBlue(c1) * αa, extractBlue(c2) * αb ) ) );
 			
 			return newTint;
 		}
