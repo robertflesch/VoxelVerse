@@ -1,6 +1,6 @@
 {
 	"config" : {
-		"region": { "startingRegion":"CollisionTest"  },
+		"region": { "startingRegion":"Cube"  },
 		"typeName" : "types.json",
 		"showHelp" : false,
 		"showButtons" : true,

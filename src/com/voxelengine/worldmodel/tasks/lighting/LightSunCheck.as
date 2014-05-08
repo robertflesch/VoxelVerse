@@ -38,15 +38,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 		private static var _s_sunLight:Number = 0.8;
 		
 		private var _face:int;
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $face:int, $taskPriority:int = 1 ):void 
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:uint, $face:int, $taskPriority:int = 1 ):void 
 		{
 			Globals.g_lightTaskController.addTask( new LightSunCheck( $instanceGuid, $gc, $id, $face, LightTask.TASK_TYPE, LightTask.TASK_PRIORITY + $taskPriority ) );
 		}
 		
-		public function LightSunCheck( $instanceGuid:String, $gc:GrainCursor, $id:String, $face:int, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
+		public function LightSunCheck( $instanceGuid:String, $gc:GrainCursor, $id:uint, $face:int, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
 			//Log.out( "LightSunCheck.create" );
 			_face = $face;
-			super( $instanceGuid, $gc, $id, 0xffffffff, $taskType, $taskPriority );
+			super( $instanceGuid, $gc, $id, $taskType, $taskPriority );
 		}
 		
 		override public function start():void {

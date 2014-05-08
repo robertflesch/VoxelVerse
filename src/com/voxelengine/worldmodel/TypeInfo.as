@@ -33,6 +33,7 @@ package com.voxelengine.worldmodel
 		private var _category:String 			= "INVALID";
 		private var _name:String 				= "INVALID"
 		//private var _color:Vector3D 			= new Vector3D(1,1,1,1);
+		// ARGB format
 		private var _color:uint					= 0xffffffff;
 		private var _maxpix:uint 				= 256;
 		private var _minpix:uint 				= 1;
@@ -208,8 +209,6 @@ package com.voxelengine.worldmodel
 				_color = Color.placeGreenNumber( _color, typesJson.color.g );
 				_color = Color.placeBlueNumber( _color, typesJson.color.b );
 				_color = Color.placeAlphaNumber( _color, typesJson.color.a );
-				if ( _brightness )
-					_brightness.color = _color;
 			}
 			
 			if ( typesJson.uv )

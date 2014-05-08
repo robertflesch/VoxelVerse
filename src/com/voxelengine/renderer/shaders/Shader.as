@@ -134,10 +134,11 @@ package com.voxelengine.renderer.shaders
 				// texture repeat. Options: repeat, wrap, clamp
 				"tex ft0, v0, fs0 <2d,clamp,mipnearest>", // v1 is passed in from vertex, UV coordinates
 				// now apply the color and brightness from the vertex attirbutes
+				
 				/////////////////////////////////////////////////
 				// base texture
 				/////////////////////////////////////////////////
-				"mul ft0, v1.xyz, ft0", // texture color - v3.xyz
+				"mul ft0, v1.xyz, ft0", // texture color - v1.xyz
 				
 				/////////////////////////////////////////////////
 				// light from brightness

@@ -488,6 +488,7 @@ package com.voxelengine.worldmodel.models
 				{
 					oldDic[instance.instanceInfo.instanceGuid] = null;
 					instance.release();
+					// could I just use a delete here, rather then creating new dictionary? See Dictionary class for details - RSF
 				}
 				else
 				{

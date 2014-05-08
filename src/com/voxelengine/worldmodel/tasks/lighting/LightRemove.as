@@ -9,6 +9,7 @@
 package com.voxelengine.worldmodel.tasks.lighting
 {
 	import com.developmentarc.core.tasks.events.TaskEvent;
+	import com.voxelengine.events.LightEvent;
 	import flash.geom.Vector3D;
 	
 	import com.voxelengine.Log;
@@ -28,21 +29,33 @@ package com.voxelengine.worldmodel.tasks.lighting
 	 */
 	public class LightRemove extends LightTask 
 	{		
-		
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint, $taskPriority:int = 1 ):void 
-		{
-			Log.out( "LightRemove.addTask: for gc: " + $gc.toString() );
-			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $id, $color, $gc.toID(), LightTask.TASK_PRIORITY + $taskPriority )
+		static public function handleLightEvents( $le:LightEvent ):void {
+			if ( LightEvent.REMOVE == $le.type )
+			{
+				addTask( $le.instanceGuid, $le.gc, $le.lightID );
+			}
+		}
+		 
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
+			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
+			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $lightID );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
+	
+		
+		// NEVER use this, use the static function
+		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
+			super( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
+		}
+
 		
 		/**
 		 * @param $taskType The Task type.
 		 * @param $taskPriority The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
 		 */
-		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
-			super( $instanceGuid, $gc, $id, $color, TASK_TYPE, $taskPriority );
+		private function remove( $gc:GrainCursor, $lightID:uint ):void {
+			LightRemove.addTask( _guid, $gc, $lightID );
 		}
 		
 		override public function start():void {
@@ -52,7 +65,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			main:if ( vm )
 			{
 				// we are going to be getting the light oxel position, the light is gone.
-				// In that case how do I get its id, and colors??
+				// In that case how do I get its lightID, and colors??
 				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
 				if ( null == lo.gc )
 					break main; 
@@ -63,7 +76,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				Log.out( "LightRemove.start - priority: " + priority + " oxel: " + lo.toStringShort() + " brightness: " + lo.brightness.toString() );
 				
 				// face is ignored here, but better to put in a valid value.
-				lo.brightness.restoreDefault( "", lo, Globals.POSX );
+				lo.brightness.restoreDefault( Brightness.FIXED, lo, Globals.POSX );
 				
 				var result:Boolean = false;
 				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
@@ -88,16 +101,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 
-		private function remove( $gc:GrainCursor, $id:String, $color:uint, $priority:int ):void {
-			LightRemove.addTask( _guid, $gc, $id, $color, $priority );
-		}
-		
 		private function lightRemoveNeighbor( $no:Oxel, $lo:Oxel, $face:int ):void {
 			
 			if ( $no.brightness ) {
-				if ( $no.brightness.lastLight == id ) // dont relight something that already has the influence from this light
+				if ( $no.brightness.lastLightID == lightID ) // dont relight something that already has the influence from this light
 					return;
-				else if ( $no.brightness.lastLight == Brightness.FIXED ) // dont relight something that already has the influence from this light
+				else if ( $no.brightness.lastLightID == Brightness.FIXED ) // dont relight something that already has the influence from this light
 					return;
 			}
 			var propogate:Boolean = false;
@@ -112,8 +121,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 					
 				if ( $no.gc.grain == $lo.gc.grain )
 				{
-					if ( $no.brightness.restoreDefault( id, $no, $face ) )
-						remove( $no.gc, id, color, priority + $lo.parent.gc.grain );
+					if ( $no.brightness.restoreDefault( lightID, $no, $face ) )
+						remove( $no.gc, lightID );
 				}
 					
 				else // no is larger (never smaller by definition)	
@@ -123,10 +132,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 					{
 						if ( !$lo.parent.brightness )
 							$lo.parent.brightness = BrightnessPool.poolGet();
-						$lo.parent.brightness.restoreDefaultFromChildOxel( id, $lo.parent, $face );
-						remove( $lo.parent.gc, id, color, priority + $lo.parent.gc.grain );
+						$lo.parent.brightness.restoreDefaultFromChildOxel( lightID, $lo.parent, $face );
+						remove( $lo.parent.gc, lightID );
 					}
-					//propogate = $no.brightness.setToDefaultFromChildOxel( id, $no, $face );
+					//propogate = $no.brightness.setToDefaultFromChildOxel( lightID, $no, $face );
 				}
 					
 			}
@@ -143,7 +152,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				// Change this oxel, but dont propogate
 				// TODO add transparent torch?
 				if ( $no.gc.grain == $lo.gc.grain )
-					$no.brightness.restoreDefault( id, $no, $face );
+					$no.brightness.restoreDefault( lightID, $no, $face );
 				else // no is larger (never smaller by definition)	
 				{
 					// pass info into parent.
@@ -151,17 +160,17 @@ package com.voxelengine.worldmodel.tasks.lighting
 					{
 						if ( !$lo.parent.brightness )
 							$lo.parent.brightness = BrightnessPool.poolGet();
-						$lo.parent.brightness.restoreDefaultFromChildOxel( id, $lo.parent, $face );
-						remove( $lo.parent.gc, id, color, priority + $lo.parent.gc.grain );
+						$lo.parent.brightness.restoreDefaultFromChildOxel( lightID, $lo.parent, $face );
+						remove( $lo.parent.gc, lightID );
 					}
-					//propogate = $no.brightness.setToDefaultFromChildOxel( id, $no, $face );
+					//propogate = $no.brightness.setToDefaultFromChildOxel( lightID, $no, $face );
 				}
 			}
 			// has brightness, but no faces, so reset to default.
 			else if ( $no.brightness )
 			{
-				$no.brightness.setByFace( Oxel.face_get_opposite( $face ), $no.brightness.DEFAULT, id, $no.gc.size() );
-				//$no.brightness.calculateEffect( $face, $lo.brightness, $no, id );
+				$no.brightness.setByFace( Oxel.face_get_opposite( $face ), $no.brightness.DEFAULT, lightID, $no.gc.size() );
+				//$no.brightness.calculateEffect( $face, $lo.brightness, $no, lightID );
 			}
 			// Should never hit these.
 			else if ( !$no.facesHas() && !$no.childrenHas() && Globals.AIR != $no.type )
@@ -190,7 +199,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				// dont care the type, since it is only temp, just has to be transparent
 				oxelt.initialize( $no, gct, Globals.AIR, null );
 				oxelt.brightness = Brightness.scratch();
-				oxelt.brightness.restoreDefault( id, $no, $face );
+				oxelt.brightness.restoreDefault( lightID, $no, $face );
 				
 				lightRemoveNeighbor( dchild[childIndex], oxelt, $face ); 
 				

@@ -8,6 +8,8 @@
 
 package com.voxelengine.worldmodel.tasks.lighting
 {
+	import com.voxelengine.events.LightEvent;
+	import com.voxelengine.worldmodel.TypeInfo;
 	import flash.geom.Vector3D;
 	import com.developmentarc.core.tasks.events.TaskEvent;
 	
@@ -28,24 +30,50 @@ package com.voxelengine.worldmodel.tasks.lighting
 	 */
 	public class Light extends LightTask 
 	{		
+		private var _color:uint;
+		public function get color():uint { return _color; }
 		/**
 		 *  
 		 * @param $instanceGuid - guid of parent model
 		 * @param $gc of oxel that HAS light attributes
-		 * @param $id a light id
+		 * @param $lightID a light id
 		 * @param $color a light color
 		 * 
 		 */
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint, $taskPriority:int = 1 ):void {
+		static public function handleLightEvents( $le:LightEvent ):void {
+			if ( LightEvent.ADD == $le.type )
+			{
+				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
+				main:if ( vm ) {
+					var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
+					if ( lightValid( lo ) )
+					{
+						if ( null == lo.brightness )
+							lo.brightness = BrightnessPool.poolGet();
+						
+						lo.brightness.lastLightID = $le.lightID;
+						var ti:TypeInfo = Globals.Info[lo.type];
+						lo.brightness.colorAdd( ti.color, true );
+						// this is already in the oxel, why pass it in?
+						//lo.brightness.type = $le.type;
+					}
+					
+					addTask( $le.instanceGuid, $le.gc, $le.lightID, ti.color );
+				}
+			}
+		}
+		 
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightColor:uint ):void {
 			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var lt:Light = new Light( $instanceGuid, $gc, $id, $color )
+			var lt:Light = new Light( $instanceGuid, $gc, $lightID, $lightColor );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
 		
 		// NEVER use this, use the static function
-		public function Light( $instanceGuid:String, $gc:GrainCursor, $id:String, $color:uint ):void {
-			super( $instanceGuid, $gc, $id, $color, $gc.toID(), $gc.grain );
+		public function Light( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightColor:uint ):void {
+			_color = $lightColor;
+			super( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
 		}
 		
 		override public function start():void {
@@ -75,8 +103,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 				return false; 
 			if ( null == o.brightness )
 				return false; 
-			if ( null == o.brightness.lastLight )
-				return false; 
+//			if ( 0 == o.brightness.lastLight )
+//				return false; 
 			
 			return true;
 		}
@@ -136,7 +164,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		// returns true if continue
 		private function projectOnEqualGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
 			
-			if ( $no.brightness.lastLight == $lo.brightness.lastLight ) // dont reevaluate an oxel that already has the influence from this light
+			if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
 			{
 				// Should I allow this to happen multiple times, but not add new tasks for it?
 //				if ( $no.brightness.addInfluence( $lo.brightness, $face, false, no.gc.size() ) )
@@ -251,8 +279,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $no.brightness.valuesHas() )
 			{
-				Light.addTask( _guid, $no.gc, id, color, $no.gc.grain );
-				Log.out( "Light.add - ID: " + id + $no.brightness.toString() );
+				addTask( _guid, $no.gc, lightID, color );
+				Log.out( "Light.add - ID: " + lightID + $no.brightness.toString() );
 			}
 		}
 		
@@ -339,7 +367,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				add ( po );
 			}
 			// if already ready, this must be from a previous lighting
-			// reset the ready and the lastLight id
+			// reset the ready and the lastLight lightID
 			else if ( po.brightness.lastLight ) 
 			{
 				po.brightness.readyReset();
@@ -360,7 +388,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( po.brightness.ready )
 			{
 				//Log.out( "Light.addToParent - complete: " + po.toStringShort() + " " + po.brightness.toString() );
-				po.brightness.lastLight = id;
+				po.brightness.lastLight = lightID;
 			}
 		}
 */	

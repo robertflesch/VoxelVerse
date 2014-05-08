@@ -7,6 +7,7 @@
  ==============================================================================*/
 package com.voxelengine.worldmodel.models
 {
+	import com.voxelengine.events.LightEvent;
 	import com.voxelengine.pools.BrightnessPool;
 	import com.voxelengine.worldmodel.biomes.LayerInfo;
 	import com.voxelengine.worldmodel.oxel.Brightness;
@@ -87,140 +88,48 @@ package com.voxelengine.worldmodel.models
 		protected var 	_description:String 			= "EmptyDesc"; // saved in bigDB metadata
 		private var 	_anim:Animation 				= null;
 		private var 	_camera:Camera					= new Camera();
+		private var 	_lightIDNext:uint 				= 1024; // reserve space for ?
+		private var 	_usesGravity:Boolean 			= false;     				// INSTANCE NOT EXPORTED
 		
 		protected var 	_turnRate:Number 				= 20; // 2.5 for ship
 		protected var 	_accelRate:Number 				= 2.5;
 		
-		private var _usesGravity:Boolean 						= false;     				// INSTANCE NOT EXPORTED
-		public function get usesGravity():Boolean 				{ return _usesGravity; }
-		public function set usesGravity(val:Boolean):void 		{ _usesGravity = val; }
 		
-		public function get camera():Camera
-		{
-			return _camera;
-		}
+		public function get usesGravity():Boolean 					{ return _usesGravity; }
+		public function set usesGravity(val:Boolean):void 			{ _usesGravity = val; }
 		
-		protected function get initialized():Boolean
-		{
-			return _initialized;
-		}
+		public function get getLightID():uint 						{ return _lightIDNext++ }
 		
-		public function get databaseObject():DatabaseObject
-		{
-			return _databaseObject;
-		}
-		
-		public function set databaseObject(val:DatabaseObject):void
-		{
-			_databaseObject = val;
-		}
-		
-		public function get anim():Animation
-		{
-			return _anim;
-		}
-		
-		public function get accelRate():Number
-		{
-			return _accelRate;
-		}
-		
-		public function get clipVelocityFactor():Number
-		{
-			return _clipVelocityFactor.val;
-		}
-		
-		public function set clipVelocityFactor($val:Number):void
-		{
-			_clipVelocityFactor.val = $val;
-		}
-		
-		public function get lastCollisionModel():VoxelModel
-		{
-			return _lastCollisionModel;
-		}
-		
-		public function set lastCollisionModel(val:VoxelModel):void
-		{
-			_lastCollisionModel = val;
-		}
-		
-		public function lastCollisionModelReset():void
-		{
-			_lastCollisionModel = null;
-		}
-		
-		public function get statisics():ModelStatisics
-		{
-			return _statisics;
-		}
-		
-		public function get instanceInfo():InstanceInfo
-		{
-			return _instanceInfo;
-		}
-		
-		public function get editCursor():EditCursor
-		{
-			return _editCursor;
-		}
-		
+		public function get camera():Camera							{ return _camera; }
+		protected function get initialized():Boolean 				{ return _initialized; }
+		public function get databaseObject():DatabaseObject 		{ return _databaseObject; }
+		public function set databaseObject(val:DatabaseObject):void { _databaseObject = val; }
+		public function get anim():Animation 						{ return _anim; }
+		public function get accelRate():Number 						{ return _accelRate; }
+		public function get clipVelocityFactor():Number 			{ return _clipVelocityFactor.val; }
+		public function set clipVelocityFactor($val:Number):void 	{ _clipVelocityFactor.val = $val; }
+		public function get lastCollisionModel():VoxelModel 		{ return _lastCollisionModel; }
+		public function set lastCollisionModel(val:VoxelModel):void { _lastCollisionModel = val; }
+		public function lastCollisionModelReset():void 				{ _lastCollisionModel = null; }
+		public function get statisics():ModelStatisics				{ return _statisics; }
+		public function get instanceInfo():InstanceInfo				{ return _instanceInfo; }
+		public function get editCursor():EditCursor 				{ return _editCursor; }
 		//public function set editCursor(val:EditCursor):void { _editCursor = val; }
-		
-		public function get visible():Boolean
-		{
-			return _visible;
-		}
-		
-		public function set visible(val:Boolean):void
-		{
-			_visible = val;
-		}
-		
-		public function get modelInfo():ModelInfo
-		{
-			return _modelInfo;
-		}
-		
-		public function set modelInfo(val:ModelInfo):void
-		{
-			_modelInfo = val;
-		}
-		
-		public function get name():String
-		{
-			return _name;
-		}
-		
-		public function set name(val:String):void
-		{
-			_name = val;
-		}
-		
-		public function get description():String
-		{
-			return _description;
-		}
-		
-		public function set description(val:String):void
-		{
-			_description = val;
-		}
-		
-		public function get children():Vector.<VoxelModel>
-		{
-			return _children;
-		}
-		
-		public function get modified():Boolean
-		{
-			return _modified;
-		}
-		
-		public function get complete():Boolean
-		{
-			return _complete;
-		}
+		public function get visible():Boolean 						{ return _visible; }
+		public function set visible(val:Boolean):void 				{ _visible = val; }
+		public function get modelInfo():ModelInfo 					{ return _modelInfo; }
+		public function set modelInfo(val:ModelInfo):void			{ _modelInfo = val; }
+		public function get name():String							{ return _name; }
+		public function set name(val:String):void					{ _name = val; }
+		public function get description():String					{ return _description; }
+		public function set description(val:String):void			{ _description = val; }
+		public function get children():Vector.<VoxelModel>			{ return _children; }
+		public function get modified():Boolean						{ return _modified; }
+		public function get selected():Boolean 						{ return _selected; }
+		public function set selected(val:Boolean):void  			{ _selected = val; }
+		public function get onSolidGround():Boolean 				{ return _onSolidGround; }
+		public function set onSolidGround(val:Boolean):void 		{ _onSolidGround = val; }
+		public function get complete():Boolean						{ return _complete; }
 		
 		public function set complete(val:Boolean):void
 		{
@@ -235,13 +144,6 @@ package com.voxelengine.worldmodel.models
 			}
 		}
 		
-		public function get selected():Boolean { return _selected; }
-		
-		public function set selected(val:Boolean):void  { _selected = val; }
-		
-		public function get onSolidGround():Boolean { return _onSolidGround; }
-		
-		public function set onSolidGround(val:Boolean):void { _onSolidGround = val; }
 		
 		public function get keyboardControl():Boolean { return _keyboardControl; }
 		
@@ -569,14 +471,15 @@ package com.voxelengine.worldmodel.models
 					
 				if ( typeInfo.light )
 				{
-					if ( !changedOxel.brightness )
-						changedOxel.brightness = BrightnessPool.poolGet();
-					else
-						changedOxel.brightness.setAll( 1.0, Brightness.FIXED );
-						
-					changedOxel.brightness.color = typeInfo.color;
-					changedOxel.brightness.lastLight = Globals.getUID();
-					Light.addTask( instanceInfo.instanceGuid, $gc, changedOxel.brightness.lastLight, typeInfo.color );
+					//if ( !changedOxel.brightness )
+						//changedOxel.brightness = BrightnessPool.poolGet();
+					//else
+						//changedOxel.brightness.setAll( 1.0, Brightness.FIXED );
+						//
+					//Light.addTask( instanceInfo.instanceGuid, $gc, getLightID, typeInfo.color );
+					
+					var le:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, getLightID );
+					Globals.g_app.dispatchEvent( le );
 				}
 			}
 			

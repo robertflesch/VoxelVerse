@@ -25,8 +25,8 @@ public class Quad {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//     Static Variables
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private static const VERTEX_PER_QUAD:int = 4;
-	private static const QUAD_UV_COUNT:int = 5;
+	static private const QUAD_UV_COUNT:int = 5;
+	static public const VERTEX_PER_QUAD:int = 4;
 	//public static const DATA_PER_VERTEX:int = 11; // 8;
 	static public const DATA_PER_VERTEX:int = 12; // 11 added brightness
 	static public const VERTICES:int = VERTEX_PER_QUAD * DATA_PER_VERTEX;
@@ -357,10 +357,10 @@ public class Quad {
 		_vertices[vertexIndex++] = normalx; // Needed for lighting and face culling
 		_vertices[vertexIndex++] = normaly; // Needed for lighting
 		_vertices[vertexIndex++] = normalz; // Needed for lighting
-		_vertices[vertexIndex++] = tint.x; 
-		_vertices[vertexIndex++] = tint.y; 
-		_vertices[vertexIndex++] = tint.z; 
-		_vertices[vertexIndex++] = $brightness;
+		_vertices[vertexIndex++] = 1; // tint.x; 
+		_vertices[vertexIndex++] = 1; // tint.y; 
+		_vertices[vertexIndex++] = 1; // tint.z; 
+		_vertices[vertexIndex++] = 1; // $brightness;
 
 		return vertexIndex;
 	}
@@ -400,7 +400,7 @@ public class Quad {
 		var height:Number = 1;
 		
 		//var tint:Vector3D = Color.toVector3D( tint, $ti.color );
-		_s_tint = Color.toVector3D( _s_tint, Color.combineRGB( $ti.color, $brightness.color ) );
+		_s_tint = Color.toVector3D( _s_tint, $ti.color );
 		var sideBrightness:Number = 0.5;
 		if ( $ti.light || 1000 <= $ti.type )
 		{
@@ -478,7 +478,7 @@ public class Quad {
 		//Log.out( "Quad.addStraightVerticesNew temp: " + brightness );
 		//Log.out( "Quad.asvn - plane_facing: " + plane_facing );
 		var vertexIndex:int;
-		_s_tint = Color.toVector3D( _s_tint, Color.combineRGB( $ti.color, $brightness.color ) );
+		var tint:Vector3D = Color.toVector3D( _s_tint, $ti.color );
 		
 		var sideBrightness:Number = 0.5;
 		var normal:int = 1;
@@ -487,55 +487,55 @@ public class Quad {
 			case Globals.POSX:
 				//trace( "Quad.addStraightVertices - addQuad POSX" );
 				normal = -1 * plane_facing;
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y         , z			, _U[1]		, _V[3]		, normal, 0, 0, _s_tint, $brightness.b100 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z			, _U[2]		, _V[0]		, normal, 0, 0, _s_tint, $brightness.b110 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z + scale	, _U[3]		, _V[1]		, normal, 0, 0, _s_tint, $brightness.b111 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y         , z + scale	, _U[0]		, _V[2]		, normal, 0, 0, _s_tint, $brightness.b101 * sideBrightness );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y         , z			, _U[1]		, _V[3]		, normal, 0, 0, tint, $brightness._b100.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z			, _U[2]		, _V[0]		, normal, 0, 0, tint, $brightness._b110.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z + scale	, _U[3]		, _V[1]		, normal, 0, 0, tint, $brightness._b111.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y         , z + scale	, _U[0]		, _V[2]		, normal, 0, 0, tint, $brightness._b101.colorGetComposite() );
 				break;
 				
 			case Globals.NEGX:
 				//trace( "Quad.addStraightVertices - addQuad NEGX" );
 				normal = 1 * plane_facing;
-				vertexIndex = buildVertices( vertexIndex, x			, y         , z			, _U[3]		, _V[3]		, normal, 0, 0, _s_tint, $brightness.b000 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z			, _U[0]		, _V[0]		, normal, 0, 0, _s_tint, $brightness.b010 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z + scale	, _U[1]		, _V[1]		, normal, 0, 0, _s_tint, $brightness.b011 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x			, y         , z + scale	, _U[2]		, _V[2]		, normal, 0, 0, _s_tint, $brightness.b001 * sideBrightness );
+				vertexIndex = buildVertices( vertexIndex, x			, y         , z			, _U[3]		, _V[3]		, normal, 0, 0, tint, $brightness._b000.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z			, _U[0]		, _V[0]		, normal, 0, 0, tint, $brightness._b010.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z + scale	, _U[1]		, _V[1]		, normal, 0, 0, tint, $brightness._b011.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y         , z + scale	, _U[2]		, _V[2]		, normal, 0, 0, tint, $brightness._b001.colorGetComposite() );
 				break;
 				
 			case Globals.NEGY:
 				//trace( "Quad.addStraightVertices - addQuad POSY" );
 				normal = 1 * plane_facing;
-				vertexIndex = buildVertices( vertexIndex, x			, y             , z			, _U[0]		, _V[0]		, 0, normal, 0, _s_tint, $brightness.b000 );
-				vertexIndex = buildVertices( vertexIndex, x			, y             , z + scale	, _U[3]		, _V[3]		, 0, normal, 0, _s_tint, $brightness.b001 );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y				, z + scale	, _U[2]		, _V[2]		, 0, normal, 0, _s_tint, $brightness.b101 );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y				, z			, _U[1]		, _V[1]		, 0, normal, 0, _s_tint, $brightness.b100 );
+				vertexIndex = buildVertices( vertexIndex, x			, y             , z			, _U[0]		, _V[0]		, 0, normal, 0, tint, $brightness._b000.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y             , z + scale	, _U[3]		, _V[3]		, 0, normal, 0, tint, $brightness._b001.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y				, z + scale	, _U[2]		, _V[2]		, 0, normal, 0, tint, $brightness._b101.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y				, z			, _U[1]		, _V[1]		, 0, normal, 0, tint, $brightness._b100.colorGetComposite() );
 				break;
 				
 			case Globals.POSY:
 				//trace( "Quad.addStraightVertices - addQuad NEGY" );
 				normal = -1 * plane_facing;
-				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z			, _U[0]		, _V[0]		, 0, normal, 0, _s_tint, $brightness.b010 );
-				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z + scale	, _U[3]		, _V[3]		, 0, normal, 0, _s_tint, $brightness.b011 );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z + scale	, _U[2]		, _V[2]		, 0, normal, 0, _s_tint, $brightness.b111 );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z			, _U[1]		, _V[1]		, 0, normal, 0, _s_tint, $brightness.b110 );
+				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z			, _U[0]		, _V[0]		, 0, normal, 0, tint, $brightness._b010.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z + scale	, _U[3]		, _V[3]		, 0, normal, 0, tint, $brightness._b011.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z + scale	, _U[2]		, _V[2]		, 0, normal, 0, tint, $brightness._b111.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z			, _U[1]		, _V[1]		, 0, normal, 0, tint, $brightness._b110.colorGetComposite() );
 				break;
 
 			case Globals.POSZ:
 				//trace( "Quad.addStraightVertices - addQuad POSZ" );
 				normal = -1 * plane_facing;
-				vertexIndex = buildVertices( vertexIndex, x			, y			, z + scale	, _U[0]		, _V[2]		, 0, 0, normal, _s_tint, $brightness.b001 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y			, z + scale	, _U[1]		, _V[3]		, 0, 0, normal, _s_tint, $brightness.b101 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z + scale	, _U[2]		, _V[0]		, 0, 0, normal, _s_tint, $brightness.b111 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z + scale	, _U[3]		, _V[1]		, 0, 0, normal, _s_tint, $brightness.b011 * sideBrightness );
+				vertexIndex = buildVertices( vertexIndex, x			, y			, z + scale	, _U[0]		, _V[2]		, 0, 0, normal, tint, $brightness._b001.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y			, z + scale	, _U[1]		, _V[3]		, 0, 0, normal, tint, $brightness._b101.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z + scale	, _U[2]		, _V[0]		, 0, 0, normal, tint, $brightness._b111.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z + scale	, _U[3]		, _V[1]		, 0, 0, normal, tint, $brightness._b011.colorGetComposite() );
 				break;
 				
 			case Globals.NEGZ:
 				//trace( "Quad.addStraightVertices - addQuad NEGZ" );
 				normal = 1 * plane_facing;
-				vertexIndex = buildVertices( vertexIndex, x			, y			, z			, _U[2]		, _V[2]		, 0, 0, normal, _s_tint, $brightness.b000 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y			, z			, _U[3]		, _V[3]		, 0, 0, normal, _s_tint, $brightness.b100 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z			, _U[0]		, _V[0]		, 0, 0, normal, _s_tint, $brightness.b110 * sideBrightness );
-				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z			, _U[1]		, _V[1]		, 0, 0, normal, _s_tint, $brightness.b010 * sideBrightness );
+				vertexIndex = buildVertices( vertexIndex, x			, y			, z			, _U[2]		, _V[2]		, 0, 0, normal, tint, $brightness._b000.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y			, z			, _U[3]		, _V[3]		, 0, 0, normal, tint, $brightness._b100.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x + scale	, y + scale	, z			, _U[0]		, _V[0]		, 0, 0, normal, tint, $brightness._b110.colorGetComposite() );
+				vertexIndex = buildVertices( vertexIndex, x			, y + scale	, z			, _U[1]		, _V[1]		, 0, 0, normal, tint, $brightness._b010.colorGetComposite() );
 				break;
 				
 			default:

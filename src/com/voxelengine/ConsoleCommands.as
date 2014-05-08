@@ -128,7 +128,7 @@ package com.voxelengine
 			for each ( var oxel:Oxel in ol )
 			{
 				//if ( count < 200 )
-					LightSunCheck.addTask( Globals.selectedModel.instanceInfo.instanceGuid, oxel.gc, "SUN", Globals.POSY );
+					LightSunCheck.addTask( Globals.selectedModel.instanceInfo.instanceGuid, oxel.gc, 1, Globals.POSY );
 				//count++;
 			}
 		}

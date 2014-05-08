@@ -39,91 +39,88 @@ public class Brightness extends BrightnessData {
 	static private var _s_sb2:Brightness = new Brightness(); // scratchBrightness 2
 	static public function scratch():Brightness { return _s_sb; }
 
-	private var _lastLight:String = "";
-	public function get lastLight():String { return _lastLight; }
-	public function set lastLight(value:String):void { _lastLight = value; }
+	private var _lastLightID:uint;
+	public function get lastLightID():uint { return _lastLightID; }
+	public function set lastLightID(value:uint):void { _lastLightID = value; }
 	
-	static public const FIXED:String = "FIXED";
-	public const DEFAULT:Number = 0.2;
-	public const DEFAULT_SIGMA:Number = 0.01;
-	public const DEFAULT_ATTEN:Number = 0.1;
+	static public const FIXED:uint = 1;
+	public const DEFAULT:uint = 51; // out of 255 ( 20% )
+	public const DEFAULT_SIGMA:uint = 2;
+	public const DEFAULT_ID:uint = 1;
+	public const DEFAULT_ATTEN:uint = 25; // out of 255
 	public const DEFAULT_PER_DISTANCE:int = 16;
-	public const DEFAULT_COLOR:uint = 0xffffffff;
-	private var _atten:Number = DEFAULT_ATTEN;  // down 1 per meter
+	public const DEFAULT_COLOR:uint = 0x00ffffff;
+	private var _atten:uint = DEFAULT_ATTEN;  // down 1 per meter
 	private var _sunlit:Boolean;
-	public var _b000:Number = DEFAULT;
-	public var _b001:Number = DEFAULT;
-	public var _b100:Number = DEFAULT;
-	public var _b101:Number = DEFAULT;
-	public var _b010:Number = DEFAULT;
-	public var _b011:Number = DEFAULT;
-	public var _b110:Number = DEFAULT;
-	public var _b111:Number = DEFAULT;
-	//public var color:Vector3D = new Vector3D(1, 1, 1, 1);
-	private var _color:uint = DEFAULT_COLOR;
-	public function get color():uint { return _color; }
-	public function set color( v:uint ):void { _color = v; }
+	public var _b000:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );;
+	public var _b001:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );;
+	public var _b100:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b101:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b010:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b011:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b110:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b111:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+
+	public function get b000():uint { return _b000.attnGet( _lastLightID ); }
+	public function get b001():uint { return _b001.attnGet( _lastLightID ); }
+	public function get b100():uint { return _b100.attnGet( _lastLightID ); }
+	public function get b101():uint { return _b101.attnGet( _lastLightID ); }
+	public function get b010():uint { return _b010.attnGet( _lastLightID ); }
+	public function get b011():uint { return _b011.attnGet( _lastLightID ); }
+	public function get b110():uint { return _b110.attnGet( _lastLightID ); }
+	public function get b111():uint { return _b111.attnGet( _lastLightID ); }
 	
-	public function get b000():Number { return _b000; }
-	public function get b001():Number { return _b001; }
-	public function get b100():Number { return _b100; }
-	public function get b101():Number { return _b101; }
-	public function get b010():Number { return _b010; }
-	public function get b011():Number { return _b011; }
-	public function get b110():Number { return _b110; }
-	public function get b111():Number { return _b111; }
-	
-	public function set b000( n:Number ):void { _b000 = setPrecision( n ); }
-	public function set b001( n:Number ):void { _b001 = setPrecision( n ); }
-	public function set b100( n:Number ):void { _b100 = setPrecision( n ); }
-	public function set b101( n:Number ):void { _b101 = setPrecision( n ); }
-	public function set b010( n:Number ):void { _b010 = setPrecision( n ); }
-	public function set b011( n:Number ):void { _b011 = setPrecision( n ); }
-	public function set b110( n:Number ):void { _b110 = setPrecision( n ); }
-	public function set b111( n:Number ):void { _b111 = setPrecision( n ); }
+	public function set b000( attn:uint ):void { _b000.attnSet( _lastLightID, attn ); }
+	public function set b001( attn:uint ):void { _b001.attnSet( _lastLightID, attn ); }
+	public function set b100( attn:uint ):void { _b100.attnSet( _lastLightID, attn ); }
+	public function set b101( attn:uint ):void { _b101.attnSet( _lastLightID, attn ); }
+	public function set b010( attn:uint ):void { _b010.attnSet( _lastLightID, attn ); }
+	public function set b011( attn:uint ):void { _b011.attnSet( _lastLightID, attn ); }
+	public function set b110( attn:uint ):void { _b110.attnSet( _lastLightID, attn ); }
+	public function set b111( attn:uint ):void { _b111.attnSet( _lastLightID, attn ); }
 	
 	public function get sunlit():Boolean { return _sunlit; }
 	// TODO this should be from the current sun object
 	public function set sunlit(value:Boolean):void { true == value ? setAll( 1.0, Brightness.FIXED ): reset(); _sunlit = value;  }
 	
-	private function rnd( $val:Number ):Number { return int($val * 100) / 100; }
+	private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
 	// var number:Number = 10.98813311;
 	// trace(setPrecision(number,1)); //Result is 10.9
 	// trace(setPrecision(number,2)); //Result is 10.98
 	// trace(setPrecision(number,3)); //Result is 10.988 and so on
 	// http://stackoverflow.com/questions/632802/how-to-deal-with-number-precision-in-actionscript
-	private function setPrecision( $number:Number, $precision:int = 3):Number {
-		$precision = Math.pow(10, $precision);
-		return Math.round( $number * $precision )/$precision;
-	}
+	//private function setPrecision( $number:Number, $precision:int = 3):Number {
+		//$precision = Math.pow(10, $precision);
+		//return Math.round( $number * $precision )/$precision;
+	//}
 
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
 		
-		$ba.writeFloat( rnd( b000 ) );
-		$ba.writeFloat( rnd( b001 ) );
-		$ba.writeFloat( rnd( b100 ) );
-		$ba.writeFloat( rnd( b101 ) );
-		$ba.writeFloat( rnd( b010 ) );
-		$ba.writeFloat( rnd( b011 ) );
-		$ba.writeFloat( rnd( b110 ) );
-		$ba.writeFloat( rnd( b111 ) );
+		$ba.writeInt( rnd( b000 ) );
+		$ba.writeInt( rnd( b001 ) );
+		$ba.writeInt( rnd( b100 ) );
+		$ba.writeInt( rnd( b101 ) );
+		$ba.writeInt( rnd( b010 ) );
+		$ba.writeInt( rnd( b011 ) );
+		$ba.writeInt( rnd( b110 ) );
+		$ba.writeInt( rnd( b111 ) );
 		return $ba;
 	}
 	
 	public function fromByteArray( $ba:ByteArray ):ByteArray {
 		
-		//var b000 = rnd( $ba.readFloat() );
+		//var b000 = rnd( $ba.readInt() );
 		//trace( "Brightness.fromByteArray b000: " + b000 );
-		b000 = $ba.readFloat();
-		b001 = $ba.readFloat();
-		b100 = $ba.readFloat();
-		b101 = $ba.readFloat();
-		b010 = $ba.readFloat();
-		b011 = $ba.readFloat();
-		b110 = $ba.readFloat();
-		b111 = $ba.readFloat();
+		b000 = $ba.readInt();
+		b001 = $ba.readInt();
+		b100 = $ba.readInt();
+		b101 = $ba.readInt();
+		b010 = $ba.readInt();
+		b011 = $ba.readInt();
+		b110 = $ba.readInt();
+		b111 = $ba.readInt();
 		return $ba;
 	}
 
@@ -135,15 +132,13 @@ public class Brightness extends BrightnessData {
 				"  b010: " + b010 +
 				"  b011: " + b011 +
 				"  b110: " + b110 +
-				"  b111: " + b111 + 
-				" color: " + Color.displayInHex( color );
+				"  b111: " + b111;
 	}
 	
 	public function copyFrom( $b:Brightness ):void {
 		if ( sunlit )
 			return;
-		_lastLight = $b.lastLight;
-		_color = $b.color;
+		_lastLightID = $b.lastLightID;
 		b000 = $b.b000;
 		b001 = $b.b001; 
 		b010 = $b.b010; 
@@ -155,10 +150,10 @@ public class Brightness extends BrightnessData {
 		_atten = $b._atten;
 	}
 	
-	public function setAll( $val:Number, $id:String ):void	{
+	public function setAll( $val:uint, $id:uint ):void	{
 		if ( sunlit )
 			return;
-		_lastLight = $id;
+		_lastLightID = $id;
 		b000 = $val;
 		b001 = $val;
 		b100 = $val;
@@ -226,7 +221,7 @@ public class Brightness extends BrightnessData {
 			child7 = true; }
 	}
 	
-	public function restoreDefault( $id:String, $no:Oxel, $faceFrom:int ):Boolean	{
+	public function restoreDefault( $id:uint, $no:Oxel, $faceFrom:int ):Boolean	{
 		//Log.out( "Brightness.setDefault - id: " + $id + " no: " + $no.toStringShort() + toString() );			
 		if ( sunlit )
 			return false;
@@ -234,7 +229,7 @@ public class Brightness extends BrightnessData {
 		if ( valuesHas() )
 		{
 			Log.out( "Brightness.restoreDefault - resetting id: " + $id + " no: " + $no.toStringShort() + toString() );
-			_lastLight = $id;	
+			_lastLightID = $id;	
 			if ( b000 != DEFAULT
 			  || b001 != DEFAULT
 			  || b100 != DEFAULT
@@ -279,18 +274,17 @@ public class Brightness extends BrightnessData {
 		b110 = DEFAULT;
 		b111 = DEFAULT;
 		
-		_lastLight = "";
+		_lastLightID = 0;
 		_atten = DEFAULT_ATTEN;
 		_sunlit = false;
-		color = DEFAULT_COLOR;
 	}
 	
-	public function setByFace( $face:int, $val:Number, $id:String, size:int ):void {
+	public function setByFace( $face:int, $val:uint, $id:uint, size:int ):void {
 		if ( sunlit )
 			return;
 
-		_lastLight = $id;	
-		var localAtten:Number = _atten * size/DEFAULT_PER_DISTANCE
+		_lastLightID = $id;	
+		var localAtten:uint = _atten * size/DEFAULT_PER_DISTANCE
 
 		if ( Globals.POSX == $face ) {
 			b100 = $val;
@@ -361,7 +355,7 @@ public class Brightness extends BrightnessData {
 	}
 
 	
-	public function restoreDefaultFromChildOxel( $id:String, $no:Oxel, $faceFrom:int ):Boolean {
+	public function restoreDefaultFromChildOxel( $id:uint, $no:Oxel, $faceFrom:int ):Boolean {
 		return restoreDefault( $id, $no, $faceFrom );
 	}
 	
@@ -393,7 +387,7 @@ public class Brightness extends BrightnessData {
 		var noSize:int = $no.gc.size();
 		var lob:Brightness = $lo.brightness;
 		_s_sb.reset();
-		_s_sb.lastLight = lob.lastLight;
+		_s_sb.lastLightID = lob.lastLightID;
 		//_s_sb.colorMix( lob, $lightColor );
 		if ( Globals.POSX == $faceFrom ) {
 			_s_sb.b100 = Math.min( lob.b100 - ( _atten * (z / loSize) )
@@ -484,7 +478,7 @@ public class Brightness extends BrightnessData {
 	// Brightness uses passed in value, which allows it to reuse a brightness
 	public function subfaceGet( $face:int, $child:int, $nb:Brightness ):void {
 		
-		$nb.lastLight = lastLight;
+		$nb.lastLightID = lastLightID;
 		if ( Globals.POSX == $face ) {
 			if ( 0 == $child ) {
 				$nb.b100 = b100;
@@ -643,7 +637,6 @@ public class Brightness extends BrightnessData {
 		}				
 		else	
 			Log.out( "Brightness.subfaceGet: ERROR child index: " + $child );
-		$nb.color = color;	
 	}
 	
 	// grabs the light from a parent to a child brightness
@@ -741,20 +734,19 @@ public class Brightness extends BrightnessData {
 		  && b100 == $b.b100 
 		  && b110 == $b.b110 
 		  && b111 == $b.b111 
-		  && b101 == $b.b101
-		  && color == $b.color ) return true;
+		  && b101 == $b.b101 ) return true;
 		 
 		return false;  
 	}
 
-	private function get avg():Number {
+	private function get avg():uint {
 		
 		return (b000 + b010 + b011 + b001 + b100 + b110 +  b111 + b101)/8
 	}
 	
-	private function get max():Number {
+	private function get max():uint {
 		
-		var max:Number = DEFAULT;
+		var max:uint = DEFAULT;
 		if ( max < b000 )
 			max = b000;
 		if ( max < b001 )
@@ -775,24 +767,45 @@ public class Brightness extends BrightnessData {
 		return max;	
 	}
 	
-	private function colorMix( $lob:Brightness, $lightColor:uint ):void {
-		
+	//private function colorMix( $lob:Brightness, $lightColor:uint ):void {
+		//
 		// want to mix the default color * DEFAULT (intensity) + lob.color * $lob.avg
 		//color = Color.combineRGBAndIntensity( color, DEFAULT, $lob.color, $lob.avg );
-		Log.out( "Brightness.colorMix premix: " + Color.displayInHex( color ) + "  lightColor: " + Color.displayInHex( $lightColor ) );
+		//Log.out( "Brightness.colorMix premix: " + Color.displayInHex( color ) + "  lightColor: " + Color.displayInHex( $lightColor ) );
 		//color = Color.test( color, DEFAULT, $lightColor, $lob.max );
-		color = Color.testInt( color, DEFAULT, $lightColor, $lob.max, DEFAULT_COLOR * DEFAULT );
-		Log.out( "Brightness.colorMix postmx: " + Color.displayInHex( color ) );
+		//color = Color.testInt( color, DEFAULT, $lightColor, $lob.max, DEFAULT_COLOR * DEFAULT );
+		//Log.out( "Brightness.colorMix postmx: " + Color.displayInHex( color ) );
+	//}
+	
+	public function colorAdd( $lightColor:uint, isLight:Boolean = false ):void {
+		
+		if ( false == _b000.colorHas( _lastLightID ) )
+		{
+			// If this is not the light its self, set default attn to 0 of 255
+			var val:uint = $lightColor;
+			if ( false == isLight )
+				val &= 0x00ffffff;
+			
+			_b000.colorAdd( _lastLightID, val );
+			_b001.colorAdd( _lastLightID, val );
+			_b100.colorAdd( _lastLightID, val );
+			_b101.colorAdd( _lastLightID, val );
+			_b010.colorAdd( _lastLightID, val );
+			_b011.colorAdd( _lastLightID, val );
+			_b110.colorAdd( _lastLightID, val );
+			_b111.colorAdd( _lastLightID, val );
+		}
 	}
 	
 	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int, $lightColor:uint ):Boolean
 	{
 		_s_sb2.copyFrom( this );		
-		lastLight = $lob.lastLight;
+		lastLightID = $lob.lastLightID;
+		colorAdd( $lightColor );
 		
-		colorMix( $lob, $lightColor );
+//		colorMix( $lob, $lightColor );
 		
-		const attenScaled:Number = _atten * ($grainUnits/16);
+		const attenScaled:uint = _atten * ($grainUnits/16);
 		if ( Globals.POSX == $faceFrom ) {
 			
 			if ( b000 < $lob.b100 ) { b000 = $lob.b100; }

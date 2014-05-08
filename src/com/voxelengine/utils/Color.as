@@ -61,22 +61,35 @@ import flash.geom.Vector3D;
 			return newTint;
 		}
 		
-		//public static function combineRGB( c1:Vector3D, c2:Vector3D ):Vector3D {
-			//var newTint:Vector3D = new Vector3D(1,1,1,1);
-			//newTint.x = ( c1.x + c2.x ) / 2;
-			//newTint.y = ( c1.y + c2.y ) / 2;
-			//newTint.z = ( c1.z + c2.z ) / 2;
-			//
-			//return newTint;
-		//}
+		public static function testCombineARGB( c1:uint, c2:uint ):uint {
+			var αa:Number = Color.extractIntensity( c1 )/255;
+			var αb:Number = Color.extractIntensity( c2 )/255;
+			return ARGBToHex( (αa + αb * ( 1 - αa )) * 255
+					 		, Math.max( extractRed(c1) * αa, extractRed(c2) * αb )
+							, Math.max( extractGreen(c1) * αa, extractGreen(c2) * αb )
+							, Math.max( extractBlue(c1) * αa, extractBlue(c2) * αb ) );
+		}
 		
-		public static function combineRGB( c1:uint, c2:uint ):uint {
-			var newTint:uint;
-			newTint = RGBToHex( ( extractRed(c1) + extractRed(c2) )/ 2
-			                  , ( extractGreen(c1) + extractGreen(c2) )/ 2 
-							  , ( extractBlue(c1) + extractBlue(c2) )/ 2 )
+		public static function combineRGB( c1:Vector3D, c2:Vector3D ):Vector3D {
+			var newTint:Vector3D = new Vector3D(1,1,1,1);
+			newTint.x = ( c1.x + c2.x ) / 2;
+			newTint.y = ( c1.y + c2.y ) / 2;
+			newTint.z = ( c1.z + c2.z ) / 2;
 			
 			return newTint;
+		}
+		
+		public static function maxValuesARGB( c1:uint, c2:uint ):uint {
+			return ARGBToHex ( Math.max( extractIntensity(c1), extractIntensity(c2) )
+							, Math.max( extractRed(c1), extractRed(c2) )
+							, Math.max( extractGreen(c1), extractGreen(c2) )
+							, Math.max( extractBlue(c1), extractBlue(c2) ) );
+		}
+		
+		public static function averageRGB( c1:uint, c2:uint ):uint {
+			return RGBToHex( ( extractRed(c1) + extractRed(c2) )/ 2
+			               , ( extractGreen(c1) + extractGreen(c2) )/ 2 
+						   , ( extractBlue(c1) + extractBlue(c2) ) / 2 );
 		}
 		
 		public static function toVector3D( tint:Vector3D, color:uint ):Vector3D
@@ -92,11 +105,22 @@ import flash.geom.Vector3D;
 			return (( c >> 24 ) & 0xFF);
 		}
 
+		public static function extractIntensity(c:uint):uint {
+			return (( c >> 24 ) & 0xFF);
+		}
+		
 		public static function placeAlphaNumber( color:uint, value:Number ):uint
 		{
 			color = color & 0x00ffffff;
 			var intValue:uint = value * 255;
 			color = color | ( intValue << 24 );
+			return color;
+		}
+		
+		public static function placeAlpha( color:uint, value:uint ):uint
+		{
+			color = color & 0x00ffffff;
+			color = color | ( value << 24 );
 			return color;
 		}
 		
@@ -155,6 +179,12 @@ import flash.geom.Vector3D;
 			return hex;
 		}
 		 
+		public static function ARGBToHex(a:uint, r:uint, g:uint, b:uint):uint
+		{
+			var hex:uint = (a << 25 | r << 16 | g << 8 | b);
+			return hex;
+		}
+		
 		public static function HexToRGB(hex:uint):Array
 		{
 			var rgb:Array = [];

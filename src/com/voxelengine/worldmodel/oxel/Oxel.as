@@ -614,9 +614,8 @@ package com.voxelengine.worldmodel.oxel
 					throw new Error( "Oxel.type - no active model guid" );
 				if ( EditCursor.EDIT_CURSOR != $guid )
 				{
-					var color:uint = brightness.color;
-					var lightGuid:String = brightness.lastLight;
-					LightRemove.addTask( $guid, gc, lightGuid, color );
+					var lightID:uint = brightness.lastLightID;
+					LightRemove.addTask( $guid, gc, lightID );
 					// TODO - dispatch event starting light regeneration from other lights
 				}
 			}
@@ -1258,7 +1257,7 @@ package com.voxelengine.worldmodel.oxel
 				if ( faceHas( $face ) )
 				{
 					_s_oxelsEvaluated++;
-					LightSunCheck.addTask( $guid, gc, generateID( $guid ), $face );
+					LightSunCheck.addTask( $guid, gc, 1, $face );
 				}
 
 			}
@@ -1277,7 +1276,7 @@ package com.voxelengine.worldmodel.oxel
 				if ( Globals.Info[type].light ) // had & quads, but that doesnt matter with this style
 				{
 					_s_lightsFound++;
-					Light.addTask( $guid, gc, Globals.getUID(), 0xffffffff );
+					//Light.addTask( $guid, gc, 0xffffffff );
 				}
 			}
 		}

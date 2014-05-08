@@ -30,6 +30,10 @@ package {
 	import com.voxelengine.worldmodel.MouseKeyboardHandler;
 	import com.voxelengine.worldmodel.RegionManager;
 
+	import com.voxelengine.events.LightEvent;
+	import com.voxelengine.worldmodel.tasks.lighting.Light;
+	import com.voxelengine.worldmodel.tasks.lighting.LightRemove;
+	
 	// TODO Flowing materials
 	// TODO Gas
 	// TODO Light maps
@@ -108,6 +112,9 @@ package {
 			stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, mouseUpRight);
 			
 			VoxelVerseGUI.currentInstance.init();
+			addEventListener( LightEvent.ADD, Light.handleLightEvents );
+			addEventListener( LightEvent.REMOVE, LightRemove.handleLightEvents );
+
 			
 			if ( false == WindowSplash.isActive )
 				WindowSplash.create();
