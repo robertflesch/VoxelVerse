@@ -2,7 +2,7 @@ package com.voxelengine.utils {
 
 import flash.geom.Vector3D;
 	
-    public class Color {
+    public class ColorUtils {
 
 		public static function combineRGBA( c1:Vector3D, c2:Vector3D ):Vector3D {
 			// Determine RGBA colour received by combining two colours
@@ -62,8 +62,8 @@ import flash.geom.Vector3D;
 		}
 		
 		public static function testCombineARGB( c1:uint, c2:uint ):uint {
-			var αa:Number = Color.extractIntensity( c1 )/255;
-			var αb:Number = Color.extractIntensity( c2 )/255;
+			var αa:Number = ColorUtils.extractIntensity( c1 )/255;
+			var αb:Number = ColorUtils.extractIntensity( c2 )/255;
 			return ARGBToHex( (αa + αb * ( 1 - αa )) * 255
 					 		, Math.max( extractRed(c1) * αa, extractRed(c2) * αb )
 							, Math.max( extractGreen(c1) * αa, extractGreen(c2) * αb )
@@ -90,15 +90,6 @@ import flash.geom.Vector3D;
 			return RGBToHex( ( extractRed(c1) + extractRed(c2) )/ 2
 			               , ( extractGreen(c1) + extractGreen(c2) )/ 2 
 						   , ( extractBlue(c1) + extractBlue(c2) ) / 2 );
-		}
-		
-		public static function toVector3D( tint:Vector3D, color:uint ):Vector3D
-		{
-			tint.w = extractAlpha(color)/255;
-			tint.x = extractRed(color)/255;
-			tint.y = extractGreen(color)/255;
-			tint.z = extractBlue(color)/255;
-			return tint;
 		}
 		
 		public static function extractAlpha(c:uint):uint {
@@ -217,7 +208,12 @@ import flash.geom.Vector3D;
 			return RGBToHex(colors[0], colors[1], colors[2]);
 		}
 		
-		
+		public static function toVector3D( $container:Vector3D, $color:uint ):void {
+			$container.x = extractRed( $color );
+			$container.y = extractGreen( $color );
+			$container.z = extractBlue( $color );
+			$container.w = extractAlpha( $color );
+		}
 		
 		/**
 		 * Converts Red, Green, Blue to Hue, Saturation, Value

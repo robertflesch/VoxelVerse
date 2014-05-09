@@ -10,7 +10,7 @@ package com.voxelengine.worldmodel
 	import com.voxelengine.events.LoadingEvent;
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
-	import com.voxelengine.utils.Color;
+	import com.voxelengine.utils.ColorUtils;
 	import com.voxelengine.worldmodel.oxel.Brightness;
 	import com.voxelengine.worldmodel.oxel.FlowInfo;
 	import flash.geom.Vector3D;
@@ -64,7 +64,7 @@ package com.voxelengine.worldmodel
 		public function get type():uint 		{ return _typeId; }
 		public function get alpha():Boolean 		
 		{ 
-			if ( Color.extractAlpha( _color ) != 255 ) 
+			if ( ColorUtils.extractAlpha( _color ) != 255 ) 
 				return true 
 			else 
 				return false; 
@@ -108,16 +108,16 @@ package com.voxelengine.worldmodel
 				_name = o.value;
 				break;
 			case "red":
-				Color.placeRedNumber( _color, o.value );
+				ColorUtils.placeRedNumber( _color, o.value );
 				break;
 			case "green":
-				Color.placeGreenNumber( _color, o.value );
+				ColorUtils.placeGreenNumber( _color, o.value );
 				break;
 			case "blue":
-				Color.placeBlueNumber( _color, o.value );
+				ColorUtils.placeBlueNumber( _color, o.value );
 				break;
 			case "alpha":
-				Color.placeAlphaNumber( _color, o.value );
+				ColorUtils.placeAlphaNumber( _color, o.value );
 				break;
 			case "class":
 				_category = o.value;
@@ -205,10 +205,10 @@ package com.voxelengine.worldmodel
 
 			if ( typesJson.color  )
 			{
-				_color = Color.placeRedNumber( _color, typesJson.color.r );
-				_color = Color.placeGreenNumber( _color, typesJson.color.g );
-				_color = Color.placeBlueNumber( _color, typesJson.color.b );
-				_color = Color.placeAlphaNumber( _color, typesJson.color.a );
+				_color = ColorUtils.placeRedNumber( _color, typesJson.color.r );
+				_color = ColorUtils.placeGreenNumber( _color, typesJson.color.g );
+				_color = ColorUtils.placeBlueNumber( _color, typesJson.color.b );
+				_color = ColorUtils.placeAlphaNumber( _color, typesJson.color.a );
 			}
 			
 			if ( typesJson.uv )

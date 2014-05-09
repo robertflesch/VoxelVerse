@@ -10,7 +10,7 @@ package com.voxelengine.worldmodel.oxel
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 
-	import com.voxelengine.utils.Color;
+	import com.voxelengine.utils.ColorUtils;
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
 	import com.voxelengine.pools.GrainCursorPool;
@@ -52,14 +52,14 @@ public class Brightness extends BrightnessData {
 	public const DEFAULT_COLOR:uint = 0x00ffffff;
 	private var _atten:uint = DEFAULT_ATTEN;  // down 1 per meter
 	private var _sunlit:Boolean;
-	public var _b000:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );;
-	public var _b001:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );;
-	public var _b100:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
-	public var _b101:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
-	public var _b010:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
-	public var _b011:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
-	public var _b110:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
-	public var _b111:VertexColor = new VertexColor( DEFAULT_ID, Color.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b000:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );;
+	public var _b001:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );;
+	public var _b100:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b101:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b010:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b011:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b110:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
+	public var _b111:VertexColor = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT ) );
 
 	public function get b000():uint { return _b000.attnGet( _lastLightID ); }
 	public function get b001():uint { return _b001.attnGet( _lastLightID ); }

@@ -9,6 +9,7 @@ package com.voxelengine.renderer
 {
 
 import com.voxelengine.pools.VertexIndexBuilderPool;
+import com.voxelengine.renderer.vertexComponents.VertexComponent;
 import flash.display3D.VertexBuffer3D;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Context3D;
@@ -57,6 +58,7 @@ public class VertexIndexBuilder
 	private var _vertexBuffers:Vector.<VertexBuffer3D> = new Vector.<VertexBuffer3D>();
 	private var _indexBuffers:Vector.<IndexBuffer3D> = new Vector.<IndexBuffer3D>();
 	private var _oxels:Vector.<Oxel>;
+	private var _vc:Vector.<VertexComponent> = new Vector.<VertexComponent>();
 	
 	private var _sorted:Boolean = false;
 	private var _dirty:Boolean = false;
@@ -231,51 +233,25 @@ public class VertexIndexBuilder
 		var oxel:Oxel;
 		var quad:Quad;
 		var quadCount:uint;
-		var verticeCount:uint;
-		var vertice:uint;
-		var q:int;
 		for ( var index:int = $oxelStartingIndex; index < $oxelStartingIndex + $oxelsToProcess; index++ ) {
 			oxel = _oxels[index];
 			if ( oxel.quads ) 
 			{
 				for each ( quad in oxel.quads ) 
 				{
-					vertice = 0;
 					if ( quad )
 					{
 						quadCount++;
-						q = 0;
-						for ( ; q < Quad.VERTEX_PER_QUAD; q ++ )
-						{
-							verticeCount++;
-							_vertices.writeFloat( quad._vertices[vertice++] ); // x
-							_vertices.writeFloat( quad._vertices[vertice++] ); // y
-							_vertices.writeFloat( quad._vertices[vertice++] ); // z
-							_vertices.writeFloat( quad._vertices[vertice++] ); // u
-							_vertices.writeFloat( quad._vertices[vertice++] ); // v
-							_vertices.writeFloat( quad._vertices[vertice++] ); // normalx
-							_vertices.writeFloat( quad._vertices[vertice++] ); // normaly
-							_vertices.writeFloat( quad._vertices[vertice++] ); // normalz
-							_vertices.writeFloat( quad._vertices[vertice++] ); // tint.x
-							_vertices.writeFloat( quad._vertices[vertice++] ); // tint.y
-							_vertices.writeFloat( quad._vertices[vertice++] ); // tint.z
-							_vertices.writeFloat( quad._vertices[vertice++] ); // brightness
-							//_vertices.writeUnsignedInt( quad._vertices[8] );
+						for each ( var vc:VertexComponent in quad.components ) {
+							vc.writeToByteArray( _vertices );
 						}
 					}
 				}
 			}
 		}
 		
-		// don’t forget that AGAL textures are written in BGRA not ARGB! You will have to set the endian of the used ByteArray properly like this:
-		// byteArray.endian = Endian.LITTLE_ENDIAN;		
-
-		//public function createVertexBuffer (numVertices:int, data32PerVertex:int) : flash.display3D.VertexBuffer3D;
 		var vb:VertexBuffer3D = $context.createVertexBuffer( quadCount * Quad.VERTEX_PER_QUAD, Quad.DATA_PER_VERTEX);
-
-		//public function uploadFromByteArray (data:ByteArray, byteArrayOffset:int, startVertex:int, numVertices:int) : void;
-		//vb.uploadFromByteArray ( _vertices, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
-		vb.uploadFromByteArray ( _vertices, 0, 0, verticeCount);
+		vb.uploadFromByteArray ( _vertices, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
 		_vertexBuffers.push(vb);
 		_buffers++;
 	}
@@ -451,6 +427,21 @@ public class VertexIndexBuilder
 //		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
 	
+	private function addComponentData():void {
+		for each ( var oxel:Oxel in _oxels ) {
+			if ( oxel.quads ) {
+				for each ( var quad:Quad in oxel.quads ) {
+					if ( 0 < quad.components.length ) {
+						for ( var i:uint; i < Quad.COMPONENT_COUNT; i++ )
+							_vc.push( quad.components[i].clone() );
+						return;
+					}
+				}
+			}
+		}
+		throw new Error( "VertexIndexBuilder.addComponentData - No components found" );
+	}
+	
 	// We need to break the quads in ~ 16k sized chunks. since that is the limit for each VertexBuffer
 	public function buffersBuildFromOxels( context:Context3D ):void 
 	{
@@ -465,9 +456,13 @@ public class VertexIndexBuilder
 		{
 			const MAX_QUADS:int = int (BUFFER_LIMIT / (Quad.VERTICES / Quad.DATA_PER_VERTEX));
 			
+			
 			var oxelStartingIndex:int = 0;
 			var remainingOxels:int = _oxels.length;
 			var quadsInOxel:int = 0;
+			
+			if ( 0 < remainingOxels )
+				addComponentData();
 			
 			while ( 0 < remainingOxels ) {
 				var quadsProcessed:int = 0;
@@ -501,28 +496,19 @@ public class VertexIndexBuilder
 		dirty = false;
 	}
 	
-	public function BufferCopyToGPU( context:Context3D ) : void 
+	public function BufferCopyToGPU( $context:Context3D ) : void 
 	{
 		// This function is takes less the 1 ms per call when logged in debugger
-		//var timer:int = getTimer();
-		var vb:VertexBuffer3D;
-		var ib:IndexBuffer3D;
 		for (var i:int = 0; i < _buffers; i++) {
 			//trace("VertexIndexBuilder - BufferCopyToGPU - count: " + _buffers);
-			vb = _vertexBuffers[i];
-			
-			// Position
-			context.setVertexBufferAt(0, vb, 0, Context3DVertexBufferFormat.FLOAT_3);
-			
-			// UV Texture Coords
-			context.setVertexBufferAt(1, vb, 3, Context3DVertexBufferFormat.FLOAT_2);
-			// Normal
-			context.setVertexBufferAt(2, vb, 5, Context3DVertexBufferFormat.FLOAT_3);
-			// Color
-			context.setVertexBufferAt(3, vb, 8, Context3DVertexBufferFormat.FLOAT_4);
-
-			ib = _indexBuffers[i];
-			context.drawTriangles(ib);
+			var vb:VertexBuffer3D = _vertexBuffers[i];
+			var index:uint;
+			var offset:uint;
+			for each ( var vc:VertexComponent in _vc ) {
+				$context.setVertexBufferAt( index++, vb, offset, vc.type() );
+				offset += vc.size();
+			}
+			$context.drawTriangles( _indexBuffers[i] );
 		}
 		//trace ( "VertexIndexBuilder.BufferCopyToGPU - took: "  + (getTimer() - timer) );			
 	}
