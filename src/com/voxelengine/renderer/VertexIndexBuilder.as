@@ -58,7 +58,8 @@ public class VertexIndexBuilder
 	private var _vertexBuffers:Vector.<VertexBuffer3D> = new Vector.<VertexBuffer3D>();
 	private var _indexBuffers:Vector.<IndexBuffer3D> = new Vector.<IndexBuffer3D>();
 	private var _oxels:Vector.<Oxel>;
-	private var _vc:Vector.<VertexComponent> = new Vector.<VertexComponent>();
+	private var _vc:Vector.<VertexComponent> = new Vector.<VertexComponent>(Quad.COMPONENT_COUNT,true);
+	private var _vertexDataSize:uint;
 	
 	private var _sorted:Boolean = false;
 	private var _dirty:Boolean = false;
@@ -225,7 +226,7 @@ public class VertexIndexBuilder
 	private function quadsCopyToVertexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
 		
 		_s_totalUsed++;
-		_bufferVertexMemory += $quadsToProcess * Quad.VERTEX_PER_QUAD * Quad.DATA_PER_VERTEX * BYTES_PER_WORD;
+		_bufferVertexMemory += $quadsToProcess * Quad.VERTEX_PER_QUAD * _vertexDataSize * BYTES_PER_WORD;
 		
 		var _vertices:ByteArray = new ByteArray();
 		_vertices.endian = Endian.LITTLE_ENDIAN;
@@ -250,12 +251,12 @@ public class VertexIndexBuilder
 			}
 		}
 		
-		var vb:VertexBuffer3D = $context.createVertexBuffer( quadCount * Quad.VERTEX_PER_QUAD, Quad.DATA_PER_VERTEX);
+		var vb:VertexBuffer3D = $context.createVertexBuffer( quadCount * Quad.VERTEX_PER_QUAD, _vertexDataSize );
 		vb.uploadFromByteArray ( _vertices, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
 		_vertexBuffers.push(vb);
 		_buffers++;
 	}
-	
+	/*
 	private function quadsCopyToVertexBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		_s_totalUsed++;
 		_bufferVertexMemory += quadsToProcess * Quad.VERTICES * 4; // times 4 seems true, but I dont understand why
@@ -304,7 +305,7 @@ public class VertexIndexBuilder
 		_vertexBuffers.push(vb);
 		_buffers++;
 	}
-
+*/
 	private function quadsCopyToIndexBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		
 		var _offsetIndices:Vector.<uint> = new Vector.<uint>( quadsToProcess * Quad.INDICES );
@@ -352,7 +353,7 @@ public class VertexIndexBuilder
 		quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		//quadsCopyToIndexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 	}
-
+/*
 	private function quadsCopyToBuffersVectorGood( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		//trace("VertexIndexBuilder.quadsCopyToBuffers - startingIndex: " + oxelStartingIndex + " oxelsToProcess:" +  oxelsToProcess + " quadsToProcess: " + quadsToProcess );
 		try {
@@ -426,14 +427,17 @@ public class VertexIndexBuilder
 		
 //		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
-	
+	*/
 	private function addComponentData():void {
+		_vertexDataSize = 0;
 		for each ( var oxel:Oxel in _oxels ) {
 			if ( oxel.quads ) {
 				for each ( var quad:Quad in oxel.quads ) {
-					if ( 0 < quad.components.length ) {
-						for ( var i:uint; i < Quad.COMPONENT_COUNT; i++ )
-							_vc.push( quad.components[i].clone() );
+					if ( quad && 0 < quad.components.length ) {
+						for ( var i:uint; i < Quad.COMPONENT_COUNT; i++ ) {
+							_vc[i] = quad.components[i].clone();
+							_vertexDataSize += quad.components[i].size();
+						}
 						return;
 					}
 				}
@@ -454,15 +458,14 @@ public class VertexIndexBuilder
 		dispose();
 		if ( 0 < _oxels.length ) 
 		{
-			const MAX_QUADS:int = int (BUFFER_LIMIT / (Quad.VERTICES / Quad.DATA_PER_VERTEX));
-			
-			
 			var oxelStartingIndex:int = 0;
 			var remainingOxels:int = _oxels.length;
 			var quadsInOxel:int = 0;
 			
 			if ( 0 < remainingOxels )
 				addComponentData();
+			
+			const MAX_QUADS:int = int (BUFFER_LIMIT / 4 * _vertexDataSize);
 			
 			while ( 0 < remainingOxels ) {
 				var quadsProcessed:int = 0;

@@ -80,7 +80,7 @@ public class VertexColor {
 	
 	// this returns a composite color made of default color plus any additional colors
 	public function colorGetComposite():uint {
-		return 1;
+		return 0x66666666;
 		//if ( false == _changed )
 			//return _composite;
 			//

@@ -101,6 +101,7 @@ package com.voxelengine.renderer.shaders
 //				"m44 v3, va0, vc0",  	// works great for default. Not for translated cube
 //				"m44 v3, va0, vc4",  	// works great for default. Not for translated cube
 				"m44 v3, va0, vc8",  	// the transformed vertices with out the camera data, works great for default AND for translated cube, rotated cube broken still
+				"mov v4, va4",        	// pass light color and brightness (va4) to the fragment shader via v4
 				
 				// A non working method for a generated normal
 				//"nrm vt1.xyz, va0.xyz",	// normalize the vertex (va0) into vt1. we need to mask the W component as the normalize operation only work for Vector3D
@@ -138,11 +139,11 @@ package com.voxelengine.renderer.shaders
 				/////////////////////////////////////////////////
 				// base texture
 				/////////////////////////////////////////////////
-				"mul ft0, v1.xyz, ft0", // texture color - v1.xyz
+				"mul ft0, v1.xyz, ft0", // mutliply by texture tint - v1.xyz
 				
 				/////////////////////////////////////////////////
 				// light from brightness
-				"mul ft4, ft0, v1.w",   // add to base texture brightness - v3.w
+				"mul ft4, v4, ft0",   // modify the texture by multipling by the light color
 				
 				/////////////////////////////////////////////////
 				// light from dynamic lights

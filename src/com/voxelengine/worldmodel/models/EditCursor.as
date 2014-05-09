@@ -161,12 +161,12 @@ package com.voxelengine.worldmodel.models
 				if ( !oxel.brightness )
 					oxel.brightness = BrightnessPool.poolGet();
 				oxel.brightness.setAll( 1.0, Brightness.FIXED );
-				oxel.quadsBuild();
 			}
 			
 			var gcCursor:GrainCursor = GrainCursorPool.poolGet( oxel.gc.bound );
 			gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
 			oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
+oxel.quadsBuild();
 			GrainCursorPool.poolDispose( gcCursor );
 		}
 		
