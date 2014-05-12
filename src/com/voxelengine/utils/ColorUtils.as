@@ -151,6 +151,21 @@ import flash.geom.Vector3D;
 			return color;
 		}
 		
+		public static function convertRGBAToABGR( $ARGB:uint ):uint {
+			
+			var color:uint = $ARGB;
+			var red:uint = extractRed( $ARGB );
+			var blue:uint = extractBlue( $ARGB );
+			
+			color = color & 0xff00ff00;
+
+			color = color | ( blue << 16 );
+			color = color | ( red << 0 );
+
+			return color;
+			
+		}
+
 		public static function displayInHex(c:uint):String {
 			var r:String=extractRed(c).toString(16).toUpperCase();
 			var g:String=extractGreen(c).toString(16).toUpperCase();

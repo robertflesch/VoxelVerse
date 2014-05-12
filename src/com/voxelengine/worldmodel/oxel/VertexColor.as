@@ -80,16 +80,16 @@ public class VertexColor {
 	
 	// this returns a composite color made of default color plus any additional colors
 	public function colorGetComposite():uint {
-		return 0x66666666;
-		//if ( false == _changed )
-			//return _composite;
-			//
-		//for each ( var color:uint in _colors ) {
-			//_composite = Color.testCombineARGB( _composite, color );
-		//}
-		//
-		//_changed = false;
-		//return _composite;
+		//return 0x66666666;
+		if ( false == _changed )
+			return _composite;
+			
+		for each ( var color:uint in _colors ) {
+			_composite = ColorUtils.testCombineARGB( _composite, color );
+		}
+		
+		_changed = false;
+		return _composite;
 	}
 	
 } // end of class VertexColor

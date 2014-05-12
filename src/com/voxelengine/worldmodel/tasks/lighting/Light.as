@@ -51,9 +51,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 						if ( null == lo.brightness )
 							lo.brightness = BrightnessPool.poolGet();
 						
-						lo.brightness.lastLightID = $le.lightID;
 						var ti:TypeInfo = Globals.Info[lo.type];
-						lo.brightness.colorAdd( ti.color, true );
+						lo.brightness.colorAdd( ti.color, $le.lightID, true );
 						// this is already in the oxel, why pass it in?
 						//lo.brightness.type = $le.type;
 					}

@@ -777,8 +777,10 @@ public class Brightness extends BrightnessData {
 		//Log.out( "Brightness.colorMix postmx: " + Color.displayInHex( color ) );
 	//}
 	
-	public function colorAdd( $lightColor:uint, isLight:Boolean = false ):void {
+	public function colorAdd( $lightColor:uint, $lightID:uint, isLight:Boolean = false ):void {
 		
+		_lastLightID = $lightID;
+		// if one has this last light id, then all should have it.
 		if ( false == _b000.colorHas( _lastLightID ) )
 		{
 			// If this is not the light its self, set default attn to 0 of 255
@@ -800,8 +802,7 @@ public class Brightness extends BrightnessData {
 	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int, $lightColor:uint ):Boolean
 	{
 		_s_sb2.copyFrom( this );		
-		lastLightID = $lob.lastLightID;
-		colorAdd( $lightColor );
+		colorAdd( $lightColor, $lob.lastLightID );
 		
 //		colorMix( $lob, $lightColor );
 		
