@@ -927,6 +927,46 @@ public class Brightness extends BrightnessData {
 		return max;	
 	}
 	
+	private function get maxVertex():VertexColor {
+		
+		var max:uint = DEFAULT_ATTEN;
+		var maxVert:VertexColor;
+		if ( max < b000 ) {
+			max = b000;
+			maxVert = _b000;
+		}
+		if ( max < b001 ) {
+			max = b001;
+			maxVert = _b001;
+		}
+		if ( max < b010 ) {
+			max = b010;
+			maxVert = _b010;
+		}
+		if ( max < b011 ) {
+			max = b011;
+			maxVert = _b011;
+		}
+		if ( max < b100 ) {
+			max = b100;
+			maxVert = _b100;
+		}
+		if ( max < b101 ) {
+			max = b101;
+			maxVert = _b101;
+		}
+		if ( max < b110 ) {
+			max = b110;
+			maxVert = _b110;
+		}
+		if ( max < b111 ) {
+			max = b111;
+			maxVert = _b111;
+		}
+
+		return maxVert;	
+	}
+	
 	//private function colorMix( $lob:Brightness, $lightColor:uint ):void {
 		//
 		// want to mix the default color * DEFAULT_ATTEN (intensity) + lob.color * $lob.avg
@@ -1052,9 +1092,60 @@ public class Brightness extends BrightnessData {
 		
 		
 		if ( !$faceOnly && max - attenScaled > avg ) {
-			Log.out( "addInfluence - needs face smoothing" );
+			Log.out( "addInfluence - needs face balancing" );
+			c = balanceAttn( attenScaled );
 		}
 		
+		return c;
+	}
+	/*
+	 *           0,1,0  ___________ 1,1,0
+	 *                /|          /|
+	 *               / |   1,1,1 / |
+	 *     ^  0,1,1 /__|________/  |   POSX ->
+	 *     |       |   |        |  |
+	 *    POSY     |   |________|__|
+	 *             |  / 0,0,0   |  / 1,0,0
+	 *             | /          | /
+	 *             |/___________|/
+	 *      POSZ   0,0,1        1,0,1
+	 *        |
+	 *        \/
+	 */
+	private function balanceAttn( $attenScaled:uint ):Boolean {
+		var c:Boolean = false;
+		// Do this for each adject vertice
+		if ( b000 > b100 + $attenScaled ) { b100 = b000 - $attenScaled; c = true; }
+		if ( b000 > b010 + $attenScaled ) { b010 = b000 - $attenScaled; c = true; }
+		if ( b000 > b001 + $attenScaled ) { b001 = b000 - $attenScaled; c = true; }
+		
+		if ( b001 > b011 + $attenScaled ) { b011 = b001 - $attenScaled; c = true; }
+		if ( b001 > b101 + $attenScaled ) { b101 = b001 - $attenScaled; c = true; }
+		if ( b001 > b000 + $attenScaled ) { b000 = b001 - $attenScaled; c = true; }
+		
+		if ( b101 > b001 + $attenScaled ) { b001 = b101 - $attenScaled; c = true; }
+		if ( b101 > b111 + $attenScaled ) { b111 = b101 - $attenScaled; c = true; }
+		if ( b101 > b100 + $attenScaled ) { b100 = b101 - $attenScaled; c = true; }
+		
+		if ( b100 > b101 + $attenScaled ) { b101 = b100 - $attenScaled; c = true; }
+		if ( b100 > b000 + $attenScaled ) { b000 = b100 - $attenScaled; c = true; }
+		if ( b100 > b110 + $attenScaled ) { b110 = b100 - $attenScaled; c = true; }
+		
+		if ( b010 > b000 + $attenScaled ) { b000 = b010 - $attenScaled; c = true; }
+		if ( b010 > b110 + $attenScaled ) { b110 = b010 - $attenScaled; c = true; }
+		if ( b010 > b011 + $attenScaled ) { b001 = b010 - $attenScaled; c = true; }
+		
+		if ( b011 > b010 + $attenScaled ) { b010 = b011 - $attenScaled; c = true; }
+		if ( b011 > b111 + $attenScaled ) { b111 = b011 - $attenScaled; c = true; }
+		if ( b011 > b001 + $attenScaled ) { b001 = b011 - $attenScaled; c = true; }
+		
+		if ( b111 > b011 + $attenScaled ) { b011 = b111 - $attenScaled; c = true; }
+		if ( b111 > b101 + $attenScaled ) { b101 = b111 - $attenScaled; c = true; }
+		if ( b111 > b110 + $attenScaled ) { b110 = b111 - $attenScaled; c = true; }
+		
+		if ( b110 > b010 + $attenScaled ) { b010 = b110 - $attenScaled; c = true; }
+		if ( b110 > b100 + $attenScaled ) { b100 = b110 - $attenScaled; c = true; }
+		if ( b110 > b111 + $attenScaled ) { b111 = b110 - $attenScaled; c = true; }
 		return c;
 	}
 	
