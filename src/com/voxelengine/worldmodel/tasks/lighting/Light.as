@@ -44,7 +44,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				main:if ( vm ) {
 					var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
-					if ( lightValid( lo ) )
+					if ( valid( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
 						lo.brightness.colorAdd( ti.color, $le.lightID, true );
@@ -81,9 +81,9 @@ package com.voxelengine.worldmodel.tasks.lighting
 			main:if ( vm ) {
 				
 				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
-				if ( lo.gc.eval( 4, 1, 5 , 15 ) )
+				if ( lo.gc.eval( 5, 1, 2 , 7 ) )
 					Log.out ( "light spreading WRONG to this one" );
-				if ( lightValid( lo ) ) {
+				if ( valid( lo ) ) {
 					
 					spreadToNeighbors( lo );
 				}
@@ -97,34 +97,28 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
-		static private function lightValid( lo:Oxel ):Boolean {
-			
-			if ( null == lo.gc )
-				return false; 
-			if ( null == lo.brightness )
-				lo.brightness = BrightnessPool.poolGet();
-			if ( 0 == lo.brightness.lastLightID )
-				return false; 
-			
-			return true;
-		}
-		
-		static private function neighborValid( o:Oxel ):Boolean {
+		static private function valid( o:Oxel ):Boolean {
 			
 			if ( Globals.BAD_OXEL == o ) // This is possible, if oxel is on edge of model
 			{
-				//Log.out( "Light.neighborValid - o == Globals.BAD_OXEL - continue" );
+				//Log.out( "Light.valid - o == Globals.BAD_OXEL - continue" );
 				return false;
 			}
 			else if ( Globals.Info[o.type].light ) // dont try to light a light? what if light source is stronger?
 			{
-				Log.out( "Light.neighborValid - o == LIGHT - continue" );
+				Log.out( "Light.valid - Dont light a light! - continue" );
 				return false;
 			}
 
 			if ( !o.brightness ) // does this oxel already have a brightness?
 				o.brightness = BrightnessPool.poolGet();
 
+			if ( 0 == o.brightness.lastLightID )
+			{
+				Log.out( "Light.valid - 0 == LIGHT ID - continue" );
+				return false;
+			}
+				
 			return true;
 		}
 		
@@ -140,7 +134,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( Globals.BAD_OXEL != no && no.gc.eval( 5, 1, 2 , 7 ) )
 					Log.out ( "light spreading WRONG to this one" );
 					
-				if ( !neighborValid( no ) )
+				if ( !valid( no ) )
 					continue;
 				
 				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
@@ -166,6 +160,11 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
 					rebuildFace( $face, $no );
 			}					
+			else if ( $no.childrenHas() ) 
+			{
+				//Log.out( "Light.projectOnEqualGrain - projectOnNeighborChildren" );
+				projectOnNeighborChildren( $no, $lo, $face );
+			}					
 			else if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
 			{
 				// Should I allow this to happen multiple times, but not add new tasks for it?
@@ -174,14 +173,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 				//Log.out( "Light.projectOnEqualGrain - ALREADY LIT BY SAME LIGHT  - continue face: " + Globals.Plane[$face].name );
 				return true;
 			}
-			else if ( $no.childrenHas() ) 
-			{
-				//Log.out( "Light.projectOnEqualGrain - projectOnNeighborChildren" );
-				projectOnNeighborChildren( $no, $lo, $face );
-			}					
 			else 
 			{
-				if ( Globals.AIR == $no.type ) { // this oxel does not have faces, and transmits light
+				//if ( Globals.AIR == $no.type ) { // this oxel does not have faces OR children, and transmits light
+				if ( true == $no.hasAlpha )	 { // this oxel does not have faces OR children, and transmits light
 					//Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
 					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
 						add( $no );
@@ -264,7 +259,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					
 					var  noChild:Oxel = dchild[childIndex];
 					var  loChild:Oxel = oxelt;
-					if ( !neighborValid( noChild ) )
+					if ( !valid( noChild ) )
 						continue;
 					
 					projectOnEqualGrain( loChild, noChild, $face );	

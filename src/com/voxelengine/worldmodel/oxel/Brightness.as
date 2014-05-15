@@ -365,7 +365,7 @@ public class Brightness extends BrightnessData {
 			b111 = $lob.b111;
 			child7 = true; }
 	}
-	
+	/* Old style, not using color blending
 	public function restoreDefault( $id:uint, $no:Oxel, $faceFrom:int ):Boolean	{
 		//Log.out( "Brightness.setDefault - id: " + $id + " no: " + $no.toStringShort() + toString() );			
 		if ( sunlit )
@@ -408,7 +408,7 @@ public class Brightness extends BrightnessData {
 		}
 		return c;
 	}
-
+*/
 	public function reset():void	{
 		
 		_lastLightID = DEFAULT_ID;
@@ -500,10 +500,11 @@ public class Brightness extends BrightnessData {
 		}
 	}
 
-	
+	/* Old style not using colors
 	public function restoreDefaultFromChildOxel( $id:uint, $no:Oxel, $faceFrom:int ):Boolean {
 		return restoreDefault( $id, $no, $faceFrom );
 	}
+	*/
 	
 	// This creates a virtual larger face that is then applied to the larger no.
 	public function setFromSmallerOxel( $no:Oxel, $lo:Oxel, $faceFrom:int, $lightColor:uint ):Boolean {
@@ -626,7 +627,15 @@ public class Brightness extends BrightnessData {
 	// Brightness uses passed in value, which allows it to reuse a brightness
 	public function subfaceGet( $face:int, $child:int, $nb:Brightness ):void {
 		
+		$nb.reset();
+		var colors:Dictionary = _b000.colors();
+		for (var lightID:String in colors )
+		{
+			var color:uint = colors[lightID];
+			$nb.colorAdd( color, uint(lightID) );
+		}
 		$nb.lastLightID = lastLightID;
+		
 		if ( Globals.POSX == $face ) {
 			if ( 0 == $child ) {
 				$nb.b100 = b100;

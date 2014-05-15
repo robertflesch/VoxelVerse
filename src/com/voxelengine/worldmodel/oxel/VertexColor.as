@@ -123,6 +123,7 @@ public class VertexColor {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.colorRemove - INVALID $lightID = 0" );
 		_changed = true;
+		// Does this remove the null entry from the dictonary?
 		delete _colors[$lightID]; //removes the key
 	}
 	
