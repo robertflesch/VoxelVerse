@@ -46,7 +46,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		// NEVER use this, use the static function
 		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
-			super( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
+			super( $instanceGuid, $gc, $lightID );
 		}
 
 		
@@ -58,6 +58,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			LightRemove.addTask( _guid, $gc, $lightID );
 		}
 		
+		/*
 		override public function start():void {
 			super.start();
 			
@@ -169,7 +170,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			// has brightness, but no faces, so reset to default.
 			else if ( $no.brightness )
 			{
-				$no.brightness.setByFace( Oxel.face_get_opposite( $face ), $no.brightness.DEFAULT, lightID, $no.gc.size() );
+				$no.brightness.setByFace( Oxel.face_get_opposite( $face ), Brightness.DEFAULT, lightID, $no.gc.size() );
 				//$no.brightness.calculateEffect( $face, $lo.brightness, $no, lightID );
 			}
 			// Should never hit these.
@@ -213,6 +214,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			// TODO stop this somehow?
 			super.cancel();
 		}
-		
+		*/
 	}
 }

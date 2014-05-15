@@ -30,8 +30,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 	 */
 	public class Light extends LightTask 
 	{		
-		private var _color:uint;
-		public function get color():uint { return _color; }
 		/**
 		 *  
 		 * @param $instanceGuid - guid of parent model
@@ -48,31 +46,32 @@ package com.voxelengine.worldmodel.tasks.lighting
 					var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
 					if ( lightValid( lo ) )
 					{
-						if ( null == lo.brightness )
-							lo.brightness = BrightnessPool.poolGet();
-						
 						var ti:TypeInfo = Globals.Info[lo.type];
 						lo.brightness.colorAdd( ti.color, $le.lightID, true );
-						// this is already in the oxel, why pass it in?
-						//lo.brightness.type = $le.type;
+						lo.brightness.lastLightID = $le.lightID;
+						if ( lo.parent ) {
+							if ( null == lo.parent.brightness )
+								lo.parent.brightness = BrightnessPool.poolGet();
+							lo.parent.brightness.deriveFromChildOxel( lo );
+						}
 					}
 					
-					addTask( $le.instanceGuid, $le.gc, $le.lightID, ti.color );
+					addTask( $le.instanceGuid, $le.gc, $le.lightID );
 				}
 			}
 		}
 		 
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightColor:uint ):void {
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
 			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var lt:Light = new Light( $instanceGuid, $gc, $lightID, $lightColor );
+			var lt:Light = new Light( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
 		
 		// NEVER use this, use the static function
-		public function Light( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightColor:uint ):void {
-			_color = $lightColor;
-			super( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
+		public function Light( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
+//			super( $instanceGuid, $gc, $gc.toID(), $gc.grain );
+			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
 		}
 		
 		override public function start():void {
@@ -82,10 +81,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 			main:if ( vm ) {
 				
 				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
-				if ( lo.gc.eval( 6, 0, 1 , 2 ) )
+				if ( lo.gc.eval( 4, 1, 5 , 15 ) )
 					Log.out ( "light spreading WRONG to this one" );
-				if ( lightValid( lo ) )
+				if ( lightValid( lo ) ) {
+					
 					spreadToNeighbors( lo );
+				}
 				else
 					Log.out( "Light.start - lightValid failed", Log.ERROR );
 
@@ -96,14 +97,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
-		static private function lightValid( o:Oxel ):Boolean {
+		static private function lightValid( lo:Oxel ):Boolean {
 			
-			if ( null == o.gc )
+			if ( null == lo.gc )
 				return false; 
-			if ( null == o.brightness )
+			if ( null == lo.brightness )
+				lo.brightness = BrightnessPool.poolGet();
+			if ( 0 == lo.brightness.lastLightID )
 				return false; 
-//			if ( 0 == o.brightness.lastLight )
-//				return false; 
 			
 			return true;
 		}
@@ -136,23 +137,19 @@ package com.voxelengine.worldmodel.tasks.lighting
 			{
 				var no:Oxel = $lo.neighbor(face);
 				
+				if ( Globals.BAD_OXEL != no && no.gc.eval( 5, 1, 2 , 7 ) )
+					Log.out ( "light spreading WRONG to this one" );
+					
 				if ( !neighborValid( no ) )
 					continue;
 				
-				if ( no.gc.eval( 6, 0, 1 , 2 ) )
-					Log.out ( "light spreading WRONG to this one" );
-				if ( no.gc.eval( 4, 7, 2 , 12 ) )
-					Log.out ( "light NOT spreading to this one" );
-					
 				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
 				{
-					if ( projectOnLargerGrain( $lo, no, face ) )
-						continue;
+					projectOnLargerGrain( $lo, no, face );
 				}
 				else if ( no.gc.grain == $lo.gc.grain ) // equal grain can have children
 				{ 
-					if ( projectOnEqualGrain( $lo, no, face ) )
-						continue;
+					projectOnEqualGrain( $lo, no, face );
 				}
 				else {
 					Log.out( "Light.spreadToNeighbors - NEIGHBOR GRAIN IS SMALLER: ", Log.ERROR );
@@ -163,7 +160,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 		// returns true if continue
 		private function projectOnEqualGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
 			
-			if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
+			if ( false == $no.hasAlpha ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
+			{
+				//Log.out( "Light.projectOnEqualGrain - solid - addInfluence and rebuildFace" );
+				if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
+					rebuildFace( $face, $no );
+			}					
+			else if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
 			{
 				// Should I allow this to happen multiple times, but not add new tasks for it?
 //				if ( $no.brightness.addInfluence( $lo.brightness, $face, false, no.gc.size() ) )
@@ -176,23 +179,17 @@ package com.voxelengine.worldmodel.tasks.lighting
 				//Log.out( "Light.projectOnEqualGrain - projectOnNeighborChildren" );
 				projectOnNeighborChildren( $no, $lo, $face );
 			}					
-			else if ( false == $no.hasAlpha ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
-			{
-				//Log.out( "Light.projectOnEqualGrain - solid - addInfluence and rebuildFace" );
-				if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size(), color ) )
-					rebuildFace( $face, $no );
-			}					
 			else 
 			{
 				if ( Globals.AIR == $no.type ) { // this oxel does not have faces, and transmits light
 					//Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), color ) )
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
 						add( $no );
 				}
 				else { // this oxel has faces and transmits light (water and leaves)
 					// this is a solid object which does not transmit light (leaves are exception)
 					//Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), color ) )
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
 					{
 						rebuildFace( $face, $no );
 						add( $no );
@@ -212,23 +209,33 @@ package com.voxelengine.worldmodel.tasks.lighting
 				Log.out( "Light.projectOnLargerGrain - NEIGHBOR GRAIN HAS CHILDEN!: ", Log.ERROR );
 				return true;
 			} 
-			else if ( $no.isSolid ) 
-			{
-				//Log.out( "Light.projectOnLargerGrain - no.gc.grain > $lo.gc.grain - calculateEffect - DOES THIS WORK FROM SMALLER OXEL?" );
-				$no.brightness.setFromSmallerOxel( $no, $lo, $face, color );
-				rebuildFace( $face, $no );
-			}
-			else
-			{
-				//if ( $no.brightness.lastLight != $lo.brightness.lastLight ) // dont reevaluate an oxel that already has the influence from this light
-				{
-					$no.brightness.setFromSmallerOxel( $no, $lo, $face, color );
-					add( $no );
+			
+			// first thing I need to do is to generate the larger grain size for parent
+			if ( null == $lo.parent )
+				return true;
+			else {
+				// if the parent has not been set up
+				if ( null == $lo.parent.brightness )
+					$lo.parent.brightness = BrightnessPool.poolGet();
+					
+				if ( $lo.parent.brightness.lastLightID != $lo.brightness.lastLightID ) {
+					var parent:Oxel = $lo.parent;
+					var current:Oxel = $lo;
+					while ( parent.gc.grain <= $no.gc.grain ) {
+						// Make sure light color data is being passed correctly
+						parent.brightness.deriveFromChildOxel( current );
+						current = parent;
+						parent = parent.parent;
+					}
+					projectOnEqualGrain( current, $no, $face );
 				}
-				//else
-				//	Log.out( "Light.projectOnLargerGrain - ALREADY LIT BY SAME LIGHT  - continue face: " + Globals.Plane[$face].name );
+				else // ( $lo.parent.brightness.lastLightID == $lo.brightness.lastLightID )
+				{
+					// has the neighbor been lit by same light already?
+					if ( $no.brightness.lastLightID != $lo.brightness.lastLightID )
+						projectOnEqualGrain( $lo.parent, $no, $face );
+				}
 			}
-
 			return false;
 		}
 		
@@ -278,8 +285,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $no.brightness.valuesHas() )
 			{
-				addTask( _guid, $no.gc, lightID, color );
-				Log.out( "Light.add - ID: " + lightID + $no.brightness.toString() );
+				addTask( _guid, $no.gc, lightID );
+				Log.out( "Light.add - gc:" + $no.gc.toString() + " br: " + $no.brightness.toString() );
 			}
 		}
 		

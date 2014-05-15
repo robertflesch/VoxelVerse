@@ -36,7 +36,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			_gc = GrainCursorPool.poolGet( $gc.bound );
 			_gc.copyFrom( $gc );
 			_lightID = $lightID;
-			super($taskType, $taskPriority);
+			super($taskType, $taskPriority );
 		}
 
 		override public function complete():void

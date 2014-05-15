@@ -55,7 +55,6 @@ package com.voxelengine.worldmodel
 		private var _flame:Boolean  			= false;
 		private var _interactions:Interactions 	= null;
 		private var _flowInfo:FlowInfo 			= null;
-		private var _brightness:Brightness		= null;
 
 		public function set name(val:String):void 	{ _name = val; }
 		public function set image(val:String):void 	{ _image = val; }
@@ -73,7 +72,6 @@ package com.voxelengine.worldmodel
 		public function get name():String 			{ return _name; }
 		public function get image():String 			{ return _image; }
 		public function get flowInfo():FlowInfo		{ return _flowInfo; }
-		public function get brightness():Brightness	{ return _brightness; }
 		
 		public function get placeable():Boolean 	{ return _placeable; }
 		public function get light():Boolean 		{ return _light; }
@@ -274,11 +272,7 @@ package com.voxelengine.worldmodel
 			if ( typesJson.light )
 			{
 				if ( "true" ==  typesJson.light.toLowerCase() )
-				{
 					_light = true;
-					_brightness = new Brightness();
-					_brightness.setAll( 1.0, Brightness.FIXED );
-				}
 				else
 					_light = false;
 			}

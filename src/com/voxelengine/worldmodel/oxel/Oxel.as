@@ -232,6 +232,7 @@ package com.voxelengine.worldmodel.oxel
 		public function get hasAlpha():Boolean { return Globals.hasAlpha( type ); }
 		public function get isFlowable():Boolean { return Globals.Info[type].flowable; }
 		public function get isSolid():Boolean { return Globals.Info[type].solid; }
+		public function get isLight():Boolean { return Globals.Info[type].light; }
 		
 		// Intentionally empty, since these are allocated enmase in pool
 		public function Oxel() {
@@ -635,19 +636,19 @@ package com.voxelengine.worldmodel.oxel
 						_flowInfo = null;  // If it has flow info, release it, no need to check first
 				}
 				
-				if ( Globals.Info[$newType].light )
-				{
-					if ( "" == $guid )
-						throw new Error( "Oxel.type - no active model guid" );
-					if ( EditCursor.EDIT_CURSOR != $guid )
-					{
+				//if ( Globals.Info[$newType].light )
+				//{
+					//if ( "" == $guid )
+						//throw new Error( "Oxel.type - no active model guid" );
+					//if ( EditCursor.EDIT_CURSOR != $guid )
+					//{
 						// keep any existing brightness Info
-						if ( !_brightness ) {
-							_brightness = BrightnessPool.poolGet();
-							_brightness.copyFrom( Globals.Info[$newType].brightness );
-						}
-					}
-				}
+						//if ( !_brightness ) {
+							//_brightness = BrightnessPool.poolGet();
+							//_brightness.colorAdd(  copyFrom( Globals.Info[$newType].brightness );
+						//}
+					//}
+				//}
 			}
 			else
 				Log.out( "Oxel.writeInternal - No type information found for typeID: " + $newType, Log.ERROR );

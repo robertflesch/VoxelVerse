@@ -318,13 +318,13 @@ public class GrainCursor
 		return true;
 	}	
 
-	public function childId():int {
-		var x:int = grainX % 2; // ?? grainX >> (grain - 1);
-		var y:int = grainY % 2;
-		var z:int = grainZ % 2;
+	public function childId():uint {
+		var x:uint = grainX % 2; // ?? grainX >> (grain - 1);
+		var y:uint = grainY % 2;
+		var z:uint = grainZ % 2;
 		
 		// This number scheme is back asswards!
-		var c:int = 0;
+		var c:uint = 0;
 		if ( z ) c += 4;
 		if ( y ) c += 2;
 		if ( x ) c += 1;
