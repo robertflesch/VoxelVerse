@@ -154,7 +154,7 @@ package com.voxelengine.worldmodel.oxel
 		public function vm_initialize( $stats:ModelStatisics ):void {
 			if ( null == _parent )
 			{
-				//Log.out( "Oxel.vm_initialize - This should only happen ONCE --------------------------------------" );
+				//Log.out( "Oxel.vm_initialize - This should only happen ONCE PER MODEL --------------------------------------" );
 				_vertMan = new VertexManager();
 				// Only set minGrain for root oxel
 				if ( 8 < gc.bound  )

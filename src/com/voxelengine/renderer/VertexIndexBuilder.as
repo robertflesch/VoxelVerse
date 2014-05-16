@@ -181,46 +181,67 @@ public class VertexIndexBuilder
 		
 		//trace ( "VertexIndexBuilder - dispose" + this );			
 	}
-	
-	private function quadsCopyToIndexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
-		
-		var _offsetIndices:ByteArray = new ByteArray();
-		//_offsetIndices.endian = Endian.LITTLE_ENDIAN;
 
-		var i:int;
-		var oxel:Oxel;
-		var quad:Quad;
-		var verticeCount:uint;
-		var vertice:uint;
-		var indice:uint;
-		var q:int;
-		for ( var index:int = $oxelStartingIndex; index < $oxelStartingIndex + $oxelsToProcess; index++ ) {
-			oxel = _oxels[index];
-			if ( oxel.quads ) 
-			{
-				for each ( quad in oxel.quads ) 
-				{
-					vertice = 0;
-					if ( quad )
-					{
-						// each indice has to be offset to have a unique offset
-						for each ( indice in quad._indices ) {
-							//_offsetIndices[i] = int(i / 6) * 4 + indice;
-							//_offsetIndices.writeUnsignedInt( int(i / 6) * 4 + indice );
-							_offsetIndices.writeFloat( int(i / 6) * 4 + indice );
-							i++
-						}
-					}
-				}
-			}
+	// We need to break the quads in ~ 16k sized chunks. since that is the limit for each VertexBuffer
+	public function buffersBuildFromOxels( context:Context3D ):void {
+		if ( !dirty || !_oxels )
+		{
+			//trace( "VertexIndexBuilder.buffersBuildFromOxels - CLEAN" );
+			return;
 		}
+			
+		dispose();
+		if ( 0 < _oxels.length ) 
+		{
+			var oxelStartingIndex:int = 0;
+			var remainingOxels:int = _oxels.length;
+			var quadsInOxel:int = 0;
+			
+			if ( 0 < remainingOxels )
+				addComponentData();
+			
+			const MAX_QUADS:int = BUFFER_LIMIT / 4; // Buffer limit is max number of vertexes, and each quad has 4
+			
+			while ( 0 < remainingOxels ) {
+				var quadsProcessed:int = 0;
+				for ( var oxelsProcessed:int = oxelStartingIndex; oxelsProcessed < _oxels.length; oxelsProcessed++ ) 
+				{
+					// safety check on bad data
+					if ( _oxels[oxelsProcessed].quads ) {
+						quadsInOxel = _oxels[oxelsProcessed].quads.length;
+						// Only process full oxels, if adding additional oxel will put us 
+						// over limit, then don't include it
+						if ( quadsProcessed + quadsInOxel <= MAX_QUADS )
+							quadsProcessed += quadsInOxel;
+						else
+							break;
+					}
+					else	
+						quadsInOxel = 0;
+				}
+				if ( 0 < oxelsProcessed - oxelStartingIndex )
+					quadsCopyToBuffers( oxelStartingIndex, oxelsProcessed - oxelStartingIndex , quadsProcessed, context );
+
+				oxelStartingIndex = oxelsProcessed;
+				remainingOxels = _oxels.length - oxelsProcessed;
+				//trace( "VertexIndexBuilder.buffersBuildFromOxels oxelStartingIndex: " + oxelStartingIndex + " oxelsProcessed: " + oxelsProcessed + " remainingQuads: " + remainingQuads + " quadsProcessed: " + quadsProcessed );
+			}
+		}	
 		
-		_bufferIndexMemory = $quadsToProcess * Quad.INDICES * BYTES_PER_WORD;
+		_s_totalVertexMemory += _bufferVertexMemory;
+		_s_totalIndexMemory += _bufferIndexMemory;
+
+		dirty = false;
+	}
+	
+	private function quadsCopyToBuffers( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		
-		//public function createIndexBuffer (numIndices:int) : flash.display3D.IndexBuffer3D;
-		var ib:IndexBuffer3D = $context.createIndexBuffer( $quadsToProcess * Quad.INDICES );
-		ib.uploadFromByteArray( _offsetIndices, 0, 0, $quadsToProcess * Quad.INDICES );
-		_indexBuffers.push(ib);
+		var timer:uint = getTimer();
+		//quadsCopyToVertexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
+		quadsCopyToVertexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
+		quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
+		//quadsCopyToIndexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
+		trace("VertexIndexBuilder.quadsCopyToBuffers - oxelStartingIndex: " + oxelStartingIndex + " +  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
 	
 	private function quadsCopyToVertexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
@@ -250,8 +271,19 @@ public class VertexIndexBuilder
 				}
 			}
 		}
-		
-		var vb:VertexBuffer3D = $context.createVertexBuffer( quadCount * Quad.VERTEX_PER_QUAD, _vertexDataSize );
+		try {
+			var vb:VertexBuffer3D = $context.createVertexBuffer( quadCount * Quad.VERTEX_PER_QUAD, _vertexDataSize );
+		} catch (error:ArgumentError) {
+			Log.out('VertexIndexBuilder.quadsCopyToVertexBuffersByteArray - An argument error has occured', Log.ERROR);
+			return;
+		} catch (error:Error) {
+			Log.out('VertexIndexBuilder.quadsCopyToVertexBuffersByteArray - An error has occured which is not argument related', Log.ERROR );
+			return;
+		}
+		if ( null == vb ) {
+			trace("VertexIndexBuilder.quadsCopyToVertexBuffersByteArray - Ran out of VertexBuffers total used: " + VertexIndexBuilderPool.totalUsed() );
+			return;
+		}
 		vb.uploadFromByteArray ( _vertices, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
 		_vertexBuffers.push(vb);
 		_buffers++;
@@ -306,12 +338,12 @@ public class VertexIndexBuilder
 		_buffers++;
 	}
 */
+
 	private function quadsCopyToIndexBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		
 		var _offsetIndices:Vector.<uint> = new Vector.<uint>( quadsToProcess * Quad.INDICES );
 
 		var i:int = 0;
-		var j:int = 0;
 		var oxel:Oxel;
 		var quad:Quad;
 		var vertex:Number;
@@ -346,13 +378,49 @@ public class VertexIndexBuilder
 			
 //		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
+	
+	// Not using since some index is off...
+	private function quadsCopyToIndexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
+		
+		var _offsetIndices:ByteArray = new ByteArray();
+		//_offsetIndices.endian = Endian.LITTLE_ENDIAN;
 
-	private function quadsCopyToBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
-		//quadsCopyToVertexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		quadsCopyToVertexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		//quadsCopyToIndexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
+		var i:int;
+		var oxel:Oxel;
+		var quad:Quad;
+		var verticeCount:uint;
+		var vertice:uint;
+		var indice:uint;
+		var q:int;
+		for ( var index:int = $oxelStartingIndex; index < $oxelStartingIndex + $oxelsToProcess; index++ ) {
+			oxel = _oxels[index];
+			if ( oxel.quads ) 
+			{
+				for each ( quad in oxel.quads ) 
+				{
+					vertice = 0;
+					if ( quad )
+					{
+						// each indice has to be offset to have a unique offset
+						for each ( indice in quad._indices ) {
+							//_offsetIndices[i] = int(i / 6) * 4 + indice;
+							//_offsetIndices.writeUnsignedInt( int(i / 6) * 4 + indice );
+							_offsetIndices.writeFloat( int(i / 6) * 4 + indice );
+							i++
+						}
+					}
+				}
+			}
+		}
+		
+		_bufferIndexMemory = $quadsToProcess * Quad.INDICES * BYTES_PER_WORD;
+		
+		//public function createIndexBuffer (numIndices:int) : flash.display3D.IndexBuffer3D;
+		var ib:IndexBuffer3D = $context.createIndexBuffer( $quadsToProcess * Quad.INDICES );
+		ib.uploadFromByteArray( _offsetIndices, 0, 0, $quadsToProcess * Quad.INDICES );
+		_indexBuffers.push(ib);
 	}
+
 /*
 	private function quadsCopyToBuffersVectorGood( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		//trace("VertexIndexBuilder.quadsCopyToBuffers - startingIndex: " + oxelStartingIndex + " oxelsToProcess:" +  oxelsToProcess + " quadsToProcess: " + quadsToProcess );
@@ -445,77 +513,30 @@ public class VertexIndexBuilder
 		}
 		throw new Error( "VertexIndexBuilder.addComponentData - No components found" );
 	}
-	
-	// We need to break the quads in ~ 16k sized chunks. since that is the limit for each VertexBuffer
-	public function buffersBuildFromOxels( context:Context3D ):void 
-	{
-		if ( !dirty || !_oxels )
-		{
-			//trace( "VertexIndexBuilder.buffersBuildFromOxels - CLEAN" );
-			return;
-		}
-			
-		dispose();
-		if ( 0 < _oxels.length ) 
-		{
-			var oxelStartingIndex:int = 0;
-			var remainingOxels:int = _oxels.length;
-			var quadsInOxel:int = 0;
-			
-			if ( 0 < remainingOxels )
-				addComponentData();
-			
-			const MAX_QUADS:int = int (BUFFER_LIMIT / 4 * _vertexDataSize);
-			
-			while ( 0 < remainingOxels ) {
-				var quadsProcessed:int = 0;
-				for ( var oxelsProcessed:int = oxelStartingIndex; oxelsProcessed < _oxels.length; oxelsProcessed++ ) 
-				{
-					// safety check on bad data
-					if ( _oxels[oxelsProcessed].quads )
-						quadsInOxel = _oxels[oxelsProcessed].quads.length;
-					else	
-						quadsInOxel = 0;
-					// Only process full oxels, if adding additional oxel will put us 
-					// over limit, then don't include it
-					if ( quadsProcessed + quadsInOxel <= MAX_QUADS ) {
-						quadsProcessed += quadsInOxel;
-					}
-					else
-						break;
-				}
-				if ( 0 < oxelsProcessed - oxelStartingIndex )
-					quadsCopyToBuffersVector( oxelStartingIndex, oxelsProcessed - oxelStartingIndex , quadsProcessed, context );
 
-				oxelStartingIndex = oxelsProcessed;
-				remainingOxels = _oxels.length - oxelsProcessed;
-				//trace( "VertexIndexBuilder.buffersBuildFromOxels oxelStartingIndex: " + oxelStartingIndex + " oxelsProcessed: " + oxelsProcessed + " remainingQuads: " + remainingQuads + " quadsProcessed: " + quadsProcessed );
-			}
-		}	
-		
-		_s_totalVertexMemory += _bufferVertexMemory;
-		_s_totalIndexMemory += _bufferIndexMemory;
-
-		dirty = false;
-	}
-	
-	public function BufferCopyToGPU( $context:Context3D ) : void 
+	public function BufferCopyToGPU( context:Context3D ) : void 
 	{
-		// This function is takes less the 1 ms per call when logged in debugger
+		//var timer:int = getTimer();
+		var vb:VertexBuffer3D;
+		var ib:IndexBuffer3D;
+		var index:uint;
+		var offset:uint;
 		for (var i:int = 0; i < _buffers; i++) {
-			//trace("VertexIndexBuilder - BufferCopyToGPU - count: " + _buffers);
-			var vb:VertexBuffer3D = _vertexBuffers[i];
-			var index:uint;
-			var offset:uint;
+			vb = _vertexBuffers[i];
+			
+			index = 0;
+			offset = 0;
 			for each ( var vc:VertexComponent in _vc ) {
-				$context.setVertexBufferAt( index++, vb, offset, vc.type() );
+				context.setVertexBufferAt( index++, vb, offset, vc.type() );
 				offset += vc.size();
 			}
-			$context.drawTriangles( _indexBuffers[i] );
-		}
-		//trace ( "VertexIndexBuilder.BufferCopyToGPU - took: "  + (getTimer() - timer) );			
-	}
 
+			ib = _indexBuffers[i];
+			context.drawTriangles(ib);
+		}
+		//trace ( "VertexIndexBuilder.bufferCopyToGPU - took: "  + (getTimer() - timer) + "  to process " + _buffers + " buffers" );			
+	}	
+	
 	//////////////////////////////////
 	// Not currently in use - RSF 11.10.13
 	//////////////////////////////////

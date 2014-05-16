@@ -192,7 +192,10 @@ package com.voxelengine.renderer.shaders
 				"max ft3.w, ft2.w, ft4.w",    // take the larger value between the dynamic light and brightness
 				"sat ft2, ft3",     	// Clamp ft2 between 1 and 0, put result in ft2.
 
+				// mixed static and dynamic values
 				"mov oc ft2"
+				// static only values
+				//"mov oc ft4"
 			];
 			
 			var fragmentAssembler:AGALMiniAssembler = new AGALMiniAssembler();

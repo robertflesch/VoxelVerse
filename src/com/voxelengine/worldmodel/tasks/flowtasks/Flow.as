@@ -190,7 +190,7 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 			if ( MIN_MELT_GRAIN > flowOxel.gc.grain )
 				return;
 				
-			FlowFlop.addTask( _guid, flowOxel.gc, flowOxel.type, flowOxel.flowInfo, 1 );
+//			FlowFlop.addTask( _guid, flowOxel.gc, flowOxel.type, flowOxel.flowInfo, 1 );
 		}
 
 		private function flowStartContinous(flowOxel:Oxel):void {

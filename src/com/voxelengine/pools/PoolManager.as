@@ -27,9 +27,9 @@ import com.voxelengine.worldmodel.MemoryManager;
 		// this uses up 424 meg of memory
 		// This is minimum kickstarter setting
 		//private static const INITIAL_POOL_SETTINGS:int = 100000;
-		//private static const INITIAL_POOL_SETTINGS:int = 30000;
+		private static const INITIAL_POOL_SETTINGS:int = 30000;
 		// this uses up 157 meg of memory
-		private static const INITIAL_POOL_SETTINGS:int = 1000;
+		//private static const INITIAL_POOL_SETTINGS:int = 1000;
 		
 		public function PoolManager()
 		{
@@ -39,7 +39,7 @@ import com.voxelengine.worldmodel.MemoryManager;
 			QuadsPool.initialize( INITIAL_POOL_SETTINGS * 1.7, INITIAL_POOL_SETTINGS/6 );
 			BrightnessPool.initialize( INITIAL_POOL_SETTINGS * 10, INITIAL_POOL_SETTINGS/50 );
 			NeighborPool.initialize( INITIAL_POOL_SETTINGS * 2.5, INITIAL_POOL_SETTINGS );
-			VertexIndexBuilderPool.initialize( INITIAL_POOL_SETTINGS/100, INITIAL_POOL_SETTINGS/200 );
+			VertexIndexBuilderPool.initialize( INITIAL_POOL_SETTINGS/50, INITIAL_POOL_SETTINGS/200 );
 			// These two should always be the same
 			GrainCursorPool.initialize( INITIAL_POOL_SETTINGS * 6, INITIAL_POOL_SETTINGS );
 			OxelPool.initialize( INITIAL_POOL_SETTINGS * 6, INITIAL_POOL_SETTINGS );

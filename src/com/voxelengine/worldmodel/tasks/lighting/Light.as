@@ -30,21 +30,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 	 */
 	public class Light extends LightTask 
 	{		
-		/**
-		 *  
-		 * @param $instanceGuid - guid of parent model
-		 * @param $gc of oxel that HAS light attributes
-		 * @param $lightID a light id
-		 * @param $color a light color
-		 * 
-		 */
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.ADD == $le.type )
 			{
 				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				main:if ( vm ) {
 					var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
-					if ( valid( lo ) )
+					if ( valid( lo, true ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
 						lo.brightness.colorAdd( ti.color, $le.lightID, true );
@@ -54,9 +46,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 								lo.parent.brightness = BrightnessPool.poolGet();
 							lo.parent.brightness.deriveFromChildOxel( lo );
 						}
+						addTask( $le.instanceGuid, $le.gc, $le.lightID );
 					}
-					
-					addTask( $le.instanceGuid, $le.gc, $le.lightID );
+					else
+						Log.out( "Light.handleLightEvent - invalid light source", Log.ERROR );
 				}
 			}
 		}
@@ -68,9 +61,16 @@ package com.voxelengine.worldmodel.tasks.lighting
 			Globals.g_lightTaskController.addTask( lt );
 		}
 		
-		// NEVER use this, use the static function
+		/**
+		 * NEVER NEVER NEVER use this, use the static addTask function 
+		 * @param $instanceGuid - guid of parent model
+		 * @param $gc of oxel that HAS light attributes
+		 * @param $lightID a light id
+		 * @param $taskType each oxel gets a unique task id, so that only one task per oxel happens (at once)
+		 * @param $taskPriority small grains get processed first - so use grain size as priority
+		 * 
+		 */
 		public function Light( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
-//			super( $instanceGuid, $gc, $gc.toID(), $gc.grain );
 			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
 		}
 		
@@ -83,8 +83,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
 				if ( lo.gc.eval( 5, 1, 2 , 7 ) )
 					Log.out ( "light spreading WRONG to this one" );
-				if ( valid( lo ) ) {
-					
+				if ( valid( lo, true ) ) {
+					Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 					spreadToNeighbors( lo );
 				}
 				else
@@ -97,14 +97,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
-		static private function valid( o:Oxel ):Boolean {
+		static private function valid( o:Oxel, isLight:Boolean = false ):Boolean {
 			
 			if ( Globals.BAD_OXEL == o ) // This is possible, if oxel is on edge of model
 			{
 				//Log.out( "Light.valid - o == Globals.BAD_OXEL - continue" );
 				return false;
 			}
-			else if ( Globals.Info[o.type].light ) // dont try to light a light? what if light source is stronger?
+			
+			if ( false == isLight && Globals.Info[o.type].light ) // dont try to light a light? what if light source is stronger?
 			{
 				Log.out( "Light.valid - Dont light a light! - continue" );
 				return false;

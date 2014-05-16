@@ -103,6 +103,9 @@ public class VertexColor {
 	}
 	
 	public function attnSet( $lightID:uint, $attn:uint ):void {
+		if ( 1 == $lightID )
+			return;
+			//Log.out( "VertexColor.attnSet - lightID == 1, !!!" );
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.attnSet - INVALID $lightID = 0" );
 		if ( 0 == $attn ) {
@@ -110,8 +113,8 @@ public class VertexColor {
 			//throw new Error( "VertexColor.attnSet - attn = 0" );
 			Log.out( "VertexColor.attnSet - attn == 0, reseting" );
 		}
-		if ( 1 == $lightID && $attn != 255 )
-			Log.out( "VertexColor.attnSet - lightID == 1, !!!" );
+		//if ( 1 == $lightID && $attn != 255 )
+		//	Log.out( "VertexColor.attnSet - lightID == 1, !!!" );
 
 		var val:uint = _colors[$lightID];
 		val &= 0x00ffffff;
