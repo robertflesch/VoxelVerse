@@ -9,7 +9,6 @@ TODO: Backside of water oxels
 TODO: Fix fire animation around wood so that it can work with any voxel. Is it a double voxel? Is there a limit to the amound of faces an oxel can have?
 TODO: Head needs to turn up and down with camera.
 TODO: Limit camera angle when in first person?
-TODO: I notice a large frame rate hit the frame after I redraw a bunch of oxels, what give?
 
 FIX: Torch attachment to hand doesnt dispose correctly
 FIX: Brightness doesnt spread correctly
@@ -47,11 +46,14 @@ FIX: Lights not spreading correctly
 
 TYPEINFO: Add an fullbright flag to types.
 
+VERTEXINDEXMANAGER
+FIX: Oxels appear to not already being removed. I just saw a oxel with no quads in addComponentData
 
 COMPLETED
 FIX: Dragon: Wings not right after taking off
 FIX: Dragon Fire breath uses RED, yuck! Change to Lava or Fire
 FIX: Lagging after hitting dragon breath on stone
+TODO: I notice a large frame rate hit the frame after I redraw a bunch of oxels, what give?
 
 Goal: to become a 100 million dollar a year game studio in 5 years
 SWOT:

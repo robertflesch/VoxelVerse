@@ -1347,6 +1347,9 @@ package com.voxelengine.worldmodel.oxel
 					if ( !_brightness )
 						_brightness = BrightnessPool.poolGet();
 				}
+				
+				if ( Globals.Info[type].fullBright )
+					_brightness.fullBright();
 					
 				var scale:uint = 1 << gc.grain;
 				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )

@@ -234,6 +234,7 @@
             "id": 111,
             "category": "LIQUID",
 			"light" : "true",
+			"fullbright": "true",
             "solid": "false",
 			"flowable": [ 2, 8, 255 ],
             "animated": "true",
@@ -302,7 +303,6 @@
             "id": 115,
             "category": "AIR",
             "solid": "false",
-            "light": "true",
             "color": {
                 "r": 1,
                 "g": 1,
@@ -578,7 +578,7 @@
             "image": "dragonFire.png",
             "id": 135,
             "category": "DRAGON",
-            "light": "true",
+            "b": "true",
 			"placeable" : "false",
             "animated": "true",
             "color": {
@@ -605,7 +605,7 @@
             "image": "dragonIce.png",
             "id": 136,
             "category": "DRAGON",
-            "light": "true",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 0,
@@ -630,7 +630,7 @@
             "image": "water.png",
             "id": 138,
             "category": "UTIL",
-            "light": "true",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 0,
@@ -643,7 +643,7 @@
             "image": "stone.png",
             "id": 139,
             "category": "UTIL",
-            "light": "true",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 1,
@@ -656,7 +656,7 @@
             "image": "stone.png",
             "id": 140,
             "category": "UTIL",
-            "light": "true",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 0.5,
@@ -727,7 +727,7 @@
             "id": 144,
             "category": "AIR",
 			"solid": "false",
-			"light": "true",
+			"fullbright": "true",
 			"flowable": [ 2, 8, 8 ],
 			"interactions": [
 				{ "PICK"		: [ "FLOATIUM", 25, "na" ] },
@@ -766,7 +766,7 @@
             "image": "ash_burning.png",
             "id": 145,
             "category": "PLANT",
-            "light": "true",
+            "fullbright": "true",
             "flame": "true",
             "solid": "false",
 			"flowable": [ 2, 8, 8 ],
@@ -856,7 +856,6 @@
             "image": "mist.png",
             "id": 149,
             "category": "AIR",
-			"light" : "true",
             "solid": "false",
 			"flowable": [ 2, 8, 8 ],
             "animated": "true",
@@ -1033,6 +1032,7 @@
             "image": "invalid.png",
             "id": 1000,
             "category": "INTERNAL",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 1,
@@ -1058,6 +1058,7 @@
             "image": "invalid.png",
             "id": 1001,
             "category": "INTERNAL",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 1,
@@ -1083,6 +1084,7 @@
             "image": "invalid.png",
             "id": 1002,
             "category": "INTERNAL",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 1,
@@ -1107,6 +1109,7 @@
         {   "name": "EDITCURSOR_CYLINDER_ANIMATED", 
             "image": "invalid.png",
             "id": 1003,
+            "fullbright": "true",
             "category": "INTERNAL",
 			"placeable" : "false",
             "color": {
@@ -1133,7 +1136,7 @@
             "image": "invalid.png",
             "id": 1004,
             "category": "INTERNAL",
-            "light": "true",
+            "fullbright": "true",
 			"placeable" : "false",
             "color": {
                 "r": 1,

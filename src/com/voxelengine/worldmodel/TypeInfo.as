@@ -55,6 +55,7 @@ package com.voxelengine.worldmodel
 		private var _flame:Boolean  			= false;
 		private var _interactions:Interactions 	= null;
 		private var _flowInfo:FlowInfo 			= null;
+		private var _fullBright:Boolean 		= false;
 
 		public function set name(val:String):void 	{ _name = val; }
 		public function set image(val:String):void 	{ _image = val; }
@@ -78,6 +79,7 @@ package com.voxelengine.worldmodel
 		public function get flame():Boolean 		{ return _flame; }
 		public function get solid():Boolean 		{ return _solid; }
 		public function get flowable():Boolean 		{ return _flowable; }
+		public function get fullBright():Boolean 	{ return _fullBright; }
 		public function get animated():Boolean 		{ return _animated; }
 		public function get color():uint	 		{ return _color; }
 		public function get maxpix():uint 			{ return _maxpix; }
@@ -282,6 +284,13 @@ package com.voxelengine.worldmodel
 					_flame = true;
 				else
 					_flame = false;
+			}
+			if ( typesJson.fullbright )
+			{
+				if ( "true" ==  typesJson.fullbright.toLowerCase() )
+					_fullBright = true;
+				else
+					_fullBright = false;
 			}
 		}
 		

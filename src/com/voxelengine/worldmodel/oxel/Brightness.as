@@ -1009,6 +1009,21 @@ public class Brightness extends BrightnessData {
 		}
 	}
 	
+	
+	
+	public function fullBright():void {
+		
+		_b000.attnSet( 1, 255 );
+		_b001.attnSet( 1, 255 );
+		_b100.attnSet( 1, 255 );
+		_b101.attnSet( 1, 255 );
+		_b010.attnSet( 1, 255 );
+		_b011.attnSet( 1, 255 );
+		_b110.attnSet( 1, 255 );
+		_b111.attnSet( 1, 255 );
+
+	}
+	
 	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int, $lightColor:uint ):Boolean
 	{
 		var c:Boolean = false;

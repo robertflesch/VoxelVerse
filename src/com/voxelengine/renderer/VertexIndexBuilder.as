@@ -236,12 +236,12 @@ public class VertexIndexBuilder
 	
 	private function quadsCopyToBuffers( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		
-		var timer:uint = getTimer();
+		//var timer:uint = getTimer();
 		//quadsCopyToVertexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		quadsCopyToVertexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		//quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		//quadsCopyToIndexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		trace("VertexIndexBuilder.quadsCopyToBuffers - oxelStartingIndex: " + oxelStartingIndex + " +  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
+		//trace("VertexIndexBuilder.quadsCopyToBuffers - oxelStartingIndex: " + oxelStartingIndex + " +  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
 	
 	private function quadsCopyToVertexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
