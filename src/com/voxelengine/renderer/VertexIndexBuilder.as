@@ -239,7 +239,7 @@ public class VertexIndexBuilder
 		var timer:uint = getTimer();
 		//quadsCopyToVertexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		quadsCopyToVertexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
+		//quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		//quadsCopyToIndexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
 		trace("VertexIndexBuilder.quadsCopyToBuffers - oxelStartingIndex: " + oxelStartingIndex + " +  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
@@ -248,13 +248,17 @@ public class VertexIndexBuilder
 		
 		_s_totalUsed++;
 		_bufferVertexMemory += $quadsToProcess * Quad.VERTEX_PER_QUAD * _vertexDataSize * BYTES_PER_WORD;
+
 		
 		var _vertices:ByteArray = new ByteArray();
 		_vertices.endian = Endian.LITTLE_ENDIAN;
+		var _offsetIndices:Vector.<uint> = new Vector.<uint>( $quadsToProcess * Quad.INDICES );
 
+		var i:uint;
 		var oxel:Oxel;
 		var quad:Quad;
 		var quadCount:uint;
+		var indice:uint;
 		for ( var index:int = $oxelStartingIndex; index < $oxelStartingIndex + $oxelsToProcess; index++ ) {
 			oxel = _oxels[index];
 			if ( oxel.quads ) 
@@ -266,6 +270,11 @@ public class VertexIndexBuilder
 						quadCount++;
 						for each ( var vc:VertexComponent in quad.components ) {
 							vc.writeToByteArray( _vertices );
+						}
+						// each indice has to be offset to have a unique offset
+						for each ( indice in quad._indices ) {
+							_offsetIndices[i] = int(i / 6) * 4 + indice;
+							i++
 						}
 					}
 				}
@@ -287,6 +296,11 @@ public class VertexIndexBuilder
 		vb.uploadFromByteArray ( _vertices, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
 		_vertexBuffers.push(vb);
 		_buffers++;
+		
+		_bufferIndexMemory = $quadsToProcess * Quad.INDICES;
+		var ib:IndexBuffer3D = $context.createIndexBuffer( $quadsToProcess * Quad.INDICES );
+		ib.uploadFromVector( _offsetIndices, 0, $quadsToProcess * Quad.INDICES );
+		_indexBuffers.push(ib);
 	}
 	/*
 	private function quadsCopyToVertexBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
