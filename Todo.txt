@@ -1,0 +1,82 @@
+HOME
+
+
+WORK
+IDEA: How can I add voxel models as voxels? e.g. I torch is really voxel model, but it would be handy to have it as just a voxel(oxel).
+IDEA: Have clouds flow like a liquid
+
+TODO: Backside of water oxels
+TODO: Fix fire animation around wood so that it can work with any voxel. Is it a double voxel? Is there a limit to the amound of faces an oxel can have?
+TODO: Head needs to turn up and down with camera.
+TODO: Limit camera angle when in first person?
+TODO: I notice a large frame rate hit the frame after I redraw a bunch of oxels, what give?
+
+FIX: Torch attachment to hand doesnt dispose correctly
+FIX: Brightness doesnt spread correctly
+
+DRAGON
+IMPROVE: Dragon: Needs idle animation, being stopped plays walk animation now
+IMPROVE: Dragon: Needs walk animation
+TODO:  Dragon: Dragon fire should only melt an oxel for a few turns, then it turns back solid. And when it flows, it doesnt leave anything behind.
+FIX: Change the model for dragon breath so its not cannon
+FIX: Give each breath its own sound
+FIX: When dragon hits something, it pops to the top of object
+FIX: After landing goes back to flying too easy.
+
+ZEPPELIN
+TODO: Add new hud
+TODO: Add ammo store and ammount
+TODO: Add particles to cannon fire
+
+CANNON
+TODO: Break the ammo description out into its own json file for reuse.
+
+PARTICLE
+FIX: Particles should be UNLIT, not lights
+TODO: All(Many) particles should share the same vertex manager, and maybe a modified rendering loop?
+
+WATER
+FIX: Faces getting generated for when larger water oxel is next to smaller solid oxel
+TODO: Water faces next to solid should be inverted, arg, how does this work with FIX above? have to split oxel?
+
+TEST
+IMPROVE: Dragon: Starts going TOO fast when diving.
+
+LIGHTING
+FIX: Lights not spreading correctly
+
+TYPEINFO: Add an fullbright flag to types.
+
+
+COMPLETED
+FIX: Dragon: Wings not right after taking off
+FIX: Dragon Fire breath uses RED, yuck! Change to Lava or Fire
+FIX: Lagging after hitting dragon breath on stone
+
+Goal: to become a 100 million dollar a year game studio in 5 years
+SWOT:
+Strengths:
+14 years of experience leading virtual worlds projects, leading successful software projects for 25 years.
+Product in alpha stage so dev risk is low
+located in lower cost and area with tax breaks for game dev
+licenseing opportunities
+Designed from start to be mobile ready
+Untapped market space.
+Data driven design
+Browser based
+International market possibilities
+increadible customizable world
+
+Weaknesses:
+Single person studio
+No connections to online publications
+limited testing at scale
+some dependancy on online service providers (player.io aka yahoo game network)
+
+Opportunities
+Minecraft exposed a 250 million opportunity which could be a billion dollar opportunity
+steam punk space under targeted.
+
+Threats
+Adobe Flash is 5-10 years from end of lifecycle
+While other next generation voxel engines exist. None are targeted toward this space currently.
