@@ -222,6 +222,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 						parent.brightness.deriveFromChildOxel( current );
 						current = parent;
 						parent = parent.parent;
+						if ( null == parent.brightness )
+							parent.brightness = BrightnessPool.poolGet();
 					}
 					projectOnEqualGrain( current, $no, $face );
 				}
