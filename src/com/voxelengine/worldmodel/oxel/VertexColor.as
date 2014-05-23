@@ -56,10 +56,6 @@ public class VertexColor {
 			_changed = true;
 			_colors[$lightID] = colorAndBrightness;
 		}
-		if ( 0 == _colors[$lightID] ) {
-			_changed = true;
-			_colors[$lightID] = colorAndBrightness;
-		}
 	}
 	
 	public function colorCount():uint {
@@ -88,8 +84,9 @@ public class VertexColor {
 	public function reset():void {
 		_colors = new Dictionary(true);
 		_changed = false;
-		_composite = Brightness.DEFAULT_COLOR_BRIGHTNESS;
-		colorAdd( Brightness.DEFAULT_ID, Brightness.DEFAULT_COLOR_BRIGHTNESS );
+		
+		colorAdd( Brightness.DEFAULT_ID, Brightness.DEFAULT_COLOR );
+		attnSet( Brightness.DEFAULT_ID, Brightness.DEFAULT_ATTEN );
 	}
 	
 	public function attnGet( $lightID:uint ):uint {
@@ -130,10 +127,10 @@ public class VertexColor {
 	
 	// this returns a composite color made of default color plus any additional colors
 	public function colorGetComposite():uint {
-		//return 0x66666666;
 		if ( false == _changed )
 			return _composite;
 			
+		_composite = 0;
 		for each ( var color:uint in _colors ) {
 			_composite = ColorUtils.testCombineARGB( _composite, color );
 		}

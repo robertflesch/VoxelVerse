@@ -35,17 +35,16 @@ package com.voxelengine.worldmodel.tasks.lighting
 			{
 				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				main:if ( vm ) {
-					var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
-					if ( valid( lo, true ) )
+					var lo:Oxel = vm.oxel.childFind( $le.gc );
+					//var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
+					if ( valid( lo ) )
 					{
+						if ( !lo.gc.is_equal( $le.gc ) )
+							Log.out ( "Didn't find child!" );
 						var ti:TypeInfo = Globals.Info[lo.type];
 						lo.brightness.colorAdd( ti.color, $le.lightID, true );
 						lo.brightness.lastLightID = $le.lightID;
-						if ( lo.parent ) {
-							if ( null == lo.parent.brightness )
-								lo.parent.brightness = BrightnessPool.poolGet();
-							lo.parent.brightness.deriveFromChildOxel( lo );
-						}
+							
 						addTask( $le.instanceGuid, $le.gc, $le.lightID );
 					}
 					else
@@ -80,10 +79,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
 			main:if ( vm ) {
 				
-				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
-				if ( lo.gc.eval( 5, 1, 2 , 7 ) )
-					Log.out ( "light spreading WRONG to this one" );
-				if ( valid( lo, true ) ) {
+				var lo:Oxel = vm.oxel.childFind( _gc );
+				if ( valid( lo ) ) {
+					lo.brightness.processed = true;
+					if ( !lo.gc.is_equal( _gc ) )
+						Log.out ( "Didn't find child!" );
+						
+					if ( lo.gc.eval( 5, 1, 2 , 6 ) )
+						Log.out ( "watch light spread to children of neighbors - bottom" );
+
 					Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 					spreadToNeighbors( lo );
 				}
@@ -97,24 +101,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
-		static private function valid( o:Oxel, isLight:Boolean = false ):Boolean {
+		static private function valid( $o:Oxel ):Boolean {
 			
-			if ( Globals.BAD_OXEL == o ) // This is possible, if oxel is on edge of model
-			{
-				//Log.out( "Light.valid - o == Globals.BAD_OXEL - continue" );
+			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
 				return false;
-			}
 			
-			if ( false == isLight && Globals.Info[o.type].light ) // dont try to light a light? what if light source is stronger?
-			{
-				Log.out( "Light.valid - Dont light a light! - continue" );
-				return false;
-			}
+			if ( !$o.brightness ) // does this oxel already have a brightness?
+				$o.brightness = BrightnessPool.poolGet();
 
-			if ( !o.brightness ) // does this oxel already have a brightness?
-				o.brightness = BrightnessPool.poolGet();
-
-			if ( 0 == o.brightness.lastLightID )
+			if ( 0 == $o.brightness.lastLightID )
 			{
 				Log.out( "Light.valid - 0 == LIGHT ID - continue" );
 				return false;
@@ -138,6 +133,11 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( !valid( no ) )
 					continue;
 				
+				if ( no.isLight )
+					continue;
+			
+//				if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
+					
 				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
 				{
 					projectOnLargerGrain( $lo, no, face );
@@ -155,39 +155,31 @@ package com.voxelengine.worldmodel.tasks.lighting
 		// returns true if continue
 		private function projectOnEqualGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
 			
-			if ( false == $no.hasAlpha ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
+			if ( $no.childrenHas() ) 
 			{
-				//Log.out( "Light.projectOnEqualGrain - solid - addInfluence and rebuildFace" );
-				if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
-					rebuildFace( $face, $no );
-			}					
-			else if ( $no.childrenHas() ) 
-			{
-				//Log.out( "Light.projectOnEqualGrain - projectOnNeighborChildren" );
 				projectOnNeighborChildren( $no, $lo, $face );
 			}					
-			else if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
+			//else if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
+			else if ( $no.brightness.processed ) // dont reevaluate an oxel that already has been processed
 			{
-				// Should I allow this to happen multiple times, but not add new tasks for it?
-//				if ( $no.brightness.addInfluence( $lo.brightness, $face, false, no.gc.size() ) )
-//					rebuildFace( $face, $no );
-				//Log.out( "Light.projectOnEqualGrain - ALREADY LIT BY SAME LIGHT  - continue face: " + Globals.Plane[$face].name );
-				return true;
+				return true; 
 			}
 			else 
 			{
-				//if ( Globals.AIR == $no.type ) { // this oxel does not have faces OR children, and transmits light
-				if ( true == $no.hasAlpha )	 { // this oxel does not have faces OR children, and transmits light
-					//Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
+				if ( true == $no.isSolid ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
+				{
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size() ) )
+						rebuildFace( $no, $face );
+				} 
+				else if ( Globals.AIR == $no.type ) { // this oxel does not have faces OR children, and transmits light
+					// Add the influence, test for changes, if changed add this to light list
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size() ) )
 						add( $no );
 				}
 				else { // this oxel has faces and transmits light (water and leaves)
-					// this is a solid object which does not transmit light (leaves are exception)
-					//Log.out( "Light.projectOnEqualGrain - no.brightness.addInfluence - face: " + Globals.Plane[$face].name );
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size(), $lo.brightness._b000.colorGet( $lo.brightness.lastLightID ) ) )
+					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size() ) )
 					{
-						rebuildFace( $face, $no );
+						rebuildFace( $no, $face );
 						add( $no );
 					}
 				}
@@ -199,203 +191,122 @@ package com.voxelengine.worldmodel.tasks.lighting
 		// returns true if continue
 		private function projectOnLargerGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
 			
-			//Log.out( "Light.projectOnLargerGrain" );
-			if ( $no.childrenHas() )
-			{
-				Log.out( "Light.projectOnLargerGrain - NEIGHBOR GRAIN HAS CHILDEN!: ", Log.ERROR );
+			if ( $lo.gc.grain + 1 != $no.gc.grain ) {
+				Log.out( "Light.projectOnLargerGrain - Trying to do TWO or MORE steps up", Log.WARN );
 				return true;
-			} 
-			
-			// first thing I need to do is to generate the larger grain size for parent
-			if ( null == $lo.parent )
-				return true;
-			else {
-				// if the parent has not been set up
-				if ( null == $lo.parent.brightness )
-					$lo.parent.brightness = BrightnessPool.poolGet();
-					
-				if ( $lo.parent.brightness.lastLightID != $lo.brightness.lastLightID ) {
-					var parent:Oxel = $lo.parent;
-					var current:Oxel = $lo;
-					while ( parent.gc.grain <= $no.gc.grain ) {
-						// Make sure light color data is being passed correctly
-						parent.brightness.deriveFromChildOxel( current );
-						current = parent;
-						parent = parent.parent;
-						if ( null == parent.brightness )
-							parent.brightness = BrightnessPool.poolGet();
-					}
-					projectOnEqualGrain( current, $no, $face );
-				}
-				else // ( $lo.parent.brightness.lastLightID == $lo.brightness.lastLightID )
-				{
-					// has the neighbor been lit by same light already?
-					if ( $no.brightness.lastLightID != $lo.brightness.lastLightID )
-						projectOnEqualGrain( $lo.parent, $no, $face );
-				}
 			}
+				
+			if ( $no.childrenHas() )
+				return true;
+			
+			// Project the light on the temp brightness of equal size, from the correct face.
+			// Dont want to use projectOnEqualGrain since that add a task for alpha oxels
+			var bt:Brightness = BrightnessPool.poolGet();
+			bt.addInfluence( $lo.brightness, $face, !$no.hasAlpha, $no.gc.size() / 2 )
+			// what is the position of the opposite child
+			var oppositeId:uint = $lo.childIdOpposite( $face );	
+			// now extend the child onto its parent!
+// How to add child to solid parent
+// Do I use a new (or OLD) routine to add to just that face, or do I modify the childAdd.   
+			if ( true == $no.isSolid ) { // this is a SOLID object which does not transmit light (leaves, water are exceptions)
+				$no.brightness.addInfluence( bt, $face, true, $no.gc.size() );
+				rebuildFace( $no, $face );
+			} else if ( $no.hasAlpha ) {
+				$no.brightness.childAdd( oppositeId, bt, $no.gc.size() / 2 );
+				add( $no );
+			} else {
+				$no.brightness.addInfluence( bt, $face, true, $no.gc.size() );
+				rebuildFace( $no, $face );
+			}
+			// add will filter is out if there are no values.
 			return false;
 		}
 		
 		private function projectOnNeighborChildren( $no:Oxel, $lo:Oxel, $face:int ):void {
 			
-			//Log.out( "Light.projectOnNeighborChildren - no: " + $no.toStringShort() + "  " + $lo.brightness.toString() );
-			
-			var gct:GrainCursor = GrainCursorPool.poolGet( $no.gc.bound );
-			var oxelt:Oxel = OxelPool.poolGet(); // forced to create a temp oxel to use for projection
-			var bt:Brightness = BrightnessPool.poolGet();
-			
+			// I am getting the indexes for the imaginary children that are facing the real children
+			// and a list of the real children
+			var lobChild:Vector.<uint> = $lo.childIDsForDirection( $face )
 			var of:int = Oxel.face_get_opposite( $face );
 			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
+//var lobTestChild:Vector.<uint> = $lo.childIDsForDirection( of );
+
+			var bt:Brightness = BrightnessPool.poolGet();
 			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
 			{
-				$lo.brightness.subfaceGet( $face, childIndex, bt );
+				// I dont like subfaceGet since it uses different logic, would prefer only one routine.
+				// Idea here is I would grab the temp brightness opposite the child I am going to project upon.
+				// then just add influence back on it.
+				bt.reset();
+				// Create a temporary brightness child, pull values from parent
+				$lo.brightness.childGet( lobChild[childIndex], bt );
+				// Make sure it has valid values
 				if ( bt.valuesHas() )
 				{
-					// create temp oxel as light source for lighting purposes
-					gct.copyFrom( dchild[childIndex].gc );
-					// move to location of fake light oxel
-					gct.move( of );
-					// dont care the type, since it is only temp, just has to be transparent
-					oxelt.initialize( $no, gct, Globals.AIR, null );
-					oxelt.brightness = bt;
+					var child:Oxel = dchild[childIndex];
+					if ( !valid( child ) )
+						Log.out( "Light.projectOnNeighborChildren - How do I get here?" );
 					
-					var  noChild:Oxel = dchild[childIndex];
-					var  loChild:Oxel = oxelt;
-					if ( !valid( noChild ) )
-						continue;
+					// Project the virtual brightness object on the real child of the same size
+					child.brightness.addInfluence( bt, $face, !child.hasAlpha, child.gc.size() );
 					
-					projectOnEqualGrain( loChild, noChild, $face );	
+					if ( child.hasAlpha )
+						add( child )
+					else
+						rebuildFace( child, $face );
 				}
 			}
-			GrainCursorPool.poolDispose( gct );
-			OxelPool.poolDispose( oxelt );
 			BrightnessPool.poolReturn( bt );
 		}
 		
-		private function add( $no:Oxel ):void {
+		private function add( $o:Oxel ):void {
 			
-			if ( $no.isSolid )
+			if ( $o.brightness.processed )
+			{
+				Log.out( "Light.add - PROCESSED ALREADY", Log.ERROR );
+				return;
+			}
+			
+			if ( $o.isSolid )
 			{
 				Log.out( "Light.add - SOLID", Log.ERROR );
 				return;
 			}
 			
-			if ( $no.brightness.valuesHas() )
+			if ( $o.gc.grain < 4 )
 			{
-				addTask( _guid, $no.gc, lightID );
-				Log.out( "Light.add - gc:" + $no.gc.toString() + " br: " + $no.brightness.toString() );
-			}
-		}
-		
-		public function rebuildFace( $faceFrom:int, $no:Oxel ):void {
-			
-			if ( !$no.isSolid )
-				Log.out( "Brightness.calculateEffect - being called on non solid object", Log.ERROR );
-				
-			if ( $no.brightness.sunlit )
-				return
-			
-			if ( !$no.brightness.valuesHas() ) {
-				//Log.out( "Brightness.calculateEffect - fails valuesHas " );
+				Log.out( "Light.add - TOO SMALL" );
 				return;
 			}
+			
+			if ( $o.gc.grain > 5 )
+			{
+				Log.out( "Light.add - TOO LARGE FOR NOW" );
+				return;
+			}
+			
+			if ( $o.brightness.valuesHas() )
+			{
+				addTask( _guid, $o.gc, lightID );
+				Log.out( "Light.add - gc:" + $o.gc.toString() + " br: " + $o.brightness.toString() );
+			}
+		}
+		
+		private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
+			
+			if ( !$o.isSolid ) {
+				Log.out( "Brightness.calculateEffect - being called on non solid object", Log.ERROR );
+				return;
+			}
+				
+			if ( $o.brightness.sunlit )
+				return;
+			
+			if ( !$o.brightness.valuesHas() )
+				return;
 
-			if ( $no.quads && 0 < $no.quads.length )
-			{
-					$no.quadRebuild( Oxel.face_get_opposite( $faceFrom ) );
-	//			else
-	//				$no.quadsRebuildAll( $no.type ); // All of the quads may have changed...
-			}
+			if ( $o.quads && 0 < $o.quads.length )
+				$o.quadRebuild( Oxel.face_get_opposite( $faceFrom ) );
 		}
-		
-		
-/*		
-		private function projectOnChildren( $no:Oxel, $lo:Oxel, $face:int ):void {
-			
-			//Log.out( "Light.projectOnChildren - no: " + $no.toStringShort() + "  " + $lo.brightness.toString() );
-			var of:int = Oxel.face_get_opposite( $face );
-			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
-			var gct:GrainCursor = GrainCursorPool.poolGet( $no.gc.bound );
-			// forced to create a temp oxel to use for projection
-			var oxelt:Oxel = OxelPool.poolGet();
-			var bt:Brightness = BrightnessPool.poolGet();
-			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
-			{
-				$lo.brightness.subfaceGet( $face, childIndex, bt );
-				if ( bt.valuesHas() )
-				{
-					// create temp oxel as light source for lighting purposes
-					gct.copyFrom( dchild[childIndex].gc );
-					// move to location of fake light oxel
-					gct.move( of );
-					// dont care the type, since it is only temp, just has to be transparent
-					oxelt.initialize( $no, gct, Globals.AIR, null );
-					oxelt.brightness = bt;
-					
-					lightNeighbor( dchild[childIndex], oxelt, $face ); 
-				}
-				
-			}
-			GrainCursorPool.poolDispose( gct );
-			OxelPool.poolDispose( oxelt );
-			BrightnessPool.poolReturn( bt );
-		}
-*/
-		
-		
-/*		
-		private function addToParent( $lo:Oxel ):void {
-			if ( !$lo.parent )
-				return; 
-				
-			var po:Oxel = $lo.parent;
-			var childId:int;
-			// allocate a new brightness, and set any solid oxels to set = true.
-			if ( !po.brightness )
-			{
-				po.brightness = BrightnessPool.poolGet();
-				// this iterates thru the solid children, and sets all of them to complete.
-				// TODO still possible issue if there are hidden AIR pockets, parent might never complete
-				for each ( var child:Oxel in po.children )
-				{
-					if ( child.isSolid )
-					{
-						childId = child.gc.childId();
-						if ( !child.brightness )
-							child.brightness = BrightnessPool.poolGet();
-						// child need a brightness if it is solid
-						po.brightness.setFromChildOxel( child.brightness, childId );
-					}	
-				}
-				add ( po );
-			}
-			// if already ready, this must be from a previous lighting
-			// reset the ready and the lastLight lightID
-			else if ( po.brightness.lastLight ) 
-			{
-				po.brightness.readyReset();
-				po.brightness.lastLight = null;
-				// adding po here means even if the all the children dont get ready, it still runs
-				add ( po );
-			}
-
-			//if ( po.gc.eval( 5, 0, 4, 0 ) )
-			//	trace( "B4 - 5, 0, 4, 0: " + po.brightness.toString() );
-				
-			childId = $lo.gc.childId();
-			po.brightness.setFromChildOxel( $lo.brightness, childId );
-			
-			//if ( po.gc.eval( 5, 0, 4, 0 ) )
-			//	trace( "8T - 5, 0, 4, 0: " + po.brightness.toString() );
-			
-			if ( po.brightness.ready )
-			{
-				//Log.out( "Light.addToParent - complete: " + po.toStringShort() + " " + po.brightness.toString() );
-				po.brightness.lastLight = lightID;
-			}
-		}
-*/	
-		
 	}
 }
