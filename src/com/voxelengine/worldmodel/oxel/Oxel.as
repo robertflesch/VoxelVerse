@@ -268,6 +268,10 @@ package com.voxelengine.worldmodel.oxel
 			//trace( "Oxel.release" + gc.toString() );
 
 			_flowInfo = null; // might need a pool for these.
+			if ( _brightness ) { 
+				BrightnessPool.poolReturn( _brightness );
+				_brightness = null;
+			}
 			
 			// kill any existing family, you can be parent type OR physical type, not both
 			if ( childrenHas() )
@@ -494,6 +498,27 @@ package com.voxelengine.worldmodel.oxel
 			}
 			
 			return childrenDirectional;
+		}
+		
+		// Get just the IDs of the children in that direction, used in getting brightness
+		public function childIDsForDirection( dir:int ):Vector.<uint> {
+			
+			var childIDsDirectional:Vector.<uint> = new Vector.<uint>;
+			var mask:uint = 0;
+			if      ( Globals.POSX == dir )	mask = ALL_POSX_CHILD
+			else if ( Globals.NEGX == dir ) mask = ALL_NEGX_CHILD
+			else if ( Globals.POSY == dir ) mask = ALL_POSY_CHILD
+			else if ( Globals.NEGY == dir ) mask = ALL_NEGY_CHILD
+			else if ( Globals.POSZ == dir ) mask = ALL_POSZ_CHILD
+			else if ( Globals.NEGZ == dir ) mask = ALL_NEGZ_CHILD
+
+			for ( var i:int = 0; i < OXEL_CHILD_COUNT; i++)
+			{
+				if( mask & ( 1 << i ) ) // is bit i set
+					childIDsDirectional.push( i );
+			}
+			
+			return childIDsDirectional;
 		}
 		
 		public function childrenHas():Boolean { return null != _children; }
@@ -2686,6 +2711,62 @@ package com.voxelengine.worldmodel.oxel
 		
 		public function generateID( $guid:String ):String {
 			return $guid + _gc.toID();
+		}
+		
+		public function childIdOpposite( $face:uint ):uint {
+			var ID:uint = gc.childId();
+			if ( 0 == ID ) {
+				if ( Globals.NEGX == $face ) return 1;
+				if ( Globals.NEGY == $face ) return 2;
+				if ( Globals.NEGZ == $face ) return 4;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 1 == ID ) {
+				if ( Globals.POSX == $face ) return 0;
+				if ( Globals.NEGY == $face ) return 3;
+				if ( Globals.NEGZ == $face ) return 5;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 2 == ID ) {
+				if ( Globals.NEGX == $face ) return 3;
+				if ( Globals.POSY == $face ) return 0;
+				if ( Globals.NEGZ == $face ) return 6;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 3 == ID ) {
+				if ( Globals.POSX == $face ) return 2;
+				if ( Globals.POSY == $face ) return 1;
+				if ( Globals.NEGZ == $face ) return 7;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 4 == ID ) {
+				if ( Globals.NEGX == $face ) return 5;
+				if ( Globals.NEGY == $face ) return 6;
+				if ( Globals.POSZ == $face ) return 0;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 5 == ID ) {
+				if ( Globals.POSX == $face ) return 4;
+				if ( Globals.NEGY == $face ) return 7;
+				if ( Globals.POSZ == $face ) return 1;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 6 == ID ) {
+				if ( Globals.NEGX == $face ) return 7;
+				if ( Globals.POSY == $face ) return 4;
+				if ( Globals.POSZ == $face ) return 2;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else if ( 7 == ID ) {
+				if ( Globals.POSX == $face ) return 6;
+				if ( Globals.POSY == $face ) return 5;
+				if ( Globals.POSZ == $face ) return 3;
+				trace( "GrainCursor.childIdOpposite - unknown face for childId: " + ID + "  face: " + $face );
+			}
+			else
+				trace( "GrainCursor.childIdOpposite - unknown ID for childId: " + ID + "  face: " + $face );
+			
+			return 0;	
 		}
 		
 		
