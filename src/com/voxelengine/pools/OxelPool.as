@@ -74,9 +74,9 @@ public final class OxelPool
 		 
 	} 
 
-	public static function poolDispose(disposedOxel:Oxel):void 
+	public static function poolDispose( $disposedOxel:Oxel):void 
 	{ 
-		_pool[_counter++] = disposedOxel; 
+		_pool[_counter++] = $disposedOxel; 
 	} 
 	
 	static private function getMemoryHash( oxel:Oxel ):String
