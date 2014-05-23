@@ -61,13 +61,12 @@ import flash.geom.Vector3D;
 			return newTint;
 		}
 		
-		public static function testCombineARGB( c1:uint, c2:uint ):uint {
+		public static function testCombineARGB( base:uint, c1:uint  ):uint {
 			var αa:Number = ColorUtils.extractIntensity( c1 )/255;
-			var αb:Number = ColorUtils.extractIntensity( c2 )/255;
-			return ARGBToHex( (αa + αb * ( 1 - αa )) * 255
-					 		, Math.max( extractRed(c1) * αa, extractRed(c2) * αb )
-							, Math.max( extractGreen(c1) * αa, extractGreen(c2) * αb )
-							, Math.max( extractBlue(c1) * αa, extractBlue(c2) * αb ) );
+			return ARGBToHex( 255
+					 		, Math.max( extractRed(c1) * αa, extractRed(base) )
+							, Math.max( extractGreen(c1) * αa, extractGreen(base) )
+							, Math.max( extractBlue(c1) * αa, extractBlue(base) ) );
 		}
 		
 		public static function combineRGB( c1:Vector3D, c2:Vector3D ):Vector3D {
