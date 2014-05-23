@@ -48,7 +48,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			_face = $face;
 			super( $instanceGuid, $gc, lightID );
 		}
-		
+		/*
 		override public function start():void {
 			super.start();
 			
@@ -173,5 +173,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			trace( "VM.light evaluated: " + Oxel._s_oxelsEvaluated );
 			trace( "VM.light lights found: " + Oxel._s_lightsFound );
 		}
+		*/
 	}
 }
