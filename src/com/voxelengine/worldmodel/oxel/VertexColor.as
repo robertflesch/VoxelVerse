@@ -43,19 +43,25 @@ public class VertexColor {
 	private var _changed:Boolean = true;
 	private var _composite:uint
 	
-	public function VertexColor( $lightID:uint, colorAndBrightness:uint ) {
+	public function VertexColor( $lightID:uint, $colorAndBrightness:uint ) {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.VertexColor - INVALID $lightID = 0" );
-		colorAdd( $lightID, colorAndBrightness );
+		colorAdd( $lightID, $colorAndBrightness );
 	}
 	
-	public function colorAdd( $lightID:uint, colorAndBrightness:uint ):void {
+	public function copyColors( $colors:Dictionary ):void {
+		for (var lightID:String in $colors )
+		{
+			var color:uint = $colors[lightID];
+			colorAdd( uint(lightID), color );
+		}
+	}
+	
+	public function colorAdd( $lightID:uint, $colorAndBrightness:uint ):void {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.colorAdd - INVALID $lightID = 0" );
-		if ( null == _colors[$lightID] ) {
-			_changed = true;
-			_colors[$lightID] = colorAndBrightness;
-		}
+		_changed = true;
+		_colors[$lightID] = $colorAndBrightness;
 	}
 	
 	public function colorCount():uint {
@@ -106,7 +112,7 @@ public class VertexColor {
 		if ( 0 == $attn ) {
 			$attn = Brightness.DEFAULT_ATTEN;
 			//throw new Error( "VertexColor.attnSet - attn = 0" );
-			Log.out( "VertexColor.attnSet - attn == 0, reseting" );
+			Log.out( "VertexColor.attnSet - attn == 0, reseting", Log.ERROR );
 		}
 		//if ( 1 == $lightID && $attn != 255 )
 		//	Log.out( "VertexColor.attnSet - lightID == 1, !!!" );
