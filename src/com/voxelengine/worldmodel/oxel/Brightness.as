@@ -46,7 +46,7 @@ public class Brightness  {  // extends BrightnessData
 
 	static private var _s_sb:Brightness = new Brightness(); // scratchBrightness
 	static public function scratch():Brightness { return _s_sb; }
-	static public const FIXED:uint = 1;
+	static public const FIXED_ID:uint = 1;
 
 	private var _processed:Boolean = false; // This is used to keep track of whether or not a oxel has been processed in the light task
 	public function get processed():Boolean { return _processed; }
@@ -88,7 +88,7 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function get sunlit():Boolean { return _sunlit; }
 	// TODO this should be from the current sun object
-	public function set sunlit(value:Boolean):void { true == value ? setAll( MAX, FIXED ): reset(); _sunlit = value;  }
+	public function set sunlit(value:Boolean):void { true == value ? setAll( FIXED_ID, MAX ): reset(); _sunlit = value;  }
 	
 	private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
@@ -148,14 +148,16 @@ public class Brightness  {  // extends BrightnessData
 	}
 
 	public function toString():String {
-		return  "  b000: " + b000 +
+		return  "  lastLightID: " + _lastLightID +
+		        "  b000: " + b000 +
 				"  b001: " + b001 +
 				"  b100: " + b100 +
 				"  b101: " + b101 +
 				"  b010: " + b010 +
 				"  b011: " + b011 +
 				"  b110: " + b110 +
-				"  b111: " + b111;
+				"  b111: " + b111 +
+				"  colorCount: "  + _b000.colorCount();
 	}
 	
 	public function copyFrom( $b:Brightness ):void {
@@ -179,18 +181,24 @@ public class Brightness  {  // extends BrightnessData
 		// _processed - left empty
 	}
 	
-	public function setAll( $val:uint, $id:uint ):void	{
+	public function setAll( $lightID:uint, $attn:uint ):void	{
+		if ( Brightness.MAX < $attn )
+			throw new Error( "Brightness.setAll - attn too high" );
 		if ( sunlit )
 			return;
-		_lastLightID = $id;
-		b000 = $val;
-		b001 = $val;
-		b100 = $val;
-		b101 = $val;
-		b010 = $val;
-		b011 = $val;
-		b110 = $val;
-		b111 = $val;
+		if ( true == _b000.colorHas( $lightID ) ) {
+			_lastLightID = $lightID;
+			b000 = $attn;
+			b001 = $attn;
+			b100 = $attn;
+			b101 = $attn;
+			b010 = $attn;
+			b011 = $attn;
+			b110 = $attn;
+			b111 = $attn;
+		}
+		else
+			throw new Error( "Brightness.setAll - Color not defined" );
 	}
 	
 	public function valuesHas():Boolean	{
@@ -280,7 +288,7 @@ public class Brightness  {  // extends BrightnessData
 		for (var lightID:String in colors )
 		{
 			var color:uint = colors[lightID];
-			colorAdd( uint(lightID), color );
+			lightAdd( uint(lightID), color );
 		}
 		
 		if ( lastLightID != $bt.lastLightID ) {	
@@ -381,17 +389,13 @@ public class Brightness  {  // extends BrightnessData
 	// grabs the light from a parent to a child brightness
 	public function childGet( $childID:int, $nb:Brightness ):void {
 		
-		// NOTE NOTE - This is not using squares and triagonals
-		// NOTE NOTE - This is not using squares and triagonals
-		// NOTE NOTE - This is not using squares and triagonals
-		// NOTE NOTE - This is not using squares and triagonals
 		var colors:Dictionary = _b000.colors();
 		for (var lightIDString:String in colors )
 		{
 			var color:uint = colors[lightIDString];
 			var lightID:uint = uint(lightIDString);
 			if ( DEFAULT_ID != lightID ) {
-				$nb.colorAdd( lightID, color );
+				$nb.lightAdd( lightID, color );
 				$nb.lastLightID = lightID;
 				
 				// I think the diagonals should be averaged between both corners
@@ -568,7 +572,7 @@ public class Brightness  {  // extends BrightnessData
 		return 0;
 	}
 	
-	public function colorAdd( $lightID:uint, $lightColor:uint, isLight:Boolean = false ):void {
+	public function lightAdd( $lightID:uint, $lightColor:uint, isLight:Boolean = false ):void {
 		
 		// if one has this last light id, then all should have it.
 		if ( false == _b000.colorHas( $lightID ) )
@@ -603,12 +607,12 @@ public class Brightness  {  // extends BrightnessData
 		_b111.attnSet( 1, 255 );
 	}
 	
-	public function addInfluence( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
+	public function influenceAdd( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
 		var c:Boolean = false;
 		var lightColor:uint = $lob._b000.colorGet( $lob.lastLightID );		
 		
-		colorAdd( $lob.lastLightID, lightColor );
+		lightAdd( $lob.lastLightID, lightColor );
 		if ( lastLightID != $lob.lastLightID ) {
 			lastLightID = $lob.lastLightID;
 			processed = false;
@@ -701,25 +705,9 @@ public class Brightness  {  // extends BrightnessData
 		if ( b000 > b110 + qrAtten ) 	  { b110 = b001 - qrAtten; c = true; }
 		if ( b001 > b111 + sqAtten ) 	  { b111 = b001 - sqAtten; c = true; }
 		
-		if ( b101 > b000 + sqAtten ) 	  { b000 = b101 - sqAtten; c = true; }
-		if ( b101 > b001 + $attenScaled ) { b001 = b101 - $attenScaled; c = true; }
-		if ( b101 > b010 + qrAtten ) 	  { b010 = b101 - qrAtten; c = true; }
-		if ( b101 > b011 + sqAtten ) 	  { b011 = b101 - sqAtten; c = true; }
-		if ( b101 > b100 + $attenScaled ) { b100 = b101 - $attenScaled; c = true; }
-		if ( b101 > b110 + sqAtten ) 	  { b110 = b101 - sqAtten; c = true; }
-		if ( b101 > b111 + $attenScaled ) { b111 = b101 - $attenScaled; c = true; }
-		
-		if ( b100 > b000 + $attenScaled ) { b000 = b100 - $attenScaled; c = true; }
-		if ( b100 > b001 + sqAtten ) 	  { b001 = b100 - sqAtten; c = true; }
-		if ( b100 > b010 + sqAtten ) 	  { b010 = b100 - sqAtten; c = true; }
-		if ( b100 > b011 + qrAtten ) 	  { b011 = b100 - qrAtten; c = true; }
-		if ( b100 > b101 + $attenScaled ) { b101 = b100 - $attenScaled; c = true; }
-		if ( b100 > b110 + $attenScaled ) { b110 = b100 - $attenScaled; c = true; }
-		if ( b100 > b111 + sqAtten ) 	  { b111 = b100 - sqAtten; c = true; }
-		
 		if ( b010 > b000 + $attenScaled ) { b000 = b010 - $attenScaled; c = true; }
 		if ( b010 > b001 + sqAtten ) 	  { b001 = b010 - sqAtten; c = true; }
-		if ( b010 > b011 + $attenScaled ) { b010 = b010 - $attenScaled; c = true; }
+		if ( b010 > b011 + $attenScaled ) { b011 = b010 - $attenScaled; c = true; }
 		if ( b010 > b100 + sqAtten ) 	  { b100 = b010 - sqAtten; c = true; }
 		if ( b010 > b101 + qrAtten ) 	  { b101 = b010 - qrAtten; c = true; }
 		if ( b010 > b110 + $attenScaled ) { b110 = b010 - $attenScaled; c = true; }
@@ -733,14 +721,22 @@ public class Brightness  {  // extends BrightnessData
 		if ( b011 > b110 + sqAtten )      { b110 = b011 - sqAtten; c = true; }
 		if ( b011 > b111 + $attenScaled ) { b111 = b011 - $attenScaled; c = true; }
 
-		if ( b111 > b000 + qrAtten ) 	  { b000 = b111 - qrAtten; c = true; }
-		if ( b111 > b001 + sqAtten ) 	  { b001 = b111 - sqAtten; c = true; }
-		if ( b111 > b010 + sqAtten ) 	  { b010 = b111 - sqAtten; c = true; }
-		if ( b111 > b011 + $attenScaled ) { b011 = b111 - $attenScaled; c = true; }
-		if ( b111 > b100 + sqAtten ) 	  { b100 = b111 - sqAtten; c = true; }
-		if ( b111 > b101 + $attenScaled ) { b101 = b111 - $attenScaled; c = true; }
-		if ( b111 > b110 + $attenScaled ) { b110 = b111 - $attenScaled; c = true; }
-
+		if ( b100 > b000 + $attenScaled ) { b000 = b100 - $attenScaled; c = true; }
+		if ( b100 > b001 + sqAtten ) 	  { b001 = b100 - sqAtten; c = true; }
+		if ( b100 > b010 + sqAtten ) 	  { b010 = b100 - sqAtten; c = true; }
+		if ( b100 > b011 + qrAtten ) 	  { b011 = b100 - qrAtten; c = true; }
+		if ( b100 > b101 + $attenScaled ) { b101 = b100 - $attenScaled; c = true; }
+		if ( b100 > b110 + $attenScaled ) { b110 = b100 - $attenScaled; c = true; }
+		if ( b100 > b111 + sqAtten ) 	  { b111 = b100 - sqAtten; c = true; }
+		
+		if ( b101 > b000 + sqAtten ) 	  { b000 = b101 - sqAtten; c = true; }
+		if ( b101 > b001 + $attenScaled ) { b001 = b101 - $attenScaled; c = true; }
+		if ( b101 > b010 + qrAtten ) 	  { b010 = b101 - qrAtten; c = true; }
+		if ( b101 > b011 + sqAtten ) 	  { b011 = b101 - sqAtten; c = true; }
+		if ( b101 > b100 + $attenScaled ) { b100 = b101 - $attenScaled; c = true; }
+		if ( b101 > b110 + sqAtten ) 	  { b110 = b101 - sqAtten; c = true; }
+		if ( b101 > b111 + $attenScaled ) { b111 = b101 - $attenScaled; c = true; }
+		
 		if ( b110 > b000 + sqAtten )	  { b000 = b110 - sqAtten; c = true; }
 		if ( b110 > b001 + qrAtten )	  { b001 = b110 - qrAtten; c = true; }
 		if ( b110 > b010 + $attenScaled ) { b010 = b110 - $attenScaled; c = true; }
@@ -749,13 +745,21 @@ public class Brightness  {  // extends BrightnessData
 		if ( b110 > b101 + sqAtten )	  { b101 = b110 - sqAtten; c = true; }
 		if ( b110 > b111 + $attenScaled ) { b111 = b110 - $attenScaled; c = true; }
 
+		if ( b111 > b000 + qrAtten ) 	  { b000 = b111 - qrAtten; c = true; }
+		if ( b111 > b001 + sqAtten ) 	  { b001 = b111 - sqAtten; c = true; }
+		if ( b111 > b010 + sqAtten ) 	  { b010 = b111 - sqAtten; c = true; }
+		if ( b111 > b011 + $attenScaled ) { b011 = b111 - $attenScaled; c = true; }
+		if ( b111 > b100 + sqAtten ) 	  { b100 = b111 - sqAtten; c = true; }
+		if ( b111 > b101 + $attenScaled ) { b101 = b111 - $attenScaled; c = true; }
+		if ( b111 > b110 + $attenScaled ) { b110 = b111 - $attenScaled; c = true; }
+
 		return c;
 	}
 	
 	public function addBrightness( $lob:Brightness, $bt:Brightness ):Boolean {
 		
 		lastLightID = $lob.lastLightID
-		colorAdd( lastLightID, $lob.colorGet( lastLightID ) );
+		lightAdd( lastLightID, $lob.colorGet( lastLightID ) );
 		
 		var c:Boolean;
 		if ( b000 < $bt.b000 )	  { b000 = $bt.b000; c = true; }
@@ -960,7 +964,7 @@ public class Brightness  {  // extends BrightnessData
 		}
 		Log.out( "Brightness.setFromSmallerOxel                     " + $no.toStringShort() + " brightness: " + _s_sb.toString() );		
 		var faceOnly:Boolean = !$no.hasAlpha;
-		return addInfluence( _s_sb, $faceFrom, faceOnly, $no.gc.size() );
+		return influenceAdd( _s_sb, $faceFrom, faceOnly, $no.gc.size() );
 		//return rebuildFace( $faceFrom, _s_sb, $no );
 	}
 	*/

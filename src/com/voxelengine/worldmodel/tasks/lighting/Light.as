@@ -9,6 +9,7 @@
 package com.voxelengine.worldmodel.tasks.lighting
 {
 	import com.voxelengine.events.LightEvent;
+	import com.voxelengine.worldmodel.oxel.BrightnessTests;
 	import com.voxelengine.worldmodel.TypeInfo;
 	import flash.geom.Vector3D;
 	import com.developmentarc.core.tasks.events.TaskEvent;
@@ -42,7 +43,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						if ( !lo.gc.is_equal( $le.gc ) )
 							Log.out ( "Didn't find child!" );
 						var ti:TypeInfo = Globals.Info[lo.type];
-						lo.brightness.colorAdd( $le.lightID, ti.color, true );
+						lo.brightness.lightAdd( $le.lightID, ti.color, true );
 						lo.brightness.lastLightID = $le.lightID;
 							
 						addTask( $le.instanceGuid, $le.gc, $le.lightID );
@@ -134,8 +135,6 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			
 				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
 				{
-					if ( no.gc.eval( 6, 2, 1, 3 ) )
-						Log.out ( "Look at grain 6 lights" );
 					projectOnLargerGrain( $lo, no, face );
 				}
 				else if ( no.gc.grain == $lo.gc.grain ) // equal grain can have children
@@ -166,16 +165,16 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			{
 				if ( true == $no.isSolid ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
 				{
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, true, $no.gc.size() ) )
+					if ( $no.brightness.influenceAdd( $lo.brightness, $face, true, $no.gc.size() ) )
 						rebuildFace( $no, $face );
 				} 
 				else if ( Globals.AIR == $no.type ) { // this oxel does not have faces OR children, and transmits light
 					// Add the influence, test for changes, if changed add this to light list
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size() ) )
+					if ( $no.brightness.influenceAdd( $lo.brightness, $face, false, $no.gc.size() ) )
 						add( $no );
 				}
 				else { // this oxel has faces and transmits light (water and leaves)
-					if ( $no.brightness.addInfluence( $lo.brightness, $face, false, $no.gc.size() ) )
+					if ( $no.brightness.influenceAdd( $lo.brightness, $face, false, $no.gc.size() ) )
 					{
 						rebuildFace( $no, $face );
 						add( $no );
@@ -185,6 +184,7 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			
 			return false;
 		}
+		
 		
 		// returns true if continue
 		private function projectOnLargerGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
@@ -199,9 +199,14 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			var bt:Brightness = BrightnessPool.poolGet();
 			var btp:Brightness = BrightnessPool.poolGet();
 			
-			// project the light oxel onto the virtual brightness
 			var grainUnits:uint = $lo.gc.size();
-			bt.addInfluence( $lo.brightness, $face, !$no.hasAlpha, grainUnits )
+			// project the light oxel onto the virtual brightness
+			bt.influenceAdd( $lo.brightness, $face, !$no.hasAlpha, grainUnits )
+
+if ( $no.gc.eval( 5, 4, 2, 5 ) ) {
+	BrightnessTests.allTests();
+	Log.out ( "influence ok, add brightness broken correctly" );
+}
 			
 			// if the target is larger then one size, we need to project calculation on parent until it is correct size
 			var childID:uint = Oxel.childIdOpposite( $face, $lo.gc.childId() );	
@@ -266,7 +271,7 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 							Log.out( "Light.projectOnNeighborChildren - How do I get here?" );
 						
 						// Project the virtual brightness object on the real child of the same size
-						noChild.brightness.addInfluence( bt, $face, !noChild.hasAlpha, noChild.gc.size() );
+						noChild.brightness.influenceAdd( bt, $face, !noChild.hasAlpha, noChild.gc.size() );
 						
 						if ( noChild.hasAlpha )
 							add( noChild )
