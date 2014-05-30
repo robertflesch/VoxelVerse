@@ -57,6 +57,7 @@ public class Brightness  {  // extends BrightnessData
 	public function set lastLightID(value:uint):void { _lastLightID = value; }
 	
 	private var _atten:uint = DEFAULT_ATTEN;  // down 1 per meter
+	public function get atten():uint { return _atten; }
 	private var _sunlit:Boolean;
 	
 	public var _b000:VertexColor;
@@ -684,7 +685,7 @@ public class Brightness  {  // extends BrightnessData
 	 *        |
 	 *        \/
 	 */
-	private function balanceAttn( $attenScaled:uint ):Boolean {
+	public function balanceAttn( $attenScaled:uint ):Boolean {
 		var c:Boolean = false;
 		const sqAtten:Number = Math.sqrt( 2 * ($attenScaled * $attenScaled) );
 		const qrAtten:Number = Math.sqrt( 3 * ($attenScaled * $attenScaled) );

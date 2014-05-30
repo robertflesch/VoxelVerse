@@ -8,23 +8,24 @@
 
 package com.voxelengine.worldmodel.tasks.lighting
 {
-	import com.voxelengine.events.LightEvent;
-	import com.voxelengine.worldmodel.oxel.BrightnessTests;
-	import com.voxelengine.worldmodel.TypeInfo;
 	import flash.geom.Vector3D;
+
 	import com.developmentarc.core.tasks.events.TaskEvent;
 	
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
+	import com.voxelengine.events.LightEvent;
+	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.GrainCursorPool;
+	import com.voxelengine.pools.OxelPool;
+	import com.voxelengine.worldmodel.TypeInfo;
 	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import com.voxelengine.worldmodel.tasks.lighting.LightTask;
 	import com.voxelengine.worldmodel.oxel.Brightness;
-	import com.voxelengine.pools.BrightnessPool;
-	import com.voxelengine.pools.GrainCursorPool;
-	import com.voxelengine.pools.OxelPool;
 
+	import com.voxelengine.worldmodel.oxel.BrightnessTests;
 	/**
 	 * ...
 	 * @author Robert Flesch
@@ -86,9 +87,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( !lo.gc.is_equal( _gc ) )
 						Log.out ( "Didn't find child!" );
 
-					if ( _gc.eval( 6, 2, 1, 3 ) )
-						Log.out ( "Look at grain 6 lights" );
+if ( _gc.eval( 6, 2, 1, 3 ) )
+	Log.out ( "Look at grain 6 lights" );
 Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
+
 					spreadToNeighbors( lo );
 				}
 				else

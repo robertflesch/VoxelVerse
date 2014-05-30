@@ -37,6 +37,7 @@ public class BrightnessTests  {
 			colorAddTests();
 			influenceAddTests();
 			childAddTests();
+			childGetTests();
 		}
 		
 		static public function resetTests():void {
@@ -150,6 +151,7 @@ public class BrightnessTests  {
 		
 		static public function childAddTests():void {
 			
+			Log.out( "BrightnessTests.childAddTests	START - incomplete" );
 			var bt:Brightness = BrightnessPool.poolGet();
 			var btp:Brightness = BrightnessPool.poolGet();
 			bt.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
@@ -162,6 +164,34 @@ public class BrightnessTests  {
 				//grainUnits *= 2;
 				trace( btp.toString() );
 			}
+			Log.out( "BrightnessTests.childAddTests	END" );
+		}
+
+		static public function childGetTests():void { 
+			Log.out( "BrightnessTests.childGetTests	START" );
+			
+			var lob:Brightness = BrightnessPool.poolGet();
+			var lightId:uint = 101;
+			lob.lightAdd( lightId, 0x00ff0000 );
+			lob.setAll( lightId, Brightness.MAX );
+			
+			var btp:Brightness = BrightnessPool.poolGet();
+			// make the btp (parent) grain 5, and add a light to it.
+			// so each face has four children.
+			var btResult:Brightness = BrightnessPool.poolGet();
+			for ( var faceTest:int = Globals.POSX; faceTest <= Globals.NEGZ; faceTest++ ) {
+				trace( "------------------------------" );
+				btp.reset();
+				btp.influenceAdd( lob, (faceTest + 2) % 6, false, 32 );
+				trace( faceTest + "  " + btp.toString() );
+				for ( var childIndex:int = 0; childIndex < 8; childIndex++ ) {
+					btResult.reset();
+					btp.childGet( childIndex, btResult );
+					trace( childIndex + "  " + btResult.toString() );
+				}
+				trace( "------------------------------" );
+			}
+			Log.out( "BrightnessTests.childGetTests	END" );
 		}
 		
 		static public function toBtyeArrayTests():void { }
@@ -170,7 +200,6 @@ public class BrightnessTests  {
 		static public function valuesHasTests():void { }
 		static public function checkForSolidOxelsTests():void { }
 		static public function resetFromChildIDTests():void { }
-		static public function childGetTests():void { }
 		static public function colorGetTests():void { }
 		static public function fullBrightTests():void { }
 		static public function balanceAttnTests():void { }
