@@ -451,6 +451,10 @@ package com.voxelengine.worldmodel.models
 		// it also add flow and lighting
 		public function write( $gc:GrainCursor, $type:int, $onlyChangeType:Boolean = false ):Boolean
 		{
+			// pass in the oxel directly here?
+			// requires some refactoring but not hard - RSF
+			var oldOxel:Oxel = oxel.childGetOrCreate( $gc );
+			var oldType:int = oldOxel.type;
 			var result:Boolean;
 		// Was the old oxel here a light? if so we need to send out a light event
 			var changedOxel:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
@@ -471,16 +475,19 @@ package com.voxelengine.worldmodel.models
 					
 				if ( typeInfo.light )
 				{
-					//if ( !changedOxel.brightness )
-						//changedOxel.brightness = BrightnessPool.poolGet();
-					//else
-						//changedOxel.brightness.setAll( 1.0, Brightness.FIXED );
-						//
-					//Light.addTask( instanceInfo.instanceGuid, $gc, getLightID, typeInfo.color );
-					
 					var le:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, getLightID );
 					Globals.g_app.dispatchEvent( le );
 				}
+				
+				if ( Globals.isSolid( oldType )  && Globals.hasAlpha( $type ) ) {
+					// we removed a solid block, and are replacing it with air or transparent
+					const attenScaled:uint = changedOxel.brightness.atten * ($gc.size()/16);
+					changedOxel.brightness.balanceAttn( attenScaled );
+					var le1:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, changedOxel.brightness.lastLightID );
+					Globals.g_app.dispatchEvent( le1 );
+				}
+				
+				
 			}
 			
 			return result;
