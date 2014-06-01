@@ -162,8 +162,8 @@ package com.voxelengine.renderer.shaders
 				// ft3.w holds the total distance
 				"sub ft3, v3, fc0",		// subtract the light position from the transformed vertex postion
 				"mul ft3, ft3, ft3", 	// square it
-				"add ft3.w, ft3.x, ft3.y", // add x^2 + y ^2 + z^2
-				"add ft3.w, ft3.w, ft3.z",
+				"add ft3.w, ft3.x, ft3.y", // add w = x^2 + y ^2
+				"add ft3.w, ft3.w, ft3.z", // add w + z^2
 				"mov ft3.xyz, fc2.w", // set other components to 0 (fc2.w)
 				"sqt ft3.w, ft3.w", // take sqr root - gives us distance to this vertex
 				
@@ -179,21 +179,19 @@ package com.voxelengine.renderer.shaders
 				"mul ft2.xyz, ft2.xyz, fc2.xyz",  // take result and multiple by light color
 				// END light from dynamic lights
 				/////////////////////////////////////////////////
-				// nothing, just use light from the torch
-				// OR
-				//"max ft2, ft2, ft4",    // take the larger value between the dynamic light and brightness
-				// OR
-				//"add ft2, ft2, ft4",    // add the dynamic light and brightness
-				//"sat ft2, ft2",     	// Clamp ft2 between 1 and 0, put result in ft2.
-				// OR
-				"max ft3.x, ft2.x, ft4.x",    // take the larger value between the dynamic light and brightness
-				"max ft3.y, ft2.y, ft4.y",    // take the larger value between the dynamic light and brightness
-				"max ft3.z, ft2.z, ft4.z",    // take the larger value between the dynamic light and brightness
-				"max ft3.w, ft2.w, ft4.w",    // take the larger value between the dynamic light and brightness
+				"max ft3, ft2, ft4",    // take the larger value between the dynamic light and static light
 				"sat ft2, ft3",     	// Clamp ft2 between 1 and 0, put result in ft2.
+				// OR
+				// Not sure why it seemed this method was needed. - RSF
+				//"max ft3.x, ft2.x, ft4.x",    // take the larger value between the dynamic light and brightness
+				//"max ft3.y, ft2.y, ft4.y",    // take the larger value between the dynamic light and brightness
+				//"max ft3.z, ft2.z, ft4.z",    // take the larger value between the dynamic light and brightness
+				//"max ft3.w, ft2.w, ft4.w",    // take the larger value between the dynamic light and brightness
+				//"sat ft2, ft3",     	// Clamp ft2 between 1 and 0, put result in ft2.
 
 				// mixed static and dynamic values
 				"mov oc ft2"
+				
 				// static only values
 				//"mov oc ft4"
 			];
@@ -209,7 +207,6 @@ package com.voxelengine.renderer.shaders
 			
 			// TODO - pass in multiple lights
 			var light:ShaderLight = lights(0);
-
 			var lp:Vector3D = light.position;
 			if ( $isChild )
 			{
