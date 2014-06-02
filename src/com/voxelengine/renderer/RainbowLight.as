@@ -10,15 +10,21 @@ package com.voxelengine.renderer {
 
 import flash.geom.Vector3D;
 	
-public class ShaderLight {
-	// R, G, B, A
-	public var color:Vector3D = new Vector3D( 1, 1, 1, 1 );
-	public var position:Vector3D = new Vector3D();
-	public var endDistance:Number = 400;
-	public var nearDistance:Number = 1;
+public class RainbowLight extends ShaderLight {
 	
-	public function update():void
+	private var _phase:Number = 0;
+	
+	public function RainbowLight():void {
+		color.setTo( 1, 1, 1 );
+	}
+	
+	override public function update():void
 	{
+		var frequency:Number = 2.4;
+		color.x = Math.max( 0, Math.sin( frequency + 2 + _phase ) );
+		color.y = Math.max( 0, Math.sin( frequency + 0 + _phase ) );
+		color.z = Math.max( 0, Math.sin( frequency + 4 + _phase ) );
+		 _phase += 0.03;
 	}
 }
 }

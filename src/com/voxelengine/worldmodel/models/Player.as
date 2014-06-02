@@ -1,7 +1,9 @@
 ﻿package com.voxelengine.worldmodel.models
 {
+	import com.voxelengine.renderer.RainbowLight;
 	import com.voxelengine.renderer.ShaderLight;
 	import com.voxelengine.renderer.shaders.Shader;
+	import com.voxelengine.renderer.Torch;
 	import com.voxelengine.worldmodel.models.*;
 	import com.voxelengine.worldmodel.MouseKeyboardHandler;
 	import com.voxelengine.worldmodel.oxel.Oxel;
@@ -51,6 +53,21 @@
 			//_ct.markersAdd();
 			
 			inventoryLoad();
+			torchAdd();
+		}
+		
+		public function torchAdd():void {
+			Shader.lightsClear();
+			var sl:ShaderLight = new Torch();
+			//var sl:ShaderLight = new RainbowLight();
+			sl.position = instanceInfo.positionGet.clone();
+			sl.position.y += 30;
+			sl.position.x += 4;
+			Shader.lightAdd( sl ); 
+		}
+		
+		public function torchRemove():void {
+			Shader.lightsClear();
 		}
 		
 		private function inventoryLoad():void
@@ -199,13 +216,13 @@
 		}
 
 		override public function update($context:Context3D, $elapsedTimeMS:int):void	{
-			Shader.lightsClear();
-			var sl:ShaderLight= new ShaderLight();
+
+			var sl:ShaderLight = Shader.lights(0);
 			sl.position = instanceInfo.positionGet.clone();
 			sl.position.y += 30;
 			sl.position.x += 4;
-			Shader.lightAdd( sl ); 
-			
+			sl.update();
+
 			super.update( $context, $elapsedTimeMS );
 		}
 		
