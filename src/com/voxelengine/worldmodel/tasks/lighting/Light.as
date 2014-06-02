@@ -205,22 +205,26 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			// project the light oxel onto the virtual brightness
 			bt.influenceAdd( $lo.brightness, $face, !$no.hasAlpha, grainUnits )
 
-if ( $no.gc.eval( 5, 4, 2, 5 ) ) {
-	BrightnessTests.allTests();
+if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
+	//BrightnessTests.allTests();
 	Log.out ( "influence ok, add brightness broken correctly" );
 }
 			
 			// if the target is larger then one size, we need to project calculation on parent until it is correct size
-			var childID:uint = Oxel.childIdOpposite( $face, $lo.gc.childId() );	
+			var currentLo:Oxel = $lo;
 			for ( var i:uint = 0; i < sizeDif; i++ ) {	
+				var childID:uint = Oxel.childIdOpposite( $face, currentLo.gc.childId() );	
 				btp.reset();
 				// now extend the brightness child onto its parent!
 				btp.childAdd( childID, bt, grainUnits );
 				bt.copyFrom( btp );
 				grainUnits *= 2;
+				// if sizeDiff is 2 or great, we have to recalculate the child id for the lo's parent
+				if ( currentLo.parent )
+					currentLo = currentLo.parent;
 			}
 			// add the calculated brightness and color info to $no
-			var changed:Boolean = $no.brightness.addBrightness( $lo.brightness, bt );
+			var changed:Boolean = $no.brightness.addBrightness( bt );
 			
 			BrightnessPool.poolReturn( bt );
 			BrightnessPool.poolReturn( btp );
