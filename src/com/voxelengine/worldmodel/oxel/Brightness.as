@@ -758,10 +758,11 @@ public class Brightness  {  // extends BrightnessData
 		return c;
 	}
 	
-	public function addBrightness( $lob:Brightness, $bt:Brightness ):Boolean {
+	// Add the influcence of a virtual cube the same size
+	public function addBrightness( $bt:Brightness ):Boolean {
 		
-		lastLightID = $lob.lastLightID
-		lightAdd( lastLightID, $lob.colorGet( lastLightID ) );
+		lastLightID = $bt.lastLightID
+		lightAdd( lastLightID, $bt.colorGet( lastLightID ) );
 		
 		var c:Boolean;
 		if ( b000 < $bt.b000 )	  { b000 = $bt.b000; c = true; }
