@@ -39,8 +39,8 @@ public class Brightness  {  // extends BrightnessData
 	public static const MAX:uint = 0xff;
 	public static const DEFAULT_SIGMA:uint = 2;
 	public static const DEFAULT_ID:uint = 1;
-	public static const DEFAULT_ATTEN:uint = 0x11; // out of 255
-	//public static const DEFAULT_ATTEN:uint = 0x33; // out of 255
+	//public static const DEFAULT_ATTEN:uint = 0x11; // out of 255 - VERY DARK
+	public static const DEFAULT_ATTEN:uint = 0x33; // out of 255
 	//public static const DEFAULT_ATTEN:uint = 0xff; // out of 255
 	public static const DEFAULT_PER_DISTANCE:int = 16;
 	public static const DEFAULT_COLOR:uint = 0x00ffffff;

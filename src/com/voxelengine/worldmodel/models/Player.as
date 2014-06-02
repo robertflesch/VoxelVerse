@@ -53,9 +53,10 @@
 			//_ct.markersAdd();
 			
 			inventoryLoad();
-			torchAdd();
+			//torchAdd();
 		}
 		
+		// Be nice to have the UI driven
 		public function torchAdd():void {
 			Shader.lightsClear();
 			var sl:Torch = new Torch();
@@ -218,11 +219,13 @@
 
 		override public function update($context:Context3D, $elapsedTimeMS:int):void	{
 
-			var sl:ShaderLight = Shader.lights(0);
-			sl.position = instanceInfo.positionGet.clone();
-			sl.position.y += 30;
-			sl.position.x += 4;
-			sl.update();
+			if ( 0 < Shader.lightCount() ) {
+				var sl:ShaderLight = Shader.lights(0);
+				sl.position = instanceInfo.positionGet.clone();
+				sl.position.y += 30;
+				sl.position.x += 4;
+				sl.update();
+			}
 
 			super.update( $context, $elapsedTimeMS );
 		}

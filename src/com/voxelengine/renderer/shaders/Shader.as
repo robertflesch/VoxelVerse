@@ -39,7 +39,7 @@ package com.voxelengine.renderer.shaders
 		protected			var		_textureOffsetV:Number = 0.0
 						
 		protected 			var 	_offsets:Vector.<Number> = Vector.<Number>([0,0,0,0]);
-		protected 			var 	_constants:Vector.<Number> = Vector.<Number>([0, 0, 0, 0, 0, 0, 0, 0]);
+		protected 			var 	_constants:Vector.<Number> = Vector.<Number>([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 		
 		static public  function     lights( index:int ):ShaderLight			{ return _s_lights[ index ]; }
 		static public  function     lightCount():int 						{ return _s_lights.length; }
@@ -206,28 +206,38 @@ package com.voxelengine.renderer.shaders
 		protected function setFragmentData( $isChild:Boolean, $vm:VoxelModel ): void {
 			
 			// TODO - pass in multiple lights
-			var light:ShaderLight = lights(0);
-			var lp:Vector3D = light.position;
-			if ( $isChild )
-			{
-				// TO DO  - RSF - I think I need to handle the torch differently
-				var topMost:VoxelModel = $vm.topmostControllingModel();
-				lp = topMost.instanceInfo.worldToModel( light.position );
+			var lp:Vector3D;
+			var color:Vector3D;
+			var light:ShaderLight;
+			var nearDistance:Number;
+			var endDistance:Number;
+			if ( 0 < Shader.lightCount() ) {
+				light = lights(0);
+				lp = light.position;
+				color = light.color;
+				nearDistance = light.nearDistance;
+				endDistance = light.endDistance;
+				if ( $isChild )
+				{
+					// TO DO  - RSF - I think I need to handle the torch differently
+					var topMost:VoxelModel = $vm.topmostControllingModel();
+					lp = topMost.instanceInfo.worldToModel( light.position );
+				}
+				var i:int = 0;
+				_constants[i++] = lp.x; // light position
+				_constants[i++] = lp.y;
+				_constants[i++] = lp.z;
+				_constants[i++] = lp.w; 
+				_constants[i++] = 0.5; // fc1 - x is not used, could be light intensity
+				_constants[i++] = nearDistance; // startLight;
+				_constants[i++] = endDistance; // endLight;
+				_constants[i++] = 1;
+				_constants[i++] = color.x; // fc2
+				_constants[i++] = color.y;
+				_constants[i++] = color.z;
+				_constants[i++] = 0;
 			}
 			
-			var i:int = 0;
-			_constants[i++] = lp.x; // fc0
-			_constants[i++] = lp.y;
-			_constants[i++] = lp.z;
-			_constants[i++] = lp.w; 
-			_constants[i++] = 0.5; // fc1 - x is not used, could be light intensity
-			_constants[i++] = light.nearDistance; // startLight;
-			_constants[i++] = light.endDistance; // endLight;
-			_constants[i++] = 1;
-			_constants[i++] = light.color.x; // fc2
-			_constants[i++] = light.color.y;
-			_constants[i++] = light.color.z;
-			_constants[i++] = 0;
 			// This allows for moving light posision, light color
 			_context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT , 0 , _constants );
 		}
