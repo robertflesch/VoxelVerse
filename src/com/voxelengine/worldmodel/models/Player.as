@@ -58,8 +58,9 @@
 		
 		public function torchAdd():void {
 			Shader.lightsClear();
-			var sl:ShaderLight = new Torch();
-			//var sl:ShaderLight = new RainbowLight();
+			var sl:Torch = new Torch();
+			sl.flicker = false;
+			//var sl:RainbowLight = new RainbowLight();
 			sl.position = instanceInfo.positionGet.clone();
 			sl.position.y += 30;
 			sl.position.x += 4;
