@@ -31,7 +31,7 @@ package {
 	import com.voxelengine.worldmodel.RegionManager;
 
 	import com.voxelengine.events.LightEvent;
-	import com.voxelengine.worldmodel.tasks.lighting.Light;
+	import com.voxelengine.worldmodel.tasks.lighting.LightAdd;
 	import com.voxelengine.worldmodel.tasks.lighting.LightRemove;
 	
 	// TODO Flowing materials
@@ -112,7 +112,7 @@ package {
 			stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, mouseUpRight);
 			
 			VoxelVerseGUI.currentInstance.init();
-			addEventListener( LightEvent.ADD, Light.handleLightEvents );
+			addEventListener( LightEvent.ADD, LightAdd.handleLightEvents );
 			addEventListener( LightEvent.REMOVE, LightRemove.handleLightEvents );
 
 			
