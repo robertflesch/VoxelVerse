@@ -83,7 +83,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				
 				var lo:Oxel = vm.oxel.childFind( _gc );
 				if ( valid( lo ) ) {
-					lo.brightness.processed = true;
+//					lo.brightness.processed = true;
 					if ( !lo.gc.is_equal( _gc ) )
 						Log.out ( "Didn't find child!" );
 
@@ -154,12 +154,13 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			
 			if ( $no.childrenHas() ) 
 			{
-				if ( $no.brightness.processed )
-					return true;
+//				if ( $no.brightness.processed )
+//					return true;
 				projectOnNeighborChildren( $no, $lo.brightness, $face );
 			}					
 			//else if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
-			else if ( $no.brightness.processed ) // dont reevaluate an oxel that already has been processed
+//			else if ( $no.brightness.processed ) // dont reevaluate an oxel that already has been processed
+			else if ( $no.brightness.lightHas( lightID ) && true == $no.hasAlpha ) // dont reevaluate an oxel that already has been processed
 			{
 				return true; 
 			}
@@ -224,7 +225,7 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 					currentLo = currentLo.parent;
 			}
 			// add the calculated brightness and color info to $no
-			var changed:Boolean = $no.brightness.addBrightness( bt );
+			var changed:Boolean = $no.brightness.brightnessMerge( bt );
 			
 			BrightnessPool.poolReturn( bt );
 			BrightnessPool.poolReturn( btp );
@@ -256,8 +257,8 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
 			{
 				var noChild:Oxel = dchild[childIndex];
-				if ( noChild.brightness && noChild.brightness.processed )
-					continue;
+//				if ( noChild.brightness && noChild.brightness.processed )
+//					continue;
 				// I dont like subfaceGet since it uses different logic, would prefer only one routine.
 				// Idea here is I would grab the temp brightness opposite the child I am going to project upon.
 				// then just add influence back on it.
@@ -289,13 +290,30 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 			BrightnessPool.poolReturn( bt );
 		}
 		
-		private function add( $o:Oxel ):void {
+		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
 			
-			if ( $o.brightness.processed )
-			{
-				Log.out( "Light.add - PROCESSED ALREADY: " + $o.gc.toString() );
+			if ( !$o.isSolid ) {
+				Log.out( "LightTask.rebuildFace - being called on non solid object", Log.ERROR );
 				return;
 			}
+				
+//			if ( $o.brightness.sunlit )
+//				return;
+			
+			if ( !$o.brightness.valuesHas() )
+				return;
+
+			if ( $o.quads && 0 < $o.quads.length )
+				$o.quadRebuild( Oxel.face_get_opposite( $faceFrom ) );
+		}
+		
+		private function add( $o:Oxel ):void {
+			
+			//if ( $o.brightness.processed )
+			//{
+				//Log.out( "Light.add - PROCESSED ALREADY: " + $o.gc.toString() );
+				//return;
+			//}
 			
 			if ( $o.isSolid )
 			{
@@ -322,24 +340,5 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 			}
 		}
 		
-		private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
-			
-			if ( $o.gc.eval( 4, 1, 4, 14 ) )
-				Log.out( "rebuildFace: " + $o.brightness.toString() )
-				
-			if ( !$o.isSolid ) {
-				Log.out( "Brightness.calculateEffect - being called on non solid object", Log.ERROR );
-				return;
-			}
-				
-			if ( $o.brightness.sunlit )
-				return;
-			
-			if ( !$o.brightness.valuesHas() )
-				return;
-
-			if ( $o.quads && 0 < $o.quads.length )
-				$o.quadRebuild( Oxel.face_get_opposite( $faceFrom ) );
-		}
 	}
 }
