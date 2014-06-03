@@ -56,7 +56,7 @@ package com.voxelengine
 			if ( INFO < type )
 				show();
 
-				if ( _showing )
+			if ( _showing )
 			{
 				switch ( type )
 				{ 

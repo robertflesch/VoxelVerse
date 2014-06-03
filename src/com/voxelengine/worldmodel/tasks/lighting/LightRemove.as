@@ -58,14 +58,18 @@ package com.voxelengine.worldmodel.tasks.lighting
 				
 				var lo:Oxel = vm.oxel.childFind( _gc );
 				if ( valid( lo ) ) {
-					if ( !lo.gc.is_equal( _gc ) )
+					if ( !lo.gc.is_equal( _gc ) ) {
+						// This is a distinct possibility for removal. If the light was last non air oxel
+						// then removing it merged it into its parent.
+						// Does it require different handling?
 						Log.out ( "LightRemove.start - Didn't find child!" );
+					}
 					lo.brightness.lightRemove( lightID );
 
 					removeFromNeighbors( lo );
 				}
 				else
-					Log.out( "LightRemove.start - lightValid failed", Log.ERROR );
+					Log.out( "LightRemove.start - valid failed", Log.ERROR );
 
 			}
 			else
@@ -96,12 +100,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 			{
 				var no:Oxel = $lo.neighbor(face);
 					
-				if ( !valid( no ) )
+				if ( Globals.BAD_OXEL == no )
 					continue;
 				
 				if ( no.childrenHas() )
 					removeFromChildren( no, face );
-				else if ( no.brightness.lightGet( lightID ) )
+				else if ( no.brightness && no.brightness.lightGet( lightID ) )
 					terminalLightRemove( no, face );
 				else
 					Log.out( "LightRemove.spreadToNeighbors - Light doesnt exist: " + lightID );

@@ -87,9 +87,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( !lo.gc.is_equal( _gc ) )
 						Log.out ( "Didn't find child!" );
 
-if ( _gc.eval( 6, 2, 1, 3 ) )
-	Log.out ( "Look at grain 6 lights" );
-Log.out ( "LightAdd.start lo.gc: " + lo.gc.toString() );
+					//Log.out ( "LightAdd.start lo.gc: " + lo.gc.toString() );
 
 					spreadToNeighbors( lo );
 				}
@@ -122,8 +120,7 @@ Log.out ( "LightAdd.start lo.gc: " + lo.gc.toString() );
 		
 		private function spreadToNeighbors( $lo:Oxel ):void {
 				
-			Log.out( "LightAdd.spreadToNeighbors - $lo: " + $lo.toStringShort() + "b: " + $lo.brightness.toString() );
-			
+			//Log.out( "LightAdd.spreadToNeighbors - $lo: " + $lo.toStringShort() + "  brightness: " + $lo.brightness.toString() );
 				
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
@@ -160,7 +157,7 @@ Log.out ( "LightAdd.start lo.gc: " + lo.gc.toString() );
 			}					
 			//else if ( $no.brightness.lastLightID == $lo.brightness.lastLightID ) // dont reevaluate an oxel that already has the influence from this light
 //			else if ( $no.brightness.processed ) // dont reevaluate an oxel that already has been processed
-			else if ( $no.brightness.lightHas( lightID ) && true == $no.hasAlpha ) // dont reevaluate an oxel that already has been processed
+			else if ( $no.brightness.lightHas( lightID ) && true == $no.hasAlpha ) // dont reevaluate that has light info, and is alpha
 			{
 				return true; 
 			}
