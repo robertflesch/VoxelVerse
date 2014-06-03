@@ -14,8 +14,7 @@ package com.voxelengine.worldmodel.oxel
 	import com.voxelengine.utils.ColorUtils;
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
-	import com.voxelengine.pools.GrainCursorPool;
-	import com.voxelengine.worldmodel.tasks.lighting.Light;
+
 /**
  * ...
  * @author Robert Flesch
@@ -46,25 +45,25 @@ public class VertexColor {
 	public function VertexColor( $lightID:uint, $colorAndBrightness:uint ) {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.VertexColor - INVALID $lightID = 0" );
-		colorAdd( $lightID, $colorAndBrightness );
+		lightAdd( $lightID, $colorAndBrightness );
 	}
 	
-	public function copyColors( $colors:Dictionary ):void {
+	public function lightsCopy( $colors:Dictionary ):void {
 		for (var lightID:String in $colors )
 		{
 			var color:uint = $colors[lightID];
-			colorAdd( uint(lightID), color );
+			lightAdd( uint(lightID), color );
 		}
 	}
 	
-	public function colorAdd( $lightID:uint, $colorAndBrightness:uint ):void {
+	public function lightAdd( $lightID:uint, $colorAndBrightness:uint ):void {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.colorAdd - INVALID $lightID = 0" );
 		_changed = true;
 		_colors[$lightID] = $colorAndBrightness;
 	}
 	
-	public function colorCount():uint {
+	public function lightCount():uint {
 		var count:uint
 		for (var lightID:String in _colors )
 		{
@@ -77,13 +76,13 @@ public class VertexColor {
 		return _colors;
 	}
 	
-	public function colorGet( $lightID:uint ):uint {
+	public function lightGet( $lightID:uint ):uint {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.colorGet - INVALID $lightID = 0" );
 		return _colors[$lightID];
 	}
 	
-	public function colorHas( $lightID:uint ):Boolean {
+	public function lightHas( $lightID:uint ):Boolean {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.colorHas - INVALID $lightID = 0" );
 		if ( null == _colors[$lightID] )
@@ -96,7 +95,7 @@ public class VertexColor {
 		_colors = new Dictionary(true);
 		_changed = false;
 		
-		colorAdd( Brightness.DEFAULT_ID, Brightness.DEFAULT_COLOR );
+		lightAdd( Brightness.DEFAULT_ID, Brightness.DEFAULT_COLOR );
 		attnSet( Brightness.DEFAULT_ID, Brightness.DEFAULT_ATTEN );
 	}
 	
@@ -128,7 +127,7 @@ if ( 0 == val )
 		_colors[$lightID] = val;
 	}
 	
-	public function colorRemove( $lightID:uint ):void {
+	public function lightRemove( $lightID:uint ):void {
 		if ( 0 == $lightID )
 			throw new Error( "VertexColor.colorRemove - INVALID $lightID = 0" );
 		_changed = true;
@@ -137,7 +136,7 @@ if ( 0 == val )
 	}
 	
 	// this returns a composite color made of default color plus any additional colors
-	public function colorGetComposite():uint {
+	public function lightGetComposite():uint {
 		if ( false == _changed )
 			return _composite;
 			

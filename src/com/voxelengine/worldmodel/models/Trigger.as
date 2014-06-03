@@ -105,7 +105,7 @@ package com.voxelengine.worldmodel.models
 				oxel.write( instanceInfo.instanceGuid, loco.set_values( 0, 0, 0, oxel.gc.grain ), Globals.LEAF, true );
 				GrainCursorPool.poolDispose( loco );
 				oxel.faces_set_all();
-				oxel.faces_rebuild( Globals.INVALID, instanceInfo.instanceGuid );
+				oxel.faces_rebuild( instanceInfo.instanceGuid );
 				oxel.quadsBuild();
 				_was_selected = true;
 			}
@@ -119,7 +119,7 @@ package com.voxelengine.worldmodel.models
 				oxel.readData( null, loco1, _ba, statisics );
 				GrainCursorPool.poolDispose( loco1 );
 				// this cleans up outside, but saddle is gone
-				oxel.faces_rebuild( Globals.LEAF, instanceInfo.instanceGuid );
+				oxel.faces_rebuild( instanceInfo.instanceGuid );
 				oxel.faces_clean_all_face_bits();
 				oxel.dirty = true;
 				oxel.quadsBuild();

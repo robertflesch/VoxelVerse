@@ -8,20 +8,14 @@
 
 package com.voxelengine.worldmodel.tasks.lighting
 {
-	import com.developmentarc.core.tasks.events.TaskEvent;
-	import com.voxelengine.events.LightEvent;
-	import flash.geom.Vector3D;
-	
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
+	import com.voxelengine.events.LightEvent;
 	import com.voxelengine.worldmodel.models.VoxelModel;
+	import com.voxelengine.worldmodel.oxel.Brightness;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import com.voxelengine.worldmodel.tasks.lighting.LightTask
-	import com.voxelengine.worldmodel.oxel.Brightness;
-	import com.voxelengine.pools.BrightnessPool;
-	import com.voxelengine.pools.GrainCursorPool;
-	import com.voxelengine.pools.OxelPool;
 
 	/**
 	 * ...
@@ -31,189 +25,132 @@ package com.voxelengine.worldmodel.tasks.lighting
 	{		
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.REMOVE == $le.type )
-			{
 				addTask( $le.instanceGuid, $le.gc, $le.lightID );
-			}
 		}
-		 
+		
 		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
 			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $lightID );
+			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
-	
 		
 		// NEVER use this, use the static function
-		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
-			super( $instanceGuid, $gc, $lightID );
+		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
+			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
 		}
-
 		
+
 		/**
 		 * @param $taskType The Task type.
 		 * @param $taskPriority The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
 		 */
-		private function remove( $gc:GrainCursor, $lightID:uint ):void {
-			LightRemove.addTask( _guid, $gc, $lightID );
+		private function remove( $o:Oxel ):void {
+			LightRemove.addTask( _guid, $o.gc, lightID );
 		}
 		
-		/*
+		
 		override public function start():void {
 			super.start();
 			
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
-			main:if ( vm )
-			{
-				// we are going to be getting the light oxel position, the light is gone.
-				// In that case how do I get its lightID, and colors??
-				var lo:Oxel = vm.oxel.childGetOrCreate( _gc );
-				if ( null == lo.gc )
-					break main; 
-				if ( null == lo.brightness )
-					break main; 
-					
-				Log.out( "=================================================================================================================" );
-				Log.out( "LightRemove.start - priority: " + priority + " oxel: " + lo.toStringShort() + " brightness: " + lo.brightness.toString() );
+			main:if ( vm ) {
 				
-				// face is ignored here, but better to put in a valid value.
-				lo.brightness.restoreDefault( Brightness.FIXED, lo, Globals.POSX );
-				
-				var result:Boolean = false;
-				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
-				{
-					var no:Oxel = lo.neighbor(face);
-					if ( Globals.BAD_OXEL == no ) // This is expected, if oxel is on edge of model
-						continue;
-					else if ( Globals.Info[no.type].light ) // dont try to light a light? what if light source is stronger?
-						continue;
-					else if ( null == no ) // this should never happen
-						continue;
-					else if ( null == no.gc ) // this happens if we run into a released oxel, should never happen
-						continue;
-	
-					lightRemoveNeighbor( no, lo, face );
+				var lo:Oxel = vm.oxel.childFind( _gc );
+				if ( valid( lo ) ) {
+					if ( !lo.gc.is_equal( _gc ) )
+						Log.out ( "LightRemove.start - Didn't find child!" );
+					lo.brightness.lightRemove( lightID );
+
+					removeFromNeighbors( lo );
 				}
+				else
+					Log.out( "LightRemove.start - lightValid failed", Log.ERROR );
+
 			}
 			else
-			{
 				Log.out( "LightRemove.start - VoxelModel not found: " + _guid, Log.ERROR );
-			}	
+				
 			super.complete();
 		}
-
-		private function lightRemoveNeighbor( $no:Oxel, $lo:Oxel, $face:int ):void {
+		
+		static private function valid( $o:Oxel ):Boolean {
 			
-			if ( $no.brightness ) {
-				if ( $no.brightness.lastLightID == lightID ) // dont relight something that already has the influence from this light
-					return;
-				else if ( $no.brightness.lastLightID == Brightness.FIXED ) // dont relight something that already has the influence from this light
-					return;
-			}
-			var propogate:Boolean = false;
-			// Larger - AIR no children - Pass thru
-			// Larger - ALPHA - Pass thru
-			// Same - AIR no children - Pass thru
-			// Same - ALPHA - Pass thru
-			if ( Globals.hasAlpha( $no.type ) && !$no.childrenHas() )
-			{
-				if ( !$no.brightness )
-					return;
-					
-				if ( $no.gc.grain == $lo.gc.grain )
-				{
-					if ( $no.brightness.restoreDefault( lightID, $no, $face ) )
-						remove( $no.gc, lightID );
-				}
-					
-				else // no is larger (never smaller by definition)	
-				{
-					// pass info into parent.
-					if ( $lo.parent )
-					{
-						if ( !$lo.parent.brightness )
-							$lo.parent.brightness = BrightnessPool.poolGet();
-						$lo.parent.brightness.restoreDefaultFromChildOxel( lightID, $lo.parent, $face );
-						remove( $lo.parent.gc, lightID );
-					}
-					//propogate = $no.brightness.setToDefaultFromChildOxel( lightID, $no, $face );
-				}
-					
-			}
-			else if ( Globals.AIR == $no.type && $no.childrenHas() )
-			{
-				// propogation will be handled on recursive calls
-				projectOnChildren( $no, $lo, $face );
-			}
+			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
+				return false;
+			
+			if ( !$o.brightness ) // does this oxel already have a brightness?
+				return false;
 
-			// Larger - facesHas not alpha - propograte and Stop
-			// Same - 	facesHas not alpha  - propograte and Stop
-			else if ( $no.faceHas( Oxel.face_get_opposite( $face ) ) )
+			return true;
+		}
+		 
+		private function removeFromNeighbors( $lo:Oxel ):void {
+				
+			Log.out( "LightRemove.spreadToNeighbors - $lo: " + $lo.toStringShort() + "  brightness: " + $lo.brightness.toString() );
+
+						if ( 5 == $lo.gc.grain )
+							trace( "Watch here" );
+			
+			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
-				// Change this oxel, but dont propogate
-				// TODO add transparent torch?
-				if ( $no.gc.grain == $lo.gc.grain )
-					$no.brightness.restoreDefault( lightID, $no, $face );
-				else // no is larger (never smaller by definition)	
-				{
-					// pass info into parent.
-					if ( $lo.parent )
-					{
-						if ( !$lo.parent.brightness )
-							$lo.parent.brightness = BrightnessPool.poolGet();
-						$lo.parent.brightness.restoreDefaultFromChildOxel( lightID, $lo.parent, $face );
-						remove( $lo.parent.gc, lightID );
-					}
-					//propogate = $no.brightness.setToDefaultFromChildOxel( lightID, $no, $face );
-				}
-			}
-			// has brightness, but no faces, so reset to default.
-			else if ( $no.brightness )
-			{
-				$no.brightness.setByFace( Oxel.face_get_opposite( $face ), Brightness.DEFAULT, lightID, $no.gc.size() );
-				//$no.brightness.calculateEffect( $face, $lo.brightness, $no, lightID );
-			}
-			// Should never hit these.
-			else if ( !$no.facesHas() && !$no.childrenHas() && Globals.AIR != $no.type )
-			{
-				// Ran into a solid oxel with no faces, stop here.
-				Log.out( "LightRemove.start - solid oxel with no faces, stop here." );
-			}
-			else
-			{
-				Log.out( "LightRemove.start - solid oxel with no face" );
+				var no:Oxel = $lo.neighbor(face);
+					
+				if ( !valid( no ) )
+					continue;
+				
+				if ( no.childrenHas() )
+					removeFromChildren( no, face );
+				else if ( no.brightness.lightGet( lightID ) )
+					terminalLightRemove( no, face );
+				else
+					Log.out( "LightRemove.spreadToNeighbors - Light doesnt exist: " + lightID );
 			}
 		}
 		
-		private function projectOnChildren( $no:Oxel, $lo:Oxel, $face:int ):void {
-			
+		private function removeFromChildren( $no:Oxel, $face:int ):void {
+			// I am getting the indexes for the imaginary children that are facing the real children
+			// and a list of the real children
 			var of:int = Oxel.face_get_opposite( $face );
 			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
-			var gct:GrainCursor = GrainCursorPool.poolGet( $no.gc.bound );
-			var oxelt:Oxel = OxelPool.poolGet();
+
 			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
 			{
-				// create temp oxel as light source for lighting purposes
-				gct.copyFrom( dchild[childIndex].gc );
-				// move to location of fake light oxel
-				gct.move( of );
-				// dont care the type, since it is only temp, just has to be transparent
-				oxelt.initialize( $no, gct, Globals.AIR, null );
-				oxelt.brightness = Brightness.scratch();
-				oxelt.brightness.restoreDefault( lightID, $no, $face );
-				
-				lightRemoveNeighbor( dchild[childIndex], oxelt, $face ); 
-				
-			}
-			GrainCursorPool.poolDispose( gct );
-			OxelPool.poolDispose( oxelt );
-			
-		}
+				var noChild:Oxel = dchild[childIndex];
 
-		override public function cancel():void {
-			// TODO stop this somehow?
-			super.cancel();
+				if ( noChild.childrenHas() )
+					removeFromChildren( noChild, $face );
+				else
+					terminalLightRemove( noChild, $face );
+			}
 		}
-		*/
+		
+		private function terminalLightRemove( $o:Oxel, $face:int ):void {
+			
+			if ( null == $o.brightness )
+				return;
+				
+			$o.brightness.lightRemove( lightID );
+				
+			if ( true == $o.isSolid ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
+					rebuildFace( $o, $face );
+			else if ( Globals.AIR == $o.type ) // this oxel does not have faces OR children, and transmits light
+					remove( $o );
+			else { // this oxel has faces and transmits light (water and leaves)
+					rebuildFace( $o, $face );
+					remove( $o );
+			}
+		}
+		
+		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
+			
+			if ( !$o.isSolid ) {
+				Log.out( "LightTask.rebuildFace - being called on non solid object", Log.ERROR );
+				return;
+			}
+				
+			if ( $o.quads && 0 < $o.quads.length )
+				$o.quadsRebuildAll();
+		}
 	}
 }

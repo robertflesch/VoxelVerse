@@ -18,7 +18,6 @@ package com.voxelengine
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import com.voxelengine.worldmodel.tasks.landscapetasks.TreeGenerator;
-	import com.voxelengine.worldmodel.tasks.lighting.LightSunCheck;
 
 	
 	public class ConsoleCommands {
@@ -114,6 +113,7 @@ package com.voxelengine
 		
 		private static function lightingSun():void
 		{
+			/*
 			if ( Globals.selectedModel )
 			{
 				var ol:Vector.<Oxel> = new Vector.<Oxel>();
@@ -131,6 +131,7 @@ package com.voxelengine
 					LightSunCheck.addTask( Globals.selectedModel.instanceInfo.instanceGuid, oxel.gc, 1, Globals.POSY );
 				//count++;
 			}
+			*/
 		}
 		
 		private static function lightingReset():void

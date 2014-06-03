@@ -16,7 +16,7 @@ package com.voxelengine.worldmodel.models
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import com.voxelengine.worldmodel.oxel.OxelData;
 	import com.voxelengine.worldmodel.tasks.flowtasks.Flow;
-	import com.voxelengine.worldmodel.tasks.lighting.Light;
+	import com.voxelengine.worldmodel.tasks.lighting.LightAdd;
 	import flash.display3D.Context3D;
 	
 	import flash.events.KeyboardEvent;
@@ -479,12 +479,15 @@ package com.voxelengine.worldmodel.models
 					Globals.g_app.dispatchEvent( le );
 				}
 				
-				if ( Globals.isSolid( oldType )  && Globals.hasAlpha( $type ) ) {
+				if ( Globals.isSolid( oldType ) && Globals.hasAlpha( $type ) ) {
+					
 					// we removed a solid block, and are replacing it with air or transparent
 					const attenScaled:uint = changedOxel.brightness.atten * ($gc.size()/16);
 					changedOxel.brightness.balanceAttn( attenScaled );
-					var le1:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, changedOxel.brightness.lastLightID );
-					Globals.g_app.dispatchEvent( le1 );
+					if ( changedOxel.brightness.valuesHas() ) {
+						var le1:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, changedOxel.gc, changedOxel.brightness.lastLightID );
+						Globals.g_app.dispatchEvent( le1 );
+					}
 				}
 				
 				

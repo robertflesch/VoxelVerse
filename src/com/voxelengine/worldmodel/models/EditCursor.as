@@ -139,7 +139,7 @@ package com.voxelengine.worldmodel.models
 					selectedCursor = 1004; // EDITCURSOR_INVALID;
 
 				// We have to manually delete all of the quads so that they can be rebuilt
-				oxel.quadsDeleteAll( selectedCursor );
+				oxel.quadsDeleteAll();
 				oxel.faces_clear_all();
 				oxel.faces_mark_all_clean();
 				// This method shows only the two faces aligned with axis
@@ -674,7 +674,7 @@ oxel.quadsBuild();
 						gcGrow.grain = ++gcGrow.grain;
 						
 					editCursorSize = gcGrow.grain;
-					Globals.selectedModel.editCursor.oxel.faces_rebuild( cursorColor, EDIT_CURSOR );
+					Globals.selectedModel.editCursor.oxel.faces_rebuild( EDIT_CURSOR );
 				}
 			}
 		}
@@ -690,7 +690,7 @@ oxel.quadsBuild();
 					for ( var i:int = EditCursor.editCursorSize; i < currentSize; i++ )
 						gcShrink.grain = --gcShrink.grain;
 					editCursorSize = gcShrink.grain;
-					Globals.selectedModel.editCursor.oxel.faces_rebuild( cursorColor, EDIT_CURSOR );
+					Globals.selectedModel.editCursor.oxel.faces_rebuild( EDIT_CURSOR );
 				}
 			}	
 		}

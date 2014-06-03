@@ -7,38 +7,38 @@
 ==============================================================================*/
 package com.voxelengine.worldmodel.oxel
 {
-	import com.developmentarc.core.tasks.tasks.ITask;
-	import com.developmentarc.core.tasks.groups.TaskGroup;
-	import com.voxelengine.events.ImpactEvent;
-	import com.voxelengine.utils.Plane;
-	import com.voxelengine.renderer.VertexManager;
-	import com.voxelengine.worldmodel.InteractionParams;
-	import com.voxelengine.worldmodel.models.EditCursor;
-	import com.voxelengine.worldmodel.models.VoxelModel;
-	import com.voxelengine.worldmodel.tasks.lighting.Light;
-	import com.voxelengine.worldmodel.tasks.lighting.LightSunCheck;
-	import com.voxelengine.worldmodel.TypeInfo;
-	import com.voxelengine.worldmodel.tasks.flowtasks.Flow;
-	import com.voxelengine.worldmodel.tasks.flowtasks.FlowFlop;
 	import flash.geom.Point;
 	import flash.net.registerClassAlias;
 	import flash.utils.getTimer;
-	import com.voxelengine.Log;
+
+	import com.developmentarc.core.tasks.tasks.ITask;
+	import com.developmentarc.core.tasks.groups.TaskGroup;
 	
 	import flash.display3D.Context3D;
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 	import flash.geom.Matrix3D;
-	import com.voxelengine.renderer.shaders.Shader;
-
+	
+	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
+	import com.voxelengine.events.ImpactEvent;
+	import com.voxelengine.utils.Plane;
 	import com.voxelengine.renderer.VertexIndexBuilder;
+	import com.voxelengine.renderer.VertexManager;
+	import com.voxelengine.renderer.Quad;
+	import com.voxelengine.renderer.shaders.Shader;
+	import com.voxelengine.pools.*;
+	import com.voxelengine.worldmodel.InteractionParams;
+	import com.voxelengine.worldmodel.TypeInfo;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.models.ModelStatisics;
-	import com.voxelengine.renderer.Quad;
-	import com.voxelengine.pools.*;
+	import com.voxelengine.worldmodel.models.EditCursor;
+	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.tasks.landscapetasks.TreeGenerator;
 	import com.voxelengine.worldmodel.tasks.lighting.LightRemove;
+	import com.voxelengine.worldmodel.tasks.lighting.LightAdd;
+	import com.voxelengine.worldmodel.tasks.flowtasks.Flow;
+	import com.voxelengine.worldmodel.tasks.flowtasks.FlowFlop;
 
 	/**
 	 * ...
@@ -113,7 +113,7 @@ package com.voxelengine.worldmodel.oxel
 					
 				// uses the OLD type since _data has not been set yet
 				if ( Globals.AIR != type )
-					vertManRemoveOxel( type );
+					vertManRemoveOxel();
 				
 				super.type = $val;
 				
@@ -283,7 +283,7 @@ package com.voxelengine.worldmodel.oxel
 			
 			// removes all quad and the quads vector
 			// removed the brightness
-			vertManRemoveOxel( type );
+			vertManRemoveOxel();
 			
 			if ( _vertMan )
 			{
@@ -813,6 +813,7 @@ package com.voxelengine.worldmodel.oxel
 
 		public function checkForMerge():Boolean	{
 			const childType:uint = _children[0].type;
+			var hasBrightnessData:Boolean = false;
 			// see if all of the child are the same type of node
 			for each ( var child:Oxel in _children ) 
 			{
@@ -820,9 +821,23 @@ package com.voxelengine.worldmodel.oxel
 					return false; // Not the same, get out
 				if ( child.childrenHas() )
 					return false; // Dont delete parents!
+				
+				if ( null != child._brightness )
+					hasBrightnessData = true;
 			}
 			
 			//Log.out( "Oxel.merge - removed children with type: " + Globals.Info[child.type].name + " of grain: " + gc.grain );
+			
+			/// merge the brightness data into parent.
+			if ( hasBrightnessData ) {
+				if ( null == _brightness )
+					_brightness = BrightnessPool.poolGet();
+				for each ( var childForBrightness:Oxel in _children ) 
+				{
+					if ( childForBrightness._brightness )
+						_brightness.childAdd( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size() );
+				}
+			}
 			nodes += 8;
 			childrenPrune();
 			neighborsInvalidate();
@@ -948,7 +963,7 @@ package com.voxelengine.worldmodel.oxel
 			else
 			{
 				faces_mark_all_dirty();
-				quadsDeleteAll( type );
+				quadsDeleteAll();
 			}
 		}
 		
@@ -1078,8 +1093,8 @@ package com.voxelengine.worldmodel.oxel
 			faces_clear_all();
 		}
 		
-		public function faces_rebuild( oldType:int, $guid:String ):void {
-			quadsDeleteAll( oldType );
+		public function faces_rebuild( $guid:String ):void {
+			quadsDeleteAll();
 			
 			// anytime oxel changes, neighbors need to know
 			neighborsMarkDirtyFaces( $guid );
@@ -1284,7 +1299,7 @@ package com.voxelengine.worldmodel.oxel
 				if ( faceHas( $face ) )
 				{
 					_s_oxelsEvaluated++;
-					LightSunCheck.addTask( $guid, gc, 1, $face );
+					//LightSunCheck.addTask( $guid, gc, 1, $face );
 				}
 
 			}
@@ -1346,7 +1361,7 @@ package com.voxelengine.worldmodel.oxel
 					// parents dont have quads!
 					if ( dirty  && _quads )
 					{
-						vertManRemoveOxel( type );
+						vertManRemoveOxel();
 					}
 					faces_clean_all_face_bits();
 					dirty = false;
@@ -1375,7 +1390,7 @@ package com.voxelengine.worldmodel.oxel
 				}
 				
 				if ( Globals.Info[type].fullBright )
-					_brightness.fullBright();
+					_brightness.lightFullBright();
 					
 				var scale:uint = 1 << gc.grain;
 				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
@@ -1384,7 +1399,7 @@ package com.voxelengine.worldmodel.oxel
 			else 
 			{
 				// if no faces release all quads
-				quadsDeleteAll( Globals.INVALID );
+				quadsDeleteAll();
 			}
 			
 			// did any of the quads change?
@@ -1398,7 +1413,7 @@ package com.voxelengine.worldmodel.oxel
 			}
 			// I was added to vertex, but I lost all my face, so remove oxel
 			else if ( added_to_vertex )
-				vertManRemoveOxel( type );
+				vertManRemoveOxel();
 
 			dirty = false;
 		}
@@ -1455,28 +1470,28 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 
-		public function quadsRebuildAll( oldType:int ):void {
-			if  ( _quads )
+		public function quadsRebuildAll():void {
+			if  ( !_quads )
+				return;
+				
+			//Log.out( "Oxel.quadsDeleteAll" );
+			dirty = true;
+			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
-				//Log.out( "Oxel.quadsDeleteAll" );
-				dirty = true;
-				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
+				var quad:Quad = _quads[face];
+				if ( quad )
 				{
-					var quad:Quad = _quads[face];
-					if ( quad )
-					{
-						var copiedQuads:Quad = QuadPool.poolGet();
-						copiedQuads.copyUV( quad );
-						var plane_facing:int = 1;
-						var scale:uint = 1 << gc.grain;
-						quadDelete( quad, face, oldType );
-						copiedQuads.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), face, plane_facing, scale, _brightness );
-					}
+					var copiedQuad:Quad = QuadPool.poolGet();
+					copiedQuad.copyUV( quad );
+					var plane_facing:int = 1;
+					var scale:uint = 1 << gc.grain;
+					quadDelete( quad, face, type );
+					copiedQuad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), face, plane_facing, scale, _brightness );
 				}
 			}
 		}
 		////////////////////////////////////////
-		public function quadsDeleteAll( oldType:int ):void {
+		public function quadsDeleteAll():void {
 			if  ( _quads )
 			{
 				//Log.out( "Oxel.quadsDeleteAll" );
@@ -1485,7 +1500,7 @@ package com.voxelengine.worldmodel.oxel
 				{
 					var quad:Quad = _quads[face];
 					if ( quad )
-						quadDelete( quad, face, oldType );
+						quadDelete( quad, face, type );
 				}
 			}
 		}
@@ -1493,8 +1508,8 @@ package com.voxelengine.worldmodel.oxel
 		// TODO, I see some risk here when I am changing oxel type from things like sand to glass
 		// Its going to assume that it was solid, which works for sand to glass
 		// how about water to sand? the oxel would lose all its faces, but never go away.
-		protected function quadDelete( quad:Quad, face:int, oldType:int ):void {
-			vertManMarkDirty( oldType );
+		protected function quadDelete( quad:Quad, face:int, type:int ):void {
+			vertManMarkDirty( type );
 			QuadPool.poolDispose( quad );
 			_quads[face] = null;
 		}
@@ -1505,10 +1520,10 @@ package com.voxelengine.worldmodel.oxel
 		// Vertex Manager functions START
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		private function vertManRemoveOxel( oldType:int ):void {
+		private function vertManRemoveOxel():void {
 			if ( _quads )
 			{
-				quadsDeleteAll( oldType );
+				quadsDeleteAll();
 				QuadsPool.poolDispose( _quads );
 				_quads = null;
 			}
@@ -1522,7 +1537,7 @@ package com.voxelengine.worldmodel.oxel
 			if ( added_to_vertex )
 			{
 				// Todo - this should just mark the oxels, and clean up should happen later
-				vm_get().oxelRemove( this, oldType ).dirty;
+				vm_get().oxelRemove( this, type ).dirty;
 				added_to_vertex = false;
 			}
 		}
@@ -2188,7 +2203,7 @@ package com.voxelengine.worldmodel.oxel
 			gc.grainZ = z;
 			
 			faces_mark_all_dirty();
-			quadsDeleteAll( type );
+			quadsDeleteAll();
 			
 			if ( _children )
 			{
@@ -2266,8 +2281,8 @@ package com.voxelengine.worldmodel.oxel
 			trace( _x_min );
 			trace( "x range: " + (_x_max - _x_min) );
 			trace( "oxel center is: " + gc.size()/2 + "  model center is: " + (_x_max + _x_min)/2 );
-			trace( _y_max );
 			trace( _y_min );
+			trace( _y_max );
 			trace( "y range: " + (_y_max - _y_min) );
 			trace( "oxel center is: " + gc.size()/2 + "  model center is: " + (_y_max + _y_min)/2 );
 			trace( _z_max );

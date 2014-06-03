@@ -8,13 +8,13 @@
 
 package com.voxelengine.worldmodel.tasks.lighting
 {
-	import flash.geom.Vector3D;
-	
 	import com.developmentarc.core.tasks.tasks.AbstractTask;
 	
+	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
 	import com.voxelengine.pools.GrainCursorPool;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
+	import com.voxelengine.worldmodel.oxel.Oxel;
 	
 	// * @author Robert Flesch
 	public class LightTask extends AbstractTask 
@@ -44,5 +44,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			GrainCursorPool.poolDispose( _gc );
 			super.complete();
 		}
+		
 	}
 }

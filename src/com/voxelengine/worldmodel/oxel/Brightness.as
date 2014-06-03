@@ -11,11 +11,10 @@ package com.voxelengine.worldmodel.oxel
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 
-	import com.voxelengine.utils.ColorUtils;
-	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
-	import com.voxelengine.pools.GrainCursorPool;
-	import com.voxelengine.worldmodel.tasks.lighting.Light;
+	import com.voxelengine.Globals;
+	import com.voxelengine.utils.ColorUtils;
+	
 /**
  * ...
  * @author Robert Flesch
@@ -49,9 +48,9 @@ public class Brightness  {  // extends BrightnessData
 	static public function scratch():Brightness { return _s_sb; }
 	static public const FIXED_ID:uint = 1;
 
-	private var _processed:Boolean = false; // This is used to keep track of whether or not a oxel has been processed in the light task
-	public function get processed():Boolean { return _processed; }
-	public function set processed(value:Boolean):void { _processed = value; }
+//	private var _processed:Boolean = false; // This is used to keep track of whether or not a oxel has been processed in the light task
+//	public function get processed():Boolean { return _processed; }
+//	public function set processed(value:Boolean):void { _processed = value; }
 
 	private var _lastLightID:uint;
 	public function get lastLightID():uint { return _lastLightID; }
@@ -159,24 +158,24 @@ public class Brightness  {  // extends BrightnessData
 				"  b011: " + b011 +
 				"  b110: " + b110 +
 				"  b111: " + b111 +
-				"  colorCount: "  + _b000.colorCount();
+				"  colorCount: "  + _b000.lightCount();
 	}
 	
 	public function copyFrom( $b:Brightness ):void {
 		if ( sunlit )
 			return;
-		if ( 1 < _b000.colorCount() )	
+		if ( 1 < _b000.lightCount() )	
 			reset();	
 		_lastLightID = $b.lastLightID;
 
-		_b000.copyColors( $b._b000.colors() );
-		_b001.copyColors( $b._b001.colors() ); 
-		_b010.copyColors( $b._b010.colors() );
-		_b011.copyColors( $b._b011.colors() );
-		_b100.copyColors( $b._b100.colors() );
-		_b101.copyColors( $b._b101.colors() ); 
-		_b110.copyColors( $b._b110.colors() ); 
-		_b111.copyColors( $b._b111.colors() );
+		_b000.lightsCopy( $b._b000.colors() );
+		_b001.lightsCopy( $b._b001.colors() ); 
+		_b010.lightsCopy( $b._b010.colors() );
+		_b011.lightsCopy( $b._b011.colors() );
+		_b100.lightsCopy( $b._b100.colors() );
+		_b101.lightsCopy( $b._b101.colors() ); 
+		_b110.lightsCopy( $b._b110.colors() ); 
+		_b111.lightsCopy( $b._b111.colors() );
 		
 		_atten = $b._atten;
 		// _sunlit - left empty
@@ -188,7 +187,7 @@ public class Brightness  {  // extends BrightnessData
 			throw new Error( "Brightness.setAll - attn too high" );
 		if ( sunlit )
 			return;
-		if ( true == _b000.colorHas( $lightID ) ) {
+		if ( true == _b000.lightHas( $lightID ) ) {
 			_lastLightID = $lightID;
 			b000 = $attn;
 			b001 = $attn;
@@ -239,7 +238,6 @@ public class Brightness  {  // extends BrightnessData
 			if ( kid.isSolid )
 				resetFromChildID( kid.gc.childId() );
 		}
-		
 	}
 
 	// This resets the corner identified by child id to default values.
@@ -295,7 +293,7 @@ public class Brightness  {  // extends BrightnessData
 		
 		if ( lastLightID != $bt.lastLightID ) {	
 			lastLightID = $bt.lastLightID;
-			processed = false;
+//			processed = false;
 		}
 		// The corner that the child is in is always the most accurate data, everything else is a guess
 		if ( 0 == $childID ) {
@@ -567,17 +565,21 @@ public class Brightness  {  // extends BrightnessData
 		return maxVert;	
 	}
 	
-	public function colorGet( $lightID:uint ):uint {
-		if ( true == _b000.colorHas( $lightID ) )
-			return _b000.colorGet( $lightID );
+	public function lightGet( $lightID:uint ):uint {
+		if ( true == _b000.lightHas( $lightID ) )
+			return _b000.lightGet( $lightID );
 			
 		return 0;
+	}
+	
+	public function lightHas( $lightID:uint ):Boolean {
+		return _b000.lightHas( $lightID );
 	}
 	
 	public function lightAdd( $lightID:uint, $lightColor:uint, isLight:Boolean = false ):void {
 		
 		// if one has this last light id, then all should have it.
-		if ( false == _b000.colorHas( $lightID ) )
+		if ( false == _b000.lightHas( $lightID ) )
 		{
 			// If this is not the light its self, set default attn to 0 of 255
 			var val:uint = $lightColor;
@@ -586,18 +588,35 @@ public class Brightness  {  // extends BrightnessData
 				val |= DEFAULT_ATTEN << 24;
 			}
 			
-			_b000.colorAdd( $lightID, val );
-			_b001.colorAdd( $lightID, val );
-			_b100.colorAdd( $lightID, val );
-			_b101.colorAdd( $lightID, val );
-			_b010.colorAdd( $lightID, val );
-			_b011.colorAdd( $lightID, val );
-			_b110.colorAdd( $lightID, val );
-			_b111.colorAdd( $lightID, val );
+			_b000.lightAdd( $lightID, val );
+			_b001.lightAdd( $lightID, val );
+			_b100.lightAdd( $lightID, val );
+			_b101.lightAdd( $lightID, val );
+			_b010.lightAdd( $lightID, val );
+			_b011.lightAdd( $lightID, val );
+			_b110.lightAdd( $lightID, val );
+			_b111.lightAdd( $lightID, val );
 		}
 	}
 	
-	public function fullBright():void {
+	public function lightRemove( $lightID:uint ):void {
+		
+		// if one has this last light id, then all should have it.
+		if ( false == _b000.lightHas( $lightID ) )
+			return;
+			
+		_b000.lightRemove( $lightID );
+		_b001.lightRemove( $lightID );
+		_b100.lightRemove( $lightID );
+		_b101.lightRemove( $lightID );
+		_b010.lightRemove( $lightID );
+		_b011.lightRemove( $lightID );
+		_b110.lightRemove( $lightID );
+		_b111.lightRemove( $lightID );
+		lastLightID = DEFAULT_ID;
+	}
+	
+	public function lightFullBright():void {
 		
 		_b000.attnSet( 1, 255 );
 		_b001.attnSet( 1, 255 );
@@ -612,12 +631,12 @@ public class Brightness  {  // extends BrightnessData
 	public function influenceAdd( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
 		var c:Boolean = false;
-		var lightColor:uint = $lob._b000.colorGet( $lob.lastLightID );		
+		var lightColor:uint = $lob._b000.lightGet( $lob.lastLightID );		
 		
 		lightAdd( $lob.lastLightID, lightColor );
 		if ( lastLightID != $lob.lastLightID ) {
 			lastLightID = $lob.lastLightID;
-			processed = false;
+//			processed = false;
 		}
 		
 		const attenScaled:uint = _atten * ($grainUnits/16);
@@ -672,20 +691,7 @@ public class Brightness  {  // extends BrightnessData
 		
 		return c;
 	}
-	/*
-	 *           0,1,0  ___________ 1,1,0
-	 *                /|          /|
-	 *               / |   1,1,1 / |
-	 *     ^  0,1,1 /__|________/  |   POSX ->
-	 *     |       |   |        |  |
-	 *    POSY     |   |________|__|
-	 *             |  / 0,0,0   |  / 1,0,0
-	 *             | /          | /
-	 *             |/___________|/
-	 *      POSZ   0,0,1        1,0,1
-	 *        |
-	 *        \/
-	 */
+
 	public function balanceAttn( $attenScaled:uint ):Boolean {
 		var c:Boolean = false;
 		const sqAtten:Number = Math.sqrt( 2 * ($attenScaled * $attenScaled) );
@@ -759,10 +765,10 @@ public class Brightness  {  // extends BrightnessData
 	}
 	
 	// Add the influcence of a virtual cube the same size
-	public function addBrightness( $bt:Brightness ):Boolean {
+	public function brightnessMerge( $bt:Brightness ):Boolean {
 		
 		lastLightID = $bt.lastLightID
-		lightAdd( lastLightID, $bt.colorGet( lastLightID ) );
+		lightAdd( lastLightID, $bt.lightGet( lastLightID ) );
 		
 		var c:Boolean;
 		if ( b000 < $bt.b000 )	  { b000 = $bt.b000; c = true; }
