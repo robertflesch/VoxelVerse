@@ -30,7 +30,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 	 * ...
 	 * @author Robert Flesch
 	 */
-	public class Light extends LightTask 
+	public class LightAdd extends LightTask 
 	{		
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.ADD == $le.type )
@@ -50,14 +50,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 						addTask( $le.instanceGuid, $le.gc, $le.lightID );
 					}
 					else
-						Log.out( "Light.handleLightEvent - invalid light source", Log.ERROR );
+						Log.out( "LightAdd.handleLightAddEvent - invalid light source", Log.ERROR );
 				}
 			}
 		}
 		 
 		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
-			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var lt:Light = new Light( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
+			//Log.out( "LightAdd.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
+			var lt:LightAdd = new LightAdd( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
@@ -71,7 +71,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		 * @param $taskPriority small grains get processed first - so use grain size as priority
 		 * 
 		 */
-		public function Light( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
+		public function LightAdd( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
 			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
 		}
 		
@@ -89,16 +89,16 @@ package com.voxelengine.worldmodel.tasks.lighting
 
 if ( _gc.eval( 6, 2, 1, 3 ) )
 	Log.out ( "Look at grain 6 lights" );
-Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
+Log.out ( "LightAdd.start lo.gc: " + lo.gc.toString() );
 
 					spreadToNeighbors( lo );
 				}
 				else
-					Log.out( "Light.start - lightValid failed", Log.ERROR );
+					Log.out( "LightAdd.start - lightValid failed", Log.ERROR );
 
 			}
 			else
-				Log.out( "Light.start - VoxelModel not found: " + _guid, Log.ERROR );
+				Log.out( "LightAdd.start - VoxelModel not found: " + _guid, Log.ERROR );
 				
 			super.complete();
 		}
@@ -113,7 +113,7 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 
 			if ( 0 == $o.brightness.lastLightID )
 			{
-				Log.out( "Light.valid - 0 == LIGHT ID - continue" );
+				Log.out( "LightAdd.valid - 0 == LIGHT ID - continue" );
 				return false;
 			}
 				
@@ -122,7 +122,7 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 		
 		private function spreadToNeighbors( $lo:Oxel ):void {
 				
-			Log.out( "Light.spreadToNeighbors - $lo: " + $lo.toStringShort() + "b: " + $lo.brightness.toString() );
+			Log.out( "LightAdd.spreadToNeighbors - $lo: " + $lo.toStringShort() + "b: " + $lo.brightness.toString() );
 			
 				
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
@@ -144,7 +144,7 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 					projectOnEqualGrain( $lo, no, face );
 				}
 				else {
-					Log.out( "Light.spreadToNeighbors - NEIGHBOR GRAIN IS SMALLER: ", Log.ERROR );
+					Log.out( "LightAdd.spreadToNeighbors - NEIGHBOR GRAIN IS SMALLER: ", Log.ERROR );
 				}					
 			}
 		}
@@ -197,7 +197,7 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 
 			var sizeDif:uint = $no.gc.grain - $lo.gc.grain;
 			if ( 1 < sizeDif )
-				Log.out( "Light.projectOnLargerGrain - size greater then one" );
+				Log.out( "LightAdd.projectOnLargerGrain - size greater then one" );
 				
 			var bt:Brightness = BrightnessPool.poolGet();
 			var btp:Brightness = BrightnessPool.poolGet();
@@ -206,11 +206,6 @@ Log.out ( "Light.start lo.gc: " + lo.gc.toString() );
 			// project the light oxel onto the virtual brightness
 			bt.influenceAdd( $lo.brightness, $face, !$no.hasAlpha, grainUnits )
 
-if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
-	//BrightnessTests.allTests();
-	Log.out ( "influence ok, add brightness broken correctly" );
-}
-			
 			// if the target is larger then one size, we need to project calculation on parent until it is correct size
 			var currentLo:Oxel = $lo;
 			for ( var i:uint = 0; i < sizeDif; i++ ) {	
@@ -275,7 +270,7 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 					if ( bt.valuesHas() )
 					{
 						if ( !valid( noChild ) )
-							Log.out( "Light.projectOnNeighborChildren - How do I get here?" );
+							Log.out( "LightAdd.projectOnNeighborChildren - How do I get here?" );
 						
 						// Project the virtual brightness object on the real child of the same size
 						noChild.brightness.influenceAdd( bt, $face, !noChild.hasAlpha, noChild.gc.size() );
@@ -293,7 +288,7 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
 			
 			if ( !$o.isSolid ) {
-				Log.out( "LightTask.rebuildFace - being called on non solid object", Log.ERROR );
+				Log.out( "LightAdd.rebuildFace - being called on non solid object", Log.ERROR );
 				return;
 			}
 				
@@ -311,32 +306,32 @@ if ( $lo.gc.eval( 4, 8, 4, 9 ) ) {
 			
 			//if ( $o.brightness.processed )
 			//{
-				//Log.out( "Light.add - PROCESSED ALREADY: " + $o.gc.toString() );
+				//Log.out( "LightAdd.add - PROCESSED ALREADY: " + $o.gc.toString() );
 				//return;
 			//}
 			
 			if ( $o.isSolid )
 			{
-				Log.out( "Light.add - SOLID", Log.ERROR );
+				Log.out( "LightAdd.add - SOLID", Log.ERROR );
 				return;
 			}
 			
 			if ( $o.gc.grain < 4 )
 			{
-				Log.out( "Light.add - TOO SMALL" );
+				Log.out( "LightAdd.add - TOO SMALL" );
 				return;
 			}
 			
 			//if ( $o.gc.grain > 5 )
 			//{
-				//Log.out( "Light.add - TOO LARGE FOR NOW" );
+				//Log.out( "LightAdd.add - TOO LARGE FOR NOW" );
 				//return;
 			//}
 			
 			if ( $o.brightness.valuesHas() )
 			{
 				addTask( _guid, $o.gc, lightID );
-				Log.out( "Light.add - gc:" + $o.gc.toString() + " br: " + $o.brightness.toString() );
+				Log.out( "LightAdd.add - gc:" + $o.gc.toString() + " br: " + $o.brightness.toString() );
 			}
 		}
 		
