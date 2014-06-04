@@ -198,8 +198,6 @@ public class BrightnessTests  {
 		static public function fromBtyeArrayTests():void { }
 		static public function copyFromTests():void { }
 		static public function valuesHasTests():void { }
-		static public function checkForSolidOxelsTests():void { }
-		static public function resetFromChildIDTests():void { }
 		static public function colorGetTests():void { }
 		static public function fullBrightTests():void { }
 		static public function balanceAttnTests():void { }

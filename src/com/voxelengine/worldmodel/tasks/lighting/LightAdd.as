@@ -42,7 +42,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) )
 					{
 						if ( !lo.gc.is_equal( $le.gc ) )
-							Log.out ( "Didn't find child!" );
+							Log.out ( "LightAdd.handleLightAddEvent - Didn't find child!", Log.ERROR );
 						var ti:TypeInfo = Globals.Info[lo.type];
 						lo.brightness.lightAdd( $le.lightID, ti.color, true );
 						lo.brightness.lastLightID = $le.lightID;
@@ -85,10 +85,9 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( valid( lo ) ) {
 //					lo.brightness.processed = true;
 					if ( !lo.gc.is_equal( _gc ) )
-						Log.out ( "Didn't find child!" );
+							Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
 
-					//Log.out ( "LightAdd.start lo.gc: " + lo.gc.toString() );
-
+					//Log.out ( "LightAdd.start - gc:" + $o.gc.toString() + " br: " + $o.brightness.toString() );
 					spreadToNeighbors( lo );
 				}
 				else
@@ -328,7 +327,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( $o.brightness.valuesHas() )
 			{
 				addTask( _guid, $o.gc, lightID );
-				Log.out( "LightAdd.add - gc:" + $o.gc.toString() + " br: " + $o.brightness.toString() );
 			}
 		}
 		

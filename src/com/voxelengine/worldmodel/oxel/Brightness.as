@@ -44,13 +44,20 @@ public class Brightness  {  // extends BrightnessData
 	public static const DEFAULT_PER_DISTANCE:int = 16;
 	public static const DEFAULT_COLOR:uint = 0x00ffffff;
 
+	static public const B000:uint = 0;
+	static public const B001:uint = 1;
+	static public const B100:uint = 2;
+	static public const B101:uint = 3;
+	static public const B010:uint = 4;
+	static public const B011:uint = 5;
+	static public const B110:uint = 6;
+	static public const B111:uint = 7;
+	
 	static private var _s_sb:Brightness = new Brightness(); // scratchBrightness
 	static public function scratch():Brightness { return _s_sb; }
 	static public const FIXED_ID:uint = 1;
 
-//	private var _processed:Boolean = false; // This is used to keep track of whether or not a oxel has been processed in the light task
-//	public function get processed():Boolean { return _processed; }
-//	public function set processed(value:Boolean):void { _processed = value; }
+	private var _composite:uint;
 
 	private var _lastLightID:uint;
 	public function get lastLightID():uint { return _lastLightID; }
@@ -58,68 +65,18 @@ public class Brightness  {  // extends BrightnessData
 	
 	private var _atten:uint = DEFAULT_ATTEN;  // down 1 per meter
 	public function get atten():uint { return _atten; }
-	private var _sunlit:Boolean;
+	public function set atten( val:uint ):void { _atten = val; }
 	
-	public var _b000:VertexColor;
-	public var _b001:VertexColor;
-	public var _b100:VertexColor;
-	public var _b101:VertexColor;
-	public var _b010:VertexColor;
-	public var _b011:VertexColor;
-	public var _b110:VertexColor;
-	public var _b111:VertexColor;
-
-	public function get b000():uint { return _b000.attnGet( _lastLightID ); }
-	public function get b001():uint { return _b001.attnGet( _lastLightID ); }
-	public function get b100():uint { return _b100.attnGet( _lastLightID ); }
-	public function get b101():uint { return _b101.attnGet( _lastLightID ); }
-	public function get b010():uint { return _b010.attnGet( _lastLightID ); }
-	public function get b011():uint { return _b011.attnGet( _lastLightID ); }
-	public function get b110():uint { return _b110.attnGet( _lastLightID ); }
-	public function get b111():uint { return _b111.attnGet( _lastLightID ); }
-	
-	public function set b000( attn:uint ):void { _b000.attnSet( _lastLightID, attn ); }
-	public function set b001( attn:uint ):void { _b001.attnSet( _lastLightID, attn ); }
-	public function set b100( attn:uint ):void { _b100.attnSet( _lastLightID, attn ); }
-	public function set b101( attn:uint ):void { _b101.attnSet( _lastLightID, attn ); }
-	public function set b010( attn:uint ):void { _b010.attnSet( _lastLightID, attn ); }
-	public function set b011( attn:uint ):void { _b011.attnSet( _lastLightID, attn ); }
-	public function set b110( attn:uint ):void { _b110.attnSet( _lastLightID, attn ); }
-	public function set b111( attn:uint ):void { _b111.attnSet( _lastLightID, attn ); }
-	
-	public function get sunlit():Boolean { return _sunlit; }
-	// TODO this should be from the current sun object
-	public function set sunlit(value:Boolean):void { true == value ? setAll( FIXED_ID, MAX ): reset(); _sunlit = value;  }
-	
-	private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
+	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
 	public function Brightness():void {
 		lastLightID = DEFAULT_ID;
-		// Could get the default color and atten from the config manager.
-		_b000 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b001 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b100 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b101 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b010 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b011 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b110 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		_b111 = new VertexColor( DEFAULT_ID, ColorUtils.placeAlpha( DEFAULT_COLOR, DEFAULT_ATTEN ) );
-		
+		lightAdd( DEFAULT_ID, DEFAULT_COLOR );
 	}
 	
-	// var number:Number = 10.98813311;
-	// trace(setPrecision(number,1)); //Result is 10.9
-	// trace(setPrecision(number,2)); //Result is 10.98
-	// trace(setPrecision(number,3)); //Result is 10.988 and so on
-	// http://stackoverflow.com/questions/632802/how-to-deal-with-number-precision-in-actionscript
-	//private function setPrecision( $number:Number, $precision:int = 3):Number {
-		//$precision = Math.pow(10, $precision);
-		//return Math.round( $number * $precision )/$precision;
-	//}
-
-	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
-		
+		throw new Error( "Brightness.toByteArray - NOT IMPLEMENTED" );
+		/*
 		Log.out( "Brightness.toByteArray - This does not take into account color data", Log.ERROR );
 		$ba.writeInt( rnd( b000 ) );
 		$ba.writeInt( rnd( b001 ) );
@@ -129,11 +86,14 @@ public class Brightness  {  // extends BrightnessData
 		$ba.writeInt( rnd( b011 ) );
 		$ba.writeInt( rnd( b110 ) );
 		$ba.writeInt( rnd( b111 ) );
+		*/
 		return $ba;
+		
 	}
 	
 	public function fromByteArray( $ba:ByteArray ):ByteArray {
-		
+		throw new Error( "Brightness.fromByteArray - NOT IMPLEMENTED" );
+		/*
 //		Log.out( "Brightness.fromByteArray - This does not take into account color data", Log.ERROR );
 		//var b000 = rnd( $ba.readInt() );
 		//trace( "Brightness.fromByteArray b000: " + b000 );
@@ -145,344 +105,280 @@ public class Brightness  {  // extends BrightnessData
 		b011 = $ba.readInt();
 		b110 = $ba.readInt();
 		b111 = $ba.readInt();
+		*/
 		return $ba;
 	}
 
 	public function toString():String {
-		return  "  lastLightID: " + _lastLightID +
-		        "  b000: " + b000 +
-				"  b001: " + b001 +
-				"  b100: " + b100 +
-				"  b101: " + b101 +
-				"  b010: " + b010 +
-				"  b011: " + b011 +
-				"  b110: " + b110 +
-				"  b111: " + b111 +
-				"  colorCount: "  + _b000.lightCount();
+		
+		var outputString:String = "";
+		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+			var li:LightInfo = _lights[i];
+			if ( null != li ) {
+				outputString += "light: " + i + "  " + li.toString();
+			}
+		}
+		return outputString;
 	}
+	
 	
 	public function copyFrom( $b:Brightness ):void {
-		if ( sunlit )
-			return;
-		if ( 1 < _b000.lightCount() )	
-			reset();	
-		_lastLightID = $b.lastLightID;
-
-		_b000.lightsCopy( $b._b000.colors() );
-		_b001.lightsCopy( $b._b001.colors() ); 
-		_b010.lightsCopy( $b._b010.colors() );
-		_b011.lightsCopy( $b._b011.colors() );
-		_b100.lightsCopy( $b._b100.colors() );
-		_b101.lightsCopy( $b._b101.colors() ); 
-		_b110.lightsCopy( $b._b110.colors() ); 
-		_b111.lightsCopy( $b._b111.colors() );
 		
-		_atten = $b._atten;
-		// _sunlit - left empty
-		// _processed - left empty
+		// Copy all of the light data from the passed in Brightness
+		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+			var bli:LightInfo = $b._lights[i];
+			if ( null != bli )
+				_lights[i].copyFrom( bli );
+			else 
+				_lights[i] = null;
+		}
 	}
 	
-	public function setAll( $lightID:uint, $attn:uint ):void	{
+	public function setAll( $ID:uint, $attn:uint ):void	{
+		
+		var li:LightInfo =  lightGet( $ID );
+		
+		if ( null == li )
+			throw new Error( "Brightness.setAll - light not defined" );
+			
 		if ( Brightness.MAX < $attn )
 			throw new Error( "Brightness.setAll - attn too high" );
-		if ( sunlit )
-			return;
-		if ( true == _b000.lightHas( $lightID ) ) {
-			_lastLightID = $lightID;
-			b000 = $attn;
-			b001 = $attn;
-			b100 = $attn;
-			b101 = $attn;
-			b010 = $attn;
-			b011 = $attn;
-			b110 = $attn;
-			b111 = $attn;
-		}
-		else
-			throw new Error( "Brightness.setAll - Color not defined" );
+
+		li.setAll( $attn );
 	}
 	
 	public function valuesHas():Boolean	{
-		if ( sunlit )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b000 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b001 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b100 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b101 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b010 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b011 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b110 )
-			return true;
-		if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < b111 )
-			return true;
-		//if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < Color.extractRed( color ) )
-			//return true;
-		//if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < Color.extractGreen( color ) )
-			//return true;
-		//if ( ( DEFAULT_ATTEN + DEFAULT_SIGMA ) < Color.extractBlue( color ) )
-			//return true;
-			
+
+		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+			var li:LightInfo = _lights[i];
+			if ( null != li )
+				if ( DEFAULT_ATTEN + DEFAULT_SIGMA < li.avg )
+					return true
+		}
+		
 		return false;
 	}
 	
-	public function checkForSolidOxels( $o:Oxel ):void	{
-		// now we have to check for solid children, and set those vertices to default value
-		var kids:Vector.<Oxel> = $o.children
-		for each ( var kid:Oxel in kids ) {
-			if ( kid.isSolid )
-				resetFromChildID( kid.gc.childId() );
+	public function reset():void {
+		
+		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+			var li:LightInfo = _lights[i];
+			if ( null != li )
+				li.setAll( DEFAULT_ATTEN );
 		}
-	}
 
-	// This resets the corner identified by child id to default values.
-	public function resetFromChildID( $childID:int ):void {	
-
-		if ( 0 == $childID )
-			b000 = DEFAULT_ATTEN;
-		else if ( 1 == $childID )
-			b100 = DEFAULT_ATTEN;
-		else if ( 2 == $childID )
-			b010 = DEFAULT_ATTEN;
-		else if ( 3 == $childID )
-			b110 = DEFAULT_ATTEN;
-		else if ( 4 == $childID )
-			b001 = DEFAULT_ATTEN;
-		else if ( 5 == $childID )
-			b101 = DEFAULT_ATTEN;
-		else if ( 6 == $childID )
-			b011 = DEFAULT_ATTEN;
-		else if ( 7 == $childID )
-			b111 = DEFAULT_ATTEN;
-	}
-
-	public function reset():void	{
-		
 		_lastLightID = DEFAULT_ID;
-		_b000.reset();
-		_b001.reset();
-		_b100.reset();
-		_b101.reset();
-		_b010.reset();
-		_b011.reset();
-		_b110.reset();
-		_b111.reset();
-		
 		_atten = DEFAULT_ATTEN;
-		_sunlit = false;
 	}
 
-	public function childAdd( $childID:uint, $bt:Brightness, $grainUnits:uint ):void {	
+	public function childAdd( $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
 
 		// This is special case which needs to take into account atten
 		var localAtten:uint = _atten * $grainUnits/DEFAULT_PER_DISTANCE
 		var sqrAtten:Number =  Math.sqrt( 2 * (localAtten * localAtten) );
 		var csqrAtten:Number =  Math.sqrt( (localAtten * localAtten) + (sqrAtten * sqrAtten) );
 		
-		var colors:Dictionary = $bt._b000.colors();
-		for (var lightID:String in colors )
-		{
-			var color:uint = colors[lightID];
-			lightAdd( uint(lightID), color );
-		}
+		if ( !lightHas( $b.lastLightID ) )
+			lightAdd( $b.lastLightID, $b.lightGet( $b.lastLightID ).color );
 		
-		if ( lastLightID != $bt.lastLightID ) {	
-			lastLightID = $bt.lastLightID;
-//			processed = false;
-		}
+		if ( lastLightID != $b.lastLightID )
+			lastLightID = $b.lastLightID;
+		
+		var li:LightInfo =  lightGet( $b.lastLightID );		
+		var bli:LightInfo =  $b.lightGet( $b.lastLightID );		
+		if ( null == li )
+			throw new Error( "Brightness.childAdd - light not defined" );
+		
 		// The corner that the child is in is always the most accurate data, everything else is a guess
 		if ( 0 == $childID ) {
-			b000 = $bt.b000;
-			if ( b001 < $bt.b001 - localAtten ) b001 = $bt.b001 - localAtten;
-			if ( b100 < $bt.b100 - localAtten ) b100 = $bt.b100 - localAtten;
-			if ( b101 < $bt.b101 - sqrAtten ) 	b101 = $bt.b101 - sqrAtten;
+			li.b000 = bli.b000;
+			if ( li.b001 < bli.b001 - localAtten )  li.b001 = bli.b001 - localAtten;
+			if ( li.b100 < bli.b100 - localAtten )  li.b100 = bli.b100 - localAtten;
+			if ( li.b101 < bli.b101 - sqrAtten )  	li.b101 = bli.b101 - sqrAtten;
 			
-			if ( b010 < $bt.b010 - localAtten ) b010 = $bt.b010 - localAtten;
-			if ( b011 < $bt.b011 - sqrAtten ) 	b011 = $bt.b011 - sqrAtten;
-			if ( b110 < $bt.b110 - sqrAtten ) 	b110 = $bt.b110 - sqrAtten;
-			if ( b111 < $bt.b111 - csqrAtten ) 	b111 = $bt.b111 - csqrAtten;
+			if ( li.b010 < bli.b010 - localAtten )  li.b010 = bli.b010 - localAtten;
+			if ( li.b011 < bli.b011 - sqrAtten )  	li.b011 = bli.b011 - sqrAtten;
+			if ( li.b110 < bli.b110 - sqrAtten )  	li.b110 = bli.b110 - sqrAtten;
+			if ( li.b111 < bli.b111 - csqrAtten )  	li.b111 = bli.b111 - csqrAtten;
 		}
 		else if ( 1 == $childID ) {
-			if ( b000 < $bt.b000 - localAtten ) b000 = $bt.b000 - localAtten;
-			if ( b001 < $bt.b001 - sqrAtten ) 	b001 = $bt.b001 - sqrAtten;
-			b100 = $bt.b100;
-			if ( b101 < $bt.b101 - localAtten ) b101 = $bt.b101 - localAtten;
+			if ( li.b000 < bli.b000 - localAtten )  li.b000 = bli.b000 - localAtten;
+			if ( li.b001 < bli.b001 - sqrAtten )  	li.b001 = bli.b001 - sqrAtten;
+			li.b100 = bli.b100;
+			if ( li.b101 < bli.b101 - localAtten )  li.b101 = bli.b101 - localAtten;
 			       
-			if ( b010 < $bt.b010 - sqrAtten ) 	b010 = $bt.b010 - sqrAtten;
-			if ( b011 < $bt.b011 - csqrAtten ) 	b011 = $bt.b011 - csqrAtten;
-			if ( b110 < $bt.b110 - localAtten ) b110 = $bt.b110 - localAtten;
-			if ( b111 < $bt.b111 - sqrAtten ) 	b111 = $bt.b111 - sqrAtten;
+			if ( li.b010 < bli.b010 - sqrAtten )  	li.b010 = bli.b010 - sqrAtten;
+			if ( li.b011 < bli.b011 - csqrAtten )  	li.b011 = bli.b011 - csqrAtten;
+			if ( li.b110 < bli.b110 - localAtten )  li.b110 = bli.b110 - localAtten;
+			if ( li.b111 < bli.b111 - sqrAtten )  	li.b111 = bli.b111 - sqrAtten;
 		}
 		else if ( 2 == $childID ) {
-			if ( b000 < $bt.b000 - localAtten ) b000 = $bt.b000 - localAtten;
-			if ( b001 < $bt.b001 - sqrAtten ) 	b001 = $bt.b001 - sqrAtten;
-			if ( b100 < $bt.b100 - sqrAtten ) 	b100 = $bt.b100 - sqrAtten;
-			if ( b101 < $bt.b101 - csqrAtten ) 	b101 = $bt.b101 - csqrAtten;
+			if ( li.b000 < bli.b000 - localAtten )  li.b000 = bli.b000 - localAtten;
+			if ( li.b001 < bli.b001 - sqrAtten )  	li.b001 = bli.b001 - sqrAtten;
+			if ( li.b100 < bli.b100 - sqrAtten )  	li.b100 = bli.b100 - sqrAtten;
+			if ( li.b101 < bli.b101 - csqrAtten )  	li.b101 = bli.b101 - csqrAtten;
 			       
-			b010 = $bt.b010;
-			if ( b011 < $bt.b011 - localAtten ) b011 = $bt.b011 - localAtten;
-			if ( b110 < $bt.b110 - localAtten ) b110 = $bt.b110 - localAtten;
-			if ( b111 < $bt.b111 - sqrAtten ) 	b111 = $bt.b111 - sqrAtten;
+			li.b010 = bli.b010;
+			if ( li.b011 < bli.b011 - localAtten )  li.b011 = bli.b011 - localAtten;
+			if ( li.b110 < bli.b110 - localAtten )  li.b110 = bli.b110 - localAtten;
+			if ( li.b111 < bli.b111 - sqrAtten )  	li.b111 = bli.b111 - sqrAtten;
 		}
 		else if ( 3 == $childID ) {
-			if ( b000 < $bt.b000 - sqrAtten ) 	b000 = $bt.b000 - sqrAtten;
-			if ( b001 < $bt.b001 - csqrAtten ) 	b001 = $bt.b001 - csqrAtten;
-			if ( b100 < $bt.b100 - localAtten ) b100 = $bt.b100 - localAtten;
-			if ( b101 < $bt.b101 - sqrAtten ) 	b101 = $bt.b101 - sqrAtten;
+			if ( li.b000 < bli.b000 - sqrAtten )  	li.b000 = bli.b000 - sqrAtten;
+			if ( li.b001 < bli.b001 - csqrAtten )  	li.b001 = bli.b001 - csqrAtten;
+			if ( li.b100 < bli.b100 - localAtten )  li.b100 = bli.b100 - localAtten;
+			if ( li.b101 < bli.b101 - sqrAtten )  	li.b101 = bli.b101 - sqrAtten;
 			       
-			if ( b010 < $bt.b010 - localAtten ) b010 = $bt.b010 - localAtten;
-			if ( b011 < $bt.b011 - sqrAtten ) 	b011 = $bt.b011 - sqrAtten;
-			b110 = $bt.b110;
-			if ( b111 < $bt.b111 - localAtten ) b111 = $bt.b111 - localAtten;
+			if ( li.b010 < bli.b010 - localAtten )  li.b010 = bli.b010 - localAtten;
+			if ( li.b011 < bli.b011 - sqrAtten )  	li.b011 = bli.b011 - sqrAtten;
+			li.b110 = bli.b110;
+			if ( li.b111 < bli.b111 - localAtten )  li.b111 = bli.b111 - localAtten;
 		}
 		else if ( 4 == $childID ) {
-			if ( b000 < $bt.b000 - localAtten ) b000 = $bt.b000 - localAtten;
-			b001 = $bt.b001;
-			if ( b100 < $bt.b100 - sqrAtten ) 	b100 = $bt.b100 - sqrAtten;
-			if ( b101 < $bt.b101 - localAtten ) b101 = $bt.b101 - localAtten;
+			if ( li.b000 < bli.b000 - localAtten )  li.b000 = bli.b000 - localAtten;
+			li.b001 = bli.b001;
+			if ( li.b100 < bli.b100 - sqrAtten )  	li.b100 = bli.b100 - sqrAtten;
+			if ( li.b101 < bli.b101 - localAtten )  li.b101 = bli.b101 - localAtten;
 			       
-			if ( b010 < $bt.b010 - sqrAtten ) 	b010 = $bt.b010 - sqrAtten;
-			if ( b011 < $bt.b011 - localAtten ) b011 = $bt.b011 - localAtten;
-			if ( b110 < $bt.b110 - csqrAtten ) 	b110 = $bt.b110 - csqrAtten;
-			if ( b111 < $bt.b111 - sqrAtten ) 	b111 = $bt.b111 - sqrAtten;
+			if ( li.b010 < bli.b010 - sqrAtten )  	li.b010 = bli.b010 - sqrAtten;
+			if ( li.b011 < bli.b011 - localAtten )  li.b011 = bli.b011 - localAtten;
+			if ( li.b110 < bli.b110 - csqrAtten )  	li.b110 = bli.b110 - csqrAtten;
+			if ( li.b111 < bli.b111 - sqrAtten )  	li.b111 = bli.b111 - sqrAtten;
 		}
 		else if ( 5 == $childID ) {
-			if ( b000 < $bt.b000 - sqrAtten ) 	b000 = $bt.b000 - sqrAtten;
-			if ( b001 < $bt.b001 - localAtten ) b001 = $bt.b001 - localAtten;
-			if ( b100 < $bt.b100 - csqrAtten ) b100 = $bt.b100 - localAtten;
-			b101 = $bt.b101;
+			if ( li.b000 < bli.b000 - sqrAtten )  	li.b000 = bli.b000 - sqrAtten;
+			if ( li.b001 < bli.b001 - localAtten )  li.b001 = bli.b001 - localAtten;
+			if ( li.b100 < bli.b100 - csqrAtten )  	li.b100 = bli.b100 - localAtten;
+			li.b101 = bli.b101;
 			       
-			if ( b010 < $bt.b010 - csqrAtten ) 	b010 = $bt.b010 - csqrAtten;
-			if ( b011 < $bt.b011 - sqrAtten ) 	b011 = $bt.b011 - sqrAtten;
-			if ( b110 < $bt.b110 - sqrAtten ) 	b110 = $bt.b110 - sqrAtten;
-			if ( b111 < $bt.b111 - localAtten ) b111 = $bt.b111 - localAtten;
+			if ( li.b010 < bli.b010 - csqrAtten )  	li.b010 = bli.b010 - csqrAtten;
+			if ( li.b011 < bli.b011 - sqrAtten )  	li.b011 = bli.b011 - sqrAtten;
+			if ( li.b110 < bli.b110 - sqrAtten )  	li.b110 = bli.b110 - sqrAtten;
+			if ( li.b111 < bli.b111 - localAtten )  li.b111 = bli.b111 - localAtten;
 		}
 		else if ( 6 == $childID ) {
-			if ( b000 < $bt.b000 - sqrAtten ) 	b000 = $bt.b000 - sqrAtten;
-			if ( b001 < $bt.b001 - localAtten ) b001 = $bt.b001 - localAtten;
-			if ( b100 < $bt.b100 - csqrAtten ) 	b100 = $bt.b100 - csqrAtten;
-			if ( b101 < $bt.b101 - sqrAtten ) 	b101 = $bt.b101 - sqrAtten;
+			if ( li.b000 < bli.b000 - sqrAtten )  	li.b000 = bli.b000 - sqrAtten;
+			if ( li.b001 < bli.b001 - localAtten )  li.b001 = bli.b001 - localAtten;
+			if ( li.b100 < bli.b100 - csqrAtten )  	li.b100 = bli.b100 - csqrAtten;
+			if ( li.b101 < bli.b101 - sqrAtten )  	li.b101 = bli.b101 - sqrAtten;
 			       
-			if ( b010 < $bt.b010 - localAtten ) b010 = $bt.b010 - localAtten;
-			b011 = $bt.b011;
-			if ( b110 < $bt.b110 - sqrAtten ) 	b110 = $bt.b110 - sqrAtten;
-			if ( b111 < $bt.b111 - localAtten ) b111 = $bt.b111 - localAtten;
+			if ( li.b010 < bli.b010 - localAtten )  li.b010 = bli.b010 - localAtten;
+			li.b011 = bli.b011;
+			if ( li.b110 < bli.b110 - sqrAtten )  	li.b110 = bli.b110 - sqrAtten;
+			if ( li.b111 < bli.b111 - localAtten )  li.b111 = bli.b111 - localAtten;
 		}
 		else if ( 7 == $childID ) {
-			if ( b000 < $bt.b000 - csqrAtten ) 	b000 = $bt.b000 - csqrAtten;
-			if ( b001 < $bt.b001 - sqrAtten ) 	b001 = $bt.b001 - sqrAtten;
-			if ( b100 < $bt.b100 - sqrAtten ) 	b100 = $bt.b100 - sqrAtten;
-			if ( b101 < $bt.b101 - localAtten ) b101 = $bt.b101 - localAtten;
+			if ( li.b000 < bli.b000 - csqrAtten )  	li.b000 = bli.b000 - csqrAtten;
+			if ( li.b001 < bli.b001 - sqrAtten )  	li.b001 = bli.b001 - sqrAtten;
+			if ( li.b100 < bli.b100 - sqrAtten )  	li.b100 = bli.b100 - sqrAtten;
+			if ( li.b101 < bli.b101 - localAtten )  li.b101 = bli.b101 - localAtten;
 			       
-			if ( b010 < $bt.b010 - sqrAtten ) 	b010 = $bt.b010 - sqrAtten;
-			if ( b011 < $bt.b011 - localAtten ) b011 = $bt.b011 - localAtten;
-			if ( b110 < $bt.b110 - localAtten ) b110 = $bt.b110 - localAtten;
-			b111 = $bt.b111;
+			if ( li.b010 < bli.b010 - sqrAtten )  	li.b010 = bli.b010 - sqrAtten;
+			if ( li.b011 < bli.b011 - localAtten )  li.b011 = bli.b011 - localAtten;
+			if ( li.b110 < bli.b110 - localAtten )  li.b110 = bli.b110 - localAtten;
+			li.b111 = bli.b111;
 		}
 	}
 	
-	// grabs the light from a parent to a child brightness
+	// creates a virtual brightness(light) the light from a parent to a child brightness
 	public function childGet( $childID:int, $nb:Brightness ):void {
 		
-		var colors:Dictionary = _b000.colors();
-		for (var lightIDString:String in colors )
+		for ( var i:int; i < LIGHTS_MAX; i++ )
 		{
-			var color:uint = colors[lightIDString];
-			var lightID:uint = uint(lightIDString);
-			if ( DEFAULT_ID != lightID ) {
-				$nb.lightAdd( lightID, color );
-				$nb.lastLightID = lightID;
+			var li:LightInfo = _lights[i];
+			if ( null != li )
+			{
+				if ( !$nb.lightHas( li.ID ) )
+					$nb.lightAdd( li.ID, li.color );
+				var bli:LightInfo = $nb.lightGet( li.ID );
+				if ( null == bli )
+					throw new Error( "Brightness.childGet - $nb does not have light info for lightID: " + li.ID )
 				
 				// I think the diagonals should be averaged between both corners
 				if ( 0 == $childID ) { // b000
-					$nb.b000 = b000;
-					$nb.b001 = (b001 + b000) / 2;
-					$nb.b010 = (b010 + b000) / 2;				// average edge for edge points
-					$nb.b011 = (b011 + b001 + b010 + b000) / 4; // average of all four on face for points on face
-					$nb.b100 = (b100 + b000) / 2;
-					$nb.b101 = (b101 + b000 + b100 + b001) / 4;
-					$nb.b110 = (b110 + b100 + b000 + b010) / 4;
-					$nb.b111 = avg; 							// average of all eight for center points
+					bli.b000 = li.b000;
+					bli.b001 = ( li.b001 + li.b000) / 2;
+					bli.b010 = ( li.b010 + li.b000) / 2;				// average edge for edge points
+					bli.b011 = ( li.b011 + li.b001 + li.b010 + li.b000) / 4; // average of all four on face for points on face
+					bli.b100 = ( li.b100 + li.b000) / 2;
+					bli.b101 = ( li.b101 + li.b000 + li.b100 + li.b001) / 4;
+					bli.b110 = ( li.b110 + li.b100 + li.b000 + li.b010) / 4;
+					bli.b111 = li.avg; 							// average of all eight for center points
 				}
 				else if ( 1 == $childID )	{ // b100
-					$nb.b000 = (b000 + b100) / 2;
-					$nb.b001 = (b101 + b000 + b100 + b001) / 4;
-					$nb.b010 = (b000 + b100 + b010 + b110) / 4;
-					$nb.b011 = avg;
-					$nb.b100 = b100;
-					$nb.b101 = (b101 + b100) / 2;
-					$nb.b110 = (b100 + b110) / 2;
-					$nb.b111 = (b100 + b110 + b101 + b111) / 4;
+					bli.b000 = ( li.b000 + li.b100) / 2;
+					bli.b001 = ( li.b101 + li.b000 + li.b100 + li.b001) / 4;
+					bli.b010 = ( li.b000 + li.b100 + li.b010 + li.b110) / 4;
+					bli.b011 = li.avg;
+					bli.b100 = li.b100;
+					bli.b101 = ( li.b101 + li.b100) / 2;
+					bli.b110 = ( li.b100 + li.b110) / 2;
+					bli.b111 = ( li.b100 + li.b110 + li.b101 + li.b111) / 4;
 				}
 				else if ( 2 == $childID )	{ // b010
-					$nb.b000 = (b000 + b010) / 2;
-					$nb.b001 = (b000 + b010 + b001 + b011) / 4;
-					$nb.b010 = b010;
-					$nb.b011 = (b011 + b010) / 2;
-					$nb.b100 = (b000 + b010 + b100 + b110) / 4;
-					$nb.b101 = avg;
-					$nb.b110 = (b110 + b010) / 2;
-					$nb.b111 = (b111 + b010 + b110 + b011 ) / 4;
+					bli.b000 = ( li.b000 + li.b010) / 2;
+					bli.b001 = ( li.b000 + li.b010 + li.b001 + li.b011) / 4;
+					bli.b010 = li.b010;
+					bli.b011 = ( li.b011 + li.b010) / 2;
+					bli.b100 = ( li.b000 + li.b010 + li.b100 + li.b110) / 4;
+					bli.b101 = li.avg;
+					bli.b110 = ( li.b110 + li.b010) / 2;
+					bli.b111 = ( li.b111 + li.b010 + li.b110 + li.b011 ) / 4;
 				}
 				else if ( 3 == $childID ) { // b110
-					$nb.b000 = (b000 + b010 + b110 + b100 ) / 4;
-					$nb.b001 = avg;
-					$nb.b010 = (b010 + b110) / 2;
-					$nb.b011 = (b111 + b010 + b110 + b011 ) / 4;
-					$nb.b100 = (b100 + b110) / 2;
-					$nb.b101 = (b100 + b110 + b111 + b101 ) / 4;
-					$nb.b110 = b110;
-					$nb.b111 = (b111 + b110) / 2;
+					bli.b000 = ( li.b000 + li.b010 + li.b110 + li.b100 ) / 4;
+					bli.b001 = li.avg;
+					bli.b010 = ( li.b010 + li.b110) / 2;
+					bli.b011 = ( li.b111 + li.b010 + li.b110 + li.b011 ) / 4;
+					bli.b100 = ( li.b100 + li.b110) / 2;
+					bli.b101 = ( li.b100 + li.b110 + li.b111 + li.b101 ) / 4;
+					bli.b110 = li.b110;
+					bli.b111 = ( li.b111 + li.b110) / 2;
 				}
 				else if ( 4 == $childID )	{ // b001
-					$nb.b000 = (b000 + b001) / 2;
-					$nb.b001 = b001;
-					$nb.b010 = (b000 + b010 + b001 + b011) / 4;
-					$nb.b011 = (b011 + b001) / 2;
-					$nb.b100 = (b101 + b000 + b100 + b001) / 4;
-					$nb.b101 = (b101 + b001) / 2;
-					$nb.b110 = avg;
-					$nb.b111 = (b001 + b011 + b101 + b111) / 4;
+					bli.b000 = ( li.b000 + li.b001) / 2;
+					bli.b001 = li.b001;
+					bli.b010 = ( li.b000 + li.b010 + li.b001 + li.b011) / 4;
+					bli.b011 = ( li.b011 + li.b001) / 2;
+					bli.b100 = ( li.b101 + li.b000 + li.b100 + li.b001) / 4;
+					bli.b101 = ( li.b101 + li.b001) / 2;
+					bli.b110 = li.avg;
+					bli.b111 = ( li.b001 + li.b011 + li.b101 + li.b111) / 4;
 				}
 				else if ( 5 == $childID )	{ // b101
-					$nb.b000 = (b101 + b000 + b100 + b001) / 4;
-					$nb.b001 = (b001 + b101) / 2;
-					$nb.b010 = avg;
-					$nb.b011 = (b001 + b011 + b101 + b111) / 4;
-					$nb.b100 = (b100 + b101) / 2;
-					$nb.b101 = b101;
-					$nb.b110 = (b100 + b110 + b101 + b111) / 4;
-					$nb.b111 = (b111 + b101) / 2;
+					bli.b000 = ( li.b101 + li.b000 + li.b100 + li.b001) / 4;
+					bli.b001 = ( li.b001 + li.b101) / 2;
+					bli.b010 = li.avg;
+					bli.b011 = ( li.b001 + li.b011 + li.b101 + li.b111) / 4;
+					bli.b100 = ( li.b100 + li.b101) / 2;
+					bli.b101 = li.b101;
+					bli.b110 = ( li.b100 + li.b110 + li.b101 + li.b111) / 4;
+					bli.b111 = ( li.b111 + li.b101) / 2;
 				}
 				else if ( 6 == $childID )	{ // b011
-					$nb.b000 = (b000 + b010 + b011 + b001) / 4;
-					$nb.b001 = (b001 + b011) / 2;
-					$nb.b010 = (b010 + b011) / 2;
-					$nb.b011 = b011;
-					$nb.b100 = avg;
-					$nb.b101 = (b001 + b011 + b101 + b111) / 4;
-					$nb.b110 = (b010 + b011 + b110 + b111) / 4;
-					$nb.b111 = (b111 + b011) / 2;
+					bli.b000 = ( li.b000 + li.b010 + li.b011 + li.b001) / 4;
+					bli.b001 = ( li.b001 + li.b011) / 2;
+					bli.b010 = ( li.b010 + li.b011) / 2;
+					bli.b011 = li.b011;
+					bli.b100 = li.avg;
+					bli.b101 = ( li.b001 + li.b011 + li.b101 + li.b111) / 4;
+					bli.b110 = ( li.b010 + li.b011 + li.b110 + li.b111) / 4;
+					bli.b111 = ( li.b111 + li.b011) / 2;
 				}
 				else if ( 7 == $childID )	{ // b111
-					$nb.b000 = avg;
-					$nb.b001 = (b001 + b011 + b101 + b111 ) / 4;
-					$nb.b010 = (b111 + b010 + b110 + b011 ) / 4;
-					$nb.b011 = (b011 + b111) / 2;
-					$nb.b100 = (b100 + b110 + b101 + b111 ) / 4;
-					$nb.b101 = (b101 + b111) / 2;
-					$nb.b110 = (b110 + b111) / 2;
-					$nb.b111 = b111;
-				}
+					bli.b000 = li.avg;
+					bli.b001 = ( li.b001 + li.b011 + li.b101 + li.b111 ) / 4;
+					bli.b010 = ( li.b111 + li.b010 + li.b110 + li.b011 ) / 4;
+					bli.b011 = ( li.b011 + li.b111) / 2;
+					bli.b100 = ( li.b100 + li.b110 + li.b101 + li.b111 ) / 4;
+					bli.b101 = ( li.b101 + li.b111) / 2;
+					bli.b110 = ( li.b110 + li.b111) / 2;
+					bli.b111 = li.b111;
+				}					
 			}
 		}
 	}
-
+/*
 	// if changed return true, which can add a new light task for AIR oxels
 	private function equals( $b:Brightness ):Boolean {
 		if ( b000 == $b.b000 
@@ -496,660 +392,267 @@ public class Brightness  {  // extends BrightnessData
 		 
 		return false;  
 	}
+*/
+	private function avg( $ID:uint ):uint {
+		
+		var li:LightInfo = lightGet( $ID );
+		return (li.b000 + li.b010 + li.b011 + li.b001 + li.b100 + li.b110 +  li.b111 + li.b101)/8
+	}
 
-	private function get avg():uint {
-		
-		return (b000 + b010 + b011 + b001 + b100 + b110 +  b111 + b101)/8
-	}
-	
-	private function get max():uint {
-		
-		var max:uint = DEFAULT_ATTEN;
-		if ( max < b000 )
-			max = b000;
-		if ( max < b001 )
-			max = b001;
-		if ( max < b010 )
-			max = b010;
-		if ( max < b011 )
-			max = b011;
-		if ( max < b100 )
-			max = b100;
-		if ( max < b101 )
-			max = b101;
-		if ( max < b110 )
-			max = b110;
-		if ( max < b111 )
-			max = b111;
-
-		return max;	
-	}
-	
-	private function get maxVertex():VertexColor {
-		
-		var max:uint = DEFAULT_ATTEN;
-		var maxVert:VertexColor;
-		if ( max < b000 ) {
-			max = b000;
-			maxVert = _b000;
-		}
-		if ( max < b001 ) {
-			max = b001;
-			maxVert = _b001;
-		}
-		if ( max < b010 ) {
-			max = b010;
-			maxVert = _b010;
-		}
-		if ( max < b011 ) {
-			max = b011;
-			maxVert = _b011;
-		}
-		if ( max < b100 ) {
-			max = b100;
-			maxVert = _b100;
-		}
-		if ( max < b101 ) {
-			max = b101;
-			maxVert = _b101;
-		}
-		if ( max < b110 ) {
-			max = b110;
-			maxVert = _b110;
-		}
-		if ( max < b111 ) {
-			max = b111;
-			maxVert = _b111;
-		}
-
-		return maxVert;	
-	}
-	
-	public function lightGet( $lightID:uint ):uint {
-		if ( true == _b000.lightHas( $lightID ) )
-			return _b000.lightGet( $lightID );
-			
-		return 0;
-	}
-	
-	public function lightHas( $lightID:uint ):Boolean {
-		return _b000.lightHas( $lightID );
-	}
-	
-	public function lightAdd( $lightID:uint, $lightColor:uint, isLight:Boolean = false ):void {
-		
-		// if one has this last light id, then all should have it.
-		if ( false == _b000.lightHas( $lightID ) )
+	// New TAG
+	public function lightGet( $ID:uint ):LightInfo {
+		for ( var i:int; i < LIGHTS_MAX; i++ )
 		{
-			// If this is not the light its self, set default attn to 0 of 255
-			var val:uint = $lightColor;
-			if ( false == isLight ) {
-				val &= 0x00ffffff;
-				val |= DEFAULT_ATTEN << 24;
+			var lightInfo:LightInfo = _lights[i];
+			if ( null != lightInfo ) {
+				if ( $ID == lightInfo.ID ) {
+					return lightInfo;
+				}
 			}
+		}
+		return null;
+	}
+	
+	// New TAG
+	private var _lights:Vector.<LightInfo> = new Vector.<LightInfo>(4, true);
+	static private const LIGHTS_MAX:int = 4;
+	private var _lightCount:int;
+	public function lightHas( $ID:uint ):Boolean {
+		for ( var i:int; i < LIGHTS_MAX; i++ )
+		{
+			var lightInfo:LightInfo = _lights[i];
+			if ( null != lightInfo ) {
+				if ( $ID == lightInfo.ID )
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	// New TAG
+	public function lightAdd( $ID:uint, $color:uint, $isLight:Boolean = false ):void {
+		
+		if ( lightHas( $ID ) )
+			return;
+		
+		if ( _lightCount < LIGHTS_MAX ) {
 			
-			_b000.lightAdd( $lightID, val );
-			_b001.lightAdd( $lightID, val );
-			_b100.lightAdd( $lightID, val );
-			_b101.lightAdd( $lightID, val );
-			_b010.lightAdd( $lightID, val );
-			_b011.lightAdd( $lightID, val );
-			_b110.lightAdd( $lightID, val );
-			_b111.lightAdd( $lightID, val );
+			for ( var i:int; i < LIGHTS_MAX; i++ ) {
+				if ( null == _lights[i] ) {
+					_lights[i] = new LightInfo( $ID, $color );	
+					if ( true == $isLight )
+						_lights[i].setAll( 255 );
+					_lightCount++;
+					break;
+				}
+			}
+		}
+		else {
+			Log.out( "Brightness.lightAdd - NEED TO WRITE LIGHT EVAL AND REPLACEMENT WITH BRIGHTEST LIGHT CODE HERE", Log.ERROR );
 		}
 	}
 	
-	public function lightRemove( $lightID:uint ):void {
+	// New TAG
+	public function lightRemove( $ID:uint ):void {
 		
-		// if one has this last light id, then all should have it.
-		if ( false == _b000.lightHas( $lightID ) )
+		if ( !lightHas( $ID ) )
 			return;
-			
-		_b000.lightRemove( $lightID );
-		_b001.lightRemove( $lightID );
-		_b100.lightRemove( $lightID );
-		_b101.lightRemove( $lightID );
-		_b010.lightRemove( $lightID );
-		_b011.lightRemove( $lightID );
-		_b110.lightRemove( $lightID );
-		_b111.lightRemove( $lightID );
-		lastLightID = DEFAULT_ID;
+		
+		for ( var i:int; i < LIGHTS_MAX; i++ )
+		{
+			var lightInfo:LightInfo = _lights[i];
+			if ( null != lightInfo ) {
+				if ( $ID == lightInfo.ID ) {
+					_lights[i] = null;
+					_lightCount--;
+					break;
+				}
+			}
+		}
 	}
 	
+	// New TAG
 	public function lightFullBright():void {
 		
-		_b000.attnSet( 1, 255 );
-		_b001.attnSet( 1, 255 );
-		_b100.attnSet( 1, 255 );
-		_b101.attnSet( 1, 255 );
-		_b010.attnSet( 1, 255 );
-		_b011.attnSet( 1, 255 );
-		_b110.attnSet( 1, 255 );
-		_b111.attnSet( 1, 255 );
+		var li:LightInfo = lightGet( Brightness.DEFAULT_ID );
+		li.setAll( 255 );
 	}
 	
 	public function influenceAdd( $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
 		var c:Boolean = false;
-		var lightColor:uint = $lob._b000.lightGet( $lob.lastLightID );		
 		
-		lightAdd( $lob.lastLightID, lightColor );
-		if ( lastLightID != $lob.lastLightID ) {
-			lastLightID = $lob.lastLightID;
-//			processed = false;
-		}
+		var bli:LightInfo = $lob.lightGet( $lob.lastLightID );
+		if ( !lightHas( $lob.lastLightID ) )
+			lightAdd( bli.ID, bli.color );
+		var li:LightInfo = lightGet( $lob.lastLightID );
+		if ( null == li )
+			throw new Error( "Brightness.influenceAdd - lightInfo not found" );
+		
+		lastLightID = $lob.lastLightID;
 		
 		const attenScaled:uint = _atten * ($grainUnits/16);
 		if ( Globals.POSX == $faceFrom ) {
 			
-			if ( b000 < $lob.b100 ) { b000 = $lob.b100; c = true; }
-			if ( b010 < $lob.b110 ) { b010 = $lob.b110; c = true; }
-			if ( b011 < $lob.b111 ) { b011 = $lob.b111; c = true; }
-			if ( b001 < $lob.b101 ) { b001 = $lob.b101; c = true; }
+			if ( li.b000 < bli.b100 ) { li.b000 = bli.b100; c = true; }
+			if ( li.b010 < bli.b110 ) { li.b010 = bli.b110; c = true; }
+			if ( li.b011 < bli.b111 ) { li.b011 = bli.b111; c = true; }
+			if ( li.b001 < bli.b101 ) { li.b001 = bli.b101; c = true; }
 		}
 		else if ( Globals.NEGX == $faceFrom ) {
 
-			if ( b100 < $lob.b000 ) { b100 = $lob.b000; c = true; }
-			if ( b110 < $lob.b010 ) { b110 = $lob.b010; c = true; }
-			if ( b111 < $lob.b011 ) { b111 = $lob.b011; c = true; }
-			if ( b101 < $lob.b001 ) { b101 = $lob.b001; c = true; }
+			if ( li.b100 < bli.b000 ) { li.b100 = bli.b000; c = true; }
+			if ( li.b110 < bli.b010 ) { li.b110 = bli.b010; c = true; }
+			if ( li.b111 < bli.b011 ) { li.b111 = bli.b011; c = true; }
+			if ( li.b101 < bli.b001 ) { li.b101 = bli.b001; c = true; }
 		}
 		else if ( Globals.POSY == $faceFrom ) {
 
-			if ( b000 < $lob.b010 ) { b000 = $lob.b010; c = true; }
-			if ( b100 < $lob.b110 ) { b100 = $lob.b110; c = true; }
-			if ( b101 < $lob.b111 ) { b101 = $lob.b111; c = true; }
-			if ( b001 < $lob.b011 ) { b001 = $lob.b011; c = true; }
+			if ( li.b000 < bli.b010 ) { li.b000 = bli.b010; c = true; }
+			if ( li.b100 < bli.b110 ) { li.b100 = bli.b110; c = true; }
+			if ( li.b101 < bli.b111 ) { li.b101 = bli.b111; c = true; }
+			if ( li.b001 < bli.b011 ) { li.b001 = bli.b011; c = true; }
 		}
 		else if ( Globals.NEGY == $faceFrom ) {
 
-			if ( b010 < $lob.b000 ) { b010 = $lob.b000; c = true; }
-			if ( b110 < $lob.b100 ) { b110 = $lob.b100; c = true; }
-			if ( b111 < $lob.b101 ) { b111 = $lob.b101; c = true; }
-			if ( b011 < $lob.b001 ) { b011 = $lob.b001; c = true; }
+			if ( li.b010 < bli.b000 ) { li.b010 = bli.b000; c = true; }
+			if ( li.b110 < bli.b100 ) { li.b110 = bli.b100; c = true; }
+			if ( li.b111 < bli.b101 ) { li.b111 = bli.b101; c = true; }
+			if ( li.b011 < bli.b001 ) { li.b011 = bli.b001; c = true; }
 		}
 		else if ( Globals.POSZ == $faceFrom ) {
 
-			if ( b000 < $lob.b001 ) { b000 = $lob.b001; c = true; }
-			if ( b010 < $lob.b011 ) { b010 = $lob.b011; c = true; }
-			if ( b110 < $lob.b111 ) { b110 = $lob.b111; c = true; }
-			if ( b100 < $lob.b101 ) { b100 = $lob.b101; c = true; }
+			if ( li.b000 < bli.b001 ) { li.b000 = bli.b001; c = true; }
+			if ( li.b010 < bli.b011 ) { li.b010 = bli.b011; c = true; }
+			if ( li.b110 < bli.b111 ) { li.b110 = bli.b111; c = true; }
+			if ( li.b100 < bli.b101 ) { li.b100 = bli.b101; c = true; }
 		}
 		else if ( Globals.NEGZ == $faceFrom ) {
 			
-			if ( b001 < $lob.b000 ) { b001 = $lob.b000; c = true; }
-			if ( b011 < $lob.b010 ) { b011 = $lob.b010; c = true; }
-			if ( b111 < $lob.b110 ) { b111 = $lob.b110; c = true; }
-			if ( b101 < $lob.b100 ) { b101 = $lob.b100; c = true; }
+			if ( li.b001 < bli.b000 ) { li.b001 = bli.b000; c = true; }
+			if ( li.b011 < bli.b010 ) { li.b011 = bli.b010; c = true; }
+			if ( li.b111 < bli.b110 ) { li.b111 = bli.b110; c = true; }
+			if ( li.b101 < bli.b100 ) { li.b101 = bli.b100; c = true; }
 		}
 		
 		//if ( !$faceOnly && max - attenScaled > avg ) {
 		if ( !$faceOnly ) {
-			var result:Boolean = balanceAttn( attenScaled );
+			var result:Boolean = balanceAttn( lastLightID, attenScaled );
 			c = c || result;
 		}
 		
 		return c;
 	}
 
-	public function balanceAttn( $attenScaled:uint ):Boolean {
+	public function balanceAttn( $ID:uint, $attenScaled:uint ):Boolean {
 		var c:Boolean = false;
+		const li:LightInfo = lightGet( $ID );
 		const sqAtten:Number = Math.sqrt( 2 * ($attenScaled * $attenScaled) );
 		const qrAtten:Number = Math.sqrt( 3 * ($attenScaled * $attenScaled) );
 		// Do this for each adject vertice
-		if ( b000 > b001 + $attenScaled ) { b001 = b000 - $attenScaled; c = true; }
-		if ( b000 > b010 + $attenScaled ) { b010 = b000 - $attenScaled; c = true; }
-		if ( b000 > b011 + sqAtten ) 	  { b011 = b000 - sqAtten; c = true; }
-		if ( b000 > b100 + $attenScaled ) { b100 = b000 - $attenScaled; c = true; }
-		if ( b000 > b101 + sqAtten ) 	  { b101 = b000 - sqAtten; c = true; }
-		if ( b000 > b110 + sqAtten ) 	  { b110 = b000 - sqAtten; c = true; }
-		if ( b000 > b111 + qrAtten ) 	  { b111 = b000 - qrAtten; c = true; }
+		if ( li.b000 > li.b001 + $attenScaled ) { li.b001 = li.b000 - $attenScaled; c = true; }
+		if ( li.b000 > li.b010 + $attenScaled ) { li.b010 = li.b000 - $attenScaled; c = true; }
+		if ( li.b000 > li.b011 + sqAtten ) 	  	{ li.b011 = li.b000 - sqAtten; c = true; }
+		if ( li.b000 > li.b100 + $attenScaled ) { li.b100 = li.b000 - $attenScaled; c = true; }
+		if ( li.b000 > li.b101 + sqAtten ) 	  	{ li.b101 = li.b000 - sqAtten; c = true; }
+		if ( li.b000 > li.b110 + sqAtten ) 	  	{ li.b110 = li.b000 - sqAtten; c = true; }
+		if ( li.b000 > li.b111 + qrAtten ) 	  	{ li.b111 = li.b000 - qrAtten; c = true; }
 		
-		if ( b001 > b000 + $attenScaled ) { b000 = b001 - $attenScaled; c = true; }
-		if ( b001 > b010 + sqAtten ) 	  { b010 = b001 - sqAtten; c = true; }
-		if ( b001 > b011 + $attenScaled ) { b011 = b001 - $attenScaled; c = true; }
-		if ( b001 > b100 + sqAtten ) 	  { b100 = b001 - sqAtten; c = true; }
-		if ( b001 > b101 + $attenScaled ) { b101 = b001 - $attenScaled; c = true; }
-		if ( b000 > b110 + qrAtten ) 	  { b110 = b001 - qrAtten; c = true; }
-		if ( b001 > b111 + sqAtten ) 	  { b111 = b001 - sqAtten; c = true; }
+		if ( li.b001 > li.b000 + $attenScaled ) { li.b000 = li.b001 - $attenScaled; c = true; }
+		if ( li.b001 > li.b010 + sqAtten ) 	  	{ li.b010 = li.b001 - sqAtten; c = true; }
+		if ( li.b001 > li.b011 + $attenScaled ) { li.b011 = li.b001 - $attenScaled; c = true; }
+		if ( li.b001 > li.b100 + sqAtten ) 	  	{ li.b100 = li.b001 - sqAtten; c = true; }
+		if ( li.b001 > li.b101 + $attenScaled ) { li.b101 = li.b001 - $attenScaled; c = true; }
+		if ( li.b000 > li.b110 + qrAtten ) 	  	{ li.b110 = li.b001 - qrAtten; c = true; }
+		if ( li.b001 > li.b111 + sqAtten ) 	  	{ li.b111 = li.b001 - sqAtten; c = true; }
 		
-		if ( b010 > b000 + $attenScaled ) { b000 = b010 - $attenScaled; c = true; }
-		if ( b010 > b001 + sqAtten ) 	  { b001 = b010 - sqAtten; c = true; }
-		if ( b010 > b011 + $attenScaled ) { b011 = b010 - $attenScaled; c = true; }
-		if ( b010 > b100 + sqAtten ) 	  { b100 = b010 - sqAtten; c = true; }
-		if ( b010 > b101 + qrAtten ) 	  { b101 = b010 - qrAtten; c = true; }
-		if ( b010 > b110 + $attenScaled ) { b110 = b010 - $attenScaled; c = true; }
-		if ( b010 > b111 + sqAtten ) 	  { b111 = b010 - sqAtten; c = true; }
+		if ( li.b010 > li.b000 + $attenScaled ) { li.b000 = li.b010 - $attenScaled; c = true; }
+		if ( li.b010 > li.b001 + sqAtten ) 	  	{ li.b001 = li.b010 - sqAtten; c = true; }
+		if ( li.b010 > li.b011 + $attenScaled ) { li.b011 = li.b010 - $attenScaled; c = true; }
+		if ( li.b010 > li.b100 + sqAtten ) 	  	{ li.b100 = li.b010 - sqAtten; c = true; }
+		if ( li.b010 > li.b101 + qrAtten ) 	  	{ li.b101 = li.b010 - qrAtten; c = true; }
+		if ( li.b010 > li.b110 + $attenScaled ) { li.b110 = li.b010 - $attenScaled; c = true; }
+		if ( li.b010 > li.b111 + sqAtten ) 	  	{ li.b111 = li.b010 - sqAtten; c = true; }
 		
-		if ( b011 > b000 + sqAtten ) 	  { b000 = b011 - sqAtten; c = true; }
-		if ( b011 > b001 + $attenScaled ) { b001 = b011 - $attenScaled; c = true; }
-		if ( b011 > b010 + $attenScaled ) { b010 = b011 - $attenScaled; c = true; }
-		if ( b011 > b100 + qrAtten )      { b100 = b011 - qrAtten; c = true; }
-		if ( b011 > b101 + sqAtten )      { b101 = b011 - sqAtten; c = true; }
-		if ( b011 > b110 + sqAtten )      { b110 = b011 - sqAtten; c = true; }
-		if ( b011 > b111 + $attenScaled ) { b111 = b011 - $attenScaled; c = true; }
+		if ( li.b011 > li.b000 + sqAtten ) 	  	{ li.b000 = li.b011 - sqAtten; c = true; }
+		if ( li.b011 > li.b001 + $attenScaled ) { li.b001 = li.b011 - $attenScaled; c = true; }
+		if ( li.b011 > li.b010 + $attenScaled ) { li.b010 = li.b011 - $attenScaled; c = true; }
+		if ( li.b011 > li.b100 + qrAtten )      { li.b100 = li.b011 - qrAtten; c = true; }
+		if ( li.b011 > li.b101 + sqAtten )      { li.b101 = li.b011 - sqAtten; c = true; }
+		if ( li.b011 > li.b110 + sqAtten )      { li.b110 = li.b011 - sqAtten; c = true; }
+		if ( li.b011 > li.b111 + $attenScaled ) { li.b111 = li.b011 - $attenScaled; c = true; }
 
-		if ( b100 > b000 + $attenScaled ) { b000 = b100 - $attenScaled; c = true; }
-		if ( b100 > b001 + sqAtten ) 	  { b001 = b100 - sqAtten; c = true; }
-		if ( b100 > b010 + sqAtten ) 	  { b010 = b100 - sqAtten; c = true; }
-		if ( b100 > b011 + qrAtten ) 	  { b011 = b100 - qrAtten; c = true; }
-		if ( b100 > b101 + $attenScaled ) { b101 = b100 - $attenScaled; c = true; }
-		if ( b100 > b110 + $attenScaled ) { b110 = b100 - $attenScaled; c = true; }
-		if ( b100 > b111 + sqAtten ) 	  { b111 = b100 - sqAtten; c = true; }
+		if ( li.b100 > li.b000 + $attenScaled ) { li.b000 = li.b100 - $attenScaled; c = true; }
+		if ( li.b100 > li.b001 + sqAtten ) 	  	{ li.b001 = li.b100 - sqAtten; c = true; }
+		if ( li.b100 > li.b010 + sqAtten ) 	  	{ li.b010 = li.b100 - sqAtten; c = true; }
+		if ( li.b100 > li.b011 + qrAtten ) 	  	{ li.b011 = li.b100 - qrAtten; c = true; }
+		if ( li.b100 > li.b101 + $attenScaled ) { li.b101 = li.b100 - $attenScaled; c = true; }
+		if ( li.b100 > li.b110 + $attenScaled ) { li.b110 = li.b100 - $attenScaled; c = true; }
+		if ( li.b100 > li.b111 + sqAtten ) 	  	{ li.b111 = li.b100 - sqAtten; c = true; }
 		
-		if ( b101 > b000 + sqAtten ) 	  { b000 = b101 - sqAtten; c = true; }
-		if ( b101 > b001 + $attenScaled ) { b001 = b101 - $attenScaled; c = true; }
-		if ( b101 > b010 + qrAtten ) 	  { b010 = b101 - qrAtten; c = true; }
-		if ( b101 > b011 + sqAtten ) 	  { b011 = b101 - sqAtten; c = true; }
-		if ( b101 > b100 + $attenScaled ) { b100 = b101 - $attenScaled; c = true; }
-		if ( b101 > b110 + sqAtten ) 	  { b110 = b101 - sqAtten; c = true; }
-		if ( b101 > b111 + $attenScaled ) { b111 = b101 - $attenScaled; c = true; }
+		if ( li.b101 > li.b000 + sqAtten ) 	  	{ li.b000 = li.b101 - sqAtten; c = true; }
+		if ( li.b101 > li.b001 + $attenScaled ) { li.b001 = li.b101 - $attenScaled; c = true; }
+		if ( li.b101 > li.b010 + qrAtten ) 	  	{ li.b010 = li.b101 - qrAtten; c = true; }
+		if ( li.b101 > li.b011 + sqAtten ) 	  	{ li.b011 = li.b101 - sqAtten; c = true; }
+		if ( li.b101 > li.b100 + $attenScaled ) { li.b100 = li.b101 - $attenScaled; c = true; }
+		if ( li.b101 > li.b110 + sqAtten ) 	  	{ li.b110 = li.b101 - sqAtten; c = true; }
+		if ( li.b101 > li.b111 + $attenScaled ) { li.b111 = li.b101 - $attenScaled; c = true; }
 		
-		if ( b110 > b000 + sqAtten )	  { b000 = b110 - sqAtten; c = true; }
-		if ( b110 > b001 + qrAtten )	  { b001 = b110 - qrAtten; c = true; }
-		if ( b110 > b010 + $attenScaled ) { b010 = b110 - $attenScaled; c = true; }
-		if ( b110 > b011 + sqAtten )	  { b011 = b110 - sqAtten; c = true; }
-		if ( b110 > b100 + $attenScaled ) { b100 = b110 - $attenScaled; c = true; }
-		if ( b110 > b101 + sqAtten )	  { b101 = b110 - sqAtten; c = true; }
-		if ( b110 > b111 + $attenScaled ) { b111 = b110 - $attenScaled; c = true; }
+		if ( li.b110 > li.b000 + sqAtten )	  	{ li.b000 = li.b110 - sqAtten; c = true; }
+		if ( li.b110 > li.b001 + qrAtten )	  	{ li.b001 = li.b110 - qrAtten; c = true; }
+		if ( li.b110 > li.b010 + $attenScaled ) { li.b010 = li.b110 - $attenScaled; c = true; }
+		if ( li.b110 > li.b011 + sqAtten )	  	{ li.b011 = li.b110 - sqAtten; c = true; }
+		if ( li.b110 > li.b100 + $attenScaled ) { li.b100 = li.b110 - $attenScaled; c = true; }
+		if ( li.b110 > li.b101 + sqAtten )	  	{ li.b101 = li.b110 - sqAtten; c = true; }
+		if ( li.b110 > li.b111 + $attenScaled ) { li.b111 = li.b110 - $attenScaled; c = true; }
 
-		if ( b111 > b000 + qrAtten ) 	  { b000 = b111 - qrAtten; c = true; }
-		if ( b111 > b001 + sqAtten ) 	  { b001 = b111 - sqAtten; c = true; }
-		if ( b111 > b010 + sqAtten ) 	  { b010 = b111 - sqAtten; c = true; }
-		if ( b111 > b011 + $attenScaled ) { b011 = b111 - $attenScaled; c = true; }
-		if ( b111 > b100 + sqAtten ) 	  { b100 = b111 - sqAtten; c = true; }
-		if ( b111 > b101 + $attenScaled ) { b101 = b111 - $attenScaled; c = true; }
-		if ( b111 > b110 + $attenScaled ) { b110 = b111 - $attenScaled; c = true; }
+		if ( li.b111 > li.b000 + qrAtten ) 	  	{ li.b000 = li.b111 - qrAtten; c = true; }
+		if ( li.b111 > li.b001 + sqAtten ) 	  	{ li.b001 = li.b111 - sqAtten; c = true; }
+		if ( li.b111 > li.b010 + sqAtten ) 	  	{ li.b010 = li.b111 - sqAtten; c = true; }
+		if ( li.b111 > li.b011 + $attenScaled ) { li.b011 = li.b111 - $attenScaled; c = true; }
+		if ( li.b111 > li.b100 + sqAtten ) 	  	{ li.b100 = li.b111 - sqAtten; c = true; }
+		if ( li.b111 > li.b101 + $attenScaled ) { li.b101 = li.b111 - $attenScaled; c = true; }
+		if ( li.b111 > li.b110 + $attenScaled ) { li.b110 = li.b111 - $attenScaled; c = true; }
 
 		return c;
 	}
 	
 	// Add the influcence of a virtual cube the same size
-	public function brightnessMerge( $bt:Brightness ):Boolean {
+	public function brightnessMerge( $b:Brightness ):Boolean {
 		
-		lastLightID = $bt.lastLightID
-		lightAdd( lastLightID, $bt.lightGet( lastLightID ) );
+		var bli:LightInfo = $b.lightGet( $b.lastLightID );
+		if ( !lightHas( $b.lastLightID ) )
+			lightAdd( bli.ID, bli.color );
+		var li:LightInfo = lightGet( $b.lastLightID );
+		if ( null == li )
+			throw new Error( "Brightness.brightnessMerge  - lightInfo not found" );
 		
 		var c:Boolean;
-		if ( b000 < $bt.b000 )	  { b000 = $bt.b000; c = true; }
-		if ( b001 < $bt.b001 )	  { b001 = $bt.b001; c = true; }
-		if ( b010 < $bt.b010 )	  { b010 = $bt.b010; c = true; }
-		if ( b011 < $bt.b011 )	  { b011 = $bt.b011; c = true; }
-		if ( b100 < $bt.b100 )	  { b100 = $bt.b100; c = true; }
-		if ( b101 < $bt.b101 )	  { b101 = $bt.b101; c = true; }
-		if ( b110 < $bt.b110 )	  { b110 = $bt.b110; c = true; }
-		if ( b111 < $bt.b111 )	  { b111 = $bt.b111; c = true; }
+		if ( li.b000 < bli.b000 )	  { li.b000 = bli.b000; c = true; }
+		if ( li.b001 < bli.b001 )	  { li.b001 = bli.b001; c = true; }
+		if ( li.b010 < bli.b010 )	  { li.b010 = bli.b010; c = true; }
+		if ( li.b011 < bli.b011 )	  { li.b011 = bli.b011; c = true; }
+		if ( li.b100 < bli.b100 )	  { li.b100 = bli.b100; c = true; }
+		if ( li.b101 < bli.b101 )	  { li.b101 = bli.b101; c = true; }
+		if ( li.b110 < bli.b110 )	  { li.b110 = bli.b110; c = true; }
+		if ( li.b111 < bli.b111 )	  { li.b111 = bli.b111; c = true; }
 		return c;
 	}
 	
-	/*
-	public function setByFace( $face:int, $val:uint, $id:uint, size:int ):void {
-		if ( sunlit )
-			return;
-
-		_lastLightID = $id;	
-		var localAtten:uint = _atten * size/DEFAULT_PER_DISTANCE
-
-		if ( Globals.POSX == $face ) {
-			b100 = $val;
-			b110 = $val;
-			b111 = $val;
-			b101 = $val; 
-			
-			b000 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b010 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b011 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b001 = Math.max( $val - localAtten, DEFAULT_ATTEN ); 
-		}
-		else if ( Globals.NEGX == $face ) {
-			b000 = $val;
-			b010 = $val;
-			b011 = $val;
-			b001 = $val; 
-
-			b100 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b110 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b111 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b101 = Math.max( $val - localAtten, DEFAULT_ATTEN ); 
-		}
-		else if ( Globals.POSY == $face ) {
-			b010 = $val;
-			b110 = $val;
-			b111 = $val;
-			b011 = $val; 
-			
-			b000 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b100 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b101 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b001 = Math.max( $val - localAtten, DEFAULT_ATTEN ); 
-		}
-		else if ( Globals.NEGY == $face ) {
-			b000 = $val;
-			b100 = $val;
-			b101 = $val;
-			b001 = $val; 
-			
-			b010 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b110 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b111 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b011 = Math.max( $val - localAtten, DEFAULT_ATTEN ); 
-		}
-		else if ( Globals.POSZ == $face ) {
-			b001 = $val;
-			b011 = $val;
-			b111 = $val;
-			b101 = $val; 
-			
-			b000 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b010 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b110 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b100 = Math.max( $val - localAtten, DEFAULT_ATTEN ); 
-		}
-		else if ( Globals.NEGZ == $face ) {
-			b000 = $val;
-			b010 = $val;
-			b110 = $val;
-			b100 = $val; 
-
-			b001 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b011 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b111 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-			b101 = Math.max( $val - localAtten, DEFAULT_ATTEN );
-		}
-	}
-*/
-	/*
-	// This creates a virtual larger face that is then applied to the larger no.
-	public function setFromSmallerOxel( $no:Oxel, $lo:Oxel, $faceFrom:int, $lightColor:uint ):Boolean {
-		//Log.out( "setFromSmallerOxel" );
-		// small lo being applied to larger no
-		// I need to find the position offset, by
-		var loGrain:int = $lo.gc.grain;
-		var noGrain:int = $no.gc.grain;
-		var gct:GrainCursor = GrainCursorPool.poolGet( noGrain );
-		var sizeDiff:int = noGrain - loGrain;
-		gct.copyFrom( $lo.gc );
-		gct.become_ancestor( sizeDiff ); // This loses the odd bits
-		gct.become_decendant( sizeDiff )
-		//gct.become_child( sizeDiff );  // now I have the origin grain from that ancestor, same size as lo
-		// create a virtual parent, of the same size as the neighbor
-		// that has the scaled values, I only care about the face that I am getting values from
-		// now 
-		// This gets me the position of the pos x face
-		// on a 16 lo projecting on a 64 no, I might get a 16,32 offset
-		// coordinate effected would be 1,0,0  1,1,0, 1,0,1, and 1,1,1
-		// that would subtract a 16 * _atten to one coordinate, and n - size
-		//
-		var x:int = $lo.gc.getModelX() - gct.getModelX();
-		var y:int = $lo.gc.getModelY() - gct.getModelY();
-		var z:int = $lo.gc.getModelZ() - gct.getModelZ();
-		var loSize:int = $lo.gc.size();
-		var noSize:int = $no.gc.size();
-		var lob:Brightness = $lo.brightness;
-		_s_sb.reset();
-		_s_sb.colorAdd( lob.lastLightID, $lightColor );
-		_s_sb.lastLightID = lob.lastLightID;	
-
-		if ( Globals.POSX == $faceFrom ) {
-			_s_sb.b100 = Math.min( lob.b100 - ( _atten * (z / loSize) )
-							     , lob.b100 - ( _atten * (y / loSize) ) );
-								 
-			_s_sb.b101 = Math.min( lob.b101 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
-			                     , lob.b110 - ( _atten * (y / loSize) ) );
-								 
-			_s_sb.b110 = Math.min( lob.b110 - ( _atten * ((noSize - (y + loSize)) / loSize ) )
-			                     , lob.b100 - ( _atten * (z / loSize) ) );
-			
-			// RSF appear to be bug here when the 101 oxel is projecting
-			_s_sb.b111 = Math.max( lob.b111 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
-								 , lob.b111 - ( _atten * ((noSize - (y + loSize)) / loSize ) ) );
-		}
-		else if ( Globals.NEGX == $faceFrom ) {
-			_s_sb.b000 = Math.min( lob.b000 - ( _atten * ( z / loSize ) )
-								 , lob.b000 - ( _atten * ( y / loSize ) ) );
-								 
-			_s_sb.b001 = Math.min( lob.b001 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
-			                     , lob.b010 - ( _atten * (y / loSize ) ) );
-								 
-			_s_sb.b010 = Math.min( lob.b010 - ( _atten * ((noSize - (y + loSize)) / loSize ) )
-			                     , lob.b000 - ( _atten * (z / loSize ) ) );
-								 
-			_s_sb.b011 = Math.max( lob.b011 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
-								 , lob.b011 - ( _atten * ((noSize - (y + loSize)) / loSize ) ) );
-		}
-		else if ( Globals.POSY == $faceFrom ) {
-			_s_sb.b010 = Math.min( lob.b010 - ( _atten * ( z / loSize ) )
-								 , lob.b010 - ( _atten * ( x / loSize ) ) );
-								 
-			_s_sb.b110 = Math.min( lob.b110 - ( _atten * (z / loSize ) )
-								 , lob.b110 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) );
-								 
-			_s_sb.b111 = Math.min( lob.b111 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) 
-								 , lob.b111 - ( _atten * ((noSize - (z + loSize)) / loSize ) ) );
-			
-			_s_sb.b011 = Math.min( lob.b011 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
-			                     , lob.b110 - ( _atten * (x / loSize ) ) );
-		}
-		else if ( Globals.NEGY == $faceFrom ) {
-			_s_sb.b000 = Math.min( lob.b000 - ( _atten * ( z / loSize ) )
-								 , lob.b000 - ( _atten * ( x / loSize ) ) );
-								 
-			_s_sb.b100 = Math.min(( lob.b100 - ( _atten * (z / loSize ) ) )
-								 ,( lob.b100 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) ) );
-								 
-			_s_sb.b101 = Math.min( lob.b101 - ( _atten * ((noSize - (x + loSize)) / loSize ) )
-								 , lob.b101 - ( _atten * ((noSize - (z + loSize)) / loSize ) ) );
-			
-			_s_sb.b001 = Math.min( lob.b001 - ( _atten * ((noSize - (z + loSize)) / loSize ) )
-			                     , lob.b100 - ( _atten * (x / loSize ) ) );
-		}
-		else if ( Globals.POSZ == $faceFrom ) {
-			
-			_s_sb.b001 = Math.min( lob.b001 - ( _atten * ( y / loSize ) )
-								 , lob.b001 - ( _atten * ( x / loSize ) ) );
-								 
-			_s_sb.b011 = Math.min( lob.b011 - ( _atten * ((noSize - (y + loSize)) / loSize ) )
-								 , lob.b011 - ( _atten * ( x / loSize ) ) );
-								 
-			_s_sb.b111 = Math.max( lob.b111 - ( _atten * ((noSize - (x + loSize)) / loSize ) )
-								 , lob.b111 - ( _atten * ((noSize - (y + loSize)) / loSize ) ) );
-			
-			_s_sb.b101 = Math.min( lob.b101 - ( _atten * ( y / loSize ) )
-								 , lob.b101 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) );
-		}
-		else if ( Globals.NEGZ == $faceFrom ) {
-			_s_sb.b000 = Math.min( lob.b000 - ( _atten * ( y / loSize ) )
-								 , lob.b000 - ( _atten * ( x / loSize ) ) );
-								 
-			_s_sb.b010 = Math.min( lob.b010 - ( _atten * ((noSize - (y + loSize)) / loSize ) )
-								 , lob.b010 - ( _atten * ( x / loSize ) ) );
-								 
-			_s_sb.b110 = Math.max( lob.b110 - ( _atten * ((noSize - (x + loSize)) / loSize ) )
-								 , lob.b110 - ( _atten * ((noSize - (y + loSize)) / loSize ) ) );
-			
-			_s_sb.b100 = Math.min( lob.b100 - ( _atten * ( y / loSize ) )
-								 , lob.b100 - ( _atten * ((noSize - (x + loSize)) / loSize ) ) );
-
-		}
-		Log.out( "Brightness.setFromSmallerOxel                     " + $no.toStringShort() + " brightness: " + _s_sb.toString() );		
-		var faceOnly:Boolean = !$no.hasAlpha;
-		return influenceAdd( _s_sb, $faceFrom, faceOnly, $no.gc.size() );
-		//return rebuildFace( $faceFrom, _s_sb, $no );
-	}
-	*/
-	/*
-	// Brightness uses passed in value, which allows it to reuse a brightness
-	public function subfaceGet( $face:int, $child:int, $nb:Brightness ):void {
+	// this returns a composite color made of default color plus any additional colors
+	public function lightGetComposite( $vertex:uint ):uint {
+		_composite = 0;
 		
-		$nb.reset();
-		var colors:Dictionary = _b000.colors();
-		for (var lightID:String in colors )
+		for ( var i:int; i < LIGHTS_MAX; i++ )
 		{
-			var color:uint = colors[lightID];
-			$nb.colorAdd( uint(lightID), color );
+			var li:LightInfo = _lights[i];
+			if ( null != li )
+				_composite = ColorUtils.testCombineARGB( _composite, li.color, li.vertexInfoGet( $vertex ) );
 		}
-		$nb.lastLightID = lastLightID;
 		
-		if ( Globals.POSX == $face ) {
-			if ( 0 == $child ) {
-				$nb.b100 = b100;
-				$nb.b110 = (b110 + b100) / 2;
-				$nb.b111 = (b111 + b100) / 2;
-				$nb.b101 = (b101 + b100) / 2;
-			}
-			else if ( 1 == $child )	{
-				$nb.b100 = (b110 + b100) / 2;;
-				$nb.b110 = b110;
-				$nb.b111 = (b111 + b110) / 2;
-				$nb.b101 = (b111 + b100) / 2;
-			}
-			else if ( 2 == $child )	{
-				$nb.b100 = (b101 + b100) / 2;;
-				$nb.b110 = (b111 + b100) / 2;
-				$nb.b111 = (b111 + b101) / 2;
-				$nb.b101 = b101;
-			}
-			else if ( 3 == $child )	{
-				$nb.b100 = (b111 + b100) / 2;;
-				$nb.b110 = (b111 + b110) / 2;
-				$nb.b111 = b111;
-				$nb.b101 = (b111 + b101) / 2;
-			}
-		}
-		else if ( Globals.NEGX == $face ) {
-			if ( 0 == $child ) {
-				$nb.b000 = b000;
-				$nb.b010 = (b010 + b000) / 2;
-				$nb.b011 = (b011 + b000) / 2;
-				$nb.b001 = (b001 + b000) / 2;
-			}
-			else if ( 1 == $child )	{
-				$nb.b000 = (b010 + b000) / 2;;
-				$nb.b010 = b010;
-				$nb.b011 = (b011 + b010) / 2;
-				$nb.b001 = (b011 + b000) / 2;
-			}
-			else if ( 2 == $child )	{
-				$nb.b000 = (b001 + b000) / 2;;
-				$nb.b010 = (b011 + b000) / 2;
-				$nb.b011 = (b011 + b001) / 2;
-				$nb.b001 = b001;
-			}
-			else if ( 3 == $child )	{
-				$nb.b000 = (b011 + b000) / 2;;
-				$nb.b010 = (b011 + b010) / 2;
-				$nb.b011 = b011;
-				$nb.b001 = (b011 + b001) / 2;
-			}
-		}		
-		else if ( Globals.POSY == $face ) {
-			if ( 0 == $child ) {
-				$nb.b010 = b010;
-				$nb.b110 = (b110 + b010) / 2;
-				$nb.b111 = (b111 + b010) / 2;
-				$nb.b011 = (b011 + b010) / 2;
-			}
-			else if ( 1 == $child )	{
-				$nb.b010 = (b110 + b010) / 2;;
-				$nb.b110 = b110;
-				$nb.b111 = (b111 + b110) / 2;
-				$nb.b011 = (b111 + b010) / 2;
-			}
-			else if ( 2 == $child )	{
-				$nb.b010 = (b011 + b010) / 2;;
-				$nb.b110 = (b111 + b010) / 2;
-				$nb.b111 = (b111 + b011) / 2;
-				$nb.b011 = b011;
-			}
-			else if ( 3 == $child )	{
-				$nb.b010 = (b111 + b010) / 2;;
-				$nb.b110 = (b111 + b110) / 2;
-				$nb.b111 = b111;
-				$nb.b011 = (b111 + b011) / 2;
-			}
-		}				
-		else if ( Globals.NEGY == $face ) {
-			if ( 0 == $child ) {
-				$nb.b000 = b000;
-				$nb.b100 = (b100 + b000) / 2;
-				$nb.b101 = (b101 + b000) / 2;
-				$nb.b001 = (b001 + b000) / 2;
-			}
-			else if ( 1 == $child )	{
-				$nb.b000 = (b100 + b000) / 2;;
-				$nb.b100 = b100;
-				$nb.b101 = (b101 + b100) / 2;
-				$nb.b001 = (b101 + b000) / 2;
-			}
-			else if ( 2 == $child )	{
-				$nb.b000 = (b001 + b000) / 2;;
-				$nb.b100 = (b101 + b000) / 2;
-				$nb.b101 = (b101 + b001) / 2;
-				$nb.b001 = b001;
-			}
-			else if ( 3 == $child )	{
-				$nb.b000 = (b101 + b000) / 2;;
-				$nb.b100 = (b101 + b100) / 2;
-				$nb.b101 = b101;
-				$nb.b001 = (b101 + b001) / 2;
-			}
-		}				
-		else if ( Globals.POSZ == $face ) {
-			if ( 0 == $child ) {
-				$nb.b001 = b001;
-				$nb.b011 = (b011 + b001) / 2;
-				$nb.b111 = (b111 + b001) / 2;
-				$nb.b101 = (b101 + b001) / 2;
-			}
-			else if ( 1 == $child )	{
-				$nb.b001 = (b101 + b001) / 2;
-				$nb.b011 = (b111 + b001) / 2;
-				$nb.b111 = (b111 + b101) / 2;
-				$nb.b101 = b101;
-			}
-			else if ( 2 == $child )	{
-				$nb.b001 = (b011 + b001) / 2;
-				$nb.b011 = b011;
-				$nb.b111 = (b111 + b011) / 2;
-				$nb.b101 = (b111 + b001) / 2;
-			}
-			else if ( 3 == $child )	{
-				$nb.b001 = (b111 + b001) / 2;
-				$nb.b011 = (b111 + b011) / 2;
-				$nb.b111 = b111;
-				$nb.b101 = (b111 + b101) / 2;
-			}
-		}				
-		else if ( Globals.NEGZ == $face ) {
-			if ( 0 == $child ) {
-				$nb.b000 = b000;
-				$nb.b010 = (b010 + b000) / 2;
-				$nb.b110 = (b110 + b000) / 2;
-				$nb.b100 = (b100 + b000) / 2;
-			}
-			else if ( 1 == $child )	{
-				$nb.b000 = (b100 + b000) / 2;
-				$nb.b010 = (b110 - b000) / 2;
-				$nb.b110 = (b110 - b100) / 2;
-				$nb.b100 = b100;
-			}
-			else if ( 2 == $child )	{
-				$nb.b000 = (b010 + b000) / 2;
-				$nb.b010 = b010;
-				$nb.b110 = (b110 + b010) / 2;
-				$nb.b100 = (b110 + b000) / 2;
-			}
-			else if ( 3 == $child )	{
-				$nb.b000 = (b110 + b000) / 2;
-				$nb.b010 = (b110 + b010) / 2;
-				$nb.b110 = b110;
-				$nb.b100 = (b110 + b100) / 2;
-			}
-		}				
-		else	
-			Log.out( "Brightness.subfaceGet: ERROR child index: " + $child );
+		return _composite;
 	}
-	*/
 	
-} // end of class FlowInfo
+	
+} // end of class Brightness
 } // end of package

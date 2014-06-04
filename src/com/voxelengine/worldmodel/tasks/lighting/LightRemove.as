@@ -91,11 +91,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		 
 		private function removeFromNeighbors( $lo:Oxel ):void {
 				
-			Log.out( "LightRemove.spreadToNeighbors - $lo: " + $lo.toStringShort() + "  brightness: " + $lo.brightness.toString() );
-
-						if ( 5 == $lo.gc.grain )
-							trace( "Watch here" );
-			
+			//Log.out( "LightRemove.spreadToNeighbors - $lo: " + $lo.toStringShort() + "  brightness: " + $lo.brightness.toString() );
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
 				var no:Oxel = $lo.neighbor(face);

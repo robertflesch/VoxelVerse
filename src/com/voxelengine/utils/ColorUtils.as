@@ -61,8 +61,8 @@ import flash.geom.Vector3D;
 			return newTint;
 		}
 		
-		public static function testCombineARGB( base:uint, c1:uint  ):uint {
-			var αa:Number = ColorUtils.extractIntensity( c1 )/255;
+		public static function testCombineARGB( base:uint, c1:uint, αa:Number ):uint {
+			αa = αa/255;
 			return ARGBToHex( 255
 					 		, Math.max( extractRed(c1) * αa, extractRed(base) )
 							, Math.max( extractGreen(c1) * αa, extractGreen(base) )

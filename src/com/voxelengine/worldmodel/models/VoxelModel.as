@@ -483,7 +483,7 @@ package com.voxelengine.worldmodel.models
 					
 					// we removed a solid block, and are replacing it with air or transparent
 					const attenScaled:uint = changedOxel.brightness.atten * ($gc.size()/16);
-					changedOxel.brightness.balanceAttn( attenScaled );
+					changedOxel.brightness.balanceAttn( 0, attenScaled );
 					if ( changedOxel.brightness.valuesHas() ) {
 						var le1:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, changedOxel.gc, changedOxel.brightness.lastLightID );
 						Globals.g_app.dispatchEvent( le1 );
