@@ -14,22 +14,24 @@ import com.voxelengine.worldmodel.oxel.Brightness;
      
 public final class BrightnessPool
 { 
+	private static var _currentPoolSize:uint; 
 	private static var GROWTH_VALUE:uint; 
 	private static var _counter:uint; 
 	private static var _pool:Vector.<Brightness>; 
 	
 	static public function remaining():uint { return _counter; }
-	static public function total():uint { return _pool.length; }
-	static public function totalUsed():uint { return _pool.length - _counter; }
+	static public function totalUsed():uint { return _currentPoolSize - _counter; }
+	static public function total():uint { return _currentPoolSize; }
 
-	public static function initialize( $maxPoolSize:uint, $growthValue:uint ):void 
+	public static function initialize( maxPoolSize:uint, growthValue:uint ):void 
 	{ 
-		_counter = $maxPoolSize; 
-		GROWTH_VALUE = $growthValue; 
+		_currentPoolSize = maxPoolSize; 
+		GROWTH_VALUE = growthValue; 
+		_counter = maxPoolSize; 
 		 
-		_pool = new Vector.<Brightness>( $maxPoolSize ); 
-		
-		var i:uint = $maxPoolSize; 
+		var i:uint = maxPoolSize; 
+		 
+		_pool = new Vector.<Brightness>(_currentPoolSize); 
 		while( --i > -1 ) 
 			_pool[i] = new Brightness(); 
 	} 
@@ -37,15 +39,29 @@ public final class BrightnessPool
 	public static function poolGet():Brightness 
 	{ 
 		if ( _counter > 0 ) 
+		{
 			return _pool[--_counter]; 
+		}
 			 
-		Log.out( "BrightnessPool  - Allocating more Brightnesss: " + GROWTH_VALUE, Log.ERROR );
+		Log.out( "BrightnessPool.poolGet - Allocating more Brightness: " + _currentPoolSize, Log.ERROR );
+
+		const newPoolSize:int = _currentPoolSize + GROWTH_VALUE;
+		var newPool:Vector.<Brightness> = new Vector.<Brightness>(newPoolSize);
+		for ( var index:int = 0; index < _currentPoolSize; index++ )
+		{
+			newPool[index] = _pool[index];
+		}
+		for ( var newIndex:int = _currentPoolSize; newIndex < newPoolSize; newIndex++ )
+		{
+			newPool[newIndex] = new Brightness();
+		}
 		
-		var i:uint = GROWTH_VALUE; 
-		while( --i > -1 ) 
-				_pool.unshift ( new Brightness() ); 
-				
-		_counter = GROWTH_VALUE; 
+		_counter = _currentPoolSize; 
+		_currentPoolSize += GROWTH_VALUE;
+		_pool = null
+		_pool = newPool;
+		newPool = null;
+		
 		return poolGet(); 
 		 
 	} 
