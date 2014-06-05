@@ -132,8 +132,9 @@ package com.developmentarc.core.tasks
 		 * @param task The ITask to add to the controller.
 		 * 
 		 */
-		public function addTask(task:ITask ):void
+		public function addTask(task:ITask ):Boolean
 		{
+			var result:Boolean;
 			// apply overrides
 			// if overrides dont override this task add task
 			if(applyOverrides(task)) { 
@@ -141,13 +142,16 @@ package com.developmentarc.core.tasks
 				// determine priority and placement
 				task.inQueue();
 				taskQueue.addItem(task, task.priority);
+				result = true;
 			}
 			else {
 				// Trigger Ignore on task
 				task.ignore();
+				result = false;
 			}
 			// call next, to check queue state
 			next();
+			return result;
 		}
 		
 		/**
@@ -191,7 +195,7 @@ package com.developmentarc.core.tasks
 					if(newTask.taskType == task.taskType) {
 						// Already one in the queue with same type and uid, disregard new task
 						if (newTask.uid == task.uid) {
-							trace( "TaskController.applyOverides - DUP FOUND" );				
+							//trace( "TaskController.applyOverides - DUP FOUND" );				
 							return false;
 						}
 						else {
