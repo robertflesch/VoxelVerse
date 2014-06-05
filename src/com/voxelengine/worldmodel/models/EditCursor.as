@@ -160,7 +160,7 @@ package com.voxelengine.worldmodel.models
 				}
 				if ( !oxel.brightness )
 					oxel.brightness = BrightnessPool.poolGet();
-				oxel.brightness.setAll( Brightness.FIXED_ID, Brightness.MAX );
+				oxel.brightness.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
 			}
 			
 			var gcCursor:GrainCursor = GrainCursorPool.poolGet( oxel.gc.bound );

@@ -95,7 +95,7 @@ public class BrightnessTests  {
 
 			bt.reset();
 			try {
-				bt.setAll( Brightness.FIXED_ID, Brightness.MAX );
+				bt.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
 				Log.out( "BrightnessTests.setAllTests	pass 2" );
 			} catch (e:Error) {
 				Log.out( "BrightnessTests.setAllTests	FAIL 2", Log.ERROR );

@@ -561,7 +561,7 @@ package com.voxelengine.worldmodel.oxel
 				if ( _brightness )
 				{
 					_children[i].brightness = BrightnessPool.poolGet();
-					brightness.childGet( i, _children[i].brightness );
+					brightness.childGetAllLights( gct.childId(), _children[i].brightness );
 				}
 				// use the super so you dont start a flow event on flowable types.
 				if ( Globals.GRASS == type )
@@ -640,8 +640,11 @@ package com.voxelengine.worldmodel.oxel
 					throw new Error( "Oxel.type - no active model guid" );
 				if ( EditCursor.EDIT_CURSOR != $guid )
 				{
-					var lightID:uint = brightness.lastLightID;
-					LightRemove.addTask( $guid, gc, lightID );
+					if ( null != brightness )
+						LightRemove.addTask( $guid, gc, brightness.lightIDGet() );
+					else
+						throw new Error( "Oxel.type - no active model guid" );
+					
 					// TODO - dispatch event starting light regeneration from other lights
 				}
 			}
@@ -835,7 +838,7 @@ package com.voxelengine.worldmodel.oxel
 				for each ( var childForBrightness:Oxel in _children ) 
 				{
 					if ( childForBrightness._brightness )
-						_brightness.childAdd( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size() );
+						_brightness.childAddAll( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size() );
 				}
 			}
 			nodes += 8;

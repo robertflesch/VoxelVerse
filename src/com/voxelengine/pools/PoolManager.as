@@ -27,9 +27,10 @@ import com.voxelengine.worldmodel.MemoryManager;
 		// this uses up 424 meg of memory
 		// This is minimum kickstarter setting
 		//private static const INITIAL_POOL_SETTINGS:int = 100000;
-		private static const INITIAL_POOL_SETTINGS:int = 30000;
+		//private static const INITIAL_POOL_SETTINGS:int = 50000;
+		//private static const INITIAL_POOL_SETTINGS:int = 30000;
 		// this uses up 157 meg of memory
-		//private static const INITIAL_POOL_SETTINGS:int = 1000;
+		private static const INITIAL_POOL_SETTINGS:int = 1000;
 		
 		public function PoolManager()
 		{

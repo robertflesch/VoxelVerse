@@ -19,6 +19,7 @@ package com.voxelengine.events
 	{
 		static public const ADD:String 					= "ADD";
 		static public const REMOVE:String				= "REMOVE";
+		static public const CHANGE:String				= "CHANGE";
 		
 		private var _instanceGuid:String;
 		private var _gc:GrainCursor;

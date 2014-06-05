@@ -25,21 +25,48 @@ public class LightInfo
 	public static const DEFAULT_ATTEN:uint = 0x33333333; // out of 255
 	public static const MAX:uint = 0xff;
 	
-	public function LightInfo( $ID:uint, $color:uint ) {		
+	public var lightIs:Boolean = false;
+	public var processed:Boolean = false;
+	public var ID:uint
+	public var color:uint;
+	private var bLower:uint = DEFAULT_ATTEN;
+	private var bHigher:uint = DEFAULT_ATTEN;
+	
+	
+	public function LightInfo( $ID:uint, $color:uint, $lightIs:Boolean ) {		
 		ID = $ID;
 		color = $color;
+		lightIs = $lightIs;
+	}
+	
+	public function toByteArray( $ba:ByteArray ):ByteArray {
+		$ba.writeBoolean( lightIs );
+		$ba.writeUnsignedInt( ID );
+		$ba.writeUnsignedInt( color );
+		$ba.writeUnsignedInt( bLower );
+		$ba.writeUnsignedInt( bHigher );
+		return $ba;
+	}
+	
+	public function fromByteArray( $ba:ByteArray ):ByteArray {
+		lightIs = $ba.readBoolean();
+		ID  	= $ba.readUnsignedInt();
+		color	= $ba.readUnsignedInt();
+		bLower	= $ba.readUnsignedInt();
+		bHigher	= $ba.readUnsignedInt();
+		return $ba;
 	}
 	
 	public function toString():String {
-		return (" LightInfo - ID: " + ID + " color: " + color + " processed: " + processed + " bLower: " + bLower + " bHigher: " + bHigher);
+		return (" LightInfo - ID: " + ID + " color: " + color + " bLower: " + bLower + " bHigher: " + bHigher);
 	}
 
 	public function copyFrom( $li:LightInfo ):void {
-		processed = $li.processed;
 		ID = $li.ID;
 		color = $li.color;
 		bLower = $li.bLower;
 		bHigher = $li.bHigher;
+		lightIs = $li.lightIs;
 	}
 	
 	public function get avg():uint {
@@ -60,12 +87,6 @@ public class LightInfo
 		b110 = $attn;
 		b111 = $attn;
 	}
-	
-	public var processed:Boolean = false;
-	public var ID:uint
-	public var color:uint;
-	private var bLower:uint = DEFAULT_ATTEN;
-	private var bHigher:uint = DEFAULT_ATTEN;
 	
 	public function vertexInfoGet( $vertex:uint ):uint {
 		if (       Brightness.B000 ) return b000;
@@ -97,6 +118,6 @@ public class LightInfo
 	public function set b011( attn:uint ):void { bHigher = ((bHigher & 0xffff00ff) | (attn << 8)); }
 	public function set b110( attn:uint ):void { bHigher = ((bHigher & 0xff00ffff) | (attn << 16)); }
 	public function set b111( attn:uint ):void { bHigher = ((bHigher & 0x00ffffff) | (attn << 24)); }
-
+	
 } // end of class LughtInfo
 } // end of package

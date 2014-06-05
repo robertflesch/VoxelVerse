@@ -7,9 +7,10 @@
 ==============================================================================*/
 
 package com.voxelengine.renderer.vertexComponents {
-	import com.voxelengine.utils.ColorUtils;
 	import flash.utils.ByteArray;
 	import flash.display3D.Context3DVertexBufferFormat;
+	
+	import com.voxelengine.utils.ColorUtils;
 
 public class ColorUINT extends VertexComponent {
 
@@ -17,9 +18,9 @@ public class ColorUINT extends VertexComponent {
 	
 	// don’t forget that AGAL textures are written in BGRA not ARGB! You will have to set the endian of the used ByteArray properly like this:
 	// byteArray.endian = Endian.LITTLE_ENDIAN;		
-	public function ColorUINT( $ARGB:uint ):void {
+	public function ColorUINT( $RGBA:uint ):void {
 		super( Context3DVertexBufferFormat.BYTES_4, 1 );
-		_ABGR = ColorUtils.convertRGBAToABGR( $ARGB );
+		_ABGR = ColorUtils.convertRGBAToABGR( $RGBA );
 	}
 	
 	override public function writeToByteArray( $ba:ByteArray ):void {
