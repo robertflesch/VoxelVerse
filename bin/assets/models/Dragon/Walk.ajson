@@ -1,0 +1,56 @@
+{
+	"animation": [
+		{
+			"attachmentName": "WingRight",
+			"location": {
+				"x": -2,
+				"y": -5,
+				"z": -16
+			},
+			"rotation": {
+				"x": 90,
+				"y": 90,
+				"z": 0
+			},
+			"scale": {
+				"x": 0.8,
+				"y": 0.5,
+				"z": 0.4
+			}
+		},
+		{
+			"attachmentName": "WingLeft",
+			"location": {
+				"x": -17,
+				"y": -5,
+				"z": -16
+			},
+			"rotation": {
+				"x": 90,
+				"y": 90,
+				"z": 180
+			},
+			"scale": {
+				"x": 0.8,
+				"y": 0.5,
+				"z": 0.4
+			}
+		},
+		{
+			"attachmentName": "WingTipRight",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "WingTipLeft",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		}
+	]			
+}

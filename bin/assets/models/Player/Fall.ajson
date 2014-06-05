@@ -1,0 +1,77 @@
+{
+	"animation": [
+		{
+			"attachmentName": "LeftArm",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "RightArm",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "LeftThigh",
+			"rotation": {
+				"x": 20,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": -40,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "RightThigh",
+			"rotation": {
+				"x": -20,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 40,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "PlayerFoot",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": -40,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		}		
+	]			
+}

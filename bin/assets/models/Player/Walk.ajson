@@ -1,0 +1,99 @@
+{
+	"animation": [
+		{
+			"attachmentName": "LeftArm",
+			"rotation": {
+				"x": 10,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": -20,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "RightArm",
+			"rotation": {
+				"x": -10,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 20,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "LeftThigh",
+			"rotation": {
+				"x": 20,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": -40,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "RightThigh",
+			"rotation": {
+				"x": -20,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 40,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "PlayerFoot",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 60,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		}		
+	]			
+}

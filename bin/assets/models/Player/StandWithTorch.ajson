@@ -1,0 +1,116 @@
+{
+    "attachment": [
+		{
+			"fileName": "Torch",
+			"attachsTo": "LeftArm",
+			"location": {
+				"x": 0,
+				"y": -8,
+				"z": -10
+			},
+			"rotation": {
+				"x": 90,
+				"y": 0,
+				"z": 0
+			}
+		}
+	],
+	"animation": [
+		{
+			"attachmentName": "LeftArm",
+			"rotation": {
+				"x": -90,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.1,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "RightArm",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.1,
+					"type": "rotation_repeating"
+				}
+			]
+			
+		},		
+		{
+			"attachmentName": "LeftThigh",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.1,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "RightThigh",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.1,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "PlayerFoot",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.1,
+					"type": "rotation_repeating"
+				}
+			]
+		}		
+	]			
+}

@@ -1,0 +1,90 @@
+{
+    "animation": [
+		{
+			"attachmentName": "WingRight",
+			"location": {
+				"x": -9,
+                "y": -20,
+                "z": -24
+            },
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 1,
+					"type": "rotate_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingLeft",
+			"location": {
+				"x": -22,
+				"y": -15,
+				"z": -24
+			},
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 180
+					},
+					"time": 1,
+					"type": "rotate_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingTipLeft",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 1,
+					"type": "rotate_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingTipRight",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 1,
+					"type": "rotate_to"
+				}
+			]
+		}	
+	]			
+}

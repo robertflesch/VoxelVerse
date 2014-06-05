@@ -1,0 +1,104 @@
+{
+   "animation": [
+		{
+			"attachmentName": "WingRight",
+			"location": {
+				"x": -9,
+                "y": -20,
+                "z": -24
+            },
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 45,
+						"z": 0
+					},
+					"time": 2,
+					"type": "rotate_to"
+				},
+				{
+					"delta": {
+						"x": -14,
+						"y": -20,
+						"z": -24
+					},
+					"time": 2,
+					"type": "location_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingLeft",
+			"location": {
+				"x": -22,
+				"y": -15,
+				"z": -24
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 180
+			},
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 45,
+						"z": 180
+					},
+					"time": 2,
+					"type": "rotate_to"
+				},
+				{
+					"delta": {
+						"x": -17,
+						"y": -15,
+						"z": -24
+					},
+					"time": 2,
+					"type": "location_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingTipLeft",
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotate_to"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingTipRight",
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 0
+					},
+					"time": 0.5,
+					"type": "rotate_to"
+				}
+			]
+		}
+		
+	]			
+}

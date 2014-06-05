@@ -1,0 +1,123 @@
+{
+    "sound": 
+	{
+		"name" : "Flapping.mp3",
+		"soundRangeMax" : 2000,
+		"soundRangeMin" : 10
+	},
+	"animation": [
+		{
+			"attachmentName": "WingRight",
+			"location": {
+				"x": -9,
+                "y": -20,
+                "z": -24
+            },
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 10
+			},
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": -40
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingLeft",
+			"location": {
+				"x": -22,
+				"y": -15,
+				"z": -24
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 170
+			},
+			"scale": {
+				"x": 1,
+				"y": 1,
+				"z": 1
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 40
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+			
+		},
+		{
+			"attachmentName": "WingTipLeft",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": 30
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "WingTipRight",
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"transforms": [
+				{
+					"delta": {
+						"x": 0,
+						"y": 0,
+						"z": -30
+					},
+					"time": 0.5,
+					"type": "rotation_repeating"
+				}
+			]
+		},
+		{
+			"attachmentName": "LeftFoot",
+			"rotation": {
+				"x": 90,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"attachmentName": "RightFoot",
+			"rotation": {
+				"x": 90,
+				"y": 0,
+				"z": 0
+			}
+		}		
+	]			
+}
