@@ -1094,6 +1094,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			// have to do this here since writeVersionedData is recursive
 			ba.writeByte(oxel.gc.bound);
 			oxel.writeData( ba);
+			ba.compress();
 		}
 		
 		// This reads the format info and advances position on byteArray
@@ -1128,6 +1129,14 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 		
 		public function IVMLoad($ba:ByteArray):void
 		{
+			// the try catch here allows me to treat all models as compressed
+			// if the uncompress fails, it simply continues
+			try { 
+				$ba.uncompress();
+			}
+			catch (error:Error) {
+				Log.out( "VoxelModel.IVMLoad - this model is not compressed: " + modelInfo.fileName );
+			}
 			// Read off 3 bytes, the data format
 			$ba.position = 0;
 			var format:String = VoxelModel.readFormat($ba);
@@ -1156,7 +1165,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			rootGrainSize = $ba.readByte();
 			gct = GrainCursorPool.poolGet(rootGrainSize);
 			gct.grain = rootGrainSize;
-			_statisics.gather( VERSION, $ba, rootGrainSize);
+			_statisics.gather( _version, $ba, rootGrainSize);
 			// Version specific data
 			//Log.out( "VoxelModel.loadOxelFromByteArray - modelInfo: " + modelInfo.fileName );
 			if (VERSION_000 == _version)
