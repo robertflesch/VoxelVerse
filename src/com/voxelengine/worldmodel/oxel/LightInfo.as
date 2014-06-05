@@ -76,7 +76,7 @@ public class LightInfo
 	public function setAll( $attn:uint ):void	{
 		
 		if ( LightInfo.MAX < $attn )
-			throw new Error( "Brightness.setAll - attn too high" );
+			throw new Error( "LightInfo.setAll - attn > MAX" );
 
 		b000 = $attn;
 		b001 = $attn;
@@ -96,7 +96,7 @@ public class LightInfo
 		else if (  Brightness.B010 ) return b010;
 		else if (  Brightness.B011 ) return b011;
 		else if (  Brightness.B110 ) return b110;
-		else return b111; // if (  B111 ) 
+		else return b111; // if (  Brightness.B111 ) 
 		
 		return 0xff;
 	}
