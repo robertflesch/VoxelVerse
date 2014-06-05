@@ -77,31 +77,30 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.start();
 			
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
-			main:if ( vm ) {
-				
-				var lo:Oxel = vm.oxel.childFind( _gc );
-				if ( valid( lo ) ) {
-					
-					if ( !lo.gc.is_equal( _gc ) )
-							Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
+			if ( vm ) {
+			
+				try {
+					var lo:Oxel = vm.oxel.childFind( _gc );
+					if ( valid( lo ) ) {
+						
+						if ( !lo.gc.is_equal( _gc ) )
+								Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
 
-					if ( lo.gc.eval( 4, 1, 5, 15 ) )		
-						Log.out ( "WATCH LIGHT SPREAD TO KIDS" );
-					if ( lo.gc.eval( 4, 2, 5, 15 ) )		
-						Log.out ( "WATCH LIGHT SPREAD TO KIDS" );
-					if ( lo.gc.eval( 4, 2, 4, 15 ) )		
-						Log.out ( "WATCH LIGHT SPREAD TO KIDS" );
-					//Log.out ( "LightAdd.start - gc:" + $o.gc.toString() + " br: " + $o.brightness.toString() );
-					lo.brightness.lightGet( lightID ).processed = true;
-					spreadToNeighbors( lo );
+						//Log.out ( "LightAdd.start - gc:" + lo.gc.toString() + " br: " + lo.brightness.toString() );
+						lo.brightness.lightGet( lightID ).processed = true;
+						spreadToNeighbors( lo );
+					}
+					else
+						Log.out( "LightAdd.start - lightValid failed", Log.ERROR );
 				}
-				else
-					Log.out( "LightAdd.start - lightValid failed", Log.ERROR );
-
+				catch (error:Error) {
+					Log.out( "LightAdd.start - Exception Caught: " + error.message, Log.ERROR );
+				}
 			}
 			else
 				Log.out( "LightAdd.start - VoxelModel not found: " + _guid, Log.ERROR );
 				
+			// Have to call complete or queue hangs
 			super.complete();
 		}
 		
@@ -118,32 +117,20 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		private function spreadToNeighbors( $lo:Oxel ):void {
 				
-			//Log.out( "LightAdd.spreadToNeighbors - $lo: " + $lo.toStringShort() + "  brightness: " + $lo.brightness.toString() );
-				
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
 				var no:Oxel = $lo.neighbor(face);
 					
-				if ( !valid( no ) )
-					continue;
-				
-				if ( no.isLight )
-					continue;
-					
-				if ( no.brightness.lightHas( lightID ) && true == no.brightness.lightGet( lightID ).processed )
-					continue;
+				if ( !valid( no ) ) continue;
+				if ( no.isLight ) continue;
+				if ( checkIfProcessed( no ) ) continue;
 			
 				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
-				{
 					projectOnLargerGrain( $lo, no, face );
-				}
 				else if ( no.gc.grain == $lo.gc.grain ) // equal grain can have children
-				{ 
 					projectOnEqualGrain( $lo, no, face );
-				}
-				else {
+				else
 					Log.out( "LightAdd.spreadToNeighbors - NEIGHBOR GRAIN IS SMALLER: ", Log.ERROR );
-				}					
 			}
 		}
 		
@@ -152,14 +139,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $no.childrenHas() ) 
 			{
-//				if ( $no.brightness.processed )
-//					return true;
+				if ( checkIfProcessed( $no ) )
+					return true;
 				projectOnNeighborChildren( $no, $lo.brightness, $face );
 			}					
-			//else if ( $no.brightness.lightHas( lightID ) && true == $no.hasAlpha ) // dont reevaluate that has light info, and is alpha
-			//{
-				//return true; 
-			//}
 			else 
 			{
 				if ( true == $no.isSolid ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
@@ -234,6 +217,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 			// add routine will filter out if there are no values.
 			return false;
 		}
+
+		// Checks if this oxel has been processed
+		// Only transparent oxels are processed, meaning they have had all of their neighbors evaluated for the light content.
+		private function checkIfProcessed( $o:Oxel ):Boolean	{
+			if ( $o.brightness && $o.brightness.lightHas( lightID ) && true == $o.brightness.lightGet( lightID ).processed )
+				return true;
+			return false;
+		}
 		
 		private function projectOnNeighborChildren( $no:Oxel, $lob:Brightness, $face:int ):void {
 			
@@ -242,17 +233,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 			var lobChild:Vector.<uint> = Oxel.childIDsForDirection( $face )
 			var of:int = Oxel.face_get_opposite( $face );
 			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
-//var lobTestChild:Vector.<uint> = Oxel.childIDsForDirection( of );
+			//var lobTestChild:Vector.<uint> = Oxel.childIDsForDirection( of );
 
 			var bt:Brightness = BrightnessPool.poolGet();
 			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
 			{
 				var noChild:Oxel = dchild[childIndex];
-//				if ( noChild.brightness && noChild.brightness.processed )
-//					continue;
-				// I dont like subfaceGet since it uses different logic, would prefer only one routine.
-				// Idea here is I would grab the temp brightness opposite the child I am going to project upon.
-				// then just add influence back on it.
+				if ( checkIfProcessed ( noChild ) )
+					continue;
+				// Idea here is I would grab a temp virtual brightness child that is opposite the child I am going to project upon.
 				bt.reset();
 				// Create a temporary brightness child, pull values from parent
 				$lob.childGet( lightID, lobChild[childIndex], bt );
@@ -263,10 +252,11 @@ package com.voxelengine.worldmodel.tasks.lighting
 				else
 				{
 					// Make sure it has valid values
+					// add influence from the temp child to the actual child.
 					if ( bt.valuesHas() )
 					{
 						if ( !valid( noChild ) )
-							Log.out( "LightAdd.projectOnNeighborChildren - How do I get here?" );
+							Log.out( "LightAdd.projectOnNeighborChildren - How do I get here?", Log.ERROR );
 						
 						// Project the virtual brightness object on the real child of the same size
 						noChild.brightness.influenceAdd( lightID, bt, $face, !noChild.hasAlpha, noChild.gc.size() );
@@ -288,9 +278,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 				return;
 			}
 				
-//			if ( $o.brightness.sunlit )
-//				return;
-			
 			if ( !$o.brightness.valuesHas() )
 				return;
 
@@ -300,7 +287,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		private function add( $o:Oxel ):void {
 			
-			if ( $o.brightness.lightHas( lightID ) && true == $o.brightness.lightGet( lightID ).processed )
+			if ( checkIfProcessed( $o ) )
 			{
 				//Log.out( "LightAdd.add - ALREADY PROCESSED LightID: " + lightID + "  gc: " + $o.gc.toString() );
 				return;
@@ -318,16 +305,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 				return;
 			}
 			
-			//if ( $o.gc.grain > 5 )
-			//{
-				//Log.out( "LightAdd.add - TOO LARGE FOR NOW" );
-				//return;
-			//}
-			
 			if ( $o.brightness.valuesHas() )
 			{
-				if ( false == addTask( _guid, $o.gc, lightID ) )
-					Log.out( "LightAdd.add - DUP gc: " + $o.gc.toString() );
+				addTask( _guid, $o.gc, lightID );
+					
+//				if ( false == addTask( _guid, $o.gc, lightID ) )
+//					Log.out( "LightAdd.add - DUP gc: " + $o.gc.toString() );
 			}
 		}
 		
