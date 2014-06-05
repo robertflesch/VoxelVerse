@@ -22,21 +22,22 @@ package com.voxelengine.worldmodel.oxel
 
 public class LightInfo
 {
-	public static const DEFAULT_ATTEN:uint = 0x33333333; // out of 255
 	public static const MAX:uint = 0xff;
 	
 	public var lightIs:Boolean = false;
 	public var processed:Boolean = false;
 	public var ID:uint
 	public var color:uint;
-	private var bLower:uint = DEFAULT_ATTEN;
-	private var bHigher:uint = DEFAULT_ATTEN;
+	private var bLower:uint;
+	private var bHigher:uint;
 	
 	
-	public function LightInfo( $ID:uint, $color:uint, $lightIs:Boolean ) {		
+	public function LightInfo( $ID:uint, $color:uint, $attn:uint, $lightIs:Boolean ) {		
 		ID = $ID;
 		color = $color;
 		lightIs = $lightIs;
+		bLower = $attn;
+		bHigher = $attn;
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {

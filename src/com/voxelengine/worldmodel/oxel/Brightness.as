@@ -42,6 +42,7 @@ public class Brightness  {  // extends BrightnessData
 	public static const DEFAULT_ATTEN:uint = 0xff; // out of 255
 	public static const DEFAULT_PER_DISTANCE:int = 16;
 	public static const DEFAULT_COLOR:uint = 0x00ffffff;
+	public static const DEFAULT_LIGHT_INFO_ATTN:uint = 0xffffffff;
 
 	static public const B000:uint = 0;
 	static public const B001:uint = 1;
@@ -104,7 +105,7 @@ public class Brightness  {  // extends BrightnessData
 		else {
 			var lightCount:int = $ba.readByte();
 			for ( var i:int = 0; i < lightCount; i++ ) {
-				_lights[i] = new LightInfo(0, 0, false );
+				_lights[i] = new LightInfo(0, 0, DEFAULT_LIGHT_INFO_ATTN, false );
 				_lights[i].fromByteArray( $ba );
 			}
 		}
@@ -446,7 +447,7 @@ public class Brightness  {  // extends BrightnessData
 			
 			for ( var i:int; i < LIGHTS_MAX; i++ ) {
 				if ( null == _lights[i] ) {
-					_lights[i] = new LightInfo( $ID, $color, $isLight );	
+					_lights[i] = new LightInfo( $ID, $color, DEFAULT_LIGHT_INFO_ATTN, $isLight );	
 					if ( true == $isLight )
 						_lights[i].setAll( 255 );
 					_lightCount++;
