@@ -102,7 +102,7 @@ package com.voxelengine.worldmodel.models
 		
 		private function process( $version:String, $ba:ByteArray, currentGrain:int ):ByteArray
 		{
-			var data:int = $ba.readInt();
+			var data:int = $ba.readUnsignedInt();
 			if ( OxelData.dataHasAdditional( data ) )
 			{
 				$ba = _TempFlowInfo.fromByteArray( $version, $ba );
