@@ -1091,11 +1091,9 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			//writeVersionedHeader( VERSION_000, ba);
 			//writeVersionedHeader( VERSION_001, ba);
 			writeVersionedHeader( VERSION, ba);
-			//oxel.writeData(ba);
 			// have to do this here since writeVersionedData is recursive
 			ba.writeByte(oxel.gc.bound);
-			//oxel.writeData001(ba);
-			oxel.writeVersionedData( VERSION, ba);
+			oxel.writeData( ba);
 		}
 		
 		// This reads the format info and advances position on byteArray

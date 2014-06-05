@@ -128,7 +128,7 @@ public class FlowInfo
 			Log.out( "FlowInfo.fromJson - INCORRECT NUMBER OF PARAMETERS, EXPECTED 3, GOT: " + $flowJson.length );
 	}
 	
-	public function toByteArray( $version:String, $ba:ByteArray ):ByteArray {
+	public function toByteArray( $ba:ByteArray ):ByteArray {
 		$ba.writeInt( _flowInfo );
 		$ba = _flowScaling.toByteArray( $ba )
 		return $ba;
@@ -136,7 +136,7 @@ public class FlowInfo
 	
 	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
 		_flowInfo = $ba.readInt();
-		$ba = _flowScaling.fromByteArray( $ba )
+		$ba = _flowScaling.fromByteArray( $version, $ba )
 		return $ba;
 	}
 	

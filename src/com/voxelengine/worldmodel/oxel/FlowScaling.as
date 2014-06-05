@@ -56,6 +56,7 @@ public class FlowScaling
 		return int($val*100)/100;
 	}
 	public function toByteArray( $ba:ByteArray ):ByteArray {
+		
 		$ba.writeFloat( rnd( PxPz ) );
 		$ba.writeFloat( rnd( PxNz ) );
 		$ba.writeFloat( rnd( NxNz ) );
@@ -63,7 +64,8 @@ public class FlowScaling
 		return $ba;
 	}
 	
-	public function fromByteArray( $ba:ByteArray ):ByteArray {
+	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
+		// No need to handle versions yet
 		PxPz = rnd( $ba.readFloat() );
 		PxNz = rnd( $ba.readFloat() );
 		NxNz = rnd( $ba.readFloat() );

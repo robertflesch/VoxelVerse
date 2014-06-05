@@ -67,7 +67,7 @@ public class Brightness  {  // extends BrightnessData
 		lightAdd( DEFAULT_ID, DEFAULT_COLOR );
 	}
 	
-	public function toByteArray( $version:String, $ba:ByteArray ):ByteArray {
+	public function toByteArray( $ba:ByteArray ):ByteArray {
 //		throw new Error( "Brightness.toByteArray - NEEDS TO BE TESTED" );
 
 		var lightCount:uint;
