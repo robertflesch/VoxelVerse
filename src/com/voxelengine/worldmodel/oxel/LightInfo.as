@@ -89,14 +89,22 @@ public class LightInfo
 	}
 	
 	public function vertexInfoGet( $vertex:uint ):uint {
-		if (       Brightness.B000 ) return b000;
-		else if (  Brightness.B001 ) return b001;
-		else if (  Brightness.B100 ) return b100;
-		else if (  Brightness.B101 ) return b101;
-		else if (  Brightness.B010 ) return b010;
-		else if (  Brightness.B011 ) return b011;
-		else if (  Brightness.B110 ) return b110;
-		else return b111; // if (  Brightness.B111 ) 
+		if (       Brightness.B000 == $vertex ) 
+			return b000;
+		else if (  Brightness.B001 == $vertex ) 
+			return b001;
+		else if (  Brightness.B100 == $vertex ) 
+			return b100;
+		else if (  Brightness.B101 == $vertex ) 
+			return b101;
+		else if (  Brightness.B010 == $vertex ) 
+			return b010;
+		else if (  Brightness.B011 == $vertex ) 
+			return b011;
+		else if (  Brightness.B110 == $vertex ) 
+			return b110;
+		else 
+			return b111; // if (  Brightness.B111 ) 
 		
 		return 0xff;
 	}
