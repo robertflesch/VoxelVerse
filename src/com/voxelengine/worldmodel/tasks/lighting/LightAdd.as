@@ -302,7 +302,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $o.brightness.lightHas( lightID ) && true == $o.brightness.lightGet( lightID ).processed )
 			{
-				Log.out( "LightAdd.add - ALREADY PROCESSED LightID: " + lightID + "  gc: " + $o.gc.toString() );
+				//Log.out( "LightAdd.add - ALREADY PROCESSED LightID: " + lightID + "  gc: " + $o.gc.toString() );
 				return;
 			}
 			

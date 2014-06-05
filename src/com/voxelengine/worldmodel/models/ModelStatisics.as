@@ -62,7 +62,7 @@ package com.voxelengine.worldmodel.models
 			_stats = new Array(256);				// INSTANCE NOT EXPORTED
 		}
 		
-		public function gather( $ba:ByteArray, $rootGrain:int ):void
+		public function gather( $version:String, $ba:ByteArray, $rootGrain:int ):void
 		{
 			if ( !$ba )
 				throw new Error( "ModelStatisics.gather - NO ByteArray found" );
@@ -75,7 +75,7 @@ package com.voxelengine.worldmodel.models
 				$ba.position = 8;
 			initialize();
 			_rootGrain = $rootGrain;
-			process( $ba, _rootGrain );
+			process( $version, $ba, _rootGrain );
 			$ba.position = orginalPosition;
 			
 			for ( var key:* in _stats )
@@ -100,13 +100,13 @@ package com.voxelengine.worldmodel.models
 //			trace( "ModelStatisics.grather - meter count: " + countInMeters );
 		}
 		
-		private function process( $ba:ByteArray, currentGrain:int ):ByteArray
+		private function process( $version:String, $ba:ByteArray, currentGrain:int ):ByteArray
 		{
 			var data:int = $ba.readInt();
 			if ( OxelData.dataHasAdditional( data ) )
 			{
-				$ba = _TempFlowInfo.fromByteArray( $ba );
-				$ba = _TempBrightness.fromByteArray( $ba );
+				$ba = _TempFlowInfo.fromByteArray( $version, $ba );
+				$ba = _TempBrightness.fromByteArray( $version, $ba );
 			}
 			
 			if ( OxelData.data_is_parent( data ) )
@@ -115,7 +115,7 @@ package com.voxelengine.worldmodel.models
 				currentGrain--;
 				for ( var i:int = 0; i < 8; i++ )
 				{
-					process( $ba, currentGrain );
+					process( $version, $ba, currentGrain );
 				}
 				currentGrain++;
 			}

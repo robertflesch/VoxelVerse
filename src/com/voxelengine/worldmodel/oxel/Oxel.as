@@ -330,6 +330,17 @@ package com.voxelengine.worldmodel.oxel
 				vm_initialize( $stats );
 		}
 		
+		// This is used to initialize all oxel nodes that are read from the byte array
+		public function initializeVersionedData( $version:String, $parent:Oxel, $gc:GrainCursor, $byteData:uint, $stats:ModelStatisics ):void {
+
+			if ( $version == VoxelModel.VERSION_003 || $version == VoxelModel.VERSION_002 || $version == VoxelModel.VERSION_001 || $version == VoxelModel.VERSION_000 )
+			{
+				initialize( $parent, $gc, $byteData, $stats );	
+				return;
+			}
+			throw new Error( "Oxel.initialVersionedData - UNKNOWN VERSION" );
+		}
+		
 		// This is used to initialize oxel nodes created via children create
 		private function initializeAndMarkDirty( $parent:Oxel, $gc:GrainCursor, $byteData:uint, $stats:ModelStatisics ):void {
 			initialize( $parent, $gc, $byteData, $stats );
@@ -1607,7 +1618,40 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 
-		public function writeData001( ba:ByteArray ):void 
+		public function writeVersionedData( $version:String, ba:ByteArray ):void 
+		{
+			//trace( Oxel.data_mask_temp( _data ) );
+			if ( childrenHas() && Globals.AIR != type )
+			{
+				Log.out( "Oxel.writeData - parent with TYPE: " + Globals.Info[type].name, Log.ERROR );
+				type = Globals.AIR; 
+			}
+			
+			if ( flowInfo || ( _brightness && _brightness.valuesHas() ) )
+			{
+				// I only have 1 bit for additional data...
+				additionalDataMark();
+				ba.writeInt( maskTempData() );
+				
+				if ( !flowInfo )
+					flowInfo = new FlowInfo(); 
+				flowInfo.toByteArray( $version, ba );
+				
+				if ( !brightness )
+					brightness = BrightnessPool.poolGet();
+				ba = brightness.toByteArray( $version, ba );
+			}
+			else
+				ba.writeInt( maskTempData() );
+			
+			if ( childrenHas() ) 
+			{
+				for each ( var child:Oxel in _children ) 
+					child.writeVersionedData( $version, ba );
+			}
+		}
+		
+		public function writeData001( $version:String, ba:ByteArray ):void 
 		{
 			//trace( Oxel.data_mask_temp( _data ) );
 			if ( childrenHas() && Globals.AIR != type )
@@ -1623,11 +1667,11 @@ package com.voxelengine.worldmodel.oxel
 				
 				if ( !flowInfo )
 					flowInfo = new FlowInfo(); 
-				flowInfo.toByteArray( ba );
+				flowInfo.toByteArray( $version, ba );
 				
 				if ( !brightness )
 					brightness = BrightnessPool.poolGet();
-				ba = brightness.toByteArray( ba );
+				ba = brightness.toByteArray( $version, ba );
 			}
 			else
 				ba.writeInt( maskTempData() );
@@ -1635,29 +1679,29 @@ package com.voxelengine.worldmodel.oxel
 			if ( childrenHas() ) 
 			{
 				for each ( var child:Oxel in _children ) 
-					child.writeData001( ba );
+					child.writeData001( $version, ba );
 			}
 		}
-		
-		public function readData001( $parent:Oxel, $gc:GrainCursor, $ba:ByteArray, $stats:ModelStatisics ):ByteArray 
+		/*
+		public function readData001( $version:String, $parent:Oxel, $gc:GrainCursor, $ba:ByteArray, $stats:ModelStatisics ):ByteArray 
 		{
-			var newData:uint = $ba.readInt();
-			initialize( $parent, $gc, newData, $stats );
-			if ( OxelData.data_is_parent( newData ) && Globals.AIR != type )
+			var oxelData:uint = $ba.readInt();
+			initialize( $parent, $gc, oxelData, $stats );
+			if ( OxelData.data_is_parent( oxelData ) && Globals.AIR != type )
 			{
 				Log.out( "Oxel.readData001 - parent with TYPE: " + Globals.Info[type].name, Log.ERROR );
 				type = Globals.AIR;
 			}
-			if ( OxelData.dataHasAdditional( newData ) )
+			if ( OxelData.dataHasAdditional( oxelData ) )
 			{
 				if ( !flowInfo )
 					flowInfo = new FlowInfo();
-				$ba = flowInfo.fromByteArray( $ba );
+				$ba = flowInfo.fromByteArray( $version, $ba );
 				
 				brightness = BrightnessPool.poolGet();
-				$ba = brightness.fromByteArray( $ba );
+				$ba = brightness.fromByteArray( $version, $ba );
 			}
-			if ( OxelData.data_is_parent( newData ) )
+			if ( OxelData.data_is_parent( oxelData ) )
 			{
 				_children = ChildOxelPool.poolGet();
 				var gct:GrainCursor = GrainCursorPool.poolGet( $stats.largest );
@@ -1666,25 +1710,64 @@ package com.voxelengine.worldmodel.oxel
 					_children[i]  = OxelPool.poolGet();
 					gct.copyFrom( $gc );
 					gct.become_child(i);   
-					_children[i].readData001( this, gct, $ba, $stats );
+					_children[i].readData001( $version, this, gct, $ba, $stats );
 				}
 				GrainCursorPool.poolDispose( gct );
 			}
 
 			return $ba;
 		}
-		
+		*/
+		public function readVersionedData( $version:String, $parent:Oxel, $gc:GrainCursor, $ba:ByteArray, $stats:ModelStatisics ):ByteArray 
+		{
+			var oxelData:uint = $ba.readInt();
+			initializeVersionedData( $version, $parent, $gc, oxelData, $stats );
+			
+			// Bad data check
+			if ( OxelData.data_is_parent( oxelData ) && Globals.AIR != type )
+			{
+				Log.out( "Oxel.readData001 - parent with TYPE: " + Globals.Info[type].name, Log.ERROR );
+				type = Globals.AIR;
+			}
+			// Check for flow and brightnessInfo
+			if ( OxelData.dataHasAdditional( oxelData ) )
+			{
+				if ( !flowInfo )
+					flowInfo = new FlowInfo();
+				$ba = flowInfo.fromByteArray( $version, $ba );
+				
+				brightness = BrightnessPool.poolGet();
+				$ba = brightness.fromByteArray( $version, $ba );
+			}
+			
+			if ( OxelData.data_is_parent( oxelData ) )
+			{
+				_children = ChildOxelPool.poolGet();
+				var gct:GrainCursor = GrainCursorPool.poolGet( $stats.largest );
+				for ( var i:int = 0; i < OXEL_CHILD_COUNT; i++ )
+				{
+					_children[i]  = OxelPool.poolGet();
+					gct.copyFrom( $gc );
+					gct.become_child(i);   
+					_children[i].readVersionedData( $version, this, gct, $ba, $stats );
+				}
+				GrainCursorPool.poolDispose( gct );
+			}
+
+			return $ba;
+		}
+
 		public function readData( $parent:Oxel, $gc:GrainCursor, $ba:ByteArray, $stats:ModelStatisics ):ByteArray 
 		{
-			var newData:uint = $ba.readInt();
-			//trace( intToHexString() + "  " + newData );
-			initialize( $parent, $gc, newData, $stats );
-			if ( OxelData.data_is_parent( newData ) && Globals.AIR != type )
+			var oxelData:uint = $ba.readInt();
+			//trace( intToHexString() + "  " + oxelData );
+			initialize( $parent, $gc, oxelData, $stats );
+			if ( OxelData.data_is_parent( oxelData ) && Globals.AIR != type )
 			{
 				Log.out( "Oxel.readData - parent with TYPE: " + Globals.Info[type].name, Log.ERROR );
 				type = Globals.AIR;
 			}
-			if ( OxelData.data_is_parent( newData ) )
+			if ( OxelData.data_is_parent( oxelData ) )
 			{
 				_children = ChildOxelPool.poolGet();
 				var gct:GrainCursor = GrainCursorPool.poolGet( $stats.rootSize );

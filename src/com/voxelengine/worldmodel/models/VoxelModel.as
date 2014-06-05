@@ -64,6 +64,13 @@ package com.voxelengine.worldmodel.models
 	 */
 	public class VoxelModel
 	{
+		static public const VERSION_000:String = "000";
+		static public const VERSION_001:String = "001";
+		static public const VERSION_002:String = "002";
+		static public const VERSION_003:String = "003";
+		static public const VERSION:String = VERSION_003;
+		
+		private const MANIFEST_VERSION:int = 100;
 		private var 	_oxel:Oxel 						= null; // INSTANCE NOT EXPORTED
 		private var 	_editCursor:EditCursor 			= null; // INSTANCE NOT EXPORTED
 		private var 	_initialized:Boolean 			= false; // INSTANCE NOT EXPORTED
@@ -166,10 +173,7 @@ package com.voxelengine.worldmodel.models
 			_oxel = val;
 		}
 		
-		private const VERSION_000:String = "000";
-		private const VERSION_001:String = "001";
-		private const VERSION_002:String = "002";
-		private const VERSION:String = VERSION_002;
+
 		
 		public function toString():String
 		{
@@ -935,50 +939,47 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			}
 		}
 		
-		private function writeHeaderVersion000(ba:ByteArray):void
+		private function writeVersionedHeader( $version:String, ba:ByteArray):void
 		{
 			ba.writeByte('i'.charCodeAt());
 			ba.writeByte('v'.charCodeAt());
 			ba.writeByte('m'.charCodeAt());
-			ba.writeByte(VERSION_000.charCodeAt(0));
-			ba.writeByte(VERSION_000.charCodeAt(1));
-			ba.writeByte(VERSION_000.charCodeAt(2));
-			ba.writeByte(0);
-			ba.writeByte(oxel.gc.bound);
-		}
-		
-		private function writeHeaderVersion001(ba:ByteArray):void
-		{
-			ba.writeByte('i'.charCodeAt());
-			ba.writeByte('v'.charCodeAt());
-			ba.writeByte('m'.charCodeAt());
-			ba.writeByte(VERSION_001.charCodeAt(0));
-			ba.writeByte(VERSION_001.charCodeAt(1));
-			ba.writeByte(VERSION_001.charCodeAt(2));
-			ba.writeByte(0);
-			ba.writeByte(oxel.gc.bound);
-		}
-		
-		private const MANIFEST_VERSION:int = 100;
-		
-		private function writeHeaderVersion002(ba:ByteArray):void
-		{
-			ba.writeByte('i'.charCodeAt());
-			ba.writeByte('v'.charCodeAt());
-			ba.writeByte('m'.charCodeAt());
-			ba.writeByte(VERSION.charCodeAt(0));
-			ba.writeByte(VERSION.charCodeAt(1));
-			ba.writeByte(VERSION.charCodeAt(2));
-			ba.writeByte(MANIFEST_VERSION);
-			var modelJson:String = modelInfo.getJSON();
-			//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
-			modelJson = encodeURI(modelJson);
-			//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
-			ba.writeInt(modelJson.length);
-			ba.writeUTFBytes(modelJson);
-			//trace( "VoxelModel.writeHeaderVersion002 modelInfo ends at: " + ba.position );
-			ba.writeByte(oxel.gc.bound);
-			//trace( "VoxelModel.writeHeaderVersion002 oxel ends at: " + ba.position );
+			if ( VERSION_000 == $version ) 
+			{
+				ba.writeByte(VERSION_000.charCodeAt(0));
+				ba.writeByte(VERSION_000.charCodeAt(1));
+				ba.writeByte(VERSION_000.charCodeAt(2));
+				ba.writeByte(0);
+			}
+			else if ( VERSION_001 == $version ) 
+			{
+				ba.writeByte(VERSION_001.charCodeAt(0));
+				ba.writeByte(VERSION_001.charCodeAt(1));
+				ba.writeByte(VERSION_001.charCodeAt(2));
+				ba.writeByte(0);
+			}
+			else if ( VERSION_002 == $version ) 
+			{
+				ba.writeByte(VERSION_002.charCodeAt(0));
+				ba.writeByte(VERSION_002.charCodeAt(1));
+				ba.writeByte(VERSION_002.charCodeAt(2));
+				ba.writeByte(MANIFEST_VERSION);
+				var modelJson:String = modelInfo.getJSON();
+				//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
+				modelJson = encodeURI(modelJson);
+				//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
+				ba.writeInt(modelJson.length);
+				ba.writeUTFBytes(modelJson);
+				//trace( "VoxelModel.writeHeaderVersion002 modelInfo ends at: " + ba.position );
+				//trace( "VoxelModel.writeHeaderVersion002 oxel ends at: " + ba.position );
+			}
+			else if ( VERSION_003 == $version ) 
+			{
+				ba.writeByte(VERSION_003.charCodeAt(0));
+				ba.writeByte(VERSION_003.charCodeAt(1));
+				ba.writeByte(VERSION_003.charCodeAt(2));
+				ba.writeByte(0);
+			}
 		}
 		
 		public function removeFromBigDB():void
@@ -1087,10 +1088,14 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			   n+1 oxel data
 			   ------------------------------------------
 			 */
-			//writeHeaderVersion000(ba);
-			writeHeaderVersion001(ba);
+			//writeVersionedHeader( VERSION_000, ba);
+			//writeVersionedHeader( VERSION_001, ba);
+			writeVersionedHeader( VERSION, ba);
 			//oxel.writeData(ba);
-			oxel.writeData001(ba);
+			// have to do this here since writeVersionedData is recursive
+			ba.writeByte(oxel.gc.bound);
+			//oxel.writeData001(ba);
+			oxel.writeVersionedData( VERSION, ba);
 		}
 		
 		// This reads the format info and advances position on byteArray
@@ -1153,26 +1158,36 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			rootGrainSize = $ba.readByte();
 			gct = GrainCursorPool.poolGet(rootGrainSize);
 			gct.grain = rootGrainSize;
-			_statisics.gather($ba, rootGrainSize);
+			_statisics.gather( VERSION, $ba, rootGrainSize);
 			// Version specific data
 			//Log.out( "VoxelModel.loadOxelFromByteArray - modelInfo: " + modelInfo.fileName );
 			if (VERSION_000 == _version)
 			{
-				//Log.out("VoxelModel.loadFromIVMFormat - VERSION_000 fileName: " + instanceInfo.fileName );
+				Log.out("VoxelModel.loadFromIVMFormat - VERSION_000 fileName: " + modelInfo.fileName );
 				//Log.out("VoxelModel.loadFromIVMFormat - byteArrayLoad - took: " + (getTimer() - timer) );
 				oxel.readData( null, gct, $ba, _statisics );
 			}
 			else if (VERSION_001 == _version)
 			{
-				// This version requires a new readData function
 				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
 				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
-				oxel.readData001( null, gct, $ba, _statisics );
+				oxel.readVersionedData( VERSION_001, null, gct, $ba, _statisics );
 			}
 			else if (VERSION_002 == _version)
 			{
 				// Version 2 is handled in different way, since it has modelInfo and byteArray in same object
-				throw new Error("VoxelModel.loadFromIVMFormat - VERSION NOT SUPPORTED IN THIS FUNCTION");
+				//throw new Error("VoxelModel.loadFromIVMFormat - VERSION NOT SUPPORTED IN THIS FUNCTION");
+				// This version requires a new readData function
+				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
+				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
+				// changes in read are in the Brightness...
+				oxel.readVersionedData( VERSION_002, null, gct, $ba, _statisics );
+			}
+			else if (VERSION_003 == _version)
+			{
+				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
+				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
+				oxel.readVersionedData( VERSION_003, null, gct, $ba, _statisics );
 			}
 			else
 			{

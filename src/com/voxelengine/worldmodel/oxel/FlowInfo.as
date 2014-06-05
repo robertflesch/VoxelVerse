@@ -47,12 +47,11 @@ public class FlowInfo
 	
 	public static const FLOW_DIR_UNDEFINED:int				= 6;
 	
-	private var _flowInfo:int 								= 0;                 
-	private var _flowScaling:FlowScaling					= new FlowScaling();
-	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  _flowInfo function this is a bitwise data field. which holds flow type, CONTRIBUTE, count out and count down
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	private var _flowInfo:int 								= 0;                 
+	private var _flowScaling:FlowScaling					= new FlowScaling();
 	
 	public 	function get out():int { return (_flowInfo & FLOW_OUT) >> FLOW_OUT_OFFSET; }
 	public 	function set out($val:int):void { $val = $val << FLOW_OUT_OFFSET;  _flowInfo &= FLOW_OUT_MASK; _flowInfo = $val | _flowInfo; }
@@ -129,13 +128,13 @@ public class FlowInfo
 			Log.out( "FlowInfo.fromJson - INCORRECT NUMBER OF PARAMETERS, EXPECTED 3, GOT: " + $flowJson.length );
 	}
 	
-	public function toByteArray( $ba:ByteArray ):ByteArray {
+	public function toByteArray( $version:String, $ba:ByteArray ):ByteArray {
 		$ba.writeInt( _flowInfo );
 		$ba = _flowScaling.toByteArray( $ba )
 		return $ba;
 	}
 	
-	public function fromByteArray( $ba:ByteArray ):ByteArray {
+	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
 		_flowInfo = $ba.readInt();
 		$ba = _flowScaling.fromByteArray( $ba )
 		return $ba;

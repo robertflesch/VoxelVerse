@@ -85,7 +85,7 @@ package com.voxelengine.GUI
 		private function statsHandler(event:UIMouseEvent):void 
 		{
 			var ba:ByteArray = Globals.g_modelManager.findIVM( _vm.modelInfo.biomes.layers[0].data );
-			_vm.statisics.gather( ba, _vm.oxel.gc.grain );
+			_vm.statisics.gather( VoxelModel.VERSION, ba, _vm.oxel.gc.grain );
 			_vm.statisics.statsPrint();
 		}
 		

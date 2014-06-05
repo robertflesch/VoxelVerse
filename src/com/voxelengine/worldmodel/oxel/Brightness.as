@@ -67,8 +67,8 @@ public class Brightness  {  // extends BrightnessData
 		lightAdd( DEFAULT_ID, DEFAULT_COLOR );
 	}
 	
-	public function toByteArray( $ba:ByteArray ):ByteArray {
-		throw new Error( "Brightness.toByteArray - NEEDS TO BE TESTED" );
+	public function toByteArray( $version:String, $ba:ByteArray ):ByteArray {
+//		throw new Error( "Brightness.toByteArray - NEEDS TO BE TESTED" );
 
 		var lightCount:uint;
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
@@ -87,13 +87,13 @@ public class Brightness  {  // extends BrightnessData
 		
 	}
 	
-	public function fromByteArray( $ba:ByteArray ):ByteArray {
-		throw new Error( "Brightness.fromByteArray - NEEDS TO BE TESTED" );
+	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
+//		throw new Error( "Brightness.fromByteArray - NEEDS TO BE TESTED" );
 		
 		var lightCount:int = $ba.readByte();
 		for ( var i:int = 0; i < lightCount; i++ ) {
-			_lights[j] = new LightInfo(0, 0);
-			_lights[j].fromByteArray( $ba );
+			_lights[i] = new LightInfo(0, 0, false );
+			_lights[i].fromByteArray( $ba );
 		}
 		return $ba;
 	}
