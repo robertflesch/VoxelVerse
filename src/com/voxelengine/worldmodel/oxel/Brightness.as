@@ -38,8 +38,8 @@ public class Brightness  {  // extends BrightnessData
 	public static const DEFAULT_SIGMA:uint = 2;
 	public static const DEFAULT_ID:uint = 1;
 	//public static const DEFAULT_ATTEN:uint = 0x11; // out of 255 - VERY DARK
-	public static const DEFAULT_ATTEN:uint = 0x33; // out of 255
-	//public static const DEFAULT_ATTEN:uint = 0xff; // out of 255
+	//public static const DEFAULT_ATTEN:uint = 0x33; // out of 255
+	public static const DEFAULT_ATTEN:uint = 0xff; // out of 255
 	public static const DEFAULT_PER_DISTANCE:int = 16;
 	public static const DEFAULT_COLOR:uint = 0x00ffffff;
 
@@ -90,10 +90,23 @@ public class Brightness  {  // extends BrightnessData
 	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
 //		throw new Error( "Brightness.fromByteArray - NEEDS TO BE TESTED" );
 		
-		var lightCount:int = $ba.readByte();
-		for ( var i:int = 0; i < lightCount; i++ ) {
-			_lights[i] = new LightInfo(0, 0, false );
-			_lights[i].fromByteArray( $ba );
+		if ( Globals.VERSION_001 == $version ) {
+			// Just throw away this information for now.
+			$ba.readInt();
+			$ba.readInt();
+			$ba.readInt();
+			$ba.readInt();
+			$ba.readInt();
+			$ba.readInt();
+			$ba.readInt();
+			$ba.readInt();			
+		}
+		else {
+			var lightCount:int = $ba.readByte();
+			for ( var i:int = 0; i < lightCount; i++ ) {
+				_lights[i] = new LightInfo(0, 0, false );
+				_lights[i].fromByteArray( $ba );
+			}
 		}
 		return $ba;
 	}

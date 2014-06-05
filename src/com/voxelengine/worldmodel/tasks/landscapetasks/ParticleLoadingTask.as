@@ -43,7 +43,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			if ( ba )
 			{
 				loadByteArray( ba );
-				//Log.out("ParticleLoadingTask.start - loadByteArray: " + fileName + " took: " + (getTimer() - timer) );
+				Log.out("ParticleLoadingTask.start - loadByteArray: " + fileName + " took: " + (getTimer() - timer) );
 				return;
 			}
 			loadFromFile( fileName );
@@ -71,13 +71,25 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			
 			var ba:ByteArray = event.target.data;
 			Globals.g_modelManager.addIVM( _vm.modelInfo.fileName, ba );
-			loadByteArray( ba );
+			loadCompressedByteArray( ba );
+		}
+		
+		private function loadCompressedByteArray( $ba:ByteArray ):void {
+			if ( _vm && $ba )		
+			{
+				_vm.IVMLoadCompressed( $ba );
+				//Log.out( "ParticleLoadingTask.start - completed - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime) + " guid: " + _guid);
+			}
+			else
+				Log.out( "ParticleLoadingTask.loadByteArray - FAILED to find either voxel model or byte array: ", Log.ERROR );
+			_vm.complete = true;
+			super.complete() // AbstractTask will send event
 		}
 		
 		private function loadByteArray( $ba:ByteArray ):void {
 			if ( _vm && $ba )		
 			{
-				_vm.IVMLoad( $ba );
+				_vm.IVMLoadUncompressed( $ba );
 				//Log.out( "ParticleLoadingTask.start - completed - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime) + " guid: " + _guid);
 			}
 			else

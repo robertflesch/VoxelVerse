@@ -46,6 +46,15 @@ package com.voxelengine {
 		static public const AVATAR_HEIGHT_CHEST:int = 20;
 		
 		static public const GRAVITY:int = 10;
+		
+		static public const VERSION_000:String = "000";
+		static public const VERSION_001:String = "001";
+		static public const VERSION_002:String = "002";
+		static public const VERSION_003:String = "003";
+		static public const VERSION:String = VERSION_003;
+		
+		static public const MANIFEST_VERSION:int = 100;
+		
 
 		public static var g_landscapeTaskController:TaskController = new TaskController();
 		public static var g_flowTaskController:TaskController =  new TaskController();

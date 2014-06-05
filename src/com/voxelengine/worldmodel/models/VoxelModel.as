@@ -64,13 +64,6 @@ package com.voxelengine.worldmodel.models
 	 */
 	public class VoxelModel
 	{
-		static public const VERSION_000:String = "000";
-		static public const VERSION_001:String = "001";
-		static public const VERSION_002:String = "002";
-		static public const VERSION_003:String = "003";
-		static public const VERSION:String = VERSION_003;
-		
-		private const MANIFEST_VERSION:int = 100;
 		private var 	_oxel:Oxel 						= null; // INSTANCE NOT EXPORTED
 		private var 	_editCursor:EditCursor 			= null; // INSTANCE NOT EXPORTED
 		private var 	_initialized:Boolean 			= false; // INSTANCE NOT EXPORTED
@@ -941,29 +934,43 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 		
 		private function writeVersionedHeader( $version:String, ba:ByteArray):void
 		{
+			/*
+			   ------------------------------------------
+			   0 char 'i'
+			   1 char 'v'
+			   2 char 'm'
+			   3 char '0' (zero) major version
+			   4 char '' (0-9) minor version
+			   5 char '' (0-9) lesser version
+			   6 unsigned char model info version - (0) for local models
+			   n unsigned char root grain size
+			   n+1 oxel data
+			   ------------------------------------------
+			 */
+			
 			ba.writeByte('i'.charCodeAt());
 			ba.writeByte('v'.charCodeAt());
 			ba.writeByte('m'.charCodeAt());
-			if ( VERSION_000 == $version ) 
+			if ( Globals.VERSION_000 == $version ) 
 			{
-				ba.writeByte(VERSION_000.charCodeAt(0));
-				ba.writeByte(VERSION_000.charCodeAt(1));
-				ba.writeByte(VERSION_000.charCodeAt(2));
+				ba.writeByte(Globals.VERSION_000.charCodeAt(0));
+				ba.writeByte(Globals.VERSION_000.charCodeAt(1));
+				ba.writeByte(Globals.VERSION_000.charCodeAt(2));
 				ba.writeByte(0);
 			}
-			else if ( VERSION_001 == $version ) 
+			else if ( Globals.VERSION_001 == $version ) 
 			{
-				ba.writeByte(VERSION_001.charCodeAt(0));
-				ba.writeByte(VERSION_001.charCodeAt(1));
-				ba.writeByte(VERSION_001.charCodeAt(2));
+				ba.writeByte(Globals.VERSION_001.charCodeAt(0));
+				ba.writeByte(Globals.VERSION_001.charCodeAt(1));
+				ba.writeByte(Globals.VERSION_001.charCodeAt(2));
 				ba.writeByte(0);
 			}
-			else if ( VERSION_002 == $version ) 
+			else if ( Globals.VERSION_002 == $version ) 
 			{
-				ba.writeByte(VERSION_002.charCodeAt(0));
-				ba.writeByte(VERSION_002.charCodeAt(1));
-				ba.writeByte(VERSION_002.charCodeAt(2));
-				ba.writeByte(MANIFEST_VERSION);
+				ba.writeByte(Globals.VERSION_002.charCodeAt(0));
+				ba.writeByte(Globals.VERSION_002.charCodeAt(1));
+				ba.writeByte(Globals.VERSION_002.charCodeAt(2));
+				ba.writeByte(Globals.MANIFEST_VERSION);
 				var modelJson:String = modelInfo.getJSON();
 				//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
 				modelJson = encodeURI(modelJson);
@@ -973,11 +980,11 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 				//trace( "VoxelModel.writeHeaderVersion002 modelInfo ends at: " + ba.position );
 				//trace( "VoxelModel.writeHeaderVersion002 oxel ends at: " + ba.position );
 			}
-			else if ( VERSION_003 == $version ) 
+			else if ( Globals.VERSION_003 == $version ) 
 			{
-				ba.writeByte(VERSION_003.charCodeAt(0));
-				ba.writeByte(VERSION_003.charCodeAt(1));
-				ba.writeByte(VERSION_003.charCodeAt(2));
+				ba.writeByte(Globals.VERSION_003.charCodeAt(0));
+				ba.writeByte(Globals.VERSION_003.charCodeAt(1));
+				ba.writeByte(Globals.VERSION_003.charCodeAt(2));
 				ba.writeByte(0);
 			}
 		}
@@ -1074,23 +1081,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 		
 		public function IVMSaveLocal(ba:ByteArray):void
 		{
-			/*
-			   ------------------------------------------
-			   0 char 'i'
-			   1 char 'v'
-			   2 char 'm'
-			   3 char '0' (zero) major version
-			   4 char '' (0-9) minor version
-			   5 char '' (0-9) lesser version
-			   6 unsigned char model info version
-			   7...n-1 modelInfo
-			   n unsigned char root grain size
-			   n+1 oxel data
-			   ------------------------------------------
-			 */
-			//writeVersionedHeader( VERSION_000, ba);
-			//writeVersionedHeader( VERSION_001, ba);
-			writeVersionedHeader( VERSION, ba);
+			writeVersionedHeader( Globals.VERSION, ba);
 			// have to do this here since writeVersionedData is recursive
 			ba.writeByte(oxel.gc.bound);
 			oxel.writeData( ba);
@@ -1127,16 +1118,22 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			return version;
 		}
 		
-		public function IVMLoad($ba:ByteArray):void
+		public function IVMLoadCompressed($ba:ByteArray):void
 		{
 			// the try catch here allows me to treat all models as compressed
 			// if the uncompress fails, it simply continues
 			try { 
 				$ba.uncompress();
+				Log.out( "VoxelModel.IVMLoad - this byteArray IS compressed: " + modelInfo.fileName );
 			}
 			catch (error:Error) {
-				Log.out( "VoxelModel.IVMLoad - this model is not compressed: " + modelInfo.fileName );
+				Log.out( "VoxelModel.IVMLoad - this byteArray is NOT compressed: " + modelInfo.fileName );
 			}
+			IVMLoadUncompressed( $ba );
+		}
+		
+		public function IVMLoadUncompressed($ba:ByteArray):void
+		{
 			// Read off 3 bytes, the data format
 			$ba.position = 0;
 			var format:String = VoxelModel.readFormat($ba);
@@ -1155,7 +1152,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			var rootGrainSize:int = -1;
 			var gct:GrainCursor = null;
 			
-			//Log.out( "VoxelModel.loadFromIVMFormat - rootGrainSize:" + rootGrainSize );			
+			//Log.out( "VoxelModel.loadOxelFromByteArray - rootGrainSize:" + rootGrainSize );			
 			
 			oxelReset();
 			oxel = OxelPool.poolGet();
@@ -1168,19 +1165,19 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			_statisics.gather( _version, $ba, rootGrainSize);
 			// Version specific data
 			//Log.out( "VoxelModel.loadOxelFromByteArray - modelInfo: " + modelInfo.fileName );
-			if (VERSION_000 == _version)
+			if (Globals.VERSION_000 == _version)
 			{
-				Log.out("VoxelModel.loadFromIVMFormat - VERSION_000 fileName: " + modelInfo.fileName );
+				//Log.out("VoxelModel.loadFromIVMFormat - Globals.VERSION_000 fileName: " + modelInfo.fileName );
 				//Log.out("VoxelModel.loadFromIVMFormat - byteArrayLoad - took: " + (getTimer() - timer) );
 				oxel.readData( null, gct, $ba, _statisics );
 			}
-			else if (VERSION_001 == _version)
+			else if (Globals.VERSION_001 == _version)
 			{
 				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
 				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
-				oxel.readVersionedData( VERSION_001, null, gct, $ba, _statisics );
+				oxel.readVersionedData( Globals.VERSION_001, null, gct, $ba, _statisics );
 			}
-			else if (VERSION_002 == _version)
+			else if (Globals.VERSION_002 == _version)
 			{
 				// Version 2 is handled in different way, since it has modelInfo and byteArray in same object
 				//throw new Error("VoxelModel.loadFromIVMFormat - VERSION NOT SUPPORTED IN THIS FUNCTION");
@@ -1188,13 +1185,13 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
 				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
 				// changes in read are in the Brightness...
-				oxel.readVersionedData( VERSION_002, null, gct, $ba, _statisics );
+				oxel.readVersionedData( Globals.VERSION_002, null, gct, $ba, _statisics );
 			}
-			else if (VERSION_003 == _version)
+			else if (Globals.VERSION_003 == _version)
 			{
 				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
 				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
-				oxel.readVersionedData( VERSION_003, null, gct, $ba, _statisics );
+				oxel.readVersionedData( Globals.VERSION_003, null, gct, $ba, _statisics );
 			}
 			else
 			{
@@ -1227,7 +1224,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			ii.templateName = "ExplosionFragment";
 			var mi:ModelInfo = new ModelInfo();
 			var vm:VoxelModel = new VoxelModel(ii, mi, false);
-			vm._version = VERSION_000;
+			vm._version = Globals.VERSION_000;
 			vm.instanceInfo.dynamicObject = true;
 			vm.oxel = childOxel;
 			vm.oxel.breakFromParent();
@@ -1254,7 +1251,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			   ii.fileName = "ExplosionFragment";
 			   var mi:ModelInfo = new ModelInfo();
 			   var vm:VoxelModel = new VoxelModel( ii, mi );
-			   vm._version = VERSION_000;
+			   vm._version = Globals.VERSION_000;
 			   ba.position = 0;
 			   vm.IVMLoad( ba );
 			   //			vm.oxel.rebuildAll();
@@ -1268,7 +1265,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			   ii.fileName = "ExplosionFragment";
 			   var mi:ModelInfo = new ModelInfo();
 			   var vm:VoxelModel = new VoxelModel( ii, mi, false );
-			   vm._version = VERSION_000;
+			   vm._version = Globals.VERSION_000;
 			   vm.oxel = OxelPool.oxel_get();
 			   ba.position = 8;
 			   vm.oxel.byteArrayLoad( null,childOxel.gc, ba, _statisics );

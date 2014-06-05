@@ -144,11 +144,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
 			
-			if ( !$o.isSolid ) {
-				Log.out( "LightTask.rebuildFace - being called on non solid object", Log.ERROR );
-				return;
-			}
-				
 			if ( $o.quads && 0 < $o.quads.length )
 				$o.quadsRebuildAll();
 		}

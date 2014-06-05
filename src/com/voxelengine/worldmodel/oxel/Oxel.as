@@ -333,7 +333,7 @@ package com.voxelengine.worldmodel.oxel
 		// This is used to initialize all oxel nodes that are read from the byte array
 		public function initializeVersionedData( $version:String, $parent:Oxel, $gc:GrainCursor, $byteData:uint, $stats:ModelStatisics ):void {
 
-			if ( $version == VoxelModel.VERSION_003 || $version == VoxelModel.VERSION_002 || $version == VoxelModel.VERSION_001 || $version == VoxelModel.VERSION_000 )
+			if ( $version == Globals.VERSION_003 || $version == Globals.VERSION_002 || $version == Globals.VERSION_001 || $version == Globals.VERSION_000 )
 			{
 				initialize( $parent, $gc, $byteData, $stats );	
 				return;

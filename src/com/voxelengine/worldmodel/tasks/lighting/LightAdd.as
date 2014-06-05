@@ -207,10 +207,11 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( changed ) {
 				if ( true == $no.isSolid ) { // this is a SOLID object which does not transmit light (leaves, water are exceptions)
 					rebuildFace( $no, $face );
-				} else if ( $no.hasAlpha ) {
+				} else if ( Globals.AIR == $no.type ) {
 					add( $no );
 				} else {
 					rebuildFace( $no, $face ); // what case is this? leaves and water?
+					add( $no );
 				}
 			}
 			
@@ -273,11 +274,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
 			
-			if ( !$o.isSolid ) {
-				Log.out( "LightAdd.rebuildFace - being called on non solid object", Log.ERROR );
-				return;
-			}
-				
 			if ( !$o.brightness.valuesHas() )
 				return;
 
