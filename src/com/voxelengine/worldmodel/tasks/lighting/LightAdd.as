@@ -17,15 +17,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 	import com.voxelengine.events.LightEvent;
 	import com.voxelengine.pools.BrightnessPool;
 	import com.voxelengine.pools.GrainCursorPool;
-	import com.voxelengine.pools.OxelPool;
 	import com.voxelengine.worldmodel.TypeInfo;
 	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
-	import com.voxelengine.worldmodel.tasks.lighting.LightTask;
 	import com.voxelengine.worldmodel.oxel.Brightness;
+//	import com.voxelengine.worldmodel.oxel.BrightnessTests;
+	import com.voxelengine.worldmodel.tasks.lighting.LightTask;
 
-	import com.voxelengine.worldmodel.oxel.BrightnessTests;
 	/**
 	 * ...
 	 * @author Robert Flesch
@@ -173,11 +172,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $no.childrenHas() )
 				return true;
-
-			var sizeDif:uint = $no.gc.grain - $lo.gc.grain;
-			if ( 1 < sizeDif )
-				Log.out( "LightAdd.projectOnLargerGrain - size greater then one" );
-				
 			var bt:Brightness = BrightnessPool.poolGet();
 			var btp:Brightness = BrightnessPool.poolGet();
 			
@@ -185,8 +179,9 @@ package com.voxelengine.worldmodel.tasks.lighting
 			// project the light oxel onto the virtual brightness
 			bt.influenceAdd( lightID, $lo.brightness, $face, !$no.hasAlpha, grainUnits )
 
-			// if the target is larger then one size, we need to project calculation on parent until it is correct size
+			// if the target is larger then one size, we need to project calculation on parent recursively until it is correct size
 			var currentLo:Oxel = $lo;
+			var sizeDif:uint = $no.gc.grain - $lo.gc.grain;
 			for ( var i:uint = 0; i < sizeDif; i++ ) {	
 				var childID:uint = Oxel.childIdOpposite( $face, currentLo.gc.childId() );	
 				btp.reset();
