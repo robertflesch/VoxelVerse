@@ -132,6 +132,10 @@ package com.voxelengine.worldmodel.models
 			_gciData.gc.copyFrom( gct );
 			GrainCursorPool.poolDispose( gct );
 			var selectedCursor:int = cursorColor;
+			oxel.quadsDeleteAll();
+			oxel.faces_clear_all();
+			oxel.faces_mark_all_clean();
+			var gcCursor:GrainCursor = GrainCursorPool.poolGet( oxel.gc.bound );
 			if ( CURSOR_OP_INSERT == cursorOperation ) {
 				
 				var pl:PlacementLocation = getPlacementLocation( gciData.model );
@@ -139,9 +143,6 @@ package com.voxelengine.worldmodel.models
 					selectedCursor = 1004; // EDITCURSOR_INVALID;
 
 				// We have to manually delete all of the quads so that they can be rebuilt
-				oxel.quadsDeleteAll();
-				oxel.faces_clear_all();
-				oxel.faces_mark_all_clean();
 				// This method shows only the two faces aligned with axis
 				switch ( gciData.axis )
 				{
@@ -161,14 +162,38 @@ package com.voxelengine.worldmodel.models
 				if ( !oxel.brightness )
 					oxel.brightness = BrightnessPool.poolGet();
 				oxel.brightness.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
+				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
+				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
+			}
+			else
+			{
+				oxel.faces_set_all();
+				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
+				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
+				if ( !oxel.brightness )
+					oxel.brightness = BrightnessPool.poolGet();
+				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_ID );
+				li.color = cursorColorRainbow();
 			}
 			
-			var gcCursor:GrainCursor = GrainCursorPool.poolGet( oxel.gc.bound );
-			gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
-			oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
-oxel.quadsBuild();
+			oxel.quadsBuild();
 			GrainCursorPool.poolDispose( gcCursor );
 		}
+		
+		private var _phase:Number = 0;
+		private function cursorColorRainbow():uint {
+			var frequency:Number = 2.4;
+			var red:uint = Math.max( 0, Math.sin( frequency + 2 + _phase ) ) * 255;
+			var green:uint = Math.max( 0, Math.sin( frequency + 0 + _phase ) ) * 255;
+			var blue:uint = Math.max( 0, Math.sin( frequency + 4 + _phase ) ) * 255;
+			var color:uint;
+			color |= red << 16;
+			color |= green << 8;
+			color |= blue << 0;
+			_phase += 0.03;
+			return color;
+		}
+		
 		
 		override public function draw(mvp:Matrix3D, $context:Context3D, $isChild:Boolean ):void	{
 
