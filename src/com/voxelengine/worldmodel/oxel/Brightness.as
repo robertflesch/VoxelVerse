@@ -300,9 +300,9 @@ public class Brightness  {  // extends BrightnessData
 	
 	// Gets the ID of the light here
 	public function lightIDGet():uint {
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int = 1; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
-			if ( li.lightIs )
+			if ( li && li.lightIs )
 				return li.ID;
 		}
 		return 1;
