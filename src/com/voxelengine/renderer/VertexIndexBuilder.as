@@ -82,7 +82,8 @@ public class VertexIndexBuilder
 	public function release():void
 	{
 		dispose();
-		_oxels.length = 0;
+		if ( _oxels )
+			_oxels.length = 0;
 	}
 	
 	private function compareFunction( x:Oxel, y:Oxel ):int {
