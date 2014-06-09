@@ -760,6 +760,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			// remove parent level model
 			Globals.g_modelManager.changeFromParentToChild(vm);
 			_children.push(vm);
+			vm.instanceInfo.baseLightLevel = instanceInfo.baseLightLevel;
 			modelInfo.childAdd(vm.instanceInfo);
 		}
 		
