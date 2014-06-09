@@ -32,9 +32,7 @@ package com.voxelengine.worldmodel
 		private var _typeId:uint				= Globals.INVALID;
 		private var _category:String 			= "INVALID";
 		private var _name:String 				= "INVALID"
-		//private var _color:Vector3D 			= new Vector3D(1,1,1,1);
-		// ARGB format
-		private var _color:uint					= 0xffffffff;
+
 		private var _maxpix:uint 				= 256;
 		private var _minpix:uint 				= 1;
 		private var _toptt:int					= TileType.TILE_FIXED;
@@ -51,11 +49,13 @@ package com.voxelengine.worldmodel
 		private var _animated:Boolean 			= false;
 		private var _image:String				= "invalid.png";
 		private var _placeable:Boolean  		= true;
-		private var _light:Boolean  			= false;
 		private var _flame:Boolean  			= false;
 		private var _interactions:Interactions 	= null;
 		private var _flowInfo:FlowInfo 			= null;
 		private var _fullBright:Boolean 		= false;
+		private var _color:uint					= 0xffffffff;
+		private var _light:Boolean  			= false;
+		private var _attn:uint					= 0x33;
 
 		public function set name(val:String):void 	{ _name = val; }
 		public function set image(val:String):void 	{ _image = val; }
@@ -73,13 +73,15 @@ package com.voxelengine.worldmodel
 		public function get name():String 			{ return _name; }
 		public function get image():String 			{ return _image; }
 		public function get flowInfo():FlowInfo		{ return _flowInfo; }
-		
 		public function get placeable():Boolean 	{ return _placeable; }
+		
 		public function get light():Boolean 		{ return _light; }
+		public function get fullBright():Boolean 	{ return _fullBright; }
+		public function get attn():uint 			{ return _attn; }
+		
 		public function get flame():Boolean 		{ return _flame; }
 		public function get solid():Boolean 		{ return _solid; }
 		public function get flowable():Boolean 		{ return _flowable; }
-		public function get fullBright():Boolean 	{ return _fullBright; }
 		public function get animated():Boolean 		{ return _animated; }
 		public function get color():uint	 		{ return _color; }
 		public function get maxpix():uint 			{ return _maxpix; }
@@ -97,36 +99,6 @@ package com.voxelengine.worldmodel
 
 		public function TypeInfo():void { }
 
-		public function addTox( o:Object ):void
-		{
-			switch ( o.key )
-			{
-			case "type":
-				_typeId = o.value;
-				break;
-			case "name":
-				_name = o.value;
-				break;
-			case "red":
-				ColorUtils.placeRedNumber( _color, o.value );
-				break;
-			case "green":
-				ColorUtils.placeGreenNumber( _color, o.value );
-				break;
-			case "blue":
-				ColorUtils.placeBlueNumber( _color, o.value );
-				break;
-			case "alpha":
-				ColorUtils.placeAlphaNumber( _color, o.value );
-				break;
-			case "class":
-				_category = o.value;
-				break;
-			default:
-				Log.out( "TypeInfo.addTox - ERROR key not found: " + o.key );
-			}
-		}
-		
 		public function getJSON():String
 		{
 			var typesJson:String = "{\"model\":";
@@ -209,6 +181,11 @@ package com.voxelengine.worldmodel
 				_color = ColorUtils.placeGreenNumber( _color, typesJson.color.g );
 				_color = ColorUtils.placeBlueNumber( _color, typesJson.color.b );
 				_color = ColorUtils.placeAlphaNumber( _color, typesJson.color.a );
+			}
+			
+			if ( typesJson.attn  )
+			{
+				_attn = typesJson.attn;
 			}
 			
 			if ( typesJson.uv )

@@ -55,6 +55,11 @@ package com.voxelengine.worldmodel.models
 		
 		private var _life:Vector3D 						= new Vector3D(1, 1, 1);		// INSTANCE NOT EXPORTED
 		
+		private var	_baseLightLevel:uint				= 0x33;
+		
+		public function get baseLightLevel():uint 					{ return _baseLightLevel; }
+		public function set baseLightLevel(val:uint):void 			{ _baseLightLevel = val; }
+		
 		public function speed( time:Number ):Number 				{ return _moveSpeed.val * _s_speedMultipler * time; }
 		
 		public function get life():Vector3D 						{ return _life; }
@@ -123,7 +128,8 @@ package com.voxelengine.worldmodel.models
 						grainSize: 		_grainSize,
 						name: 			_name,
 						collidable:     _collidable,
-						critical:     	_critical
+						critical:     	_critical,
+						baseLightLevel: _baseLightLevel
 				};
 			}
 			else {
@@ -142,7 +148,8 @@ package com.voxelengine.worldmodel.models
 						name: 			_name,
 						collidable:     _collidable,
 						critical:     	_critical,
-						state:			_state
+						state:			_state,
+						baseLightLevel: _baseLightLevel
 						};
 			}
 		} 	
@@ -215,7 +222,9 @@ package com.voxelengine.worldmodel.models
 			if ( json.repeat )
 				_repeat = json.repeat;
 				
-
+			if ( json.baseLightLevel )
+				_baseLightLevel = json.baseLightLevel;
+						
 			//if ( json.modelClass )
 			//	Log.out( "InstanceInfo.initJSON - found modelClass in guid: " + instanceGuid );
 				

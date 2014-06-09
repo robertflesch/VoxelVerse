@@ -34,31 +34,35 @@ package com.voxelengine.worldmodel.tasks.lighting
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.ADD == $le.type )
 			{
+				// This could effect more then one model...
+				// TODO make this work for multiple models. Maybe just use a world location like the explosion code does.
 				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
-				main:if ( vm ) {
+				if ( vm ) {
 					var lo:Oxel = vm.oxel.childFind( $le.gc );
-					//var lo:Oxel = vm.oxel.childGetOrCreate( $le.gc );
 					if ( valid( lo ) )
 					{
-						if ( !lo.gc.is_equal( $le.gc ) )
-							Log.out ( "LightAdd.handleLightAddEvent - Didn't find child!", Log.ERROR );
 						var ti:TypeInfo = Globals.Info[lo.type];
-						lo.brightness.lightAdd( $le.lightID, ti.color, true );
-						addTask( $le.instanceGuid, $le.gc, $le.lightID );
+						lo.brightness.lightAdd( $le.lightID, ti.color, Brightness.MAX, true );
+						lo.brightness.attn = ti.attn;
+						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
 					}
 					else
 						Log.out( "LightAdd.handleLightAddEvent - invalid light source", Log.ERROR );
 				}
+				else
+					Log.out( "LightAdd.handleLightAddEvent - VoxelModel not found", Log.ERROR );
 			}
 		}
 		 
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
-			//Log.out( "LightAdd.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var lt:LightAdd = new LightAdd( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightDir:uint ):void {
+			var lt:LightAdd = new LightAdd( $instanceGuid, $gc, $lightID, $lightDir, $gc.toID(), $gc.grain );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
 		}
 		
+		private var _lightDir:uint;
+		private function get lightDir():uint { return _lightDir; }
+		private function set lightDir( $val:uint ):void { _lightDir = $val; }
 		/**
 		 * NEVER NEVER NEVER use this, use the static addTask function 
 		 * @param $instanceGuid - guid of parent model
@@ -68,7 +72,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 		 * @param $taskPriority small grains get processed first - so use grain size as priority
 		 * 
 		 */
-		public function LightAdd( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
+		public function LightAdd( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightDir:uint, $taskType:String, $taskPriority:int ):void {
+			_lightDir = $lightDir;
 			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
 		}
 		
@@ -90,7 +95,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						spreadToNeighbors( lo );
 					}
 					else
-						Log.out( "LightAdd.start - lightValid failed", Log.ERROR );
+						Log.out( "LightAdd.start - valid failed", Log.ERROR );
 				}
 				catch (error:Error) {
 					Log.out( "LightAdd.start - Exception Caught: " + error.message, Log.ERROR );
@@ -108,8 +113,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
 				return false;
 			
-			if ( !$o.brightness ) // does this oxel already have a brightness?
+			if ( !$o.brightness ) { // does this oxel already have a brightness?
 				$o.brightness = BrightnessPool.poolGet();
+				$o.brightness.attn = Globals.Info[$o.type].attn;
+			}
 
 			return true;
 		}
@@ -118,6 +125,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 				
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
+				// For the initial spread from light, the the dir be the spread direction
+				if ( Globals.ALL_DIRS == lightDir )
+					lightDir = face;
+				
 				var no:Oxel = $lo.neighbor(face);
 					
 				if ( !valid( no ) ) continue;
@@ -298,7 +309,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $o.brightness.valuesHas() )
 			{
-				addTask( _guid, $o.gc, lightID );
+				Log.out( "LightAdd.add - REPLACE ALL_DIRS HERE" );
+				addTask( _guid, $o.gc, lightID, Globals.ALL_DIRS );
 					
 //				if ( false == addTask( _guid, $o.gc, lightID ) )
 //					Log.out( "LightAdd.add - DUP gc: " + $o.gc.toString() );

@@ -158,6 +158,7 @@ package com.voxelengine {
 		public static const NEGY:uint = 3;
 		public static const POSZ:uint = 4;
 		public static const NEGZ:uint = 5;
+		public static const ALL_DIRS:uint = 6;
 		
 		public static var Plane:Array = [  { id: POSX, name: "POSX" }
 										 , { id: NEGX, name: "NEGX" }

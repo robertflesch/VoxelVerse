@@ -13,6 +13,7 @@ package com.voxelengine.worldmodel.models
 	import com.voxelengine.worldmodel.oxel.Brightness;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.GrainCursorIntersection;
+	import com.voxelengine.worldmodel.oxel.LightInfo;
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import com.voxelengine.worldmodel.oxel.OxelData;
 	import com.voxelengine.worldmodel.tasks.flowtasks.Flow;
@@ -89,17 +90,18 @@ package com.voxelengine.worldmodel.models
 		private var 	_anim:Animation 				= null;
 		private var 	_camera:Camera					= new Camera();
 		private var 	_lightIDNext:uint 				= 1024; // reserve space for ?
-		private var 	_usesGravity:Boolean 			= false;     				// INSTANCE NOT EXPORTED
+		private var 	_usesGravity:Boolean 			= false;     				// Should be exported
 		
+		// TODO this should be moved to controlled model
 		protected var 	_turnRate:Number 				= 20; // 2.5 for ship
 		protected var 	_accelRate:Number 				= 2.5;
 		
 		
+		
+		
 		public function get usesGravity():Boolean 					{ return _usesGravity; }
 		public function set usesGravity(val:Boolean):void 			{ _usesGravity = val; }
-		
-		public function get getLightID():uint 						{ return _lightIDNext++ }
-		
+		public function get getPerModelLightID():uint 				{ return _lightIDNext++ }
 		public function get camera():Camera							{ return _camera; }
 		protected function get initialized():Boolean 				{ return _initialized; }
 		public function get databaseObject():DatabaseObject 		{ return _databaseObject; }
@@ -472,14 +474,14 @@ package com.voxelengine.worldmodel.models
 					
 				if ( typeInfo.light )
 				{
-					var le:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, getLightID );
+					var le:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, getPerModelLightID );
 					Globals.g_app.dispatchEvent( le );
 				}
 				
 				if ( Globals.isSolid( oldType ) && Globals.hasAlpha( $type ) ) {
 					
 					// we removed a solid block, and are replacing it with air or transparent
-					const attenScaled:uint = changedOxel.brightness.atten * ($gc.size()/16);
+					const attenScaled:uint = changedOxel.brightness.attn * ($gc.size()/16);
 					changedOxel.brightness.balanceAttnAll( attenScaled );
 					if ( changedOxel.brightness.valuesHas() ) {
 throw new Error( "VoxelModel.write - How to get handle ID for block add here?" );					
@@ -1124,10 +1126,10 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			// if the uncompress fails, it simply continues
 			try { 
 				$ba.uncompress();
-				Log.out( "VoxelModel.IVMLoad - this byteArray IS compressed: " + modelInfo.fileName );
+				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
 			}
 			catch (error:Error) {
-				Log.out( "VoxelModel.IVMLoad - this byteArray is NOT compressed: " + modelInfo.fileName );
+				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray is NOT compressed: " + modelInfo.fileName );
 			}
 			IVMLoadUncompressed( $ba );
 		}
@@ -1156,6 +1158,12 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			
 			oxelReset();
 			oxel = OxelPool.poolGet();
+			oxel.brightness = BrightnessPool.poolGet();
+			if ( oxel.brightness.lightHas( Brightness.DEFAULT_ID ) ) {
+				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_ID );
+				li.setAll( instanceInfo.baseLightLevel );
+			}
+			
 			
 			// begin read
 			// Read off 1 bytes, the root size
@@ -1304,40 +1312,6 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			}
 			
 			return {key: keyString, value: valueString};
-		}
-		
-		private function readManifest($ba:ByteArray):void
-		{
-			var mani:Manifest = new Manifest();
-			var byteRead:int = 0;
-			byteRead = $ba.readByte();
-			while (String.fromCharCode(byteRead) != '\n')
-			{
-				$ba.position = $ba.position - 1;
-				var ti:TypeInfo = readSection($ba);
-				ti.minpix = 16;
-				mani.add(ti);
-				byteRead = $ba.readByte();
-			}
-			
-			mani.publish();
-		}
-		
-		private function readSection($ba:ByteArray):TypeInfo
-		{
-			var ti:TypeInfo = new TypeInfo();
-			var byteRead:int = 0;
-			byteRead = $ba.readByte();
-			while (String.fromCharCode(byteRead) != '\n')
-			{
-				$ba.position = $ba.position - 1;
-				var keyValue:Object = getKeyValuePair($ba);
-				ti.addTox(keyValue);
-//				if ( "type" == keyValue.key )
-//					Log.out( keyValue.key + " \t " + keyValue.value );
-				byteRead = $ba.readByte();
-			}
-			return ti;
 		}
 		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////

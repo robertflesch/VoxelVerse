@@ -573,6 +573,8 @@ package com.voxelengine.worldmodel.oxel
 				{
 					_children[i].brightness = BrightnessPool.poolGet();
 					brightness.childGetAllLights( gct.childId(), _children[i].brightness );
+					// child should attenuate light at same rate.
+					_children[i].brightness.attn = brightness.attn;
 				}
 				// use the super so you dont start a flow event on flowable types.
 				if ( Globals.GRASS == type )
@@ -852,6 +854,8 @@ package com.voxelengine.worldmodel.oxel
 						_brightness.childAddAll( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size() );
 				}
 			}
+			// Parent should have same brightness attn as children did.
+			_brightness.attn = childForBrightness.brightness.attn;
 			nodes += 8;
 			childrenPrune();
 			neighborsInvalidate();
@@ -1401,6 +1405,12 @@ package com.voxelengine.worldmodel.oxel
 					_quads = QuadsPool.poolGet();
 					if ( !_brightness )
 						_brightness = BrightnessPool.poolGet();
+						if ( _brightness.lightHas( Brightness.DEFAULT_ID ) ) {
+							var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_ID );
+							var rootOxel:Oxel = root_get();
+							li.setAll( rootOxel._brightness.lightGet( Brightness.DEFAULT_ID ).avg );
+						}
+						_brightness.attn = Globals.Info[type].attn;
 				}
 				
 				if ( Globals.Info[type].fullBright )
@@ -1654,6 +1664,7 @@ package com.voxelengine.worldmodel.oxel
 				
 				brightness = BrightnessPool.poolGet();
 				$ba = brightness.fromByteArray( $version, $ba );
+				brightness.attn = Globals.Info[type].attn;
 			}
 			
 			if ( OxelData.data_is_parent( oxelData ) )

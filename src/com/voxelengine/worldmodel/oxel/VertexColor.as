@@ -96,7 +96,7 @@ public class VertexColor {
 		_changed = false;
 		
 		lightAdd( Brightness.DEFAULT_ID, Brightness.DEFAULT_COLOR );
-		attnSet( Brightness.DEFAULT_ID, Brightness.DEFAULT_ATTEN );
+		attnSet( Brightness.DEFAULT_ID, Brightness.DEFAULT_BASE_ATTEN );
 	}
 	
 	public function attnGet( $lightID:uint ):uint {
@@ -114,7 +114,7 @@ if ( 0 == attn )
 if ( 0 == $lightID )
 	throw new Error( "VertexColor.attnSet - INVALID $lightID = 0" );
 if ( 0 == $attn || 255 < $attn ) {
-	$attn = Brightness.DEFAULT_ATTEN;
+	$attn = Brightness.DEFAULT_BASE_ATTEN;
 	throw new Error( "VertexColor.attnSet - attn == 0, reseting" ); }
 	
 		var val:uint = _colors[$lightID];

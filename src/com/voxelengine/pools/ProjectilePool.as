@@ -92,6 +92,7 @@ public final class ProjectilePool
 		pi.grainSize = 2;
 		pi.usesCollision = true;
 		pi.dynamicObject = true;
+		pi.baseLightLevel = 255;
 		
 		var mi:ModelInfo = Globals.g_modelManager.modelInfoGet(pi.templateName);
 		var modelAsset:String = mi.modelClass;
