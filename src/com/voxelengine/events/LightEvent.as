@@ -29,7 +29,7 @@ package com.voxelengine.events
 		public function get gc():GrainCursor  		{ return _gc; }
 		public function get lightID():uint 			{ return _lightID; }
 		
-		public function LightEvent( $eventType:String, $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $bubbles:Boolean = false, $cancellable:Boolean = false )
+		public function LightEvent( $eventType:String, $instanceGuid:String, $gc:GrainCursor, $lightID:uint = 0, $bubbles:Boolean = false, $cancellable:Boolean = false )
 		{
 			super( $eventType, $bubbles, $cancellable );
 			_instanceGuid = $instanceGuid;

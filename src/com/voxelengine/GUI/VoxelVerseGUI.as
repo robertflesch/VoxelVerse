@@ -48,14 +48,16 @@ package com.voxelengine.GUI
 		private const CROSS_HAIR_YELLOW:int = 0xCCFF00;
 		private const CROSS_HAIR_RED:int = 0xFF0000;
 		private var _crossHairColor:int = CROSS_HAIR_RED;
+		private var _crossHairHorizontal : Sprite = new Sprite();
+		private var _crossHairVertical : Sprite = new Sprite();
+		private var _crossHairAdded:Boolean = false;
+		private var _crossHairHide:Boolean = false;
 		
 		private var _built:Boolean = false;
 		private var _debugMenu:WindowDebugMenu = null;
 		private var _releaseMenu:WindowReleaseMenu = null;
 		
 		private var _fileReference:FileReference = new FileReference();
-		private var _crossHairHorizontal : Sprite = new Sprite();
-		private var _crossHairVertical : Sprite = new Sprite();
 
 		private var _dirty : Boolean;
 		
@@ -63,7 +65,6 @@ package com.voxelengine.GUI
 		private var _projectileEnabled:Boolean = true;
 		private var _hub:Hub = null;
 		private var _initialized:Boolean = false;
-		private var _crossHairAdded:Boolean = false;
 
 		static private var _currentInstance:VoxelVerseGUI = null;
 		static public function get currentInstance():VoxelVerseGUI 
@@ -200,14 +201,20 @@ Log.out( "openWindowCount: " + _openWindowCount );
 		private function deactivate(e:Event):void 
 		{
 			_crossHairColor = CROSS_HAIR_RED;
-			changeCrossHairs();
+			crossHairChange();
+			crossHairShow();
 		}
 		
 		private function activate(e:Event):void 
 		{
 			//Log.out( "VoxelVerseGUI.activate - change cross hairs:" + e.toString() );
 			_crossHairColor = CROSS_HAIR_YELLOW;
-			changeCrossHairs();
+			crossHairChange();
+			if ( _crossHairHide )
+				crossHairHide();
+			else
+				crossHairShow();
+			
 		}
 		
 		private function mouseMove(e:MouseEvent):void 
@@ -217,7 +224,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			{
 				//Log.out( "VoxelVerseGUI.mouseMove change cross hairs: " + e.toString() );
 				_crossHairColor = CROSS_HAIR_YELLOW;
-				changeCrossHairs();
+				crossHairChange();
 			}
 		}
 		
@@ -225,11 +232,26 @@ Log.out( "openWindowCount: " + _openWindowCount );
 		{
 			Globals.g_app.stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
 			_crossHairColor = CROSS_HAIR_RED;
-			changeCrossHairs();
+			crossHairChange();
 		}
 		
 		
-		private function addCrossHairs():void
+		private function addReleaseMenu():WindowReleaseMenu
+		{
+			if ( Globals.g_app.configManager.showButtons && Globals.g_app.configManager.showEditMenu )
+			{
+				crossHairAdd();
+			}
+			
+			return new WindowReleaseMenu();
+		}
+		
+		private function showHelpWindow():void
+		{
+			new WindowHelp();
+		}
+		
+		private function crossHairAdd():void
 		{
 			_crossHairHorizontal.graphics.beginFill(_crossHairColor);
 			_crossHairHorizontal.graphics.drawRect(0, 0, 50, 1);
@@ -245,7 +267,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			crossHairResize( null );
 		}
 
-		private function changeCrossHairs():void
+		private function crossHairChange():void
 		{
 			if ( !_crossHairAdded )
 			{
@@ -258,22 +280,23 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			_crossHairHorizontal = new Sprite();
 			_crossHairVertical = new Sprite();
 			
-			addCrossHairs();
+			crossHairAdd();
 		}
 		
-		private function addReleaseMenu():WindowReleaseMenu
-		{
-			if ( Globals.g_app.configManager.showButtons && Globals.g_app.configManager.showEditMenu )
-			{
-				addCrossHairs();
-			}
-			
-			return new WindowReleaseMenu();
+		public function crossHairShow():void {
+			if ( _crossHairHorizontal )
+				_crossHairHorizontal.visible = true;
+			if ( _crossHairVertical )
+				_crossHairVertical.visible = true;
 		}
 		
-		private function showHelpWindow():void
-		{
-			new WindowHelp();
+		public function crossHairHide():void {
+			if ( _crossHairHorizontal )
+				_crossHairHorizontal.visible = false;
+			if ( _crossHairVertical )
+				_crossHairVertical.visible = false;
+				
+			_crossHairHide = true;	
 		}
 		
 		private function guiEventHandler( e:GUIEvent ):void
@@ -281,19 +304,13 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			if ( GUIEvent.TOOLBAR_HIDE == e.type )
 			{
 				if ( _hub ) _hub.hide();
-				if ( _crossHairHorizontal )
-					_crossHairHorizontal.visible = false;
-				if ( _crossHairVertical )
-					_crossHairVertical.visible = false;
+				crossHairHide();
 
 			}
 			else if ( GUIEvent.TOOLBAR_SHOW == e.type )
 			{
-				if ( _crossHairHorizontal )
-					_crossHairHorizontal.visible = true;
-				if ( _crossHairVertical )
-					_crossHairVertical.visible = true;
 				if ( _hub ) _hub.show();
+				crossHairShow()
 			}
 		}
 		
@@ -309,10 +326,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 					_releaseMenu.visible = false;
 				if ( _hub )
 					_hub.visible = false;
-				if ( _crossHairHorizontal )
-					_crossHairHorizontal.visible = false;
-				if ( _crossHairVertical )
-					_crossHairVertical.visible = false;
+				crossHairHide();
 			}
 			
 		}
@@ -327,10 +341,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 					_releaseMenu.visible = true;
 				if ( _hub )
 					_hub.visible = true;
-				if ( _crossHairHorizontal )
-					_crossHairHorizontal.visible = true;
-				if ( _crossHairVertical )
-					_crossHairVertical.visible = true;
+				crossHairShow();
 				return;	
 			}
 			

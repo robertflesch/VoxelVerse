@@ -17,7 +17,6 @@ package com.voxelengine {
 	import com.voxelengine.worldmodel.oxel.OxelBad;
 	import com.voxelengine.worldmodel.ConfigManager;
 	import com.voxelengine.worldmodel.MouseKeyboardHandler;
-	import com.voxelengine.GUI.VoxelVerseGUI;
 	import com.voxelengine.renderer.Renderer;
 	import com.voxelengine.utils.GUID;
 

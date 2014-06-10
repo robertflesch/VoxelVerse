@@ -112,6 +112,7 @@ package {
 			stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, mouseUpRight);
 			
 			addEventListener( LightEvent.ADD, LightAdd.handleLightEvents );
+			addEventListener( LightEvent.CHANGE, LightAdd.handleLightEvents );
 			addEventListener( LightEvent.REMOVE, LightRemove.handleLightEvents );
 			
 			VoxelVerseGUI.currentInstance.init();

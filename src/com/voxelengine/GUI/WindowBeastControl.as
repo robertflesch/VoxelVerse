@@ -156,6 +156,8 @@ package com.voxelengine.GUI
 				throw new Error( "WindowBeastControl.buildActions - NO Actions built" );
 				_lastItemSelection = 0;
 			}
+			
+			VoxelVerseGUI.currentInstance.crossHairHide();
 		}
 		
 		//private function onRegionUnload ( le:RegionEvent ):void { 
