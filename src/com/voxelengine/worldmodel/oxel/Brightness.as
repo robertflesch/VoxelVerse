@@ -436,6 +436,23 @@ public class Brightness  {  // extends BrightnessData
 		return 1;
 	}
 
+	public function lightBrightestGet():LightInfo {
+		var maxAttn:uint = DEFAULT_BASE_ATTN;
+		var maxAttnIndex:uint;
+		// I need to know the average attn, but I dont know it here....
+		for ( var j:int; j < LIGHTS_MAX; j++ ) {
+			var li:LightInfo = _lights[j];
+			if ( null != li ) { // new light avg is greater then this lights avg, replace it.
+				if ( maxAttn < li.avg ) {
+					maxAttn = li.avg;
+					maxAttnIndex = j;
+				}
+			}
+		}
+		
+		return _lights[maxAttnIndex];
+	}
+	
 	public function lightAdd( $ID:uint, $color:uint, $avgAttn:uint, $isLight:Boolean = false ):void {
 		
 		if ( lightHas( $ID ) )
