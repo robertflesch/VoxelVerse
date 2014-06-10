@@ -52,6 +52,27 @@ package com.voxelengine.worldmodel.tasks.lighting
 				else
 					Log.out( "LightAdd.handleLightAddEvent - VoxelModel not found", Log.ERROR );
 			}
+			else if ( LightEvent.CHANGE == $le.type )
+			{
+				var vmc:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
+				if ( vmc ) {
+					var co:Oxel = vmc.oxel.childFind( $le.gc );
+					if ( co && valid( co ) )
+					{
+						// This oxel changed from solid to AIR or Translucent
+						// So I just need to rebalance it as an AIR oxel
+						const attenScaled:uint = co.brightness.attn * (co.gc.size()/16);
+						co.brightness.balanceAttnAll( attenScaled );
+						// REVIEW - Just grabbing the ID of the brightest light, but I THINK all will spread.
+						addTask( $le.instanceGuid, $le.gc, co.brightness.lightBrightestGet().ID, Globals.ALL_DIRS );
+					}
+					else
+						Log.out( "LightAdd.handleLightAddEvent - invalid light source", Log.ERROR );
+				}
+				else
+					Log.out( "LightAdd.handleLightAddEvent - VoxelModel not found", Log.ERROR );
+				
+			}
 		}
 		 
 		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightDir:uint ):void {
@@ -316,6 +337,5 @@ package com.voxelengine.worldmodel.tasks.lighting
 //					Log.out( "LightAdd.add - DUP gc: " + $o.gc.toString() );
 			}
 		}
-		
 	}
 }
