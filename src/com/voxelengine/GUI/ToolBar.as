@@ -8,6 +8,7 @@
 
 package com.voxelengine.GUI
 {
+	import com.voxelengine.events.LoadingEvent;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
@@ -44,13 +45,20 @@ package com.voxelengine.GUI
 			display( 0, Globals.g_renderer.height - TOOLBAROUTLINE_HEIGHT );
 
 			// These have to be AFTER display for some odd reason or they wont work.
-			buildActions();
 			resizeToolBar( null );
 			
 			addListeners();
 			//Globals.g_app.dispatchEvent( new GUIEvent( GUIEvent.TOOLBAR_SHOW ) );
+			
+			Globals.g_app.addEventListener(LoadingEvent.LOAD_COMPLETE, onModelLoadComplete );
 		}
 		
+		private function onModelLoadComplete( event:LoadingEvent):void
+		{
+			Globals.g_app.removeEventListener( LoadingEvent.LOAD_COMPLETE, onModelLoadComplete );
+			buildActions();
+		}
+
 		private function onRemoved( event:UIOEvent ):void
  		{
 			removeListeners();

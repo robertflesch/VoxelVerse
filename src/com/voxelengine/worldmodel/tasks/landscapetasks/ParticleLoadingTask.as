@@ -43,7 +43,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			if ( ba )
 			{
 				loadByteArray( ba );
-				Log.out("ParticleLoadingTask.start - loadByteArray: " + fileName + " took: " + (getTimer() - timer) );
+				//Log.out("ParticleLoadingTask.start - loadByteArray: " + fileName + " took: " + (getTimer() - timer) );
 				return;
 			}
 			loadFromFile( fileName );

@@ -403,7 +403,6 @@ package com.voxelengine.worldmodel.models
 			instanceInfo.usesCollision = true;
 			$vm.stateSet( "Ride");
 			camera.index = 2;	
-			Globals.g_app.dispatchEvent(new GUIEvent(GUIEvent.TOOLBAR_HIDE));
 		}
 	
 		override public function loseControl( $vm:VoxelModel ):void	{

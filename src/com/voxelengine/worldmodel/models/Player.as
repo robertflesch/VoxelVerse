@@ -47,7 +47,8 @@
 			Globals.g_app.addEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
 			clipVelocityFactor = AVATAR_CLIP_FACTOR;
 			modelInfo.editable = false;
-			takeControl( null );
+			if ( !instanceInfo.owner )
+				takeControl( null );
 			//visible = true;
 			
 			//_ct.markersAdd();

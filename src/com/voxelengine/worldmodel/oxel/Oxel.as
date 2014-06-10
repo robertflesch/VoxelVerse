@@ -215,7 +215,7 @@ package com.voxelengine.worldmodel.oxel
 				{
 					// We should inherit the min grain size from our parent
 					var minGrain:int = vm_get().minGrain
-					Log.out( "Oxel.vm_initialize - Grabbing sub vertex manager: gc.grain: " + gc.grain + "  vm_get().minGrain: " + vm_get().minGrain );
+					//Log.out( "Oxel.vm_initialize - Grabbing sub vertex manager: gc.grain: " + gc.grain + "  vm_get().minGrain: " + vm_get().minGrain );
 					_vertMan = new VertexManager();
 					_vertMan.minGrain = minGrain;
 				}

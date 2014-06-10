@@ -258,7 +258,6 @@ package com.voxelengine.worldmodel.models
 				script.instanceGuid = instanceGuid;
 				//script.event( OxelEvent.CREATE );
 				// Only person using this is the AutoControlObjectScript
-				Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.CREATE, owner.instanceInfo.instanceGuid ) );
 			}
 
 			return script;

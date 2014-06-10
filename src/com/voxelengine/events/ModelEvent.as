@@ -23,7 +23,6 @@ package com.voxelengine.events
 		static public const DETACH:String					= "DETACH";
 		static public const ATTACH:String					= "ATTACH";
 		
-		static public const CREATE:String 					= "CREATE";
 		static public const DESTROYED:String				= "DESTROYED";
 
 		static public const INFO_LOADED:String				= "INFO_LOADED";

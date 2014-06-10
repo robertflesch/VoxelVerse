@@ -111,11 +111,11 @@ package {
 			stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, mouseDownRight);
 			stage.addEventListener(MouseEvent.RIGHT_MOUSE_UP, mouseUpRight);
 			
-			VoxelVerseGUI.currentInstance.init();
 			addEventListener( LightEvent.ADD, LightAdd.handleLightEvents );
 			addEventListener( LightEvent.REMOVE, LightRemove.handleLightEvents );
-
 			
+			VoxelVerseGUI.currentInstance.init();
+
 			if ( false == WindowSplash.isActive )
 				WindowSplash.create();
 		}
@@ -123,14 +123,18 @@ package {
 		// after the splash and config have been loaded
 		public function onSplashLoaded( event : LoadingEvent ):void
 		{
+			// TODO I dont like that some objects are created in globals, others are created here - RSF
 			removeEventListener(LoadingEvent.SPLASH_LOAD_COMPLETE, onSplashLoaded);
 			_poolManager = new PoolManager();
 			Globals.g_regionManager = new RegionManager();
 			_configManager = new ConfigManager();
+			_poolManager = new PoolManager();
 			
 			addEventListener(Event.ENTER_FRAME, enterFrame);
 			addEventListener(Event.DEACTIVATE, deactivate);
 			addEventListener(Event.ACTIVATE, activate);
+			
+			VoxelVerseGUI.currentInstance.buildGUI();	
 		}
 
 		private function enterFrame(e:Event):void 

@@ -1127,7 +1127,7 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 			// if the uncompress fails, it simply continues
 			try { 
 				$ba.uncompress();
-				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
+				//Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
 			}
 			catch (error:Error) {
 				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray is NOT compressed: " + modelInfo.fileName );
@@ -1222,7 +1222,6 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 		
 		protected function oxelLoaded():void
 		{
-			//trace( "VoxelModel.oxelLoaded" );			
 			calculateCenter();
 		}
 		
@@ -1641,15 +1640,20 @@ throw new Error( "VoxelModel.write - How to get handle ID for block add here?" )
 		
 		public function takeControl($vm:VoxelModel):void
 		{
+			Log.out( "VoxelModel.takeControl of : " + modelInfo.fileName + " by: " + $vm.modelInfo.fileName );
 			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			
 			Globals.player.loseControl(this);
 			Globals.controlledModel = this;
 			
+			Globals.g_app.dispatchEvent(new GUIEvent(GUIEvent.TOOLBAR_HIDE));
+			
 			// adds the player to the child list
 			childAdd($vm);
 			camera.index = 0;
+			
+			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.TAKE_CONTROL, instanceInfo.instanceGuid ) );
 		}
 		
 		public function loseControl($vm:VoxelModel):void

@@ -66,7 +66,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			//Log.out( "CompletedModel.start - completedModel: " + vm.instanceInfo.templateName + "  count: " + _count );
 			if ( vm is Player )
 			{
-				Globals.g_app.dispatchEvent( new LoadingEvent( LoadingEvent.PLAYER_LOAD_COMPLETE ) );
+				Globals.g_app.dispatchEvent( new LoadingEvent( LoadingEvent.PLAYER_LOAD_COMPLETE, vm.instanceInfo.instanceGuid ) );
 				_playerLoaded = true;
 			}
 			

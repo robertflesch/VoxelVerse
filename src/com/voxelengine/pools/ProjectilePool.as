@@ -25,7 +25,7 @@ public final class ProjectilePool
 	
 	static public function remaining():uint { return _counter; }
 	static public function total():uint { return _pool.length; }
-	static public function totalUsed():uint { return _pool.length - _counter; }
+	static public function totalUsed():uint { return _pool ? _pool.length - _counter : GROWTH_VALUE; }
 
 	
 	public static function initialize( $initialPoolSize:uint, $growthValue:uint ):void 

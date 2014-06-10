@@ -43,7 +43,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			if ( vm && ba )		
 			{
 				vm.IVMLoadCompressed( ba ); // why is it compressed?
-				Log.out( "LoadFromByteArray.start - completed - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime) + " guid: " + _guid);
+				//Log.out( "LoadFromByteArray.start - completed - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime) + " guid: " + _guid);
 			}
 			else
 				Log.out( "LoadModelFromIVM.loadByteArray - FAILED to find either voxel model or byte array: guid: " + _guid + "  data: " + _layer.data , Log.ERROR );

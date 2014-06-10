@@ -1,6 +1,7 @@
 
 package com.voxelengine.GUI
 {
+	import com.voxelengine.events.ModelEvent;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.KeyboardEvent;
@@ -87,7 +88,6 @@ public class WindowBeastControlQuery extends VVContainer
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _beastInstanceGuid );
 			if ( vm )
 			{
-				new WindowBeastControl( _beastInstanceGuid );
 				remove();
 				vm.takeControl( Globals.player );
 			}

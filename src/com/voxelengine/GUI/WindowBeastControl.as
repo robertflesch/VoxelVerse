@@ -37,6 +37,11 @@ package com.voxelengine.GUI
 		private const ITEM_COUNT:int = 10;
 		private var _windowHeading:WindowHeading = null;
 		
+		static public function handleModelEvents( $me:ModelEvent ):void {
+			if ( ModelEvent.TAKE_CONTROL == $me.type )
+				new WindowBeastControl( $me.instanceGuid );
+		}
+		
 		public function WindowBeastControl( $beastInstanceGuid:String ):void 
 		{ 
 			_beastInstanceGuid = $beastInstanceGuid;
@@ -45,6 +50,9 @@ package com.voxelengine.GUI
 			addEventListener(UIOEvent.REMOVED, onRemoved );
 			
 			_windowHeading = new WindowHeading( _beastInstanceGuid );
+			
+			//visible = false;
+			//_windowHeading.visible = false;
 		} 
 		
 		// This function sets the underlying data to the selected info. But does not act on that info.

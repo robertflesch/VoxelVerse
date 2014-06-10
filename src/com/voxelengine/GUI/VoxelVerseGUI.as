@@ -361,6 +361,8 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			Globals.g_app.addEventListener(Event.DEACTIVATE, deactivate);
 			Globals.g_app.addEventListener(Event.ACTIVATE, activate);
 			Globals.g_app.stage.addEventListener(Event.MOUSE_LEAVE, mouseLeave);
+			
+			Globals.g_app.addEventListener(ModelEvent.TAKE_CONTROL, WindowBeastControl.handleModelEvents );
 		}
 
 		private function addKeyboardListeners(event : Event) : void
@@ -417,7 +419,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			//Log.out( "VVGui.onModelLoadingComplete" );
 			Globals.g_app.removeEventListener( LoadingEvent.LOAD_COMPLETE, onModelLoadingComplete );
 			addKeyboardListeners( event );
-			buildGUI();	
+//			buildGUI();	
 		}
 		
 		private function onKeyPressed( e : KeyboardEvent) : void
