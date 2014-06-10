@@ -850,12 +850,14 @@ package com.voxelengine.worldmodel.oxel
 					_brightness = BrightnessPool.poolGet();
 				for each ( var childForBrightness:Oxel in _children ) 
 				{
-					if ( childForBrightness._brightness )
+					if ( childForBrightness._brightness ) {
 						_brightness.childAddAll( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size() );
+						// Need to set this from a valid child
+						// Parent should have same brightness attn as children did.
+						_brightness.attn = childForBrightness.brightness.attn;
+					}
 				}
 			}
-			// Parent should have same brightness attn as children did.
-			_brightness.attn = childForBrightness.brightness.attn;
 			nodes += 8;
 			childrenPrune();
 			neighborsInvalidate();
