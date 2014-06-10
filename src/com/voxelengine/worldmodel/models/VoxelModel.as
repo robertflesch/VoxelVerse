@@ -483,11 +483,8 @@ package com.voxelengine.worldmodel.models
 					// we removed a solid block, and are replacing it with air or transparent
 					const attenScaled:uint = changedOxel.brightness.attn * ($gc.size()/16);
 					changedOxel.brightness.balanceAttnAll( attenScaled );
-					if ( changedOxel.brightness.valuesHas() ) {
-throw new Error( "VoxelModel.write - How to get handle ID for block add here?" );					
-						var le1:LightEvent = new LightEvent( LightEvent.CHANGE, instanceInfo.instanceGuid, changedOxel.gc, changedOxel.brightness.lastLightID );
-						Globals.g_app.dispatchEvent( le1 );
-					}
+					if ( changedOxel.brightness.valuesHas() )
+						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.CHANGE, instanceInfo.instanceGuid, changedOxel.gc ) );
 				}
 			}
 			
