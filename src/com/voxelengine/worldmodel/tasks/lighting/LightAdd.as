@@ -42,8 +42,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						lo.brightness.lightAdd( $le.lightID, ti.color, Brightness.MAX, true );
-						lo.brightness.attn = ti.attn;
+						lo.brightness.lightAdd( $le.lightID, ti.color, Brightness.MAX_LIGHT_LEVEL, true );
+						lo.brightness.fallOffPerMeter = ti.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
 					}
 					else
@@ -61,7 +61,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					{
 						// This oxel changed from solid to AIR or Translucent
 						// So I just need to rebalance it as an AIR oxel
-						const attenScaled:uint = co.brightness.attn * (co.gc.size()/16);
+						const attenScaled:uint = co.brightness.fallOffPerMeter * (co.gc.size()/16);
 						co.brightness.balanceAttnAll( attenScaled );
 						// REVIEW - Just grabbing the ID of the brightest light, but I THINK all will spread.
 						addTask( $le.instanceGuid, $le.gc, co.brightness.lightBrightestGet().ID, Globals.ALL_DIRS );
@@ -111,6 +111,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 						if ( !lo.gc.is_equal( _gc ) )
 								Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
 
+						if ( lo.gc.eval( 6, 2, 1, 2) )
+							trace( "watch downward light" );
 						//Log.out ( "LightAdd.start - gc:" + lo.gc.toString() + " br: " + lo.brightness.toString() );
 						lo.brightness.lightGet( lightID ).processed = true;
 						spreadToNeighbors( lo );
@@ -136,7 +138,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( !$o.brightness ) { // does this oxel already have a brightness?
 				$o.brightness = BrightnessPool.poolGet();
-				$o.brightness.attn = Globals.Info[$o.type].attn;
+				$o.brightness.fallOffPerMeter = Globals.Info[$o.type].attn;
 			}
 
 			return true;
@@ -155,13 +157,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( !valid( no ) ) continue;
 				if ( no.isLight ) continue;
 				if ( checkIfProcessed( no ) ) continue;
-			
+				
 				if ( no.gc.grain > $lo.gc.grain )  // implies it has no children.
 					projectOnLargerGrain( $lo, no, face );
 				else if ( no.gc.grain == $lo.gc.grain ) // equal grain can have children
 					projectOnEqualGrain( $lo, no, face );
 				else
 					Log.out( "LightAdd.spreadToNeighbors - NEIGHBOR GRAIN IS SMALLER: ", Log.ERROR );
+					
+					
 			}
 		}
 		
@@ -225,8 +229,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( currentLo.parent )
 					currentLo = currentLo.parent;
 			}
+			
+			Log.out( "Brightness.projectOnLargerGrain ----------------------------------------------------" );
+			Log.out( "bt: \n" + bt.toString() );
+			Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
 			var changed:Boolean = $no.brightness.brightnessMerge( lightID, bt );
+			Log.out( "no: \n" + $no.brightness.toString() );
+			Log.out( "Brightness.projectOnLargerGrain ----------------------------------------------------" );
 			
 			BrightnessPool.poolReturn( bt );
 			BrightnessPool.poolReturn( btp );
@@ -248,9 +258,22 @@ package com.voxelengine.worldmodel.tasks.lighting
 
 		// Checks if this oxel has been processed
 		// Only transparent oxels are processed, meaning they have had all of their neighbors evaluated for the light content.
-		private function checkIfProcessed( $o:Oxel ):Boolean	{
+		private function checkIfProcessed( $o:Oxel ):Boolean {
+			if ( $o.childrenHas() )
+			{
+				for each ( var child:Oxel in $o.children ) {
+					if ( child.isSolid ) return false;
+					if ( !checkIfProcessed( child ) ) return false;
+				}
+				// lets mark $o as processed for this lightID
+				if ( $o.brightness && $o.brightness.lightHas( lightID ) )
+					$o.brightness.lightGet( lightID ).processed = true;
+				return true;
+			}
+			
 			if ( $o.brightness && $o.brightness.lightHas( lightID ) && true == $o.brightness.lightGet( lightID ).processed )
 				return true;
+				
 			return false;
 		}
 		

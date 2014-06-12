@@ -2,7 +2,7 @@
   Copyright 2011-2013 Robert Flesch
   All rights reserved.  This product contains computer programs, screen
   displays and printed documentation which are original works of
-  authorship protected under United States Copyright Act.
+  authorship protected under United States Copyright Act. 
   Unauthorized reproduction, translation, or display is prohibited.
 ==============================================================================*/
 
@@ -11,6 +11,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
 	import com.voxelengine.events.LightEvent;
+	import com.voxelengine.pools.BrightnessPool;
 	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.oxel.Brightness;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
@@ -26,6 +27,71 @@ package com.voxelengine.worldmodel.tasks.lighting
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.REMOVE == $le.type )
 				addTask( $le.instanceGuid, $le.gc, $le.lightID );
+			else if ( LightEvent.BLOCK == $le.type )
+			{
+				// The only time this matters is if I have only TWO side that are translucent
+				// All other times this blockage doesnt matter.
+				Log.out( "LightRemove.handleLightEvents - BLOCK - TODO" );
+				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
+				if ( vm ) {
+					var lo:Oxel = vm.oxel.childFind( $le.gc );
+					if ( lo && valid( lo ) ) {
+						var airCount:int;
+						var moreCount:int;
+						for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ ) {
+							var no:Oxel = lo.neighbor(face);
+							if ( Globals.BAD_OXEL == no )
+								continue;
+							if ( no.isSolid )
+								continue;
+							
+							var lightIDsToBeRemoved:Vector.<uint>	= new Vector.<uint>;
+							// if one greater and there are two air, then this is only passage.
+							// if one is greater and there are three air...
+							if ( no.hasAlpha ) {
+								airCount++;
+								var bt:Brightness;
+								// Get the child bt from a larger parent
+								// TODO - Need to handle larger then size difference!
+								if ( no.gc.grain > lo.gc.grain ) {
+									var childID:uint = Oxel.childIdOpposite( face, lo.gc.childId() );	
+									bt = BrightnessPool.poolGet();
+									no.brightness.childGetAllLights( childID, bt );
+								}
+								else {
+									if ( null == no.brightness )
+										continue;
+									bt = no.brightness;
+								}
+
+								var lightIDs:Vector.<uint> = bt.lightIDNonDefaultUsedGet();
+								var conductsLights:Boolean;
+								// Default ID excluded
+								for each ( var lightID:uint in lightIDs )
+								{
+									if ( 0 == lightID || Brightness.DEFAULT_LIGHT_ID == lightID )
+										continue;
+									if ( bt.lightHas( lightID ) && lo.brightness.lightHas( lightID ) && bt.lightGet( lightID ).avg < lo.brightness.lightGet( lightID ).avg )
+									{
+										lightIDsToBeRemoved.push( lightID );
+										conductsLights = true;
+									}
+									
+									
+								}
+								if ( conductsLights )
+									moreCount++;
+							}
+						}
+						
+						// if I am the sole light, then all of the other blocks I encounter should 
+						// have a lower avg value.
+						Log.out( "LightRemove.BLOCK airCount: " + airCount + "  moreCount: " + moreCount + "  lightIDsToBeRemoved: " + lightIDsToBeRemoved );
+						for each ( var lightIDToBeRemoved:uint in lightIDsToBeRemoved )
+							addTask( $le.instanceGuid, $le.gc, lightIDToBeRemoved );
+					}
+				}
+			}
 		}
 		
 		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {

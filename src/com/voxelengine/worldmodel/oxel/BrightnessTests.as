@@ -53,7 +53,7 @@ public class BrightnessTests  {
 			else	
 				Log.out( "BrightnessTests.resetTests	FAIL 1", Log.ERROR );
 
-			bt.setAll( 1, Brightness.MAX ); 
+			bt.setAll( 1, Brightness.MAX_LIGHT_LEVEL ); 
 			if ( DefaultMax == bt.toString() )
 				Log.out( "BrightnessTests.resetTests	Pass 2" );
 			else	
@@ -85,7 +85,7 @@ public class BrightnessTests  {
 			// $lightId - doesnt have id
 			var lightId:uint = 101;
 			try {
-				bt.setAll( lightId, Brightness.MAX ); 
+				bt.setAll( lightId, Brightness.MAX_LIGHT_LEVEL ); 
 			} catch (e:Error) {
 				if ( ColorNotDefined == e.message )
 					Log.out( "BrightnessTests.setAllTests	pass 1" );
@@ -95,15 +95,15 @@ public class BrightnessTests  {
 
 			bt.reset();
 			try {
-				bt.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
+				bt.setAll( Brightness.DEFAULT_LIGHT_ID, Brightness.MAX_LIGHT_LEVEL );
 				Log.out( "BrightnessTests.setAllTests	pass 2" );
 			} catch (e:Error) {
 				Log.out( "BrightnessTests.setAllTests	FAIL 2", Log.ERROR );
 			}
 			
 			bt.reset();
-			bt.lightAdd( lightId, 0x00ff0000, Brightness.MAX );
-			bt.setAll( lightId, Brightness.MAX );
+			bt.lightAdd( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
+			bt.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
 			if ( OneOhOneMax == bt.toString() )
 				Log.out( "BrightnessTests.setAllTests	pass 3" );
 			else
@@ -126,8 +126,8 @@ public class BrightnessTests  {
 			
 			var lob:Brightness = BrightnessPool.poolGet();
 			var lightId:uint = 101;
-			lob.lightAdd( lightId, 0x00ff0000, Brightness.MAX );
-			lob.setAll( lightId, Brightness.MAX );
+			lob.lightAdd( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
+			lob.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
 			var grainUnits:uint = 16;
 			
 			var bt:Brightness = BrightnessPool.poolGet();
@@ -154,7 +154,7 @@ public class BrightnessTests  {
 			Log.out( "BrightnessTests.childAddTests	START - incomplete" );
 			var bt:Brightness = BrightnessPool.poolGet();
 			var btp:Brightness = BrightnessPool.poolGet();
-			bt.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
+			bt.setAll( Brightness.DEFAULT_LIGHT_ID, Brightness.MAX_LIGHT_LEVEL );
 			const grainUnits:uint = 16;
 			for ( var childID:uint = 0; childID < 8; childID++ ) {	
 				btp.reset();
@@ -172,8 +172,8 @@ public class BrightnessTests  {
 			
 			var lob:Brightness = BrightnessPool.poolGet();
 			var lightId:uint = 101;
-			lob.lightAdd( lightId, 0x00ff0000, Brightness.MAX );
-			lob.setAll( lightId, Brightness.MAX );
+			lob.lightAdd( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
+			lob.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
 			
 			var btp:Brightness = BrightnessPool.poolGet();
 			// make the btp (parent) grain 5, and add a light to it.

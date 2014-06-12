@@ -95,8 +95,8 @@ public class VertexColor {
 		_colors = new Dictionary(true);
 		_changed = false;
 		
-		lightAdd( Brightness.DEFAULT_ID, Brightness.DEFAULT_COLOR );
-		attnSet( Brightness.DEFAULT_ID, Brightness.DEFAULT_BASE_ATTEN );
+		lightAdd( Brightness.DEFAULT_LIGHT_ID, Brightness.DEFAULT_COLOR );
+		attnSet( Brightness.DEFAULT_LIGHT_ID, Brightness.DEFAULT_BASE_ATTEN );
 	}
 	
 	public function attnGet( $lightID:uint ):uint {

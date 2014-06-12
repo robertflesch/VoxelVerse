@@ -161,7 +161,7 @@ package com.voxelengine.worldmodel.models
 				}
 				if ( !oxel.brightness )
 					oxel.brightness = BrightnessPool.poolGet();
-				oxel.brightness.setAll( Brightness.DEFAULT_ID, Brightness.MAX );
+				oxel.brightness.setAll( Brightness.DEFAULT_LIGHT_ID, Brightness.MAX_LIGHT_LEVEL );
 				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
 				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
 			}
@@ -172,7 +172,7 @@ package com.voxelengine.worldmodel.models
 				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
 				if ( !oxel.brightness )
 					oxel.brightness = BrightnessPool.poolGet();
-				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_ID );
+				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
 				li.color = cursorColorRainbow();
 			}
 			

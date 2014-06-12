@@ -481,10 +481,16 @@ package com.voxelengine.worldmodel.models
 				if ( Globals.isSolid( oldType ) && Globals.hasAlpha( $type ) ) {
 					
 					// we removed a solid block, and are replacing it with air or transparent
-					const attenScaled:uint = changedOxel.brightness.attn * ($gc.size()/16);
+					const attenScaled:uint = changedOxel.brightness.fallOffPerMeter * ($gc.size()/16);
 					changedOxel.brightness.balanceAttnAll( attenScaled );
 					if ( changedOxel.brightness.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.CHANGE, instanceInfo.instanceGuid, changedOxel.gc ) );
+				} 
+				else if ( Globals.isSolid( $type ) && Globals.hasAlpha( oldType ) ) {
+					
+					// we add a solid block, and are replacing the transparent block that was there
+					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
+						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.BLOCK, instanceInfo.instanceGuid, changedOxel.gc ) );
 				}
 			}
 			
@@ -1157,8 +1163,8 @@ package com.voxelengine.worldmodel.models
 			oxelReset();
 			oxel = OxelPool.poolGet();
 			oxel.brightness = BrightnessPool.poolGet();
-			if ( oxel.brightness.lightHas( Brightness.DEFAULT_ID ) ) {
-				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_ID );
+			if ( oxel.brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
+				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
 				li.setAll( instanceInfo.baseLightLevel );
 			}
 			

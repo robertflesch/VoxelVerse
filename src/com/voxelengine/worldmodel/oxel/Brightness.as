@@ -34,14 +34,15 @@ public class Brightness  {  // extends BrightnessData
 	 *        |
 	 *        \/
 	 */
-	public static const MAX:uint = 0xff;
-	public static const DEFAULT_SIGMA:uint = 2;
-	public static const DEFAULT_ID:uint = 1;
-	public static const DEFAULT_BASE_ATTN:uint = 0x33; // out of 255
-	public static const DEFAULT_MATERIAL_ATTN:uint = 0x33; // how much attn per unit meter
-	public static const DEFAULT_PER_DISTANCE:int = 16;
-	public static const DEFAULT_COLOR:uint = 0x00ffffff;
-	public static const DEFAULT_LIGHT_INFO_ATTN:uint = 0x33333333;
+	public static const MAX_LIGHT_LEVEL:uint = 0xff;
+	public static const DEFAULT_LIGHT_ID:uint = 1;
+	
+	private static const DEFAULT_PER_DISTANCE:int = 16;
+	private static const DEFAULT_COLOR:uint = 0x00ffffff;
+	private static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
+	private static const DEFAULT_FALL_OFF_PER_METER:uint = 0x32; // how much attn per unit meter
+	private static const DEFAULT_SIGMA:uint = 2;
+	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
 
 	static public const B000:uint = 0;
 	static public const B001:uint = 1;
@@ -52,35 +53,36 @@ public class Brightness  {  // extends BrightnessData
 	static public const B110:uint = 6;
 	static public const B111:uint = 7;
 	
-	static private var _s_sb:Brightness = new Brightness(); // scratchBrightness
-//	static public function scratch():Brightness { return _s_sb; }
+	// Just a convience value to prevent the recalculation of the color values unless needed
+	private var _compositeColor:uint;
 
-	private var _composite:uint;
-
-	private var _attn:uint = DEFAULT_MATERIAL_ATTN;  // default attnuation per meter
-	public function get attn():uint { return _attn; }
-	public function set attn( val:uint ):void { _attn = val; }
+	 // default attenuation per meter, TODO, to be used per meter.
+	private var _fallOffPerMeter:uint = DEFAULT_FALL_OFF_PER_METER; 
+	public function get fallOffPerMeter():uint { return _fallOffPerMeter; }
+	public function set fallOffPerMeter( val:uint ):void { _fallOffPerMeter = val; }
 	
-	private var _lights:Vector.<LightInfo> = new Vector.<LightInfo>(4, true);
 	static private const LIGHTS_MAX:int = 4;
+	private var _lights:Vector.<LightInfo> = new Vector.<LightInfo>(4, true);
 	private var _lightCount:int;
 	
 	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
 	public function Brightness():void {
-		lightAdd( DEFAULT_ID, DEFAULT_COLOR, DEFAULT_BASE_ATTN );
+		lightAdd( DEFAULT_LIGHT_ID, DEFAULT_COLOR, DEFAULT_BASE_LIGHT_LEVEL );
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
-//		throw new Error( "Brightness.toByteArray - NEEDS TO BE TESTED" );
 
+		// calculate how many lights this oxel is influcence by
 		var lightCount:uint;
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			if ( null != _lights[i] )
 				lightCount++;
 		}
+		// now write the count of lights to the byte array
 		$ba.writeByte( lightCount );
 
+		// now for each light, write its contents to the byte array
 		for ( var j:int; j < LIGHTS_MAX; j++ ) {
 			var li:LightInfo = _lights[j];
 			if ( null != li ) {
@@ -88,14 +90,11 @@ public class Brightness  {  // extends BrightnessData
 			}
 		}
 		return $ba;
-		
 	}
 	
 	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
-//		throw new Error( "Brightness.fromByteArray - NEEDS TO BE TESTED" );
-		
 		if ( Globals.VERSION_001 == $version ) {
-			// Just throw away this information for now.
+			// Old style, Just throw away this information.
 			$ba.readInt();
 			$ba.readInt();
 			$ba.readInt();
@@ -106,9 +105,11 @@ public class Brightness  {  // extends BrightnessData
 			$ba.readInt();			
 		}
 		else {
+			// How many light do I need to read?
 			var lightCount:int = $ba.readByte();
+			// Now read each light
 			for ( var i:int = 0; i < lightCount; i++ ) {
-				_lights[i] = new LightInfo(0, 0, DEFAULT_LIGHT_INFO_ATTN, false );
+				_lights[i] = new LightInfo(0, 0, DEFAULT_LIGHT_LEVEL_SETTER, false );
 				_lights[i].fromByteArray( $ba );
 			}
 		}
@@ -116,12 +117,11 @@ public class Brightness  {  // extends BrightnessData
 	}
 
 	public function toString():String {
-		
 		var outputString:String = "";
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li ) {
-				outputString += "light: " + i + "  " + li.toString();
+				outputString += "\tlight: " + i + "  " + li.toString();
 			}
 		}
 		return outputString;
@@ -146,7 +146,7 @@ public class Brightness  {  // extends BrightnessData
 		if ( null == li )
 			throw new Error( "Brightness.setAll - light not defined" );
 			
-		if ( Brightness.MAX < $attn )
+		if ( Brightness.MAX_LIGHT_LEVEL < $attn )
 			throw new Error( "Brightness.setAll - attn too high" );
 
 		li.setAll( $attn );
@@ -156,11 +156,69 @@ public class Brightness  {  // extends BrightnessData
 
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
-			if ( null != li )
-				if ( DEFAULT_BASE_ATTN + DEFAULT_SIGMA < li.avg )
-					return true
+			if ( null != li ) {
+				//if ( DEFAULT_BASE_LIGHT_LEVEL + DEFAULT_SIGMA < li.avg )
+				if ( DEFAULT_BASE_LIGHT_LEVEL < li.avg )
+					return true;
+			}
 		}
 		
+		return false;
+	}
+	
+	public function valuesHasForFace( $ID:uint, $face:uint ):Boolean	{
+
+		if ( !lightHas( $ID ) )
+			return false;
+			
+		var li:LightInfo = lightGet( $ID );
+		if ( null != li )
+		{
+			//const THRESHOLD:uint = DEFAULT_BASE_LIGHT_LEVEL + DEFAULT_SIGMA;
+			const THRESHOLD:uint = DEFAULT_BASE_LIGHT_LEVEL;
+			if ( Globals.POSX == $face ) {
+				
+				if ( THRESHOLD <= li.b100 ) { return true }
+				if ( THRESHOLD <= li.b110 ) { return true }
+				if ( THRESHOLD <= li.b111 ) { return true }
+				if ( THRESHOLD <= li.b101 ) { return true }
+			}
+			else if ( Globals.NEGX == $face ) {
+
+				if ( THRESHOLD <= li.b000 ) { return true }
+				if ( THRESHOLD <= li.b010 ) { return true }
+				if ( THRESHOLD <= li.b011 ) { return true }
+				if ( THRESHOLD <= li.b001 ) { return true }
+			}
+			else if ( Globals.POSY == $face ) {
+
+				if ( THRESHOLD <= li.b010 ) { return true }
+				if ( THRESHOLD <= li.b110 ) { return true }
+				if ( THRESHOLD <= li.b111 ) { return true }
+				if ( THRESHOLD <= li.b011 ) { return true }
+			}
+			else if ( Globals.NEGY == $face ) {
+
+				if ( THRESHOLD <= li.b000 ) { return true }
+				if ( THRESHOLD <= li.b100 ) { return true }
+				if ( THRESHOLD <= li.b101 ) { return true }
+				if ( THRESHOLD <= li.b001 ) { return true }
+			}
+			else if ( Globals.POSZ == $face ) {
+
+				if ( THRESHOLD <= li.b001 ) { return true }
+				if ( THRESHOLD <= li.b011 ) { return true }
+				if ( THRESHOLD <= li.b111 ) { return true }
+				if ( THRESHOLD <= li.b101 ) { return true }
+			}
+			else if ( Globals.NEGZ == $face ) {
+				
+				if ( THRESHOLD <= li.b000 ) { return true }
+				if ( THRESHOLD <= li.b010 ) { return true }
+				if ( THRESHOLD <= li.b110 ) { return true }
+				if ( THRESHOLD <= li.b100 ) { return true }
+			}
+		}
 		return false;
 	}
 	
@@ -169,10 +227,10 @@ public class Brightness  {  // extends BrightnessData
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li )
-				li.setAll( DEFAULT_BASE_ATTN );
+				li.setAll( DEFAULT_BASE_LIGHT_LEVEL );
 		}
 
-		_attn = DEFAULT_BASE_ATTN;
+		fallOffPerMeter = DEFAULT_FALL_OFF_PER_METER;
 	}
 
 	public function childAddAll( $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
@@ -186,11 +244,13 @@ public class Brightness  {  // extends BrightnessData
 	public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
 
 		// This is special case which needs to take into account attn
-		var localattn:uint = _attn * $grainUnits/DEFAULT_PER_DISTANCE
+		var localattn:uint = fallOffPerMeter * $grainUnits/DEFAULT_PER_DISTANCE
 		var sqrattn:Number =  Math.sqrt( 2 * (localattn * localattn) );
 		var csqrattn:Number =  Math.sqrt( (localattn * localattn) + (sqrattn * sqrattn) );
 		
 		var sli:LightInfo =  $b.lightGet( $ID );	
+		if ( null == sli )
+			throw new Error( "Brightness.childAdd - SOURCE light not defined" );
 		if ( !lightHas( $ID ) )
 			lightAdd( $ID, sli.color, sli.avg );
 		var li:LightInfo =  lightGet( $ID );		
@@ -287,6 +347,15 @@ public class Brightness  {  // extends BrightnessData
 			if ( li.b110 < sli.b110 - localattn )  li.b110 = sli.b110 - localattn;
 			li.b111 = sli.b111;
 		}
+		
+		if ( li.b000 < DEFAULT_BASE_LIGHT_LEVEL ) li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b001 < DEFAULT_BASE_LIGHT_LEVEL ) li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b010 < DEFAULT_BASE_LIGHT_LEVEL ) li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b011 < DEFAULT_BASE_LIGHT_LEVEL ) li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b100 < DEFAULT_BASE_LIGHT_LEVEL ) li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b101 < DEFAULT_BASE_LIGHT_LEVEL ) li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b110 < DEFAULT_BASE_LIGHT_LEVEL ) li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b111 < DEFAULT_BASE_LIGHT_LEVEL ) li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
 	}
 	
 	// creates a virtual brightness(light) the light from a parent to a child brightness with all lights
@@ -395,10 +464,19 @@ public class Brightness  {  // extends BrightnessData
 		}					
 	}
 
-	private function avg( $ID:uint ):uint {
+	public function get avg():uint {
+		var count:int;
+		var avgTotal:uint;
+		// I need to know the average attn, but I dont know it here....
+		for ( var j:int; j < LIGHTS_MAX; j++ ) {
+			var li:LightInfo = _lights[j];
+			if ( null != li ) { // new light avg is greater then this lights avg, replace it.
+				avgTotal += li.avg;
+				count++;
+			}
+		}
 		
-		var li:LightInfo = lightGet( $ID );
-		return (li.b000 + li.b010 + li.b011 + li.b001 + li.b100 + li.b110 +  li.b111 + li.b101)/8
+		return avgTotal/count;
 	}
 
 	public function lightGet( $ID:uint ):LightInfo {
@@ -436,8 +514,19 @@ public class Brightness  {  // extends BrightnessData
 		return 1;
 	}
 
+	// Gets the ID of the light here
+	public function lightIDNonDefaultUsedGet():Vector.<uint> {
+		var lightIDs:Vector.<uint> = new Vector.<uint>;
+		for ( var i:int = 1; i < LIGHTS_MAX; i++ ) {
+			var li:LightInfo = _lights[i];
+			if ( null != li )
+				lightIDs.push( li.ID );
+		}
+		return lightIDs;
+	}
+	
 	public function lightBrightestGet():LightInfo {
-		var maxAttn:uint = DEFAULT_BASE_ATTN;
+		var maxAttn:uint = DEFAULT_BASE_LIGHT_LEVEL;
 		var maxAttnIndex:uint;
 		// I need to know the average attn, but I dont know it here....
 		for ( var j:int; j < LIGHTS_MAX; j++ ) {
@@ -462,7 +551,7 @@ public class Brightness  {  // extends BrightnessData
 			
 			for ( var i:int; i < LIGHTS_MAX; i++ ) {
 				if ( null == _lights[i] ) {
-					_lights[i] = new LightInfo( $ID, $color, DEFAULT_LIGHT_INFO_ATTN, $isLight );	
+					_lights[i] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $isLight );	
 					if ( true == $isLight )
 						_lights[i].setAll( 255 );
 					_lightCount++;
@@ -471,7 +560,7 @@ public class Brightness  {  // extends BrightnessData
 			}
 		}
 		else {
-			var lowAttn:uint = DEFAULT_BASE_ATTN;
+			var lowAttn:uint = DEFAULT_BASE_LIGHT_LEVEL;
 			var lowAttnIndex:uint;
 			// I need to know the average attn, but I dont know it here....
 			for ( var j:int; j < LIGHTS_MAX; j++ ) {
@@ -486,7 +575,7 @@ public class Brightness  {  // extends BrightnessData
 			// see if new light is stronger
 			if ( lowAttn < $avgAttn ) {
 				_lights[lowAttnIndex] = null;
-				_lights[lowAttnIndex] = new LightInfo( $ID, $color, DEFAULT_LIGHT_INFO_ATTN, $isLight );	
+				_lights[lowAttnIndex] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $isLight );	
 			}
 		}
 	}
@@ -511,36 +600,42 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function lightFullBright():void {
 		
-		var li:LightInfo = lightGet( Brightness.DEFAULT_ID );
+		var li:LightInfo = lightGet( Brightness.DEFAULT_LIGHT_ID );
 		li.setAll( 255 );
 	}
 
-	// this returns a composite color made of default color plus any additional colors
-	public function lightGetComposite( $vertex:uint ):uint {
-		_composite = 0;
+	// this returns a composite color made of default color plus any additional colors for the indicated corner
+	public function lightGetComposite( $corner:uint ):uint {
+		_compositeColor = 0;
 		
 		for ( var i:int; i < LIGHTS_MAX; i++ )
 		{
 			var li:LightInfo = _lights[i];
 			if ( null != li )
-				_composite = ColorUtils.testCombineARGB( _composite, li.color, li.vertexInfoGet( $vertex ) );
+				_compositeColor = ColorUtils.testCombineARGB( _compositeColor, li.color, li.attnLevelGet( $corner ) );
 		}
 		
-		return _composite;
+		return _compositeColor;
 	}
 		
 	public function influenceAdd( $ID:uint, $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
+		// Check to make sure this FACE has values, not the whole oxel
+		if ( !$lob.valuesHasForFace( $ID, $faceFrom ) ) 
+			return false;
+
 		var c:Boolean = false;
-		
+				
 		var sli:LightInfo = $lob.lightGet( $ID );
 		if ( !lightHas( $ID ) )
 			lightAdd( $ID, sli.color, sli.avg );
 		var li:LightInfo = lightGet( $ID );
-		if ( null == li )
-			throw new Error( "Brightness.influenceAdd - lightInfo not found" );
+		if ( null == li ) {
+			Log.out( "Brightness.influenceAdd - lightInfo not found" );
+			return false;
+		}
 		
-		const attnScaled:uint = _attn * ($grainUnits/16);
+		const attnScaled:uint = fallOffPerMeter * ($grainUnits/16);
 		if ( Globals.POSX == $faceFrom ) {
 			
 			if ( li.b000 < sli.b100 ) { li.b000 = sli.b100; c = true; }
@@ -686,8 +781,10 @@ public class Brightness  {  // extends BrightnessData
 		if ( !lightHas( $ID ) )
 			lightAdd( sli.ID, sli.color, sli.avg );
 		var li:LightInfo = lightGet( $ID );
-		if ( null == li )
-			throw new Error( "Brightness.brightnessMerge  - lightInfo not found" );
+		if ( null == li ) {
+			Log.out( "Brightness.brightnessMerge - lightInfo not found" );
+			return false;
+		}
 		
 		var c:Boolean;
 		if ( li.b000 < sli.b000 )	  { li.b000 = sli.b000; c = true; }
@@ -700,7 +797,6 @@ public class Brightness  {  // extends BrightnessData
 		if ( li.b111 < sli.b111 )	  { li.b111 = sli.b111; c = true; }
 		return c;
 	}
-	
 	
 } // end of class Brightness
 } // end of package

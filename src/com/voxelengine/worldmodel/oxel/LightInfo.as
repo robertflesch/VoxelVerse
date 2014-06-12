@@ -18,18 +18,19 @@ package com.voxelengine.worldmodel.oxel
 /**
  * ...
  * @author Robert Flesch
+ * This holds all of the color and attenuation for one color in an oxel
  */
 
 public class LightInfo
 {
 	public static const MAX:uint = 0xff;
 	
-	public var lightIs:Boolean = false;
-	public var processed:Boolean = false;
-	public var ID:uint
-	public var color:uint;
-	private var bLower:uint;
-	private var bHigher:uint;
+	public var lightIs:Boolean;		// Is this object indeed a light source, or just an air oxel
+	public var processed:Boolean;	// has this color has been used to project on its neighbors
+	public var ID:uint				// The ID of the light
+	public var color:uint;			// the RGBA color info
+	private var bLower:uint; 		// The 0xff values for the lower corners are stored in this uint
+	private var bHigher:uint; 		// The 0xff values for the upper corners are stored in this uint
 	
 	
 	public function LightInfo( $ID:uint, $color:uint, $attn:uint, $lightIs:Boolean ) {		
@@ -57,11 +58,50 @@ public class LightInfo
 		bHigher	= $ba.readUnsignedInt();
 		return $ba;
 	}
+
+	private function toHex( val:uint ):String {
+		var str:String = "";
+		str = val.toString(16)
+		return ( ("0x00000000").substr(2,8 - str.length) + str );
+	}
+	
+	private function addLeadingZero( $val:String ):String {
+		var leadingZeroes:String = "000";
+		leadingZeroes = leadingZeroes.substr(0, leadingZeroes.length - $val.length);
+		return leadingZeroes + $val;
+	}
+	
+	private function toLightLevel( val:uint ):String {
+		var str:String = "";
+		var tmp:uint = val;
+		tmp = (tmp >>> 24) & 0xff;
+		str += addLeadingZero( tmp.toString(10)) ;
+		str += "-";
+		tmp = val;
+		tmp = (tmp >> 16) & 0xff;
+		str += addLeadingZero(tmp.toString(10));
+		str += "-";
+		tmp = val;
+		tmp = (tmp >> 8) & 0xff;
+		str += addLeadingZero(tmp.toString(10));
+		str += "-";
+		tmp = val;
+		tmp = (tmp >> 0) & 0xff;
+		str += addLeadingZero(tmp.toString(10));
+		return str;
+	}
 	
 	public function toString():String {
-		return (" LightInfo - ID: " + ID + " color: " + color + " bLower: " + bLower + " bHigher: " + bHigher);
+		return toStringDetail();
+	}
+	public function toStringShort():String {
+		return (" LightInfo - ID: " + ID + "\tcolor: " + toHex(color) + " bLower: " + toHex(bLower) + " bHigher: " + toHex(bHigher) + " lightIs: " + lightIs + "\n" );
 	}
 
+	public function toStringDetail():String {
+		return (" LightInfo - ID: " + ID + "\tcolor: " + toHex(color) + " bLower: " + toLightLevel(bLower) + " bHigher: " + toLightLevel(bHigher) + " lightIs: " + lightIs + "\n" );
+	}
+	
 	public function copyFrom( $li:LightInfo ):void {
 		ID = $li.ID;
 		color = $li.color;
@@ -89,20 +129,20 @@ public class LightInfo
 		b111 = $attn;
 	}
 	
-	public function vertexInfoGet( $vertex:uint ):uint {
-		if (       Brightness.B000 == $vertex ) 
+	public function attnLevelGet( $corner:uint ):uint {
+		if (       Brightness.B000 == $corner ) 
 			return b000;
-		else if (  Brightness.B001 == $vertex ) 
+		else if (  Brightness.B001 == $corner ) 
 			return b001;
-		else if (  Brightness.B100 == $vertex ) 
+		else if (  Brightness.B100 == $corner ) 
 			return b100;
-		else if (  Brightness.B101 == $vertex ) 
+		else if (  Brightness.B101 == $corner ) 
 			return b101;
-		else if (  Brightness.B010 == $vertex ) 
+		else if (  Brightness.B010 == $corner ) 
 			return b010;
-		else if (  Brightness.B011 == $vertex ) 
+		else if (  Brightness.B011 == $corner ) 
 			return b011;
-		else if (  Brightness.B110 == $vertex ) 
+		else if (  Brightness.B110 == $corner ) 
 			return b110;
 		else 
 			return b111; // if (  Brightness.B111 ) 
@@ -128,5 +168,5 @@ public class LightInfo
 	public function set b110( attn:uint ):void { bHigher = ((bHigher & 0xff00ffff) | (attn << 16)); }
 	public function set b111( attn:uint ):void { bHigher = ((bHigher & 0x00ffffff) | (attn << 24)); }
 	
-} // end of class LughtInfo
+} // end of class LightInfo
 } // end of package
