@@ -208,13 +208,15 @@ package com.voxelengine.worldmodel.tasks.lighting
 		private function projectOnLargerGrain( $lo:Oxel, $no:Oxel, $face:int ):Boolean {
 			
 			if ( $no.childrenHas() )
-				return true;
+				return true; // What does this do?
 			var bt:Brightness = BrightnessPool.poolGet();
 			var btp:Brightness = BrightnessPool.poolGet();
 			
 			var grainUnits:uint = $lo.gc.size();
 			// project the light oxel onto the virtual brightness
-			bt.influenceAdd( lightID, $lo.brightness, $face, !$no.hasAlpha, grainUnits )
+			bt.influenceAdd( lightID, $lo.brightness, $face, !$no.hasAlpha, grainUnits );
+			if ( !bt.valuesHas() )
+				return false;
 
 			// if the target is larger then one size, we need to project calculation on parent recursively until it is correct size
 			var currentLo:Oxel = $lo;
