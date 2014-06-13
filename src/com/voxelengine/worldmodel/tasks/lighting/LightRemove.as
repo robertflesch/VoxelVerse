@@ -169,8 +169,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 					removeFromChildren( no, face );
 				else if ( no.brightness && no.brightness.lightGet( lightID ) )
 					terminalLightRemove( no, face );
-				else
-					Log.out( "LightRemove.spreadToNeighbors - Light doesnt exist: " + lightID );
+//				else
+//					Log.out( "LightRemove.spreadToNeighbors - Light doesnt exist: " + lightID );
 			}
 		}
 		
