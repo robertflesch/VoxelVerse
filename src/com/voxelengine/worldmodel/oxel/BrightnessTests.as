@@ -10,6 +10,7 @@ package com.voxelengine.worldmodel.oxel
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
 	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.worldmodel.oxel.*;
 /**
  * ...
  * @author Robert Flesch
@@ -135,7 +136,8 @@ public class BrightnessTests  {
 			var faceOnly:Boolean = false;
 			for ( var faceTest:int = Globals.POSX; faceTest <= Globals.NEGZ; faceTest++ ) {
 				bt.reset();
-				bt.influenceAdd( lob, faceTest, faceOnly, grainUnits )
+				//public function influenceAdd( $ID:uint, $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
+				bt.influenceAdd( lightId, lob, faceTest, faceOnly, grainUnits )
 				//trace(addResult[faceTest]);
 				//trace(bt.toString());
 				if ( addResult[faceTest] == bt.toString() )
@@ -159,7 +161,8 @@ public class BrightnessTests  {
 			for ( var childID:uint = 0; childID < 8; childID++ ) {	
 				btp.reset();
 				// now extend the brightness child onto its parent!
-				btp.childAdd( childID, bt, grainUnits );
+				//public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
+				btp.childAdd(  Brightness.DEFAULT_LIGHT_ID, childID, bt, grainUnits );
 				//bt.copyFrom( btp );
 				//grainUnits *= 2;
 				trace( btp.toString() );
@@ -182,11 +185,11 @@ public class BrightnessTests  {
 			for ( var faceTest:int = Globals.POSX; faceTest <= Globals.NEGZ; faceTest++ ) {
 				trace( "------------------------------" );
 				btp.reset();
-				btp.influenceAdd( lob, (faceTest + 2) % 6, false, 32 );
+				btp.influenceAdd( lightId, lob, (faceTest + 2) % 6, false, 32 );
 				trace( faceTest + "  " + btp.toString() );
 				for ( var childIndex:int = 0; childIndex < 8; childIndex++ ) {
 					btResult.reset();
-					btp.childGet( childIndex, btResult );
+					btp.childGet( lightId, childIndex, btResult );
 					trace( childIndex + "  " + btResult.toString() );
 				}
 				trace( "------------------------------" );
