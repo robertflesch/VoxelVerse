@@ -236,27 +236,29 @@ public class Brightness  {  // extends BrightnessData
 	public function childAddAll( $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
-			if ( null != li )
+			if ( null != li && DEFAULT_BASE_LIGHT_LEVEL < li.avg )
 				childAdd( li.ID, $childID, $b, $grainUnits );
 		}
 	}
 	
 	public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
 
+		var sli:LightInfo =  $b.lightGet( $ID );	
+		if ( null == sli )
+			throw new Error( "Brightness.childAdd - SOURCE light not defined" );
+		if ( DEFAULT_BASE_LIGHT_LEVEL == sli.avg )
+			return;
+			
 		// This is special case which needs to take into account attn
 		var localattn:uint = fallOffPerMeter * $grainUnits/DEFAULT_PER_DISTANCE
 		var sqrattn:Number =  Math.sqrt( 2 * (localattn * localattn) );
 		var csqrattn:Number =  Math.sqrt( (localattn * localattn) + (sqrattn * sqrattn) );
 		
-		var sli:LightInfo =  $b.lightGet( $ID );	
-		if ( null == sli )
-			throw new Error( "Brightness.childAdd - SOURCE light not defined" );
 		if ( !lightHas( $ID ) )
 			lightAdd( $ID, sli.color, sli.avg );
 		var li:LightInfo =  lightGet( $ID );		
-		
 		if ( null == li )
-			throw new Error( "Brightness.childAdd - light not defined" );
+			return; // This is a valid condition, if the light added is lower then the existing lights, it will not be added
 		
 		// The corner that the child is in is always the most accurate data, everything else is a guess
 		if ( 0 == $childID ) {
@@ -546,7 +548,10 @@ public class Brightness  {  // extends BrightnessData
 		
 		if ( lightHas( $ID ) )
 			return;
-			
+		
+		if ( DEFAULT_LIGHT_ID != $ID && DEFAULT_BASE_LIGHT_LEVEL == $avgAttn )
+			return;
+		
 		if ( _lightCount < LIGHTS_MAX ) {
 			
 			for ( var i:int; i < LIGHTS_MAX; i++ ) {
@@ -782,7 +787,7 @@ public class Brightness  {  // extends BrightnessData
 			lightAdd( sli.ID, sli.color, sli.avg );
 		var li:LightInfo = lightGet( $ID );
 		if ( null == li ) {
-			Log.out( "Brightness.brightnessMerge - lightInfo not found" );
+			Log.out( "Brightness.brightnessMerge - lightInfo not found sli.avg: " + sli.avg );
 			return false;
 		}
 		
