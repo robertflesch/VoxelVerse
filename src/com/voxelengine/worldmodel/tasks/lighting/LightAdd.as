@@ -230,13 +230,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 					currentLo = currentLo.parent;
 			}
 			
-			Log.out( "Brightness.projectOnLargerGrain ----------------------------------------------------" );
-			Log.out( "bt: \n" + bt.toString() );
-			Log.out( "no: \n" + $no.brightness.toString() );
+			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );
+			//Log.out( "bt: \n" + bt.toString() );
+			//Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
 			var changed:Boolean = $no.brightness.brightnessMerge( lightID, bt );
-			Log.out( "no: \n" + $no.brightness.toString() );
-			Log.out( "Brightness.projectOnLargerGrain ----------------------------------------------------" );
+			//Log.out( "no: \n" + $no.brightness.toString() );
+			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );
 			
 			BrightnessPool.poolReturn( bt );
 			BrightnessPool.poolReturn( btp );
@@ -353,7 +353,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $o.brightness.valuesHas() )
 			{
-				Log.out( "LightAdd.add - REPLACE ALL_DIRS HERE" );
+				//Log.out( "LightAdd.add - REPLACE ALL_DIRS HERE" );
 				addTask( _guid, $o.gc, lightID, Globals.ALL_DIRS );
 					
 //				if ( false == addTask( _guid, $o.gc, lightID ) )
