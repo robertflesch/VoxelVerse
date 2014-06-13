@@ -224,10 +224,10 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function reset():void {
 		
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int = 1; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li )
-				li.setAll( DEFAULT_BASE_LIGHT_LEVEL );
+				lightRemove( li.ID );
 		}
 
 		fallOffPerMeter = DEFAULT_FALL_OFF_PER_METER;
@@ -254,11 +254,9 @@ public class Brightness  {  // extends BrightnessData
 		var sqrattn:Number =  Math.sqrt( 2 * (localattn * localattn) );
 		var csqrattn:Number =  Math.sqrt( (localattn * localattn) + (sqrattn * sqrattn) );
 		
-		if ( !lightHas( $ID ) )
-			lightAdd( $ID, sli.color, sli.avg );
+		if ( !lightAdd( $ID, sli.color, sli.avg ) )
+			return; // failed to add the light, This is a valid condition, if the light added is lower then the existing lights, it will not be added
 		var li:LightInfo =  lightGet( $ID );		
-		if ( null == li )
-			return; // This is a valid condition, if the light added is lower then the existing lights, it will not be added
 		
 		// The corner that the child is in is always the most accurate data, everything else is a guess
 		if ( 0 == $childID ) {
@@ -377,11 +375,9 @@ public class Brightness  {  // extends BrightnessData
 			throw new Error( "Brightness.childGet - No light for ID: " + $ID );
 			
 		var li:LightInfo =  lightGet( $ID );		
-		if ( !$b.lightHas( $ID ) )
-			$b.lightAdd( $ID, li.color, li.avg );
-		var sli:LightInfo =  $b.lightGet( $ID );	
-		if ( null == sli )
+		if ( !$b.lightAdd( $ID, li.color, li.avg ) )
 			throw new Error( "Brightness.childGet - $b does not have light info for lightID: " + $ID )
+		var sli:LightInfo =  $b.lightGet( $ID );	
 				
 		// I think the diagonals should be averaged between both corners
 		if ( 0 == $childID ) { // b000
@@ -544,13 +540,13 @@ public class Brightness  {  // extends BrightnessData
 		return _lights[maxAttnIndex];
 	}
 	
-	public function lightAdd( $ID:uint, $color:uint, $avgAttn:uint, $isLight:Boolean = false ):void {
+	public function lightAdd( $ID:uint, $color:uint, $avgAttn:uint, $isLight:Boolean = false ):Boolean {
 		
 		if ( lightHas( $ID ) )
-			return;
+			return true;
 		
 		if ( DEFAULT_LIGHT_ID != $ID && DEFAULT_BASE_LIGHT_LEVEL == $avgAttn )
-			return;
+			return false;
 		
 		if ( _lightCount < LIGHTS_MAX ) {
 			
@@ -560,7 +556,7 @@ public class Brightness  {  // extends BrightnessData
 					if ( true == $isLight )
 						_lights[i].setAll( 255 );
 					_lightCount++;
-					break;
+					return true;
 				}
 			}
 		}
@@ -581,8 +577,11 @@ public class Brightness  {  // extends BrightnessData
 			if ( lowAttn < $avgAttn ) {
 				_lights[lowAttnIndex] = null;
 				_lights[lowAttnIndex] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $isLight );	
+				return true;
 			}
 		}
+		
+		return false;
 	}
 	
 	public function lightRemove( $ID:uint ):void {
@@ -629,17 +628,14 @@ public class Brightness  {  // extends BrightnessData
 		if ( !$lob.valuesHasForFace( $ID, $faceFrom ) ) 
 			return false;
 
-		var c:Boolean = false;
-				
 		var sli:LightInfo = $lob.lightGet( $ID );
-		if ( !lightHas( $ID ) )
-			lightAdd( $ID, sli.color, sli.avg );
-		var li:LightInfo = lightGet( $ID );
-		if ( null == li ) {
-			Log.out( "Brightness.influenceAdd - lightInfo not found" );
+		if ( null == sli )
+			return false; // This should not really occur
+		if ( !lightAdd( $ID, sli.color, sli.avg ) )
 			return false;
-		}
+		var li:LightInfo = lightGet( $ID );
 		
+		var c:Boolean = false;
 		const attnScaled:uint = fallOffPerMeter * ($grainUnits/16);
 		if ( Globals.POSX == $faceFrom ) {
 			
@@ -782,14 +778,12 @@ public class Brightness  {  // extends BrightnessData
 	// Add the influcence of a virtual cube the same size
 	public function brightnessMerge( $ID:uint, $b:Brightness ):Boolean {
 		
+		if ( !$b.lightHas( $ID ) )
+			return false; // if there is no value for the light, it is not added
 		var sli:LightInfo = $b.lightGet( $ID );
-		if ( !lightHas( $ID ) )
-			lightAdd( sli.ID, sli.color, sli.avg );
-		var li:LightInfo = lightGet( $ID );
-		if ( null == li ) {
-			Log.out( "Brightness.brightnessMerge - lightInfo not found sli.avg: " + sli.avg );
+		if ( !lightAdd( sli.ID, sli.color, sli.avg ) )
 			return false;
-		}
+		var li:LightInfo = lightGet( $ID );
 		
 		var c:Boolean;
 		if ( li.b000 < sli.b000 )	  { li.b000 = sli.b000; c = true; }

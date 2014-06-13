@@ -42,7 +42,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						lo.brightness.lightAdd( $le.lightID, ti.color, Brightness.MAX_LIGHT_LEVEL, true );
+						if ( !lo.brightness.lightAdd( $le.lightID, ti.color, Brightness.MAX_LIGHT_LEVEL, true ) )
+							throw new Error( "LightAdd.handleLightEvent - How did we get here?" );
 						lo.brightness.fallOffPerMeter = ti.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
 					}
@@ -111,7 +112,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						if ( !lo.gc.is_equal( _gc ) )
 								Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
 
-						if ( lo.gc.eval( 6, 2, 1, 2) )
+						if ( lo.gc.eval( 5, 7, 3, 2) )
 							trace( "watch downward light" );
 						//Log.out ( "LightAdd.start - gc:" + lo.gc.toString() + " br: " + lo.brightness.toString() );
 						lo.brightness.lightGet( lightID ).processed = true;
@@ -121,7 +122,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						Log.out( "LightAdd.start - valid failed", Log.ERROR );
 				}
 				catch (error:Error) {
-					Log.out( "LightAdd.start - Exception Caught: " + error.message, Log.ERROR );
+					Log.out( "LightAdd.start - Exception Caught: " + error.message + " lo.gc: " + lo.gc.toString(), Log.ERROR );
 				}
 			}
 			else
@@ -234,7 +235,9 @@ package com.voxelengine.worldmodel.tasks.lighting
 			//Log.out( "bt: \n" + bt.toString() );
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
-			var changed:Boolean = $no.brightness.brightnessMerge( lightID, bt );
+			var changed:Boolean;
+			if ( bt.lightHas( lightID ) )
+			changed = $no.brightness.brightnessMerge( lightID, bt );
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );
 			
