@@ -113,6 +113,7 @@ package {
 			
 			addEventListener( LightEvent.ADD, LightAdd.handleLightEvents );
 			addEventListener( LightEvent.CHANGE, LightAdd.handleLightEvents );
+			addEventListener( LightEvent.BLOCK, LightRemove.handleLightEvents );
 			addEventListener( LightEvent.REMOVE, LightRemove.handleLightEvents );
 			
 			VoxelVerseGUI.currentInstance.init();
