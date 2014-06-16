@@ -113,6 +113,12 @@ public class LightInfo
 	public function get avg():uint {
 		return (b000 + b010 + b011 + b001 + b100 + b110 +  b111 + b101)/8
 	}
+	
+	public function valuesHas():Boolean {
+		if ( Brightness.DEFAULT_BASE_LIGHT_LEVEL == avg )
+			return false;
+		return true;
+	}
 
 	public function setAll( $attn:uint ):void	{
 		
