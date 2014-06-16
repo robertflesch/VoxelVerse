@@ -481,8 +481,6 @@ package com.voxelengine.worldmodel.models
 				if ( Globals.isSolid( oldType ) && Globals.hasAlpha( $type ) ) {
 					
 					// we removed a solid block, and are replacing it with air or transparent
-					const attenScaled:uint = changedOxel.brightness.fallOffPerMeter * ($gc.size()/16);
-					changedOxel.brightness.balanceAttnAll( attenScaled );
 					if ( changedOxel.brightness.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.CHANGE, instanceInfo.instanceGuid, changedOxel.gc ) );
 				} 
