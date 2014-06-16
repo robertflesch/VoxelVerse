@@ -36,10 +36,10 @@ public class Brightness  {  // extends BrightnessData
 	 */
 	public static const MAX_LIGHT_LEVEL:uint = 0xff;
 	public static const DEFAULT_LIGHT_ID:uint = 1;
+	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
 	
 	private static const DEFAULT_PER_DISTANCE:int = 16;
 	private static const DEFAULT_COLOR:uint = 0x00ffffff;
-	private static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
 	private static const DEFAULT_FALL_OFF_PER_METER:uint = 0x32; // how much attn per unit meter
 	private static const DEFAULT_SIGMA:uint = 2;
 	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
@@ -132,8 +132,11 @@ public class Brightness  {  // extends BrightnessData
 		// Copy all of the light data from the passed in Brightness
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var sli:LightInfo = $b._lights[i];
-			if ( null != sli )
+			if ( null != sli ) { 
+				if ( null == _lights[i] )
+					_lights[i] = new LightInfo(0, 0, DEFAULT_LIGHT_LEVEL_SETTER, false );
 				_lights[i].copyFrom( sli );
+			}
 			else 
 				_lights[i] = null;
 		}
@@ -175,48 +178,49 @@ public class Brightness  {  // extends BrightnessData
 		if ( null != li )
 		{
 			//const THRESHOLD:uint = DEFAULT_BASE_LIGHT_LEVEL + DEFAULT_SIGMA;
+			// Sigma was giving me hard edges
 			const THRESHOLD:uint = DEFAULT_BASE_LIGHT_LEVEL;
 			if ( Globals.POSX == $face ) {
 				
-				if ( THRESHOLD <= li.b100 ) { return true }
-				if ( THRESHOLD <= li.b110 ) { return true }
-				if ( THRESHOLD <= li.b111 ) { return true }
-				if ( THRESHOLD <= li.b101 ) { return true }
+				if ( THRESHOLD < li.b100 ) { return true }
+				if ( THRESHOLD < li.b110 ) { return true }
+				if ( THRESHOLD < li.b111 ) { return true }
+				if ( THRESHOLD < li.b101 ) { return true }
 			}
 			else if ( Globals.NEGX == $face ) {
 
-				if ( THRESHOLD <= li.b000 ) { return true }
-				if ( THRESHOLD <= li.b010 ) { return true }
-				if ( THRESHOLD <= li.b011 ) { return true }
-				if ( THRESHOLD <= li.b001 ) { return true }
+				if ( THRESHOLD < li.b000 ) { return true }
+				if ( THRESHOLD < li.b010 ) { return true }
+				if ( THRESHOLD < li.b011 ) { return true }
+				if ( THRESHOLD < li.b001 ) { return true }
 			}
 			else if ( Globals.POSY == $face ) {
 
-				if ( THRESHOLD <= li.b010 ) { return true }
-				if ( THRESHOLD <= li.b110 ) { return true }
-				if ( THRESHOLD <= li.b111 ) { return true }
-				if ( THRESHOLD <= li.b011 ) { return true }
+				if ( THRESHOLD < li.b010 ) { return true }
+				if ( THRESHOLD < li.b110 ) { return true }
+				if ( THRESHOLD < li.b111 ) { return true }
+				if ( THRESHOLD < li.b011 ) { return true }
 			}
 			else if ( Globals.NEGY == $face ) {
 
-				if ( THRESHOLD <= li.b000 ) { return true }
-				if ( THRESHOLD <= li.b100 ) { return true }
-				if ( THRESHOLD <= li.b101 ) { return true }
-				if ( THRESHOLD <= li.b001 ) { return true }
+				if ( THRESHOLD < li.b000 ) { return true }
+				if ( THRESHOLD < li.b100 ) { return true }
+				if ( THRESHOLD < li.b101 ) { return true }
+				if ( THRESHOLD < li.b001 ) { return true }
 			}
 			else if ( Globals.POSZ == $face ) {
 
-				if ( THRESHOLD <= li.b001 ) { return true }
-				if ( THRESHOLD <= li.b011 ) { return true }
-				if ( THRESHOLD <= li.b111 ) { return true }
-				if ( THRESHOLD <= li.b101 ) { return true }
+				if ( THRESHOLD < li.b001 ) { return true }
+				if ( THRESHOLD < li.b011 ) { return true }
+				if ( THRESHOLD < li.b111 ) { return true }
+				if ( THRESHOLD < li.b101 ) { return true }
 			}
 			else if ( Globals.NEGZ == $face ) {
 				
-				if ( THRESHOLD <= li.b000 ) { return true }
-				if ( THRESHOLD <= li.b010 ) { return true }
-				if ( THRESHOLD <= li.b110 ) { return true }
-				if ( THRESHOLD <= li.b100 ) { return true }
+				if ( THRESHOLD < li.b000 ) { return true }
+				if ( THRESHOLD < li.b010 ) { return true }
+				if ( THRESHOLD < li.b110 ) { return true }
+				if ( THRESHOLD < li.b100 ) { return true }
 			}
 		}
 		return false;
@@ -622,6 +626,104 @@ public class Brightness  {  // extends BrightnessData
 		return _compositeColor;
 	}
 		
+	// returns true if this is the last face that was influenced
+	public function influenceRemove( $ID:uint, $faceFrom:int ):Boolean
+	{
+		if ( !lightHas( $ID ) )
+			return false;
+		
+		var of:int = Oxel.face_get_opposite( $faceFrom );	
+		var li:LightInfo = lightGet( $ID );
+		if ( Globals.POSX == of ) {
+			
+			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
+		}
+		else if ( Globals.NEGX == of ) {
+
+			li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
+		}
+		else if ( Globals.POSY == of ) {
+
+			li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
+		}
+		else if ( Globals.NEGY == of ) {
+
+			li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
+		}
+		else if ( Globals.POSZ == of ) {
+
+			li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
+		}
+		else if ( Globals.NEGZ == of ) {
+			
+			li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
+		}
+		
+		//if ( Globals.POSX == $faceFrom ) {
+			//
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b000 ) { li.b100 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b010 ) { li.b110 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b011 ) { li.b111 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b001 ) { li.b101 = DEFAULT_BASE_LIGHT_LEVEL; }
+		//}
+		//else if ( Globals.NEGX == $faceFrom ) {
+//
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b100 ) { li.b000 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b110 ) { li.b010 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b111 ) { li.b011 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b101 ) { li.b001 = DEFAULT_BASE_LIGHT_LEVEL; }
+		//}
+		//else if ( Globals.POSY == $faceFrom ) {
+//
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b000 ) { li.b010 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b100 ) { li.b110 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b101 ) { li.b111 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b001 ) { li.b011 = DEFAULT_BASE_LIGHT_LEVEL; }
+		//}
+		//else if ( Globals.NEGY == $faceFrom ) {
+//
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b010 ) { li.b000 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b110 ) { li.b100 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b111 ) { li.b101 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b011 ) { li.b001 = DEFAULT_BASE_LIGHT_LEVEL; }
+		//}
+		//else if ( Globals.POSZ == $faceFrom ) {
+//
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b000 ) { li.b001 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b010 ) { li.b011 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b110 ) { li.b111 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b100 ) { li.b101 = DEFAULT_BASE_LIGHT_LEVEL; }
+		//}
+		//else if ( Globals.NEGZ == $faceFrom ) {
+			//
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b001 ) { li.b000 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b011 ) { li.b010 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b111 ) { li.b110 = DEFAULT_BASE_LIGHT_LEVEL; }
+			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b101 ) { li.b100 = DEFAULT_BASE_LIGHT_LEVEL; }
+		//}
+		//if ( DEFAULT_BASE_LIGHT_LEVEL == li.avg )
+			return true;
+		return false;
+	}
+	
 	public function influenceAdd( $ID:uint, $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
 		// Check to make sure this FACE has values, not the whole oxel
@@ -686,7 +788,8 @@ public class Brightness  {  // extends BrightnessData
 			c = c || result;
 		}
 		
-		return c;
+		//return c;
+		return true;
 	}
 
 	public function balanceAttnAll( $attnScaled:uint ):Boolean {
