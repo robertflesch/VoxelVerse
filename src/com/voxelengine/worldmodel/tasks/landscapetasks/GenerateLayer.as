@@ -42,7 +42,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			var octaves:int  = ( Math.random() * 144 ) % (Math.random() * 12);
 			if ( 0 == octaves )
 				octaves = 6;
-			Log.out( "GenerateLayer - start - generating random number of octives Octaves: " + octaves, Log.ERROR );					
+			Log.out( "GenerateLayer - start - generating random number of octives Octaves: " + octaves );					
 			
 			var masterHeightMap:Array = NoiseGenerator.generate_height_map( masterMapSize, octaves );
 			//heightMap = generatePerlinNoise2DMap(voxels);

@@ -44,7 +44,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			var octaves:int;
 			if ( 0 == octaves )
 				octaves = 6;
-			Log.out( "GenerateVolcano - start - generating random number of octives Octaves: " + octaves, Log.ERROR );					
+			Log.out( "GenerateVolcano - start - generating random number of octives Octaves: " + octaves );					
 			
 			var masterHeightMap:Array = NoiseGenerator.generate_height_map( masterMapSize, octaves );
 			//heightMap = generatePerlinNoise2DMap(voxels);
@@ -64,7 +64,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 																							  , rangeInG0
 																							  , offsetInG0 );
 
-			var volcanoRadius:Number = masterMapSize / 2 * 0.7;
+			var volcanoRadius:Number = masterMapSize / 2 * 0.3;
 			var highestPoint:Number = 0;
 			for ( var x:int = 0; x < masterMapSize; x++ )
 			{

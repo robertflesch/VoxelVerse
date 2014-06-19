@@ -24,7 +24,7 @@ import flash.utils.getTimer;
 public class GrowTreesOn extends LandscapeTask 
 {		
 	public function GrowTreesOn( guid:String, layer:LayerInfo ):void {
-		Log.out( "GrowTreesOn.created", Log.WARN );					
+		Log.out( "GrowTreesOn.created" );					
 		super(guid, layer);
 	}
 	
@@ -32,7 +32,7 @@ public class GrowTreesOn extends LandscapeTask
 		super.start();
 		var timer:int = getTimer();
 		
-		Log.out( "GrowTreesOn.start - enter: ", Log.ERROR);					
+		//Log.out( "GrowTreesOn.start - enter: ", Log.ERROR);					
 		var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
 		if ( vm )
 		{
@@ -47,7 +47,7 @@ public class GrowTreesOn extends LandscapeTask
 		else
 			Log.out( "GrowTreesOn.start - VM not found for guid: " + _guid );
 
-		Log.out( "GrowTreesOn.start - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime), Log.ERROR );	
+		Log.out( "GrowTreesOn.start - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime) );	
 		
 		super.complete();
 	}

@@ -24,7 +24,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 	public class DirtToGrassAndSand extends LandscapeTask 
 	{		
 		public function DirtToGrassAndSand( guid:String, layer:LayerInfo ):void {
-			Log.out( "DirtToGrassAndSand.created", Log.WARN );					
+			Log.out( "DirtToGrassAndSand.created" );					
 			super(guid, layer);
 		}
 		
