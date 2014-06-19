@@ -13,6 +13,8 @@ package com.voxelengine
 	import com.furusystems.logging.slf4as.Logging;
 	import com.furusystems.logging.slf4as.ILogger;
 
+	import com.junkbyte.console.Cc;
+	
 	
 	public class Log {
 		
@@ -30,6 +32,7 @@ package com.voxelengine
 		public static function hide():void
 		{
 			DConsole.hide();
+			//Cc.visible = true;
 			_showing = false;
 		}
 		
@@ -38,6 +41,11 @@ package com.voxelengine
 			if ( !_initialized )
 			{
 				_initialized = true;
+				//Cc.config.commandLineAllowed = true // Enables full commandLine features
+				//Cc.config.tracing = true; // also send traces to flash's normal trace()
+				//Cc.config.maxLines = 2000; // change maximum log lines to 2000, default is 1000				
+				//Cc.startOnStage(Globals.g_app, "~");
+				
 				Globals.g_app.addChild(DConsole.view);
 				out("VoxelVerse.init - console created", Log.INFO);
 				DConsole.createCommand( "hide", hide );
@@ -68,12 +76,15 @@ package com.voxelengine
 						//break;
 					case WARN:
 						Log.L.warn(msg);
+						//Cc.warn(msg);
 						break;
 					case ERROR:
 						Log.L.error("*** " + msg);
+						//Cc.error("*** " + msg);
 						break;
 					case FATAL:
 						Log.L.fatal(msg);
+						//Cc.fatal("*** " + msg);
 						break;
 				}
 			}
