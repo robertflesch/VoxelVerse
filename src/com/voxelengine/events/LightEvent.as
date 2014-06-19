@@ -19,8 +19,8 @@ package com.voxelengine.events
 	{
 		static public const ADD:String 					= "ADD";
 		static public const REMOVE:String				= "REMOVE";
-		static public const CHANGE:String				= "CHANGE";
-		static public const BLOCK:String				= "BLOCK";
+		static public const SOLID_TO_ALPHA:String		= "CHANGE";
+		static public const ALPHA_TO_SOLID:String		= "BLOCK";
 		
 		private var _instanceGuid:String;
 		private var _gc:GrainCursor;
