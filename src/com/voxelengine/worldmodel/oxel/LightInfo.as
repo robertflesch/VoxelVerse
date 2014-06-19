@@ -39,6 +39,8 @@ public class LightInfo
 		lightIs = $lightIs;
 		bLower = $attn;
 		bHigher = $attn;
+		if ( true == $lightIs )
+			setAll( 255 );
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {

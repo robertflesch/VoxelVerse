@@ -53,7 +53,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				else
 					Log.out( "LightAdd.handleLightAddEvent - VoxelModel not found", Log.ERROR );
 			}
-			else if ( LightEvent.CHANGE == $le.type )
+			else if ( LightEvent.SOLID_TO_ALPHA == $le.type )
 			{
 				var vmc:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				if ( vmc ) {
@@ -238,8 +238,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
 			var changed:Boolean;
-			if ( bt.lightHas( lightID ) )
-			changed = $no.brightness.brightnessMerge( lightID, bt );
+			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas() )
+				changed = $no.brightness.brightnessMerge( lightID, bt );
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );
 			
@@ -300,7 +300,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 				// Idea here is I would grab a temp virtual brightness child that is opposite the child I am going to project upon.
 				bt.reset();
 				// Create a temporary brightness child, pull values from parent
-				$lob.childGet( lightID, lobChild[childIndex], bt );
+				if ( !$lob.childGet( lightID, lobChild[childIndex], bt ) )
+					continue; // this child has no value, so just continue
 				if ( noChild.childrenHas() )
 				{
 					projectOnNeighborChildren( noChild, bt, $face );
@@ -315,12 +316,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 							Log.out( "LightAdd.projectOnNeighborChildren - How do I get here?", Log.ERROR );
 						
 						// Project the virtual brightness object on the real child of the same size
-						noChild.brightness.influenceAdd( lightID, bt, $face, !noChild.hasAlpha, noChild.gc.size() );
-						
-						if ( noChild.hasAlpha )
-							add( noChild )
-						else
-							rebuildFace( noChild, $face );
+						if ( noChild.brightness.influenceAdd( lightID, bt, $face, !noChild.hasAlpha, noChild.gc.size() ) ) {
+							if ( noChild.hasAlpha )
+								add( noChild )
+							else
+								rebuildFace( noChild, $face );
+						}
 					}
 				}
 			}

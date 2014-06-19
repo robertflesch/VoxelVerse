@@ -36,13 +36,15 @@ public class Brightness  {  // extends BrightnessData
 	 */
 	public static const MAX_LIGHT_LEVEL:uint = 0xff;
 	public static const DEFAULT_LIGHT_ID:uint = 1;
-	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
 	
 	private static const DEFAULT_PER_DISTANCE:int = 16;
 	private static const DEFAULT_COLOR:uint = 0x00ffffff;
 	private static const DEFAULT_FALL_OFF_PER_METER:uint = 0x32; // how much attn per unit meter
 	private static const DEFAULT_SIGMA:uint = 2;
-	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
+//	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
+//	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
+	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x66; // out of 255
+	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x66666666;
 
 	static public const B000:uint = 0;
 	static public const B001:uint = 1;
@@ -238,6 +240,8 @@ public class Brightness  {  // extends BrightnessData
 	}
 
 	public function childAddAll( $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
+		// There is a bug in here, since it is the first three lights that get added.
+		// I should eval each child and see if its light level is higher then one of the current lights
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li && DEFAULT_BASE_LIGHT_LEVEL < li.avg )
@@ -249,7 +253,8 @@ public class Brightness  {  // extends BrightnessData
 
 		var sli:LightInfo =  $b.lightGet( $ID );	
 		if ( null == sli )
-			throw new Error( "Brightness.childAdd - SOURCE light not defined" );
+			return; // This is potential bug in process where child lights get 
+			//throw new Error( "Brightness.childAdd - SOURCE light not defined" );
 		if ( DEFAULT_BASE_LIGHT_LEVEL == sli.avg )
 			return;
 			
@@ -373,14 +378,19 @@ public class Brightness  {  // extends BrightnessData
 	}
 	
 	// creates a virtual brightness(light) the light from a parent to a child brightness, with only light specified
-	public function childGet( $ID:uint, $childID:int, $b:Brightness ):void {
+	public function childGet( $ID:uint, $childID:int, $b:Brightness ):Boolean {
 		
 		if ( !lightHas( $ID ) )
-			throw new Error( "Brightness.childGet - No light for ID: " + $ID );
+		{
+			Log.out( "Brightness.childGet - No light for ID: " + $ID, Log.WARN );
+			return false;
+		}	
 			
 		var li:LightInfo =  lightGet( $ID );		
-		if ( !$b.lightAdd( $ID, li.color, li.avg ) )
-			throw new Error( "Brightness.childGet - $b does not have light info for lightID: " + $ID )
+		if ( !$b.lightAdd( $ID, li.color, li.avg ) ) {
+			//Log.out( "Brightness.childGet - $b does not have light info for lightID: " + $ID, Log.WARN )
+			return false;
+		}
 		var sli:LightInfo =  $b.lightGet( $ID );	
 				
 		// I think the diagonals should be averaged between both corners
@@ -463,7 +473,8 @@ public class Brightness  {  // extends BrightnessData
 			sli.b101 = ( li.b101 + li.b111) / 2;
 			sli.b110 = ( li.b110 + li.b111) / 2;
 			sli.b111 = li.b111;
-		}					
+		}	
+		return true;
 	}
 
 	public function get avg():uint {
@@ -544,7 +555,7 @@ public class Brightness  {  // extends BrightnessData
 		return _lights[maxAttnIndex];
 	}
 	
-	public function lightAdd( $ID:uint, $color:uint, $avgAttn:uint, $isLight:Boolean = false ):Boolean {
+	public function lightAdd( $ID:uint, $color:uint, $avgAttn:uint, $lightIs:Boolean = false ):Boolean {
 		
 		if ( lightHas( $ID ) )
 			return true;
@@ -556,22 +567,21 @@ public class Brightness  {  // extends BrightnessData
 			
 			for ( var i:int; i < LIGHTS_MAX; i++ ) {
 				if ( null == _lights[i] ) {
-					_lights[i] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $isLight );	
-					if ( true == $isLight )
-						_lights[i].setAll( 255 );
+					_lights[i] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $lightIs );	
 					_lightCount++;
 					return true;
 				}
 			}
 		}
 		else {
-			var lowAttn:uint = DEFAULT_BASE_LIGHT_LEVEL;
+			var lowAttn:uint = MAX_LIGHT_LEVEL;
 			var lowAttnIndex:uint;
 			// I need to know the average attn, but I dont know it here....
-			for ( var j:int; j < LIGHTS_MAX; j++ ) {
+			// skip the default light, which is in position 0
+			for ( var j:int = 1; j < LIGHTS_MAX; j++ ) {
 				var li:LightInfo = _lights[j];
-				if ( null != li ) { // new light avg is greater then this lights avg, replace it.
-					if ( lowAttn < li.avg ) {
+				if ( null != li ) { 
+					if ( lowAttn != Math.min( lowAttn, li.avg ) ) {
 						lowAttn = li.avg;
 						lowAttnIndex = j;
 					}
@@ -580,7 +590,7 @@ public class Brightness  {  // extends BrightnessData
 			// see if new light is stronger
 			if ( lowAttn < $avgAttn ) {
 				_lights[lowAttnIndex] = null;
-				_lights[lowAttnIndex] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $isLight );	
+				_lights[lowAttnIndex] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $lightIs );	
 				return true;
 			}
 		}

@@ -454,8 +454,13 @@ package com.voxelengine.worldmodel.models
 			// requires some refactoring but not hard - RSF
 			var oldOxel:Oxel = oxel.childGetOrCreate( $gc );
 			var oldType:int = oldOxel.type;
+			if ( Globals.Info[oldType].light )
+			{
+				var oldLightID:uint = oldOxel.brightness.lightIDGet();
+				var rle:LightEvent = new LightEvent( LightEvent.REMOVE, instanceInfo.instanceGuid, $gc, oldLightID );
+				Globals.g_app.dispatchEvent( rle );
+			}
 			var result:Boolean;
-		// Was the old oxel here a light? if so we need to send out a light event
 			var changedOxel:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
 			if ( Globals.BAD_OXEL != changedOxel )
 			{
@@ -482,13 +487,13 @@ package com.voxelengine.worldmodel.models
 					
 					// we removed a solid block, and are replacing it with air or transparent
 					if ( changedOxel.brightness.valuesHas() )
-						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.CHANGE, instanceInfo.instanceGuid, changedOxel.gc ) );
+						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.SOLID_TO_ALPHA, instanceInfo.instanceGuid, changedOxel.gc ) );
 				} 
 				else if ( Globals.isSolid( $type ) && Globals.hasAlpha( oldType ) ) {
 					
 					// we add a solid block, and are replacing the transparent block that was there
 					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
-						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.BLOCK, instanceInfo.instanceGuid, changedOxel.gc ) );
+						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.ALPHA_TO_SOLID, instanceInfo.instanceGuid, changedOxel.gc ) );
 				}
 			}
 			

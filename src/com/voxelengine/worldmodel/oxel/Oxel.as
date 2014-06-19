@@ -1410,6 +1410,9 @@ package com.voxelengine.worldmodel.oxel
 						if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
 							var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
 							var rootOxel:Oxel = root_get();
+							if ( null == rootOxel._brightness ) {
+								rootOxel._brightness = BrightnessPool.poolGet();
+							}
 							li.setAll( rootOxel._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
 						}
 						_brightness.fallOffPerMeter = Globals.Info[type].attn;
