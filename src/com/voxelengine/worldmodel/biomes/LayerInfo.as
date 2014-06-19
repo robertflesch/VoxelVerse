@@ -43,6 +43,67 @@ package com.voxelengine.worldmodel.biomes
 		
 		public function replaceData( val:String ):void { _data = val; }
 		
+		public function clone():LayerInfo
+		{
+			var newLayerInfo:LayerInfo = new LayerInfo( _functionName, _data, _type, _range, _offset, _optionalString, _optionalInt );
+			//newLayerInfo._task = _task; // I think this is instance specific - RSF
+			
+			return newLayerInfo;
+		}
+					
+		public function LayerInfo( functionName:String = null, data:String = "", type:int = 0 , range:int = 0, offset:int = 0, optional1:String = "", optional2:int = 0 )
+		{
+			_functionName = functionName;
+			if ( _functionName && 0 < _functionName.length )
+			{
+				if ( 0 <= _functionName.indexOf( "Test" ) )
+					_task = TestLibrary.getAsset( _functionName );
+				else
+					_task = TaskLibrary.getAsset( _functionName );
+			}
+			_data = data;
+			_offset = offset;
+			_range = range;
+			_type = type;
+			_optionalString = optional1;
+			_optionalInt = optional2;			
+		}
+		
+		public function fromJSON( layerInfo:Object ):void
+		{
+			if ( layerInfo.functionName )
+			{
+				_functionName = layerInfo.functionName;
+				//Log.out( "LayerInfo.initJSON loading data for layer - " + _functionName );
+				if ( 0 <= _functionName.indexOf( "Test" ) )
+					_task = TestLibrary.getAsset( _functionName );
+				else
+					_task = TaskLibrary.getAsset( _functionName );
+			}
+			
+			if ( layerInfo.type )
+			{
+				type = Globals.getTypeId( layerInfo.type );
+			}
+			
+			if ( layerInfo.data )
+				_data = layerInfo.data;
+			if ( layerInfo.range )
+				_range = int(layerInfo.range);
+				
+			if ( layerInfo.offset )
+				_offset = int(layerInfo.offset);
+				
+			if ( layerInfo.optionalString )
+				_optionalString =  layerInfo.optionalString;
+		    
+			if ( layerInfo.optionalInt )
+				_optionalInt =  layerInfo.optionalInt;
+				
+			if ( layerInfo.oxelRange )
+				_optionalInt =  layerInfo.oxelRange;
+		}
+		
 		public function toJSON(k:*):* 
 		{ 
 			if ( "LoadModelFromIVM" == _functionName )
@@ -73,64 +134,6 @@ package com.voxelengine.worldmodel.biomes
 					optionalString: _optionalString,
 					optionalInt: 	_optionalInt
 					};
-		}
-		
-		public function clone():LayerInfo
-		{
-			var newLayerInfo:LayerInfo = new LayerInfo( _functionName, _data, _type, _range, _offset, _optionalString, _optionalInt );
-			//newLayerInfo._task = _task; // I think this is instance specific - RSF
-			
-			return newLayerInfo;
-		}
-					
-		public function LayerInfo( functionName:String = null, data:String = "", type:int = 0 , range:int = 0, offset:int = 0, optional1:String = "", optional2:int = 0 )
-		{
-			_functionName = functionName;
-			if ( _functionName && 0 < _functionName.length )
-			{
-				if ( 0 <= _functionName.indexOf( "Test" ) )
-					_task = TestLibrary.getAsset( _functionName );
-				else
-					_task = TaskLibrary.getAsset( _functionName );
-			}
-			_data = data;
-			_offset = offset;
-			_range = range;
-			_type = type;
-			_optionalString = optional1;
-			_optionalInt = optional2;			
-		}
-		
-		public function initJSON( layer:Object ):void
-		{
-			if ( layer.functionName )
-			{
-				_functionName = layer.functionName;
-				//Log.out( "LayerInfo.initJSON loading data for layer - " + _functionName );
-				if ( 0 <= _functionName.indexOf( "Test" ) )
-					_task = TestLibrary.getAsset( _functionName );
-				else
-					_task = TaskLibrary.getAsset( _functionName );
-			}
-			
-			if ( layer.type )
-			{
-				type = Globals.getTypeId( layer.type );
-			}
-			
-			if ( layer.data )
-				_data = layer.data;
-			if ( layer.range )
-				_range = int(layer.range);
-				
-			if ( layer.offset )
-				_offset = int(layer.offset);
-				
-			if ( layer.optionalString )
-				_optionalString =  layer.optionalString;
-		    
-			if ( layer.optionalInt )
-				_optionalInt =  layer.optionalInt;
 		}
 		
 		public function toString():String
