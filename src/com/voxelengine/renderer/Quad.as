@@ -356,7 +356,6 @@ public class Quad {
 	
 	private function buildVerticeComponents( componentIndex:int, x:Number, y:Number, z:Number, u:Number, v:Number, normalx:int, normaly:int, normalz:int, tint:uint, light:uint ):int
 	{
-		// QUESTION how fast is the var args in as3, which is used in the set function
 		if ( null == components[componentIndex] )
 			components[componentIndex++] = new XYZ( x, y , z );
 		else {
