@@ -59,6 +59,7 @@ public class VertexIndexBuilder
 	private var _indexBuffers:Vector.<IndexBuffer3D> = new Vector.<IndexBuffer3D>();
 	private var _oxels:Vector.<Oxel>;
 	private var _vc:Vector.<VertexComponent> = new Vector.<VertexComponent>(Quad.COMPONENT_COUNT,true);
+	private var _verticeByteArray:ByteArray = new ByteArray();
 	private var _vertexDataSize:uint;
 	
 	private var _sorted:Boolean = false;
@@ -246,10 +247,10 @@ public class VertexIndexBuilder
 		
 		_s_totalUsed++;
 		_bufferVertexMemory += $quadsToProcess * Quad.VERTEX_PER_QUAD * _vertexDataSize * BYTES_PER_WORD;
-
 		
-		var _vertices:ByteArray = new ByteArray();
-		_vertices.endian = Endian.LITTLE_ENDIAN;
+		_verticeByteArray.position = 0;
+		_verticeByteArray.endian = Endian.LITTLE_ENDIAN;
+		// NEW 2
 		var _offsetIndices:Vector.<uint> = new Vector.<uint>( $quadsToProcess * Quad.INDICES );
 
 		var i:uint;
@@ -267,7 +268,7 @@ public class VertexIndexBuilder
 					{
 						quadCount++;
 						for each ( var vc:VertexComponent in quad.components ) {
-							vc.writeToByteArray( _vertices );
+							vc.writeToByteArray( _verticeByteArray );
 						}
 						// each indice has to be offset to have a unique offset
 						for each ( indice in quad._indices ) {
@@ -291,7 +292,7 @@ public class VertexIndexBuilder
 			trace("VertexIndexBuilder.quadsCopyToVertexBuffersByteArray - Ran out of VertexBuffers total used: " + VertexIndexBuilderPool.totalUsed() );
 			return;
 		}
-		vb.uploadFromByteArray ( _vertices, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
+		vb.uploadFromByteArray ( _verticeByteArray, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
 		_vertexBuffers.push(vb);
 		_buffers++;
 		
@@ -300,12 +301,59 @@ public class VertexIndexBuilder
 		ib.uploadFromVector( _offsetIndices, 0, $quadsToProcess * Quad.INDICES );
 		_indexBuffers.push(ib);
 	}
+
+	private function addComponentData():void {
+		_vertexDataSize = 0;
+		for each ( var oxel:Oxel in _oxels ) {
+			if ( oxel.quads ) {
+				for each ( var quad:Quad in oxel.quads ) {
+					if ( quad && 0 < quad.components.length ) {
+						for ( var i:uint; i < Quad.COMPONENT_COUNT; i++ ) {
+							_vc[i] = quad.components[i].clone();
+							_vertexDataSize += quad.components[i].size();
+						}
+						return;
+					}
+				}
+			}
+		}
+		throw new Error( "VertexIndexBuilder.addComponentData - No components found" );
+	}
+
+	public function BufferCopyToGPU( context:Context3D ) : void 
+	{
+		//var timer:int = getTimer();
+		var vb:VertexBuffer3D;
+		var ib:IndexBuffer3D;
+		var index:uint;
+		var offset:uint;
+		for (var i:int = 0; i < _buffers; i++) {
+			vb = _vertexBuffers[i];
+			
+			//index = 0;
+			offset = 0;
+			//for each ( var vc:VertexComponent in _vc ) {
+				//context.setVertexBufferAt( index++, vb, offset, vc.type() );
+				//offset += vc.size();
+			//}
+			
+			for ( index = 0; index < _vc.length; index++ ) {
+				context.setVertexBufferAt( index, vb, offset, _vc[index].type() );
+				offset += _vc[index].size();
+			}
+			
+			ib = _indexBuffers[i];
+			context.drawTriangles(ib);
+		}
+		//trace ( "VertexIndexBuilder.bufferCopyToGPU - took: "  + (getTimer() - timer) + "  to process " + _buffers + " buffers" );			
+	}	
+	
 	/*
 	private function quadsCopyToVertexBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		_s_totalUsed++;
 		_bufferVertexMemory += quadsToProcess * Quad.VERTICES * 4; // times 4 seems true, but I dont understand why
 		
-		var _vertices:Vector.<Number> = new Vector.<Number>( quadsToProcess * Quad.VERTICES );
+		var _verticeByteArray:Vector.<Number> = new Vector.<Number>( quadsToProcess * Quad.VERTICES );
 
 		var j:int = 0;
 		var oxel:Oxel;
@@ -319,8 +367,8 @@ public class VertexIndexBuilder
 				{
 					if ( quad )
 					{
-						for each ( vertex in quad._vertices ) {
-							_vertices[j++] =  vertex;
+						for each ( vertex in quad._verticeByteArray ) {
+							_verticeByteArray[j++] =  vertex;
 						}
 					}
 				}
@@ -342,17 +390,19 @@ public class VertexIndexBuilder
 			return;
 		}
 		
-		// TODO I am not testing to see the size of the _vertices or _indices.
+		// TODO I am not testing to see the size of the _verticeByteArray or _indices.
 		// what happens if they are too large? 
 		// Can I ever have more then one buffer with this code? I dont see how.
-		vb.uploadFromVector( _vertices, 0, quadsToProcess * 4 );
+		vb.uploadFromVector( _verticeByteArray, 0, quadsToProcess * 4 );
 		_vertexBuffers.push(vb);
 		_buffers++;
 	}
 */
-
+/*
 	private function quadsCopyToIndexBuffersVector( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		
+		// NEW 3
+		Log.out( "VertexIndexBuilder.quadsCopyToIndexBuffersVector - NEW 3" );
 		var _offsetIndices:Vector.<uint> = new Vector.<uint>( quadsToProcess * Quad.INDICES );
 
 		var i:int = 0;
@@ -388,12 +438,14 @@ public class VertexIndexBuilder
 		//for each ( var n:Number in _offsetIndices )
 			//Log.out( n.toString() );
 			
-//		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
+//		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _verticeByteArray:" +  j + "(" + _verticeByteArray.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
-	
+*/	
+	/*
 	// Not using since some index is off...
 	private function quadsCopyToIndexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
 		
+		Log.out( "VertexIndexBuilder.quadsCopyToIndexBuffersVector - NEW 4" );
 		var _offsetIndices:ByteArray = new ByteArray();
 		//_offsetIndices.endian = Endian.LITTLE_ENDIAN;
 
@@ -432,7 +484,7 @@ public class VertexIndexBuilder
 		ib.uploadFromByteArray( _offsetIndices, 0, 0, $quadsToProcess * Quad.INDICES );
 		_indexBuffers.push(ib);
 	}
-
+*/
 /*
 	private function quadsCopyToBuffersVectorGood( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
 		//trace("VertexIndexBuilder.quadsCopyToBuffers - startingIndex: " + oxelStartingIndex + " oxelsToProcess:" +  oxelsToProcess + " quadsToProcess: " + quadsToProcess );
@@ -453,7 +505,7 @@ public class VertexIndexBuilder
 		_s_totalUsed++;
 		_bufferVertexMemory += quadsToProcess * Quad.VERTICES * 4; // times 4 seems true, but I dont understand why
 		
-		var _vertices:Vector.<Number> = new Vector.<Number>( quadsToProcess * Quad.VERTICES );
+		var _verticeByteArray:Vector.<Number> = new Vector.<Number>( quadsToProcess * Quad.VERTICES );
 		var _offsetIndices:Vector.<uint> = new Vector.<uint>( quadsToProcess * Quad.INDICES );
 
 		var i:int = 0;
@@ -470,8 +522,8 @@ public class VertexIndexBuilder
 				{
 					if ( quad )
 					{
-						for each ( vertex in quad._vertices ) {
-							_vertices[j++] =  vertex;
+						for each ( vertex in quad._verticeByteArray ) {
+							_verticeByteArray[j++] =  vertex;
 						}
 				
 						// each indice has to be offset to have a unique offset
@@ -484,13 +536,13 @@ public class VertexIndexBuilder
 			}
 		}
 		
-		// TODO I am not testing to see the size of the _vertices or _indices.
+		// TODO I am not testing to see the size of the _verticeByteArray or _indices.
 		// what happens if they are too large? 
 		// Can I ever have more then one buffer with this code? I dont see how.
-		vb.uploadFromVector( _vertices, 0, quadsToProcess * 4 );
+		vb.uploadFromVector( _verticeByteArray, 0, quadsToProcess * 4 );
 		_vertexBuffers.push(vb);
 		
-//		for each ( var n:Number in _vertices )
+//		for each ( var n:Number in _verticeByteArray )
 //			Log.out( n.toString() );
 	
 		_bufferIndexMemory = quadsToProcess * Quad.INDICES;
@@ -505,53 +557,14 @@ public class VertexIndexBuilder
 			
 		_buffers++;
 		
-//		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _vertices:" +  j + "(" + _vertices.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
+//		trace("VertexIndexBuilder.quadsCopyToBuffers - _offsetIndices: " + i + "(" + _offsetIndices.length +  ")  _verticeByteArray:" +  j + "(" + _verticeByteArray.length + ")  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
 	}
 	*/
-	private function addComponentData():void {
-		_vertexDataSize = 0;
-		for each ( var oxel:Oxel in _oxels ) {
-			if ( oxel.quads ) {
-				for each ( var quad:Quad in oxel.quads ) {
-					if ( quad && 0 < quad.components.length ) {
-						for ( var i:uint; i < Quad.COMPONENT_COUNT; i++ ) {
-							_vc[i] = quad.components[i].clone();
-							_vertexDataSize += quad.components[i].size();
-						}
-						return;
-					}
-				}
-			}
-		}
-		throw new Error( "VertexIndexBuilder.addComponentData - No components found" );
-	}
-
-	public function BufferCopyToGPU( context:Context3D ) : void 
-	{
-		//var timer:int = getTimer();
-		var vb:VertexBuffer3D;
-		var ib:IndexBuffer3D;
-		var index:uint;
-		var offset:uint;
-		for (var i:int = 0; i < _buffers; i++) {
-			vb = _vertexBuffers[i];
-			
-			index = 0;
-			offset = 0;
-			for each ( var vc:VertexComponent in _vc ) {
-				context.setVertexBufferAt( index++, vb, offset, vc.type() );
-				offset += vc.size();
-			}
-
-			ib = _indexBuffers[i];
-			context.drawTriangles(ib);
-		}
-		//trace ( "VertexIndexBuilder.bufferCopyToGPU - took: "  + (getTimer() - timer) + "  to process " + _buffers + " buffers" );			
-	}	
 	
 	//////////////////////////////////
 	// Not currently in use - RSF 11.10.13
 	//////////////////////////////////
+	/*
 	public function moveSkyTrianglesToGPU( context:Context3D ) : void {
 		
 		var vb:VertexBuffer3D;
@@ -567,6 +580,7 @@ public class VertexIndexBuilder
 			context.drawTriangles(ib);
 		}
 	}
+	*/
 	
 }
 }
