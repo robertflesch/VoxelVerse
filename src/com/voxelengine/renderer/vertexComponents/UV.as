@@ -20,6 +20,11 @@ public class UV extends VertexComponent {
 		_u = $u;
 		_v = $v;
 	}
+	
+	override public function setNumArray(args:Vector.<Number>):void {
+		_u = args[0];
+		_v = args[1];
+	}
 
 	override public function writeToByteArray( $ba:ByteArray ):void {
 		$ba.writeFloat( _u );

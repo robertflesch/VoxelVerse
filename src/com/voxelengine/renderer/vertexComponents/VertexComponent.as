@@ -19,6 +19,10 @@ public class VertexComponent {
 		_size = $size;
 	}
 	
+	public function setNumArray(args:Vector.<Number>):void {;}
+	public function setIntArray(args:Vector.<int>):void {;}
+	public function setUint(args:uint):void {;}
+	
 	public function writeToByteArray( ba:ByteArray ):void {}
 	
 	public function type():String {

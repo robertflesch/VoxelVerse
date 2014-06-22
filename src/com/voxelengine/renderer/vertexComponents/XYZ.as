@@ -23,6 +23,12 @@ public class XYZ extends VertexComponent {
 		_z = $z;
 	}
 	
+	override public function setNumArray(args:Vector.<Number>):void {
+		_x = args[0];
+		_y = args[1];
+		_z = args[2];
+	}
+
 	override public function writeToByteArray( $ba:ByteArray ):void {
 		$ba.writeFloat( _x );
 		$ba.writeFloat( _y );

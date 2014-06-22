@@ -33,6 +33,8 @@ public class Quad {
 	static private const QUAD_UV_COUNT:int = 5;
 	
 	static private var _s_textureScale:int = 256;
+	static private var _s_numArgs:Vector.<Number> = new Vector.<Number>(3, true);
+	static private var _s_intArgs:Vector.<int> = new Vector.<int>(3, true);
 	
 	static public const COMPONENT_COUNT:int = 5;
 	static public const VERTEX_PER_QUAD:int = 4;
@@ -354,14 +356,42 @@ public class Quad {
 	
 	private function buildVerticeComponents( componentIndex:int, x:Number, y:Number, z:Number, u:Number, v:Number, normalx:int, normaly:int, normalz:int, tint:uint, light:uint ):int
 	{
-		// TODO a whole lot of newing here! RSF
-		components[componentIndex++] = new XYZ( x, y , z );
-		components[componentIndex++] = new UV( u, v );
-		components[componentIndex++] = new Normal( normalx, normaly, normalz );
-		//components[componentIndex++] = new Color( 1, 1, 0, 0.3 );
-		// ABGR
-		components[componentIndex++] = new ColorUINT( tint );
-		components[componentIndex++] = new ColorUINT( light );
+		// QUESTION how fast is the var args in as3, which is used in the set function
+		if ( null == components[componentIndex] )
+			components[componentIndex++] = new XYZ( x, y , z );
+		else {
+			_s_numArgs[0] = x;
+			_s_numArgs[1] = y;
+			_s_numArgs[2] = z;
+			components[componentIndex++].setNumArray( _s_numArgs );
+		}
+		
+		if ( null == components[componentIndex] )
+			components[componentIndex++] = new UV( u, v );
+		else {
+			_s_numArgs[0] = u;
+			_s_numArgs[1] = v;
+			components[componentIndex++].setNumArray( _s_numArgs );
+		}
+			
+		if ( null == components[componentIndex] )
+			components[componentIndex++] = new Normal( normalx, normaly, normalz );
+		else {
+			_s_intArgs[0] = normalx;
+			_s_intArgs[1] = normaly;
+			_s_intArgs[2] = normalz;
+			components[componentIndex++].setIntArray( _s_intArgs );
+		}
+
+		if ( null == components[componentIndex] )
+			components[componentIndex++] = new ColorUINT( tint );
+		else	
+			components[componentIndex++].setUint( tint );
+
+		if ( null == components[componentIndex] )
+			components[componentIndex++] = new ColorUINT( light );
+		else	
+			components[componentIndex++].setUint( light );
 		
 		return componentIndex;
 	}

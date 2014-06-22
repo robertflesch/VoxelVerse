@@ -12,9 +12,9 @@ package com.voxelengine.renderer.vertexComponents {
 
 public class Normal extends VertexComponent {
 
-	private var 	_nx:Number;
-	private var 	_ny:Number;
-	private var 	_nz:Number;
+	private var 	_nx:int;
+	private var 	_ny:int;
+	private var 	_nz:int;
 	
 	public function Normal( $nx:int, $ny:int, $nz:int ):void {
 		super( Context3DVertexBufferFormat.FLOAT_3, 3 );
@@ -23,10 +23,16 @@ public class Normal extends VertexComponent {
 		_nz = $nz;
 	}
 	
+	override public function setNumArray(args:Vector.<Number>):void {
+		_nx = args[0];
+		_ny = args[1];
+		_nz = args[2];
+	}
+	
 	override public function writeToByteArray( $ba:ByteArray ):void {
-		$ba.writeFloat( _nx );
-		$ba.writeFloat( _ny );
-		$ba.writeFloat( _nz );
+		$ba.writeInt( _nx );
+		$ba.writeInt( _ny );
+		$ba.writeInt( _nz );
 	}
 	
 }
