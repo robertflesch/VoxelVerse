@@ -53,6 +53,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			}
 			else if ( LightEvent.ALPHA_TO_SOLID == $le.type )
 			{
+				/*
 				var blockageList:Vector.<BlockageCandidates> = new Vector.<BlockageCandidates>;
 				// The only time this matters is if I have only TWO side that are translucent
 				// All other times this blockage doesnt matter.
@@ -125,6 +126,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 						}
 					}
 				}
+				*/
 			}
 		}
 		
