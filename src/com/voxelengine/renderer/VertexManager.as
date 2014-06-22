@@ -33,7 +33,6 @@ public class VertexManager {
 	public function set minGrain(val:uint):void {  _minGrain = val;  }
 	public function get minGrain():uint { return _minGrain; }
 	
-	//private var _name:String;
 	public function VertexManager()
 	{
 		//var name:String = NameUtil.createUniqueName( this );
@@ -148,8 +147,17 @@ public class VertexManager {
 		}		
 	}
 	
-	public function oxelAdd( oxel:Oxel ):VertexIndexBuilder { return VIBGet( oxel.type, oxel.type ).oxelAdd( oxel ); }
-	public function oxelRemove( oxel:Oxel, oldType:int ):VertexIndexBuilder { return VIBGet( oxel.type, oldType ).oxelRemove( oxel ); }
+	public function oxelAdd( oxel:Oxel ):void { 	
+		var vib:VertexIndexBuilder = VIBGet( oxel.type, oxel.type );
+		vib.dirty = true; 
+		vib.oxelAdd( oxel ); 
+	}
+	
+	public function oxelRemove( oxel:Oxel, oldType:int ):void { 
+		var vib:VertexIndexBuilder = VIBGet( oxel.type, oldType );
+		vib.dirty = true; 
+		vib.oxelRemove( oxel ); 
+	}
 	
 	public function VIBGet( newType:int, oldType:int ):VertexIndexBuilder
 	{

@@ -130,18 +130,17 @@ public class VertexIndexBuilder
 		}
 	}
 
-	public function oxelAdd( oxel:Oxel ):VertexIndexBuilder {
+	public function oxelAdd( oxel:Oxel ):void {
 		dirty = true;
 		
 		if ( !_oxels )
 			_oxels = new Vector.<Oxel>();
 		_oxels.push( oxel );
 		_s_totalOxels++;
-		return this;
 		//trace( "VertexIndexBuilder.addOxel - total oxels - " + _oxels.length + " quad_count: " + quad_count );
 	}
 
-	public function oxelRemove( oxel:Oxel ):VertexIndexBuilder {
+	public function oxelRemove( oxel:Oxel ):void {
 		dirty = true;
 
 		if ( _oxels )
@@ -151,12 +150,10 @@ public class VertexIndexBuilder
 				if ( oxel == _oxels[index] ) {
 					_oxels.splice( index, 1 );
 					_s_totalOxels--;
-					return this;
 				}
 			}
 			trace( "VertexIndexBuilder.oxelRemove - OXEL NOT FOUND - total oxels - " + _oxels.length + "  oxel: " + oxel.toString() );
 		}
-		return this;
 	}
 	
 	public function dispose(): void {

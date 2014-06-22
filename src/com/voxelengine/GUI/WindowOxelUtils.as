@@ -73,6 +73,12 @@ package com.voxelengine.GUI
 			statsB.width = 150;
 			addElement( statsB );
 			
+			var fullBrightB:Button = new Button( "Full Bright" );
+			fullBrightB.addEventListener(UIMouseEvent.CLICK, fullBrightHandler );
+			fullBrightB.width = 150;
+			addElement( fullBrightB );
+
+			
 			//var saveModelDataB:Button = new Button( "Save Model Data" );
 			//saveModelDataB.addEventListener(UIMouseEvent.CLICK, saveModelDataHandler );
 			//saveModelDataB.width = 150;
@@ -87,6 +93,29 @@ package com.voxelengine.GUI
 			var ba:ByteArray = Globals.g_modelManager.findIVM( _vm.modelInfo.biomes.layers[0].data );
 			_vm.statisics.gather( Globals.VERSION, ba, _vm.oxel.gc.grain );
 			_vm.statisics.statsPrint();
+		}
+		
+		import flash.utils.Timer;
+		import flash.events.TimerEvent;
+		private var _reloadTimer:Timer;
+		private var startingVal:uint = 0x33;
+		private function fullBrightHandler(event:UIMouseEvent):void {
+		
+			_reloadTimer = new Timer( 1000 );
+			_reloadTimer.addEventListener(TimerEvent.TIMER, onRepeat);
+			_reloadTimer.start();
+		}
+
+		protected function onRepeat(event:TimerEvent):void
+		{
+			Log.out( "WindowOxelUtils.onRepeat - startingVal: " + startingVal );
+			_vm.oxel.fullBright( startingVal );
+			
+			if ( 0xff == startingVal ) {
+				_reloadTimer.stop();
+			}
+			
+			startingVal++;
 		}
 		
 		//private function saveModelDataHandler(event:UIMouseEvent):void 

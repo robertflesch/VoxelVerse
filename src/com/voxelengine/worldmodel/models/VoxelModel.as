@@ -527,10 +527,6 @@ package com.voxelengine.worldmodel.models
 			//oxel.mergeRecursive(); // Causes bad things to happen since we dont regen faces!
 		}
 		
-		public function lightingFromLights():void {
-			oxel.lightingFromLights( instanceInfo.instanceGuid );
-		}
-		
 		public function draw(mvp:Matrix3D, $context:Context3D, $isChild:Boolean ):void	{
 			if ( !visible )
 				return;

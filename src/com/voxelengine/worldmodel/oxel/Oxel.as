@@ -1101,6 +1101,7 @@ package com.voxelengine.worldmodel.oxel
 			}
 			else
 			{
+				// TODO This needs to be refactored to remove this from this function, so more likely go in the write function of the voxelModel.
 				if ( Globals.Info[type].flowable && Globals.autoFlow && EditCursor.EDIT_CURSOR != $guid )
 					Flow.addTask( $guid, gc, type, flowInfo, 1 );
 
@@ -1327,22 +1328,37 @@ package com.voxelengine.worldmodel.oxel
 		
 		// This would only be run once when model loads
 		// set the activeVoxelModelGuid before calling
-		public function lightingFromLights( $guid:String ):void {
+		public function lightsStaticCount( $guid:String ):void {
 			if ( childrenHas() )
 			{
 				for each ( var child:Oxel in _children )
-					child.lightingFromLights( $guid );
+					child.lightsStaticCount( $guid );
 			}
 			else
 			{
 				if ( Globals.Info[type].light ) // had & quads, but that doesnt matter with this style
-				{
 					_s_lightsFound++;
-					//Light.addTask( $guid, gc, 0xffffffff );
-				}
 			}
 		}
 		
+		// This would only be run once when model loads
+		// set the activeVoxelModelGuid before calling
+		public function lightsStaticSetDefault( $attn:uint ):void {
+			if ( childrenHas() )
+			{
+				for each ( var child:Oxel in _children )
+					child.lightsStaticSetDefault( $attn );
+			}
+			else
+			{
+				if ( _brightness && _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+					li.setAll( $attn );
+					quadsRebuildAll();
+
+				}
+			}
+		}
 
 		
 		public function faceCenterGet( face:int ):Vector3D
@@ -1483,9 +1499,7 @@ package com.voxelengine.worldmodel.oxel
 			if ( quad )
 				quadDelete( quad, $face, type );
 		}
-		////////////////////////////////////////
-		// NEEDS TESTING - Called from face lighting
-		////////////////////////////////////////
+
 		public function quadRebuild( $face:int ):void {
 			if  ( !_quads )
 				return;
@@ -1503,22 +1517,10 @@ package com.voxelengine.worldmodel.oxel
 			if  ( !_quads )
 				return;
 				
-			//Log.out( "Oxel.quadsDeleteAll" );
-			dirty = true;
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
-			{
-				var quad:Quad = _quads[face];
-				if ( quad )
-				{
-					var copiedQuad:Quad = QuadPool.poolGet();
-					copiedQuad.copyUV( quad );
-					var plane_facing:int = 1;
-					var scale:uint = 1 << gc.grain;
-					quadDelete( quad, face, type );
-					copiedQuad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), face, plane_facing, scale, _brightness );
-				}
-			}
+				quadRebuild( face );
 		}
+		
 		////////////////////////////////////////
 		public function quadsDeleteAll():void {
 			if  ( _quads )
@@ -1566,14 +1568,14 @@ package com.voxelengine.worldmodel.oxel
 			if ( added_to_vertex )
 			{
 				// Todo - this should just mark the oxels, and clean up should happen later
-				vm_get().oxelRemove( this, type ).dirty;
+				vm_get().oxelRemove( this, type );
 				added_to_vertex = false;
 			}
 		}
 		
 		private function vertManAddOxel():void {
 			added_to_vertex = true;
-			vm_get().oxelAdd( this ).dirty;
+			vm_get().oxelAdd( this );
 		}
 		
 		protected function vertManMarkDirty( oldType:int ):void {
@@ -2310,6 +2312,12 @@ package com.voxelengine.worldmodel.oxel
 			trace( "smallest oxel is " + _o_min + "  largest is " + _o_max );
 			
 			breakdown(2);
+		}
+		
+		public function fullBright( $attn:uint ):void {
+			var timer:int = getTimer();
+			lightsStaticSetDefault( $attn );
+			Log.out("Oxel.fullBright - rebuildAll took: " + (getTimer() - timer));
 		}
 		
 		public function breakdown( smallest: int ):void {
