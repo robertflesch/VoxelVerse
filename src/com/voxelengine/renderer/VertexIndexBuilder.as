@@ -219,7 +219,7 @@ public class VertexIndexBuilder
 						quadsInOxel = 0;
 				}
 				if ( 0 < oxelsProcessed - oxelStartingIndex )
-					quadsCopyToBuffers( oxelStartingIndex, oxelsProcessed - oxelStartingIndex , quadsProcessed, context );
+					populateVertexAndIndexBuffers( oxelStartingIndex, oxelsProcessed - oxelStartingIndex , quadsProcessed, context );
 
 				oxelStartingIndex = oxelsProcessed;
 				remainingOxels = _oxels.length - oxelsProcessed;
@@ -233,17 +233,7 @@ public class VertexIndexBuilder
 		dirty = false;
 	}
 	
-	private function quadsCopyToBuffers( oxelStartingIndex:int, oxelsToProcess:int, quadsToProcess:int, context:Context3D ):void { 
-		
-		//var timer:uint = getTimer();
-		//quadsCopyToVertexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		quadsCopyToVertexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		//quadsCopyToIndexBuffersVector( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		//quadsCopyToIndexBuffersByteArray( oxelStartingIndex, oxelsToProcess, quadsToProcess, context );
-		//trace("VertexIndexBuilder.quadsCopyToBuffers - oxelStartingIndex: " + oxelStartingIndex + " +  quadsToProcess: " + quadsToProcess + "  took: " + (getTimer() - timer) );
-	}
-	
-	private function quadsCopyToVertexBuffersByteArray( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
+	private function populateVertexAndIndexBuffers( $oxelStartingIndex:int, $oxelsToProcess:int, $quadsToProcess:int, $context:Context3D ):void { 
 		
 		_s_totalUsed++;
 		_bufferVertexMemory += $quadsToProcess * Quad.VERTEX_PER_QUAD * _vertexDataSize * BYTES_PER_WORD;
