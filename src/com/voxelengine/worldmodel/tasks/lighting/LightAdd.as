@@ -225,7 +225,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				var childID:uint = Oxel.childIdOpposite( $face, currentLo.gc.childId() );	
 				btp.reset();
 				// now extend the brightness child onto its parent!
-				btp.childAdd( lightID, childID, bt, grainUnits );
+				btp.childAdd( lightID, childID, bt, grainUnits, !$no.hasAlpha );
 				bt.copyFrom( btp );
 				grainUnits *= 2;
 				// if sizeDiff is 2 or great, we have to recalculate the child id for the lo's parent

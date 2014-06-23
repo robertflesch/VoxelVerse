@@ -41,10 +41,10 @@ public class Brightness  {  // extends BrightnessData
 	private static const DEFAULT_COLOR:uint = 0x00ffffff;
 	private static const DEFAULT_FALL_OFF_PER_METER:uint = 0x32; // how much attn per unit meter
 	private static const DEFAULT_SIGMA:uint = 2;
-//	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
-//	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
-	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x66; // out of 255
-	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x66666666;
+	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
+	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
+//	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x66; // out of 255
+//	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x66666666;
 
 	static public const B000:uint = 0;
 	static public const B001:uint = 1;
@@ -239,17 +239,17 @@ public class Brightness  {  // extends BrightnessData
 		fallOffPerMeter = DEFAULT_FALL_OFF_PER_METER;
 	}
 
-	public function childAddAll( $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
+	public function mergeChildren( $childID:uint, $b:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
 		// There is a bug in here, since it is the first three lights that get added.
 		// I should eval each child and see if its light level is higher then one of the current lights
 		for ( var i:int; i < LIGHTS_MAX; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li && DEFAULT_BASE_LIGHT_LEVEL < li.avg )
-				childAdd( li.ID, $childID, $b, $grainUnits );
+				childAdd( li.ID, $childID, $b, $grainUnits, $hasAlpha );
 		}
 	}
 	
-	public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
+	public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
 
 		var sli:LightInfo =  $b.lightGet( $ID );	
 		if ( null == sli )
@@ -272,89 +272,104 @@ public class Brightness  {  // extends BrightnessData
 			li.b000 = sli.b000;
 			if ( li.b001 < sli.b001 - localattn )  li.b001 = sli.b001 - localattn;
 			if ( li.b100 < sli.b100 - localattn )  li.b100 = sli.b100 - localattn;
-			if ( li.b101 < sli.b101 - sqrattn )  	li.b101 = sli.b101 - sqrattn;
-			
 			if ( li.b010 < sli.b010 - localattn )  li.b010 = sli.b010 - localattn;
-			if ( li.b011 < sli.b011 - sqrattn )  	li.b011 = sli.b011 - sqrattn;
-			if ( li.b110 < sli.b110 - sqrattn )  	li.b110 = sli.b110 - sqrattn;
-			if ( li.b111 < sli.b111 - csqrattn )  	li.b111 = sli.b111 - csqrattn;
+			if ( $hasAlpha ) {
+				if ( li.b101 < sli.b101 - sqrattn )  	li.b101 = sli.b101 - sqrattn;
+				if ( li.b011 < sli.b011 - sqrattn )  	li.b011 = sli.b011 - sqrattn;
+				if ( li.b110 < sli.b110 - sqrattn )  	li.b110 = sli.b110 - sqrattn;
+				if ( li.b111 < sli.b111 - csqrattn )  	li.b111 = sli.b111 - csqrattn;
+			}
 		}
 		else if ( 1 == $childID ) {
-			if ( li.b000 < sli.b000 - localattn )  li.b000 = sli.b000 - localattn;
-			if ( li.b001 < sli.b001 - sqrattn )  	li.b001 = sli.b001 - sqrattn;
-			li.b100 = sli.b100;
-			if ( li.b101 < sli.b101 - localattn )  li.b101 = sli.b101 - localattn;
-			       
-			if ( li.b010 < sli.b010 - sqrattn )  	li.b010 = sli.b010 - sqrattn;
-			if ( li.b011 < sli.b011 - csqrattn )  	li.b011 = sli.b011 - csqrattn;
-			if ( li.b110 < sli.b110 - localattn )  li.b110 = sli.b110 - localattn;
-			if ( li.b111 < sli.b111 - sqrattn )  	li.b111 = sli.b111 - sqrattn;
+			if ( li.b000 < sli.b000 - localattn )  		li.b000 = sli.b000 - localattn;
+														li.b100 = sli.b100;
+			if ( li.b101 < sli.b101 - localattn )  		li.b101 = sli.b101 - localattn;
+			if ( li.b110 < sli.b110 - localattn )  		li.b110 = sli.b110 - localattn;
+
+			if ( $hasAlpha ) {			
+				if ( li.b001 < sli.b001 - sqrattn )  	li.b001 = sli.b001 - sqrattn;
+				if ( li.b010 < sli.b010 - sqrattn )  	li.b010 = sli.b010 - sqrattn;
+				if ( li.b011 < sli.b011 - csqrattn )  	li.b011 = sli.b011 - csqrattn;
+				if ( li.b111 < sli.b111 - sqrattn )  	li.b111 = sli.b111 - sqrattn;
+			}
 		}
 		else if ( 2 == $childID ) {
-			if ( li.b000 < sli.b000 - localattn )  li.b000 = sli.b000 - localattn;
-			if ( li.b001 < sli.b001 - sqrattn )  	li.b001 = sli.b001 - sqrattn;
-			if ( li.b100 < sli.b100 - sqrattn )  	li.b100 = sli.b100 - sqrattn;
-			if ( li.b101 < sli.b101 - csqrattn )  	li.b101 = sli.b101 - csqrattn;
-			       
-			li.b010 = sli.b010;
-			if ( li.b011 < sli.b011 - localattn )  li.b011 = sli.b011 - localattn;
-			if ( li.b110 < sli.b110 - localattn )  li.b110 = sli.b110 - localattn;
-			if ( li.b111 < sli.b111 - sqrattn )  	li.b111 = sli.b111 - sqrattn;
+			if ( li.b000 < sli.b000 - localattn )  		li.b000 = sli.b000 - localattn;
+														li.b010 = sli.b010;
+			if ( li.b011 < sli.b011 - localattn )  		li.b011 = sli.b011 - localattn;
+			if ( li.b110 < sli.b110 - localattn )  		li.b110 = sli.b110 - localattn;
+			
+			if ( $hasAlpha ) {			
+				if ( li.b001 < sli.b001 - sqrattn )  	li.b001 = sli.b001 - sqrattn;
+				if ( li.b100 < sli.b100 - sqrattn )  	li.b100 = sli.b100 - sqrattn;
+				if ( li.b101 < sli.b101 - csqrattn )  	li.b101 = sli.b101 - csqrattn;
+				if ( li.b111 < sli.b111 - sqrattn )  	li.b111 = sli.b111 - sqrattn;
+			}
 		}
 		else if ( 3 == $childID ) {
-			if ( li.b000 < sli.b000 - sqrattn )  	li.b000 = sli.b000 - sqrattn;
-			if ( li.b001 < sli.b001 - csqrattn )  	li.b001 = sli.b001 - csqrattn;
-			if ( li.b100 < sli.b100 - localattn )  li.b100 = sli.b100 - localattn;
-			if ( li.b101 < sli.b101 - sqrattn )  	li.b101 = sli.b101 - sqrattn;
+			if ( li.b100 < sli.b100 - localattn )  		li.b100 = sli.b100 - localattn;
+			if ( li.b010 < sli.b010 - localattn )  		li.b010 = sli.b010 - localattn;
+														li.b110 = sli.b110;
+			if ( li.b111 < sli.b111 - localattn )  		li.b111 = sli.b111 - localattn;
 			       
-			if ( li.b010 < sli.b010 - localattn )  li.b010 = sli.b010 - localattn;
-			if ( li.b011 < sli.b011 - sqrattn )  	li.b011 = sli.b011 - sqrattn;
-			li.b110 = sli.b110;
-			if ( li.b111 < sli.b111 - localattn )  li.b111 = sli.b111 - localattn;
+			if ( $hasAlpha ) {			
+				if ( li.b011 < sli.b011 - sqrattn )  	li.b011 = sli.b011 - sqrattn;
+				if ( li.b101 < sli.b101 - sqrattn )  	li.b101 = sli.b101 - sqrattn;
+				if ( li.b000 < sli.b000 - sqrattn )  	li.b000 = sli.b000 - sqrattn;
+				if ( li.b001 < sli.b001 - csqrattn )  	li.b001 = sli.b001 - csqrattn;
+			}
 		}
 		else if ( 4 == $childID ) {
-			if ( li.b000 < sli.b000 - localattn )  li.b000 = sli.b000 - localattn;
-			li.b001 = sli.b001;
-			if ( li.b100 < sli.b100 - sqrattn )  	li.b100 = sli.b100 - sqrattn;
-			if ( li.b101 < sli.b101 - localattn )  li.b101 = sli.b101 - localattn;
+			if ( li.b000 < sli.b000 - localattn )  		li.b000 = sli.b000 - localattn;
+														li.b001 = sli.b001;
+			if ( li.b011 < sli.b011 - localattn )  		li.b011 = sli.b011 - localattn;
+			if ( li.b101 < sli.b101 - localattn ) 		li.b101 = sli.b101 - localattn;
 			       
-			if ( li.b010 < sli.b010 - sqrattn )  	li.b010 = sli.b010 - sqrattn;
-			if ( li.b011 < sli.b011 - localattn )  li.b011 = sli.b011 - localattn;
-			if ( li.b110 < sli.b110 - csqrattn )  	li.b110 = sli.b110 - csqrattn;
-			if ( li.b111 < sli.b111 - sqrattn )  	li.b111 = sli.b111 - sqrattn;
+			if ( $hasAlpha ) {			
+				if ( li.b100 < sli.b100 - sqrattn )  	li.b100 = sli.b100 - sqrattn;
+				if ( li.b010 < sli.b010 - sqrattn )  	li.b010 = sli.b010 - sqrattn;
+				if ( li.b110 < sli.b110 - csqrattn )  	li.b110 = sli.b110 - csqrattn;
+				if ( li.b111 < sli.b111 - sqrattn )  	li.b111 = sli.b111 - sqrattn;
+			}
 		}
 		else if ( 5 == $childID ) {
-			if ( li.b000 < sli.b000 - sqrattn )  	li.b000 = sli.b000 - sqrattn;
-			if ( li.b001 < sli.b001 - localattn )  li.b001 = sli.b001 - localattn;
-			if ( li.b100 < sli.b100 - csqrattn )  	li.b100 = sli.b100 - localattn;
-			li.b101 = sli.b101;
+			if ( li.b001 < sli.b001 - localattn )  		li.b001 = sli.b001 - localattn;
+			if ( li.b100 < sli.b100 - csqrattn )  		li.b100 = sli.b100 - localattn;
+														li.b101 = sli.b101;
+			if ( li.b111 < sli.b111 - localattn )  		li.b111 = sli.b111 - localattn;
 			       
-			if ( li.b010 < sli.b010 - csqrattn )  	li.b010 = sli.b010 - csqrattn;
-			if ( li.b011 < sli.b011 - sqrattn )  	li.b011 = sli.b011 - sqrattn;
-			if ( li.b110 < sli.b110 - sqrattn )  	li.b110 = sli.b110 - sqrattn;
-			if ( li.b111 < sli.b111 - localattn )  li.b111 = sli.b111 - localattn;
+			if ( $hasAlpha ) {			
+				if ( li.b000 < sli.b000 - sqrattn )  	li.b000 = sli.b000 - sqrattn;
+				if ( li.b010 < sli.b010 - csqrattn )  	li.b010 = sli.b010 - csqrattn;
+				if ( li.b011 < sli.b011 - sqrattn )  	li.b011 = sli.b011 - sqrattn;
+				if ( li.b110 < sli.b110 - sqrattn )  	li.b110 = sli.b110 - sqrattn;
+			}
 		}
 		else if ( 6 == $childID ) {
-			if ( li.b000 < sli.b000 - sqrattn )  	li.b000 = sli.b000 - sqrattn;
-			if ( li.b001 < sli.b001 - localattn )  li.b001 = sli.b001 - localattn;
-			if ( li.b100 < sli.b100 - csqrattn )  	li.b100 = sli.b100 - csqrattn;
-			if ( li.b101 < sli.b101 - sqrattn )  	li.b101 = sli.b101 - sqrattn;
+			if ( li.b010 < sli.b010 - localattn ) 		li.b010 = sli.b010 - localattn;
+														li.b011 = sli.b011;		
+			if ( li.b111 < sli.b111 - localattn ) 		li.b111 = sli.b111 - localattn;
+			if ( li.b001 < sli.b001 - localattn ) 		li.b001 = sli.b001 - localattn;
 			       
-			if ( li.b010 < sli.b010 - localattn )  li.b010 = sli.b010 - localattn;
-			li.b011 = sli.b011;
-			if ( li.b110 < sli.b110 - sqrattn )  	li.b110 = sli.b110 - sqrattn;
-			if ( li.b111 < sli.b111 - localattn )  li.b111 = sli.b111 - localattn;
+			if ( $hasAlpha ) {			
+				if ( li.b000 < sli.b000 - sqrattn )  	li.b000 = sli.b000 - sqrattn;
+				if ( li.b110 < sli.b110 - sqrattn )  	li.b110 = sli.b110 - sqrattn;
+				if ( li.b100 < sli.b100 - csqrattn )  	li.b100 = sli.b100 - csqrattn;
+				if ( li.b101 < sli.b101 - sqrattn )  	li.b101 = sli.b101 - sqrattn;
+			}
 		}
 		else if ( 7 == $childID ) {
-			if ( li.b000 < sli.b000 - csqrattn )  	li.b000 = sli.b000 - csqrattn;
-			if ( li.b001 < sli.b001 - sqrattn )  	li.b001 = sli.b001 - sqrattn;
-			if ( li.b100 < sli.b100 - sqrattn )  	li.b100 = sli.b100 - sqrattn;
-			if ( li.b101 < sli.b101 - localattn )  li.b101 = sli.b101 - localattn;
+			if ( li.b011 < sli.b011 - localattn ) 		li.b011 = sli.b011 - localattn;
+			if ( li.b110 < sli.b110 - localattn ) 		li.b110 = sli.b110 - localattn;
+														li.b111 = sli.b111;		
+			if ( li.b101 < sli.b101 - localattn ) 		li.b101 = sli.b101 - localattn;
 			       
-			if ( li.b010 < sli.b010 - sqrattn )  	li.b010 = sli.b010 - sqrattn;
-			if ( li.b011 < sli.b011 - localattn )  li.b011 = sli.b011 - localattn;
-			if ( li.b110 < sli.b110 - localattn )  li.b110 = sli.b110 - localattn;
-			li.b111 = sli.b111;
+			if ( $hasAlpha ) {			
+				if ( li.b000 < sli.b000 - csqrattn )  	li.b000 = sli.b000 - csqrattn;
+				if ( li.b001 < sli.b001 - sqrattn )  	li.b001 = sli.b001 - sqrattn;
+				if ( li.b100 < sli.b100 - sqrattn )  	li.b100 = sli.b100 - sqrattn;
+				if ( li.b010 < sli.b010 - sqrattn )  	li.b010 = sli.b010 - sqrattn;
+			}
 		}
 		
 		if ( li.b000 < DEFAULT_BASE_LIGHT_LEVEL ) li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
