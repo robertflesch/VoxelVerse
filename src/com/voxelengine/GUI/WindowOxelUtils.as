@@ -73,10 +73,15 @@ package com.voxelengine.GUI
 			statsB.width = 150;
 			addElement( statsB );
 			
-			var fullBrightB:Button = new Button( "Full Bright" );
-			fullBrightB.addEventListener(UIMouseEvent.CLICK, fullBrightHandler );
-			fullBrightB.width = 150;
-			addElement( fullBrightB );
+			var baseLightLevelB:Button = new Button( "Set Base Light Level..." );
+			baseLightLevelB.addEventListener(UIMouseEvent.CLICK, baseLightLevelHandler );
+			baseLightLevelB.width = 150;
+			addElement( baseLightLevelB );
+
+			//var fullBrightB:Button = new Button( "Full Bright" );
+			//fullBrightB.addEventListener(UIMouseEvent.CLICK, fullBrightHandler );
+			//fullBrightB.width = 150;
+			//addElement( fullBrightB );
 
 			
 			//var saveModelDataB:Button = new Button( "Save Model Data" );
@@ -95,13 +100,18 @@ package com.voxelengine.GUI
 			_vm.statisics.statsPrint();
 		}
 		
+		private function baseLightLevelHandler(event:UIMouseEvent):void {
+			new WindowChangeBaseLightLevel( _vm );
+		}
+			
+
 		import flash.utils.Timer;
 		import flash.events.TimerEvent;
 		private var _reloadTimer:Timer;
 		private var startingVal:uint = 0x33;
 		private function fullBrightHandler(event:UIMouseEvent):void {
 		
-			_reloadTimer = new Timer( 1000 );
+			_reloadTimer = new Timer( 250 );
 			_reloadTimer.addEventListener(TimerEvent.TIMER, onRepeat);
 			_reloadTimer.start();
 		}
