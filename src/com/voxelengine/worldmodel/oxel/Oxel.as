@@ -851,7 +851,7 @@ package com.voxelengine.worldmodel.oxel
 				for each ( var childForBrightness:Oxel in _children ) 
 				{
 					if ( childForBrightness._brightness ) {
-						_brightness.childAddAll( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size() );
+						_brightness.mergeChildren( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size(), hasAlpha );
 						// Need to set this from a valid child
 						// Parent should have same brightness attn as children did.
 						_brightness.fallOffPerMeter = childForBrightness.brightness.fallOffPerMeter;
