@@ -151,9 +151,10 @@ public class VertexIndexBuilder
 				if ( oxel == _oxels[index] ) {
 					_oxels.splice( index, 1 );
 					_s_totalOxels--;
+					return;
 				}
 			}
-			trace( "VertexIndexBuilder.oxelRemove - OXEL NOT FOUND - total oxels - " + _oxels.length + "  oxel: " + oxel.toString() );
+			Log.out( "VertexIndexBuilder.oxelRemove - OXEL NOT FOUND - total oxels - " + _oxels.length + "  oxel: " + oxel.toString(), Log.WARN );
 		}
 	}
 	
@@ -279,7 +280,7 @@ public class VertexIndexBuilder
 			return;
 		}
 		if ( null == vb ) {
-			trace("VertexIndexBuilder.quadsCopyToVertexBuffersByteArray - Ran out of VertexBuffers total used: " + VertexIndexBuilderPool.totalUsed() );
+			Log.out("VertexIndexBuilder.quadsCopyToVertexBuffersByteArray - Ran out of VertexBuffers total used: " + VertexIndexBuilderPool.totalUsed(), Log.ERROR );
 			return;
 		}
 		vb.uploadFromByteArray ( _verticeByteArray, 0, 0, quadCount * Quad.VERTEX_PER_QUAD);
