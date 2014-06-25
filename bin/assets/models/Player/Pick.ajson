@@ -5,7 +5,7 @@
 			"attachsTo": "RightArm",
 			"location": {
 				"x": 0,
-				"y": -8,
+				"y": -16,
 				"z": 6
 			},
 			"rotation": {
@@ -38,7 +38,7 @@
 						"y": 0,
 						"z": 30
 					},
-					"time": 0.5,
+					"time": 0.3,
 					"type": "rotation_repeating"
 				}
 			]
