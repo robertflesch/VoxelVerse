@@ -47,7 +47,7 @@
 			Globals.g_app.addEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
 			clipVelocityFactor = AVATAR_CLIP_FACTOR;
 			modelInfo.editable = false;
-			if ( !instanceInfo.owner )
+			//if ( !instanceInfo.owner )
 				takeControl( null );
 			//visible = true;
 			
@@ -127,11 +127,13 @@
 		}
 		
 		override protected function setAnimation():void	{
-			if ( Globals.g_app.toolOrBlockEnabled )
+			
+			/*if ( Globals.g_app.toolOrBlockEnabled )
 			{
 				stateSet( "Pick", 1 );
-			}
-			else if ( -0.4 > instanceInfo.velocityGet.y )
+			}*/
+			
+			if ( -0.4 > instanceInfo.velocityGet.y )
 			{
 				updateAnimations( "Jump", 1 );
 			}
@@ -189,13 +191,13 @@
 		}
 
 		override protected function cameraAddLocations():void {
-			camera.addLocation( new CameraLocation( true, 0, 0, 0 ) );
+//			camera.addLocation( new CameraLocation( true, 0, 0, 0 ) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 0 ) );
-			camera.addLocation( new CameraLocation( true, 0, Globals.AVATAR_HEIGHT - 4, 0) );
+//			camera.addLocation( new CameraLocation( true, 0, Globals.AVATAR_HEIGHT - 4, 0) );
 			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2) );
-//			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, 10, 50) );
+			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 50) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT + 20, 50) );
-//			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 100) );
+			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 100) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 250) );
 		}
 		
