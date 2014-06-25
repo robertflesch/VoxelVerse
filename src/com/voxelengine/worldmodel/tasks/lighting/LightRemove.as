@@ -28,6 +28,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 	{		
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.REMOVE == $le.type ) {
+				Log.out( "LightRemove.handleLightEvents" );
 				var vmr:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				if ( vmr ) {
 					var lor:Oxel = vmr.oxel.childFind( $le.gc );
@@ -35,18 +36,21 @@ package com.voxelengine.worldmodel.tasks.lighting
 						lor.brightness.lightRemove( $le.lightID );
 						var alphaCountr:int;
 						// walk thru the neighbors, if the no has less light then remove that light (just that or all lights?)
-						for ( var facer:int = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
+						var facer:uint;
+						for ( facer = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
 							var nor:Oxel = lor.neighbor(facer);
 							if ( Globals.BAD_OXEL == nor )
 								continue;
 							
-							if ( nor.hasAlpha ) {
+							if ( nor.hasAlpha && nor.brightness ) {
 								shineBackOnRemovedLight( lor, nor, facer, $le.lightID );
 								alphaCountr++;
 							}
 						}
-						//if ( 0 < alphaCountr )
-						//	rebuild neighbors faces
+						if ( 0 < alphaCountr ) {
+								var le:LightEvent = new LightEvent( LightEvent.ADD, $le.instanceGuid, lor.gc, lor.brightness.lightBrightestGet().ID );
+								Globals.g_app.dispatchEvent( le );
+						}
 					}
 				}
 				addTask( $le.instanceGuid, $le.gc, $le.lightID );
@@ -130,6 +134,28 @@ package com.voxelengine.worldmodel.tasks.lighting
 			}
 		}
 		
+		static private function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
+			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
+			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
+			lt.selfOverride = true;
+			Globals.g_lightTaskController.addTask( lt );
+		}
+		
+		// NEVER use this, use the static function
+		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
+			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
+		}
+		
+
+		/**
+		 * @param $taskType The Task type.
+		 * @param $taskPriority The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
+		 */
+		private function remove( $o:Oxel ):void {
+			LightRemove.addTask( _guid, $o.gc, lightID );
+		}
+		
+		/*
 		static private function pathToParent( $o:Oxel, $face:uint, targetGrainSize:uint ):Vector.<uint> {
 			var childIDPath:Vector.<uint> = new Vector.<uint>;
 			var gct:GrainCursor = GrainCursorPool.poolGet( $o.gc.bound );
@@ -158,29 +184,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			$bt.copyFrom( btp );
 			BrightnessPool.poolReturn( btp );
 		}
-		
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint ):void {
-			//Log.out( "Light.addTask: for gc: " + $gc.toString() + "  taskId: " + $gc.toID() );
-			var lt:LightRemove = new LightRemove( $instanceGuid, $gc, $lightID, $gc.toID(), $gc.grain );
-			lt.selfOverride = true;
-			Globals.g_lightTaskController.addTask( lt );
-		}
-		
-		// NEVER use this, use the static function
-		public function LightRemove( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $taskType:String, $taskPriority:int ):void {
-			super( $instanceGuid, $gc, $lightID, $taskType, $taskPriority );
-		}
-		
-
-		/**
-		 * @param $taskType The Task type.
-		 * @param $taskPriority The priority of the task, 0 is the highest priority, int.MAX_VALUE is the lowest.
-		 */
-		private function remove( $o:Oxel ):void {
-			LightRemove.addTask( _guid, $o.gc, lightID );
-		}
-		
-		
+		*/
 		override public function start():void {
 			super.start();
 			
@@ -231,7 +235,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				
 				if ( no.childrenHas() )
 					removeFromChildren( no, face );
-				else if ( no.brightness && no.brightness.lightGet( lightID ) )
+				else if ( no.brightness )
 					terminalLightRemove( no, face );
 //				else
 //					Log.out( "LightRemove.spreadToNeighbors - Light doesnt exist: " + lightID );
@@ -271,11 +275,11 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( null == $o.brightness )
 				return;
 				
+			$o.brightness.lightRemove( lightID );
 			if ( true == $o.isSolid ) { // this is a SOLID object which does not transmit light (leaves, water are exceptions)
-				$o.brightness.influenceRemove( lightID, $face );
-				if ( $o.brightness.lightHas( lightID ) && !$o.brightness.lightGet( lightID ).valuesHas() )
-					$o.brightness.lightRemove( lightID );
-				rebuildFace( $o, $face );
+//				$o.brightness.influenceRemove( lightID, $face );
+//				if ( $o.brightness.lightHas( lightID ) && !$o.brightness.lightGet( lightID ).valuesHas() )
+				rebuildFaces( $o );
 			}
 			else if ( Globals.AIR == $o.type ) // this oxel does not have faces OR children, and transmits light
 					remove( $o );
@@ -293,8 +297,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		static private function rebuildFaces( $o:Oxel ):void {
 			
-			if ( $o.gc.eval( 4, 2, 4, 15 ) )
-				Log.out( "rebuildFaces for removed light oxel: " );
 			if ( $o.quads && 0 < $o.quads.length )
 				$o.quadsRebuildAll();
 		}

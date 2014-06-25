@@ -76,7 +76,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			}
 		}
 		 
-		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightDir:uint ):void {
+		static private function addTask( $instanceGuid:String, $gc:GrainCursor, $lightID:uint, $lightDir:uint ):void {
 			var lt:LightAdd = new LightAdd( $instanceGuid, $gc, $lightID, $lightDir, $gc.toID(), $gc.grain );
 			lt.selfOverride = true;
 			Globals.g_lightTaskController.addTask( lt );
@@ -110,10 +110,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) ) {
 						
 						if ( !lo.gc.is_equal( _gc ) )
-								Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
+							Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
 
-						if ( lo.gc.eval( 5, 7, 3, 2) )
-							trace( "watch downward light" );
 						//Log.out ( "LightAdd.start - gc:" + lo.gc.toString() + " br: " + lo.brightness.toString() );
 						lo.brightness.lightGet( lightID ).processed = true;
 						spreadToNeighbors( lo );
