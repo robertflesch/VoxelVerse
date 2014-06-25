@@ -646,54 +646,6 @@ package com.voxelengine.worldmodel.oxel
 				neighborsInvalidate();
 			}
 			
-			// check current type
-			if ( Globals.Info[type].light )
-			{
-				if ( "" == $guid )
-					throw new Error( "Oxel.type - no active model guid" );
-				if ( EditCursor.EDIT_CURSOR != $guid )
-				{
-					if ( null != brightness )
-						LightRemove.addTask( $guid, gc, brightness.lightIDGet() );
-					else
-						throw new Error( "Oxel.type - no active model guid" );
-					
-					// TODO - dispatch event starting light regeneration from other lights
-				}
-			}
-			
-			if ( Globals.Info[$newType] )
-			{
-				if ( Globals.Info[$newType].flowable )
-				{
-					if ( null == _flowInfo ) // if it doesnt have flow info, get some! This is from placement of flowable oxels
-					{
-						_flowInfo = Globals.Info[$newType].flowInfo.clone();
-					}
-				}
-				else
-				{
-					if ( Globals.getTypeId( "obsidian" ) != $newType )
-						_flowInfo = null;  // If it has flow info, release it, no need to check first
-				}
-				
-				//if ( Globals.Info[$newType].light )
-				//{
-					//if ( "" == $guid )
-						//throw new Error( "Oxel.type - no active model guid" );
-					//if ( EditCursor.EDIT_CURSOR != $guid )
-					//{
-						// keep any existing brightness Info
-						//if ( !_brightness ) {
-							//_brightness = BrightnessPool.poolGet();
-							//_brightness.colorAdd(   );
-						//}
-					//}
-				//}
-			}
-			else
-				Log.out( "Oxel.writeInternal - No type information found for typeID: " + $newType, Log.ERROR );
-			
 			additionalDataClear();
 			
 			type = $newType;

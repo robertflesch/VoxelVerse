@@ -457,11 +457,11 @@ package com.voxelengine.worldmodel.models
 			if ( Globals.Info[oldType].light )
 			{
 				var oldLightID:uint = oldOxel.brightness.lightIDGet();
-				var rle:LightEvent = new LightEvent( LightEvent.REMOVE, instanceInfo.instanceGuid, $gc, oldLightID );
-				Globals.g_app.dispatchEvent( rle );
 			}
+			
 			var result:Boolean;
 			var changedOxel:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
+			
 			if ( Globals.BAD_OXEL != changedOxel )
 			{
 				_modified = true;
@@ -470,13 +470,25 @@ package com.voxelengine.worldmodel.models
 			
 				if ( typeInfo.flowable )
 				{
-					changedOxel.flowInfo = typeInfo.flowInfo.clone();
+					if ( null == changedOxel.flowInfo ) // if it doesnt have flow info, get some! This is from placement of flowable oxels
+						changedOxel.flowInfo = typeInfo.flowInfo.clone();
+						
 					if ( Globals.autoFlow && EditCursor.EDIT_CURSOR != instanceInfo.instanceGuid )
 					{
 						Flow.addTask( instanceInfo.instanceGuid, changedOxel.gc, changedOxel.type, changedOxel.flowInfo, 1 );
 					}
 				}
+				else
+				{
+					if ( changedOxel.flowInfo )
+						changedOxel.flowInfo = null;  // If it has flow info, release it, no need to check first
+				}
 					
+				if ( Globals.Info[oldType].light )
+				{
+					var rle:LightEvent = new LightEvent( LightEvent.REMOVE, instanceInfo.instanceGuid, $gc, oldLightID );
+					Globals.g_app.dispatchEvent( rle );
+				}
 				if ( typeInfo.light )
 				{
 					var le:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, getPerModelLightID );
@@ -495,6 +507,7 @@ package com.voxelengine.worldmodel.models
 					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.ALPHA_TO_SOLID, instanceInfo.instanceGuid, changedOxel.gc ) );
 				}
+				
 			}
 			
 			return result;
@@ -1129,7 +1142,7 @@ package com.voxelengine.worldmodel.models
 			// if the uncompress fails, it simply continues
 			try { 
 				$ba.uncompress();
-				//Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
+				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
 			}
 			catch (error:Error) {
 				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray is NOT compressed: " + modelInfo.fileName );
