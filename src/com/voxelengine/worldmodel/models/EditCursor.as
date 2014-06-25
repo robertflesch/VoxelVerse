@@ -465,6 +465,14 @@ package com.voxelengine.worldmodel.models
 			var foundModel:VoxelModel;
 			if ( Globals.selectedModel )
 			{
+				if ( Globals.g_app.toolOrBlockEnabled )
+				{
+					Globals.player.stateSet( "Pick", 1 );
+					Globals.player.stateLock( true, 600 );
+
+				}
+				
+				
 				foundModel = Globals.selectedModel;
 				var fmRoot:Oxel = foundModel.oxel;
 				if ( CURSOR_TYPE_GRAIN == cursorType )
