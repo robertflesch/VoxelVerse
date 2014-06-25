@@ -63,9 +63,7 @@ public class Brightness  {  // extends BrightnessData
 	public function get fallOffPerMeter():uint { return _fallOffPerMeter; }
 	public function set fallOffPerMeter( val:uint ):void { _fallOffPerMeter = val; }
 	
-	static private const LIGHTS_MAX:int = 4;
-	private var _lights:Vector.<LightInfo> = new Vector.<LightInfo>(4, true);
-	private var _lightCount:int;
+	private var _lights:Vector.<LightInfo> = new Vector.<LightInfo>();
 	
 	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
@@ -77,7 +75,7 @@ public class Brightness  {  // extends BrightnessData
 
 		// calculate how many lights this oxel is influcence by
 		var lightCount:uint;
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int; i < _lights.length; i++ ) {
 			if ( null != _lights[i] )
 				lightCount++;
 		}
@@ -85,7 +83,7 @@ public class Brightness  {  // extends BrightnessData
 		$ba.writeByte( lightCount );
 
 		// now for each light, write its contents to the byte array
-		for ( var j:int; j < LIGHTS_MAX; j++ ) {
+		for ( var j:int; j < _lights.length; j++ ) {
 			var li:LightInfo = _lights[j];
 			if ( null != li ) {
 				$ba = li.toByteArray( $ba );
@@ -120,7 +118,7 @@ public class Brightness  {  // extends BrightnessData
 
 	public function toString():String {
 		var outputString:String = "";
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li ) {
 				outputString += "\tlight: " + i + "  " + li.toString();
@@ -132,7 +130,7 @@ public class Brightness  {  // extends BrightnessData
 	public function copyFrom( $b:Brightness ):void {
 		
 		// Copy all of the light data from the passed in Brightness
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int; i < _lights.length; i++ ) {
 			var sli:LightInfo = $b._lights[i];
 			if ( null != sli ) { 
 				if ( null == _lights[i] )
@@ -159,7 +157,7 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function valuesHas():Boolean	{
 
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li ) {
 				//if ( DEFAULT_BASE_LIGHT_LEVEL + DEFAULT_SIGMA < li.avg )
@@ -230,7 +228,7 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function reset():void {
 		
-		for ( var i:int = 1; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int = 1; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li )
 				lightRemove( li.ID );
@@ -242,16 +240,17 @@ public class Brightness  {  // extends BrightnessData
 	public function mergeChildren( $childID:uint, $b:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
 		// There is a bug in here, since it is the first three lights that get added.
 		// I should eval each child and see if its light level is higher then one of the current lights
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
-			var li:LightInfo = _lights[i];
+		var childLightCount:uint = $b._lights.length;
+		for ( var i:int; i < childLightCount; i++ ) {
+			var li:LightInfo = $b._lights[i];
 			if ( null != li && DEFAULT_BASE_LIGHT_LEVEL < li.avg )
 				childAdd( li.ID, $childID, $b, $grainUnits, $hasAlpha );
 		}
 	}
 	
-	public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
+	public function childAdd( $ID:uint, $childID:uint, $cb:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
 
-		var sli:LightInfo =  $b.lightGet( $ID );	
+		var sli:LightInfo =  $cb.lightGet( $ID );	
 		if ( null == sli )
 			return; // This is potential bug in process where child lights get 
 			//throw new Error( "Brightness.childAdd - SOURCE light not defined" );
@@ -385,7 +384,7 @@ public class Brightness  {  // extends BrightnessData
 	// creates a virtual brightness(light) the light from a parent to a child brightness with all lights
 	public function childGetAllLights( $childID:int, $b:Brightness ):void {
 
-		for ( var i:int; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li )
 				childGet( li.ID, $childID, $b );
@@ -496,7 +495,7 @@ public class Brightness  {  // extends BrightnessData
 		var count:int;
 		var avgTotal:uint;
 		// I need to know the average attn, but I dont know it here....
-		for ( var j:int; j < LIGHTS_MAX; j++ ) {
+		for ( var j:int; j < _lights.length; j++ ) {
 			var li:LightInfo = _lights[j];
 			if ( null != li ) { // new light avg is greater then this lights avg, replace it.
 				avgTotal += li.avg;
@@ -508,7 +507,7 @@ public class Brightness  {  // extends BrightnessData
 	}
 
 	public function lightGet( $ID:uint ):LightInfo {
-		for ( var i:int; i < LIGHTS_MAX; i++ )
+		for ( var i:int; i < _lights.length; i++ )
 		{
 			var lightInfo:LightInfo = _lights[i];
 			if ( null != lightInfo ) {
@@ -521,7 +520,7 @@ public class Brightness  {  // extends BrightnessData
 	}
 	
 	public function lightHas( $ID:uint ):Boolean {
-		for ( var i:int; i < LIGHTS_MAX; i++ )
+		for ( var i:int; i < _lights.length; i++ )
 		{
 			var lightInfo:LightInfo = _lights[i];
 			if ( null != lightInfo ) {
@@ -534,7 +533,7 @@ public class Brightness  {  // extends BrightnessData
 
 	// Gets the ID of the light here
 	public function lightIDGet():uint {
-		for ( var i:int = 1; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int = 1; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( li && li.lightIs )
 				return li.ID;
@@ -545,7 +544,7 @@ public class Brightness  {  // extends BrightnessData
 	// Gets the ID of the light here
 	public function lightIDNonDefaultUsedGet():Vector.<uint> {
 		var lightIDs:Vector.<uint> = new Vector.<uint>;
-		for ( var i:int = 1; i < LIGHTS_MAX; i++ ) {
+		for ( var i:int = 1; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li )
 				lightIDs.push( li.ID );
@@ -557,7 +556,7 @@ public class Brightness  {  // extends BrightnessData
 		var maxAttn:uint = DEFAULT_BASE_LIGHT_LEVEL;
 		var maxAttnIndex:uint;
 		// I need to know the average attn, but I dont know it here....
-		for ( var j:int; j < LIGHTS_MAX; j++ ) {
+		for ( var j:int; j < _lights.length; j++ ) {
 			var li:LightInfo = _lights[j];
 			if ( null != li ) { // new light avg is greater then this lights avg, replace it.
 				if ( maxAttn < li.avg ) {
@@ -575,42 +574,20 @@ public class Brightness  {  // extends BrightnessData
 		if ( lightHas( $ID ) )
 			return true;
 		
+		// dont add in lights who are at base attn level
 		if ( DEFAULT_LIGHT_ID != $ID && DEFAULT_BASE_LIGHT_LEVEL == $avgAttn )
 			return false;
-		
-		if ( _lightCount < LIGHTS_MAX ) {
 			
-			for ( var i:int; i < LIGHTS_MAX; i++ ) {
-				if ( null == _lights[i] ) {
-					_lights[i] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $lightIs );	
-					_lightCount++;
-					return true;
-				}
-			}
-		}
-		else {
-			var lowAttn:uint = MAX_LIGHT_LEVEL;
-			var lowAttnIndex:uint;
-			// I need to know the average attn, but I dont know it here....
-			// skip the default light, which is in position 0
-			for ( var j:int = 1; j < LIGHTS_MAX; j++ ) {
-				var li:LightInfo = _lights[j];
-				if ( null != li ) { 
-					if ( lowAttn != Math.min( lowAttn, li.avg ) ) {
-						lowAttn = li.avg;
-						lowAttnIndex = j;
-					}
-				}
-			}
-			// see if new light is stronger
-			if ( lowAttn < $avgAttn ) {
-				_lights[lowAttnIndex] = null;
-				_lights[lowAttnIndex] = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $lightIs );	
+		var newLi:LightInfo = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $lightIs );
+			// check for available slot first, if none found, add new light to end.
+		for ( var i:int; i < _lights.length; i++ ) {
+			if ( null == _lights[i] ) {
+				_lights[i] = newLi;	
 				return true;
 			}
 		}
-		
-		return false;
+		_lights.push( newLi );
+		return true;
 	}
 	
 	public function lightRemove( $ID:uint ):void {
@@ -618,13 +595,12 @@ public class Brightness  {  // extends BrightnessData
 		if ( !lightHas( $ID ) )
 			return;
 		
-		for ( var i:int; i < LIGHTS_MAX; i++ )
+		for ( var i:int; i < _lights.length; i++ )
 		{
-			var lightInfo:LightInfo = _lights[i];
-			if ( null != lightInfo ) {
-				if ( $ID == lightInfo.ID ) {
+			var li:LightInfo = _lights[i];
+			if ( null != li ) {
+				if ( $ID == li.ID ) {
 					_lights[i] = null;
-					_lightCount--;
 					break;
 				}
 			}
@@ -634,14 +610,17 @@ public class Brightness  {  // extends BrightnessData
 	public function lightFullBright():void {
 		
 		var li:LightInfo = lightGet( Brightness.DEFAULT_LIGHT_ID );
-		li.setAll( 255 );
+		if ( li )
+			li.setAll( 255 );
+		else
+			Log.out( "Brightness.lightFullBright - MISSING DEFAULT LIGHTS", Log.WARN );
 	}
 
 	// this returns a composite color made of default color plus any additional colors for the indicated corner
 	public function lightGetComposite( $corner:uint ):uint {
 		_compositeColor = 0;
 		
-		for ( var i:int; i < LIGHTS_MAX; i++ )
+		for ( var i:int; i < _lights.length; i++ )
 		{
 			var li:LightInfo = _lights[i];
 			if ( null != li )
@@ -819,7 +798,7 @@ public class Brightness  {  // extends BrightnessData
 
 	public function balanceAttnAll( $attnScaled:uint ):Boolean {
 		var c:Boolean = false;
-		for ( var i:int; i < LIGHTS_MAX; i++ )
+		for ( var i:int; i < _lights.length; i++ )
 		{
 			var li:LightInfo = _lights[i];
 			if ( null != li ) {
