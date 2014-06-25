@@ -114,10 +114,6 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 		private function scale( flowOxel:Oxel ):void
 		{
 			Log.out( "Flow.scale.start - FlowOxel scaleInfo: " + flowOxel.flowInfo.flowScaling.toString() );
-			if ( flowOxel.gc.eval( 4, 0, 7, 6 ) )
-				Log.out( "Flow.start - THIS ONE" );
-//			if ( flowOxel.gc.eval( 4, 6, 8, 12 ) )
-//				Log.out( "Flow.start - THIS ONE" );
 				
 			if ( flowOxel.type == _type )
 			{
