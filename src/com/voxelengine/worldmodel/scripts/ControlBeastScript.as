@@ -6,6 +6,8 @@ package com.voxelengine.worldmodel.scripts
 	 */
 	import com.voxelengine.Globals;
 	import com.voxelengine.GUI.WindowBeastControlQuery;
+	import com.voxelengine.GUI.WindowBeastControl;
+	import com.voxelengine.worldmodel.models.InstanceInfo;
 	import com.voxelengine.worldmodel.scripts.Script;
 	import com.voxelengine.events.OxelEvent;
 	import com.voxelengine.Log;
@@ -13,7 +15,7 @@ package com.voxelengine.worldmodel.scripts
 	
 	public class ControlBeastScript extends Script 
 	{
-		private var _wt:WindowBeastControlQuery = null;
+//		private var _wt:WindowBeastControlQuery = null;
 				
 		public function ControlBeastScript() 
 		{
@@ -33,14 +35,15 @@ package com.voxelengine.worldmodel.scripts
 
 			if ( $event.type == OxelEvent.INSIDE )
 			{
-				if ( !WindowBeastControlQuery.currentInstance )
+				if ( null == WindowBeastControlQuery.currentInstance && null == WindowBeastControl.currentInstance )
 				{
 					var trigger:VoxelModel = Globals.g_modelManager.getModelInstance( instanceGuid );
 					if ( trigger )
 					{
 						var controllingModel:VoxelModel = trigger.instanceInfo.controllingModel;
+						var ii:InstanceInfo = Globals.player.instanceInfo;
 						if ( Globals.player && controllingModel && null == Globals.player.instanceInfo.controllingModel )
-							_wt = new WindowBeastControlQuery( controllingModel.instanceInfo.instanceGuid );
+							new WindowBeastControlQuery( controllingModel.instanceInfo.instanceGuid );
 					}
 				}
 			}
@@ -53,14 +56,11 @@ package com.voxelengine.worldmodel.scripts
 				//Log.out( "ControlObjectScript.onOutsideEvent: ignoring event for someone else" + $event );
 				return;
 			}
-				
-			//Log.out( "ControlObjectScript.onOutsideEvent: " + $event );
 
-			if ( _wt )
-			{
-				_wt.remove();
-				_wt = null;
-			}
+			if ( WindowBeastControlQuery.currentInstance )
+				WindowBeastControlQuery.currentInstance.remove();
+			if ( WindowBeastControl.currentInstance )
+				WindowBeastControl.currentInstance.remove();
 		}
 	}
 

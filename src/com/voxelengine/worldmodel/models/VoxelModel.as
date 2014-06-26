@@ -31,6 +31,7 @@ package com.voxelengine.worldmodel.models
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	import flash.utils.Timer;
+	import flash.utils.getQualifiedClassName;
 	
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
@@ -1654,34 +1655,41 @@ package com.voxelengine.worldmodel.models
 			return false;
 		}
 		
-		public function takeControl($vm:VoxelModel):void
+		public function takeControl( $modelLosingControl:VoxelModel, $addAsChild:Boolean = true ):void
 		{
-			Log.out( "VoxelModel.takeControl of : " + modelInfo.fileName + " by: " + $vm.modelInfo.fileName );
+			if ( $modelLosingControl )
+				Log.out( "VoxelModel.takeControl of : " + modelInfo.fileName + " by: " + $modelLosingControl.modelInfo.fileName );
+			else	
+				Log.out( "VoxelModel.takeControl of : " + modelInfo.fileName );
+			
 			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			
-			Globals.player.loseControl(this);
+			if ( Globals.player )
+				Globals.player.loseControl(this);
 			Globals.controlledModel = this;
 			
-			Globals.g_app.dispatchEvent(new GUIEvent(GUIEvent.TOOLBAR_HIDE));
-			
 			// adds the player to the child list
-			childAdd($vm);
+			if ( $modelLosingControl )
+				childAdd($modelLosingControl);
 			camera.index = 0;
 			
-			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.TAKE_CONTROL, instanceInfo.instanceGuid ) );
+			// Pass in the name of the class that is taking control.
+			var className:String = getQualifiedClassName(this)
+			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.TAKE_CONTROL, instanceInfo.instanceGuid, null, null, className ) );
 		}
 		
-		public function loseControl($vm:VoxelModel):void
+		public function loseControl($modelDetaching:VoxelModel, $detachChild:Boolean = true):void
 		{
+			
 			Globals.g_app.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			Globals.g_app.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			
-			Globals.player.takeControl(this);
-			
 			// remove the player to the child list
-			childDetach($vm);
+			if ( $detachChild )
+				childDetach($modelDetaching);
 			camera.index = 0;
+			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.RELEASE_CONTROL, instanceInfo.instanceGuid ) );
 		}
 		
 		// these are overriden in subclasses to allow for custom movement

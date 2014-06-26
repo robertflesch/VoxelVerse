@@ -166,16 +166,16 @@ package com.voxelengine.worldmodel.models
 			}
 		}
 
-		override public function takeControl( $vm:VoxelModel ):void { 
+		override public function takeControl( $modelLosingControl:VoxelModel, $addAsChild:Boolean = true ):void {
 			//Log.out( "Dragon.takeControl - starting position: " + $vm.instanceInfo.positionGet );
-			super.takeControl( $vm );
-			$vm.stateSet( "Ride");
-			$vm.stateLock( true );
+			super.takeControl( $modelLosingControl, $addAsChild );
+			$modelLosingControl.stateSet( "Ride");
+			$modelLosingControl.stateLock( true );
 		}
 	
-		override public function loseControl( $vm:VoxelModel ):void	{
-			super.loseControl( $vm );
-			$vm.stateLock( false );
+		override public function loseControl($modelDetaching:VoxelModel, $detachChild:Boolean = true):void {
+			super.loseControl( $modelDetaching, $detachChild );
+			$modelDetaching.stateLock( false );
 		}
 	
 		override public function updateVelocity( $elapsedTimeMS:int, $clipFactor:Number ):Boolean

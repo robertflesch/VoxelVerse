@@ -203,22 +203,19 @@
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 250) );
 		}
 		
-		override public function takeControl( $modelLosingControl:VoxelModel ):void {
+		override public function takeControl( $modelLosingControl:VoxelModel, $addAsChild:Boolean = true ):void {
 			Log.out( "Player.takeControl" );
-			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-			Globals.controlledModel = this;
+			super.takeControl( $modelLosingControl, false );
 			instanceInfo.usesCollision = true;
 			// We need to grab the rotation of the old parent, otherwise we get rotated back to 0 since last rotation is 0
 			if ( $modelLosingControl )
 				instanceInfo.rotationSet = $modelLosingControl.instanceInfo.rotationGet;
 		}
 
-		override public function loseControl( $vm:VoxelModel ):void {
+		override public function loseControl($modelDetaching:VoxelModel, $detachChild:Boolean = true):void
+		{
 			Log.out( "Player.loseControl" );
-			Globals.g_app.stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-			Globals.g_app.stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
-			instanceInfo.controllingModel = $vm;
+			super.loseControl( $modelDetaching, false );
 			instanceInfo.usesCollision = false;
 		}
 

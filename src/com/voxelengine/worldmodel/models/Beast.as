@@ -389,30 +389,30 @@ package com.voxelengine.worldmodel.models
 			throw new Error( "Beast.setAnimation - OVERRIDE THIS FUNCTION" );
 		}
 
-		override public function takeControl( $vm:VoxelModel ):void { 
+		override public function takeControl( $modelLosingControl:VoxelModel, $addAsChild:Boolean = true ):void {
 			//Log.out( "Beast.takeControl - starting position: " + $vm.instanceInfo.positionGet );
-			super.takeControl( $vm );
+			super.takeControl( $modelLosingControl );
+			
 			MouseKeyboardHandler.leftTurnEnabled = false;
 			MouseKeyboardHandler.rightTurnEnabled = false;
 			//MouseKeyboardHandler.mouseLookReset()
 			// now we set where the avatar will attach to beast.
-			$vm.instanceInfo.positionSet = _seatLocation;
-			$vm.instanceInfo.rotationSet = this.instanceInfo.rotationGet;
+			$modelLosingControl.instanceInfo.positionSet = _seatLocation;
+			$modelLosingControl.instanceInfo.rotationSet = this.instanceInfo.rotationGet;
 			//Log.out( "Beast.takeControl - after position set: " + $vm.instanceInfo.positionGet );
 			Globals.g_app.addEventListener( ShipEvent.THROTTLE_CHANGED, throttleEvent );
 			instanceInfo.usesCollision = true;
-			$vm.stateSet( "Ride");
 			camera.index = 2;	
 		}
 	
-		override public function loseControl( $vm:VoxelModel ):void	{
-			super.loseControl( $vm );
+		override public function loseControl($modelDetaching:VoxelModel, $detachChild:Boolean = true):void {
+			super.loseControl( $modelDetaching );
 			MouseKeyboardHandler.leftTurnEnabled = true;
 			MouseKeyboardHandler.rightTurnEnabled = true;
 			MouseKeyboardHandler.backwardEnabled = true;
-			$vm.instanceInfo.positionSetComp( $vm.instanceInfo.positionGet.x, $vm.instanceInfo.positionGet.y + _seatLocation.y, $vm.instanceInfo.positionGet.z );
+			$modelDetaching.instanceInfo.positionSetComp( $modelDetaching.instanceInfo.positionGet.x, $modelDetaching.instanceInfo.positionGet.y + _seatLocation.y, $modelDetaching.instanceInfo.positionGet.z );
 			//$vm.instanceInfo.rotationSet = this.instanceInfo.rotationGet;
-			$vm.instanceInfo.rotationSetComp( 0, instanceInfo.rotationGet.y, 0 );
+			$modelDetaching.instanceInfo.rotationSetComp( 0, instanceInfo.rotationGet.y, 0 );
 			Globals.g_app.removeEventListener( ShipEvent.THROTTLE_CHANGED, throttleEvent );
 			instanceInfo.usesCollision = false;
 		}

@@ -130,11 +130,6 @@ package com.voxelengine.worldmodel.models
 				engine.stop( this );
 		}
 		
-		override public function loseControl( $vm:VoxelModel ):void
-		{
-			super.loseControl( $vm );
-		}
-		
 		// This is for direct control of model, such as in the voxel bomber.
 		override protected function onKeyDown(e:KeyboardEvent):void 
 		{
