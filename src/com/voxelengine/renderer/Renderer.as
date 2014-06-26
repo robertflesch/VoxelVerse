@@ -12,7 +12,7 @@ package com.voxelengine.renderer
 	import flash.display.BitmapData;
 	import flash.display.Stage;
 	import flash.display.StageDisplayState;
-	//import flash.display3D.Context3DProfile;
+	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
@@ -90,13 +90,10 @@ package com.voxelengine.renderer
 
 			_stage3D.x = 0;
 			_stage3D.y = 0;
-			_stage3D.requestContext3D(Context3DRenderMode.AUTO);
 			
 			// This allows flash to run on older video drivers.
 			//Context3DProfile.BASELINE_CONSTRAINED
-			// need a newer version of flash to support this - RSF
-			// http://www.bytearray.org/?p=4516
-			//_stage3D.requestContext3D( Context3DRenderMode.AUTO, Context3DProfile.BASELINE_CONSTRAINED);
+			_stage3D.requestContext3D( Context3DRenderMode.AUTO, Context3DProfile.BASELINE_CONSTRAINED);
 			//_stage3D.requestContext3D( Context3DRenderMode.AUTO, Context3DProfile.BASELINE);
 			
 		}
