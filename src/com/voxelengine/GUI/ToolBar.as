@@ -12,6 +12,7 @@ package com.voxelengine.GUI
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import org.flashapi.swing.event.ImageEvent;
 	
 	import org.flashapi.swing.Box;
 	import org.flashapi.swing.Image;
@@ -34,23 +35,33 @@ package com.voxelengine.GUI
 		
 		private const ITEM_COUNT:int = 10;
 		
-		public function ToolBar()
+		public function ToolBar( $assetName:String )
 		{
-			var outline:Image = new Image( Globals.appPath + "assets/textures/toolbar.png");
+			var outline:Image = new Image( Globals.appPath + "assets/textures/" + $assetName );
+			outline.addEventListener(ImageEvent.IMAGE_LOADED, imageLoaded );
 			addElement( outline );
 			
 			_itemInventory = new QuickInventory();
 			addChild(_itemInventory);
 
 			display( 0, Globals.g_renderer.height - TOOLBAROUTLINE_HEIGHT );
-
+		}
+		
+		override public function dispatchEvent(event:Event):Boolean
+		{
+			trace(event.type);
+			return super.dispatchEvent(event);
+		}
+		
+		private function imageLoaded( event:ImageEvent):void
+		{
 			// These have to be AFTER display for some odd reason or they wont work.
 			resizeToolBar( null );
 			
 			addListeners();
-			//Globals.g_app.dispatchEvent( new GUIEvent( GUIEvent.TOOLBAR_SHOW ) );
+			buildActions();
 			
-			Globals.g_app.addEventListener(LoadingEvent.LOAD_COMPLETE, onModelLoadComplete );
+			event.target.removeEventListener(ImageEvent.IMAGE_LOADED, imageLoaded );
 		}
 		
 		private function onModelLoadComplete( event:LoadingEvent):void
@@ -58,7 +69,7 @@ package com.voxelengine.GUI
 			Globals.g_app.removeEventListener( LoadingEvent.LOAD_COMPLETE, onModelLoadComplete );
 			buildActions();
 		}
-
+		
 		private function onRemoved( event:UIOEvent ):void
  		{
 			removeListeners();

@@ -28,11 +28,19 @@ public class WindowBeastControlQuery extends VVContainer
 		private const TOOL_BAR_HEIGHT:int = 140;
 		private var window_offset:int = TOOL_BAR_HEIGHT;
 		
+		
+		static public function handleModelEvents( $me:ModelEvent ):void {
+			if ( ModelEvent.TAKE_CONTROL == $me.type ) {
+				if ( WindowBeastControlQuery.currentInstance )
+					WindowBeastControlQuery.currentInstance.remove();
+			}
+		}
+		
 		public function WindowBeastControlQuery( $beastInstanceGuid:String ):void 
 		{ 
 			super();
 			if ( null != WindowBeastControlQuery.currentInstance )
-				Log.out( "WindowBeastControl.constructor - trying to create window when one already exists" );
+				Log.out( "WindowBeastControlQuery.constructor - trying to create window when one already exists" );
 				
 			_beastInstanceGuid = $beastInstanceGuid;
 			_s_currentInstance = this;

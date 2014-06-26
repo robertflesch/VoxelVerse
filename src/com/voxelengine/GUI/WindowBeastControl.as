@@ -31,6 +31,9 @@ package com.voxelengine.GUI
 
 	public class WindowBeastControl extends ToolBar
 	{
+		static private var _s_currentInstance:WindowBeastControl = null;
+		static public function get currentInstance():WindowBeastControl { return _s_currentInstance; }
+		
 		// the instance guid of the beast this window controls
 		private var _beastInstanceGuid:String;
 		private const TOOL_BAR_HEIGHT:int = 140;
@@ -38,18 +41,27 @@ package com.voxelengine.GUI
 		private var _windowHeading:WindowHeading = null;
 		
 		static public function handleModelEvents( $me:ModelEvent ):void {
-			if ( ModelEvent.TAKE_CONTROL == $me.type )
-				new WindowBeastControl( $me.instanceGuid );
+			if ( ModelEvent.TAKE_CONTROL == $me.type ) {
+				var classCalled:String = $me.parentInstanceGuid;
+				if ( classCalled != "com.voxelengine.worldmodel.models::Player" )
+					new WindowBeastControl( $me.instanceGuid );
+			}
 		}
 		
 		public function WindowBeastControl( $beastInstanceGuid:String ):void 
 		{ 
+			_s_currentInstance = this;
 			_beastInstanceGuid = $beastInstanceGuid;
-			super();
+			super( "beastToolbar.png" );
 			
 			addEventListener(UIOEvent.REMOVED, onRemoved );
 			
 			_windowHeading = new WindowHeading( _beastInstanceGuid );
+		
+			if ( WindowBeastControlQuery.currentInstance )
+				WindowBeastControlQuery.currentInstance.remove();
+				
+			Globals.g_app.dispatchEvent(new GUIEvent(GUIEvent.TOOLBAR_HIDE));
 			
 			//visible = false;
 			//_windowHeading.visible = false;
@@ -106,7 +118,9 @@ package com.voxelengine.GUI
 			//reloadTimer.start();
 		}
 		
+		// This is called when the toolbar image is loaded.
 		override public function buildActions():void {
+			Log.out( "WindowBeastControl.buildActions" );
 			_itemInventory.name = "ItemSelector";
 			
 			var box:Box = null;
@@ -160,17 +174,9 @@ package com.voxelengine.GUI
 			VoxelVerseGUI.currentInstance.crossHairHide();
 		}
 		
-		//private function onRegionUnload ( le:RegionEvent ):void { 
-			//loseControl(null);
-		//}
-		
 		private function loseControlKey(e:KeyboardEvent):void {
 			if ( Keyboard.F == e.keyCode )
 				loseControl();
-		}
-		
-		private function loseControlClick(event:UIMouseEvent):void {
-			loseControl();
 		}
 		
 		private function loseControl():void {
@@ -181,27 +187,15 @@ package com.voxelengine.GUI
 				Log.out( "WindowBeastControl.loseControl - VM not found: " + _beastInstanceGuid, Log.ERROR );
 				
 			_windowHeading.remove();
-			//_windowGuns.remove();
 			remove();
 		}
 		
 		// Window events
 		private function onRemoved( event:UIOEvent ):void {
 			removeEventListener(UIOEvent.REMOVED, onRemoved );
-			Globals.g_app.stage.removeEventListener(KeyboardEvent.KEY_DOWN, loseControlKey );
-//			Globals.g_app.stage.removeEventListener(Event.RESIZE, onResize );
-			//Globals.g_app.removeEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
-			Globals.g_app.removeEventListener( GUIEvent.TOOLBAR_HIDE, guiEventHandler );
-			Globals.g_app.removeEventListener( GUIEvent.TOOLBAR_SHOW, guiEventHandler );
 			if ( _windowHeading )
 				_windowHeading.remove();
-		}
-		
-		private function guiEventHandler( e:GUIEvent ):void	{
-			if ( GUIEvent.TOOLBAR_HIDE == e.type )
-				visible = false;
-			else if ( GUIEvent.TOOLBAR_SHOW == e.type )
-				visible = true;
+			_s_currentInstance = null;
 		}
 	}
 }

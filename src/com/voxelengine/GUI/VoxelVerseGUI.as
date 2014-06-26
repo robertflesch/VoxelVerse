@@ -374,6 +374,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 			Globals.g_app.stage.addEventListener(Event.MOUSE_LEAVE, mouseLeave);
 			
 			Globals.g_app.addEventListener(ModelEvent.TAKE_CONTROL, WindowBeastControl.handleModelEvents );
+			Globals.g_app.addEventListener(ModelEvent.TAKE_CONTROL, WindowBeastControlQuery.handleModelEvents );
 		}
 
 		private function addKeyboardListeners(event : Event) : void
