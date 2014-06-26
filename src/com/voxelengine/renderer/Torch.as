@@ -14,11 +14,12 @@ public class Torch extends ShaderLight {
 	
 	private var _phase:Number = 0;
 	private var _base:Number = 100;
-	private var _range:Number = 200;
+	private var _range:Number = 100;
 	private var _flicker:Boolean = true;
 	
 	public function Torch( r:Number = 1, g:Number = 0.9, b:Number = 0 ) {
 		color.setTo( r, g, b );
+		endDistance = 100;
 	}
 		
 	override public function update():void

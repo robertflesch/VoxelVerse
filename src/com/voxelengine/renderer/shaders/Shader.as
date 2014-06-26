@@ -175,7 +175,7 @@ package com.voxelengine.renderer.shaders
 				"sub ft5.y, ft3.z, fc1.y", // rend - rstart
 				"div ft5.z, ft5.x, ft5.y",  // rend - r / rend - rstart
 				"mov ft5.xyw, fc2.w", // clear out other components to 0
-				"mul ft2, ft2, ft5.z",  // multiple the lit texture, with the attenuated light effect
+				"mul ft2, ft0, ft5.z",  // multiple the UNlit texture, with the attenuated light effect !Critical Change, otherwise the torch is dependant on the static texture color.
 				"mul ft2.xyz, ft2.xyz, fc2.xyz",  // take result and multiple by light color
 				// END light from dynamic lights
 				/////////////////////////////////////////////////

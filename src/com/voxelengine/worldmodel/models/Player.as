@@ -1,9 +1,11 @@
 ﻿package com.voxelengine.worldmodel.models
 {
+	import com.voxelengine.renderer.Lamp;
+	import com.voxelengine.renderer.Torch;
 	import com.voxelengine.renderer.RainbowLight;
+	
 	import com.voxelengine.renderer.ShaderLight;
 	import com.voxelengine.renderer.shaders.Shader;
-	import com.voxelengine.renderer.Torch;
 	import com.voxelengine.worldmodel.models.*;
 	import com.voxelengine.worldmodel.MouseKeyboardHandler;
 	import com.voxelengine.worldmodel.oxel.Oxel;
@@ -38,30 +40,30 @@
 		
 		public function Player( instanceInfo:InstanceInfo, mi:ModelInfo ) { 
 			super( instanceInfo, mi );
-			Globals.controlledModel = this;
 			
 			instanceInfo.usesCollision = true;
+			clipVelocityFactor = AVATAR_CLIP_FACTOR;
+			modelInfo.editable = false;
+			
 			Globals.g_app.addEventListener( ModelEvent.CRITICAL_MODEL_LOADED, onCriticalModelLoaded );
 			Globals.g_app.addEventListener( LoadingEvent.PLAYER_LOAD_COMPLETE, onLoadingPlayerComplete );
 			Globals.g_app.addEventListener( LoadingEvent.LOAD_COMPLETE, onLoadingComplete );
 			Globals.g_app.addEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
-			clipVelocityFactor = AVATAR_CLIP_FACTOR;
-			modelInfo.editable = false;
-			//if ( !instanceInfo.owner )
-				takeControl( null );
-			//visible = true;
+			
+			takeControl( null );
 			
 			//_ct.markersAdd();
 			
-			inventoryLoad();
-			//torchAdd();
+			//inventoryLoad();
+			torchAdd();
 		}
 		
 		// Be nice to have the UI driven
 		public function torchAdd():void {
 			Shader.lightsClear();
-			var sl:Torch = new Torch();
-			sl.flicker = false;
+			var sl:Lamp = new Lamp();
+			//var sl:Torch = new Torch();
+			//sl.flicker = true;
 			//var sl:RainbowLight = new RainbowLight();
 			sl.position = instanceInfo.positionGet.clone();
 			sl.position.y += 30;
