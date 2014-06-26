@@ -242,7 +242,8 @@ package com.voxelengine.worldmodel.models
 		
 		public function VoxelModel(ii:InstanceInfo, mi:ModelInfo, initializeRoot:Boolean = true):void {
 			_instanceInfo = ii;
-			_instanceInfo.owner = this;
+			// Why make an object the owner of its self?
+			//_instanceInfo.owner = this;
 			_modelInfo = mi;
 			
 			if (initializeRoot)
