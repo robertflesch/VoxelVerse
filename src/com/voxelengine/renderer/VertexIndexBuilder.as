@@ -334,7 +334,13 @@ public class VertexIndexBuilder
 			}
 			
 			ib = _indexBuffers[i];
-			context.drawTriangles(ib);
+			try {
+				context.drawTriangles(ib);
+			}
+			catch ( e:Error) {
+				Log.out( "VertexIndexBuilder.BufferCopyToGPU - Error caught: " + e.message );
+				Log.out( e.getStackTrace() );
+			}
 		}
 		//trace ( "VertexIndexBuilder.bufferCopyToGPU - took: "  + (getTimer() - timer) + "  to process " + _buffers + " buffers" );			
 	}	
