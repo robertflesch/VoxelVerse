@@ -45,49 +45,30 @@ package com.voxelengine.GUI
 
 			var name:Label = new Label( "VoxelVerse" );
 			name.fontSize = 14;
+			name.fontColor = 0xffffff;
 			addElement( name );
 			_startTime = getTimer();
 			_prefix = "FPS: ";
 			_fpsLabel.fontSize = 14;
+			_fpsLabel.fontColor = 0xff0000;
 			addElement( _fpsLabel );
 			_locLabel.fontSize = 14;
+			_locLabel.fontColor = 0x808080;
 			addElement( _locLabel );
 			_rotLabel.fontSize = 14;
+			_rotLabel.fontColor = 0x808080;
 			addElement( _rotLabel );
 			var spacer:Label = new Label( "" );
 			spacer.fontSize = 14;
 			addElement( spacer );
 			var fs:Label = new Label( "FullScreen F9" );
 			fs.fontSize = 14;
+			fs.fontColor = 0x0000ff;
 			addElement( fs );
 			var ss:Label = new Label( "Screen Shot F12" );
 			ss.fontSize = 14;
+			ss.fontColor = 0x0000ff;
 			addElement( ss );
-			/* These were used when mouse was active.
-			if ( Globals.g_app.configManager.showButtons )
-			{
-//				if ( !Globals.g_debug )
-//					addButton( "Help"	, { callback:showHelpWindow } );
-					
-				var fullScreenButton:Box = new Box(64,64);
-				fullScreenButton.backgroundTexture = "assets/textures/fullscreen.png";
-				fullScreenButton.addEventListener(UIMouseEvent.PRESS, fullScreenHandler );
-				addElement( fullScreenButton );
-				
-				var screenShotButton:Box = new Box(64,64);
-				screenShotButton.backgroundTexture = "assets/textures/screenshot.png";
-				screenShotButton.addEventListener(UIMouseEvent.PRESS, screenShotHandler );
-				addElement( screenShotButton );
-			
-				if ( true == Globals.sandbox )
-				{
-					var sandboxButton:Box = new Box(64,64);
-					sandboxButton.backgroundTexture = "assets/textures/sandbox.png";
-					sandboxButton.addEventListener(UIMouseEvent.PRESS, sandboxHandler );
-					addElement( sandboxButton );
-				}
-			}
-			*/
 			
 			display( 0, 0 );	
 			
