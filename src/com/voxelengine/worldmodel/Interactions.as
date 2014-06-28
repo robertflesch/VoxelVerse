@@ -54,7 +54,7 @@ public class Interactions
 			if ( name == $name )
 				return _interactions[$name];
 		}
-		Log.out( "Interactions.IOGet for " + $name + " no interaction defined", Log.ERROR );
+		Log.out( "Interactions.IOGet for " + $name + " no interaction defined" );
 		var ip:InteractionParams = new InteractionParams( name )
 		ip.setDefault();
 		return ip;
