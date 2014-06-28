@@ -204,7 +204,7 @@ package com.voxelengine.worldmodel.models
 			// get it out
 			else if ( fall && foot && (!body || !wingTip || !wing) )
 			{
-				Log.out( "Beast.collsionCheckNew - Fall and Foot point is true" );
+				//Log.out( "Beast.collsionCheckNew - Fall and Foot point is true" );
 				onSolidGround = true;
 				$loc.velocityResetY();
 
