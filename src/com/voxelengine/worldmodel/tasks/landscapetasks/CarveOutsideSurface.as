@@ -121,7 +121,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 				vm.oxel.mergeRecursive();
 				if ( 50 > Oxel.nodes )
 					stillNodes = false;
-				Log.out( "CarveOutsideSurface - merging recovered: " + Oxel.nodes + " took: " + (getTimer() - timer), Log.ERROR );
+				Log.out( "CarveOutsideSurface - merging recovered: " + Oxel.nodes + " took: " + (getTimer() - timer) );
 			}
 			
 			Globals.g_flowTaskController.emptyQueue();
