@@ -44,7 +44,9 @@ package com.voxelengine.renderer.shaders
 		static public  function     lights( index:int ):ShaderLight			{ return _s_lights[ index ]; }
 		static public  function     lightCount():int 						{ return _s_lights.length; }
 		static public  function     lightAdd( light:ShaderLight ):void 		{ _s_lights.push( light ); }
-		static public  function     lightsClear():void 						{ _s_lights.length = 0; }
+		static public  function     lightsClear():void 						{ 
+			_s_lights = new Vector.<ShaderLight>(); 
+		}
 		
 		public function		get		textureName():String  					{ return _textureName; }
 		public function		set		textureName(val:String):void 			{ _textureName = val; }
