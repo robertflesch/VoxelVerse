@@ -1,5 +1,6 @@
 ﻿package com.voxelengine.worldmodel.models
 {
+	import com.voxelengine.renderer.BlackLamp;
 	import com.voxelengine.renderer.Lamp;
 	import com.voxelengine.renderer.Torch;
 	import com.voxelengine.renderer.RainbowLight;
@@ -46,8 +47,11 @@
 			modelInfo.editable = false;
 			
 			Globals.g_app.addEventListener( ModelEvent.CRITICAL_MODEL_LOADED, onCriticalModelLoaded );
+			Globals.g_app.addEventListener( ModelEvent.RELEASE_CONTROL, handleModelEvents );
+			
 			Globals.g_app.addEventListener( LoadingEvent.PLAYER_LOAD_COMPLETE, onLoadingPlayerComplete );
 			Globals.g_app.addEventListener( LoadingEvent.LOAD_COMPLETE, onLoadingComplete );
+			
 			Globals.g_app.addEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
 			
 			takeControl( null );
@@ -55,9 +59,38 @@
 			//_ct.markersAdd();
 			
 			//inventoryLoad();
-			torchAdd();
+			torchToggle();
 		}
 		
+		private var _torchIndex:int;
+		public function torchToggle():void 
+		{
+			Shader.lightsClear();
+			var sl:ShaderLight;
+			switch( _torchIndex ) {
+				case 0:
+					sl = new Lamp();
+					break;
+				case 1:
+					sl = new Torch();
+					(sl as Torch).flicker = true;
+					break;
+				case 2:
+					sl = new RainbowLight();
+					break;
+				case 3:
+					sl = new BlackLamp();
+					_torchIndex = -1; // its going to get incremented
+					break;
+			}
+			_torchIndex++;
+			sl.position = instanceInfo.positionGet.clone();
+			sl.position.y += 30;
+			sl.position.x += 4;
+			Shader.lightAdd( sl ); 
+		}
+		
+		/*
 		// Be nice to have the UI driven
 		public function torchAdd():void {
 			Shader.lightsClear();
@@ -69,12 +102,13 @@
 			sl.position.y += 30;
 			sl.position.x += 4;
 			Shader.lightAdd( sl ); 
+			_torchIndex = 0;
 		}
 		
 		public function torchRemove():void {
 			Shader.lightsClear();
 		}
-		
+		*/
 		private function inventoryLoad():void
 		{
 			//returns the mySharedObject if it exists, if not creates a new one
@@ -196,13 +230,13 @@
 //			camera.addLocation( new CameraLocation( true, 0, 0, 0 ) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 0 ) );
 //			camera.addLocation( new CameraLocation( true, 0, Globals.AVATAR_HEIGHT - 4, 0) );
-			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2) );
+			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2 - 4) );
 			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 50) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT + 20, 50) );
 			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 100) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 250) );
 		}
-		
+
 		override public function takeControl( $modelLosingControl:VoxelModel, $addAsChild:Boolean = true ):void {
 			Log.out( "Player.takeControl" );
 			super.takeControl( $modelLosingControl, false );
