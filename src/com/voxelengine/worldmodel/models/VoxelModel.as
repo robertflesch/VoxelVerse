@@ -243,8 +243,7 @@ package com.voxelengine.worldmodel.models
 		
 		public function VoxelModel(ii:InstanceInfo, mi:ModelInfo, initializeRoot:Boolean = true):void {
 			_instanceInfo = ii;
-			// Why make an object the owner of its self?
-			//_instanceInfo.owner = this;
+			_instanceInfo.owner = this; // This tells the instanceInfo that this voxel model is its owner.
 			_modelInfo = mi;
 			
 			if (initializeRoot)
@@ -1144,10 +1143,10 @@ package com.voxelengine.worldmodel.models
 			// if the uncompress fails, it simply continues
 			try { 
 				$ba.uncompress();
-				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
+				//Log.out( "VoxelModel.IVMLoadCompressed - this byteArray IS compressed: " + modelInfo.fileName );
 			}
 			catch (error:Error) {
-				Log.out( "VoxelModel.IVMLoadCompressed - this byteArray is NOT compressed: " + modelInfo.fileName );
+				//Log.out( "VoxelModel.IVMLoadCompressed - this byteArray is NOT compressed: " + modelInfo.fileName );
 			}
 			IVMLoadUncompressed( $ba );
 		}
@@ -1655,6 +1654,20 @@ package com.voxelengine.worldmodel.models
 			return false;
 		}
 		
+		// So if you release control of any model but the player, the player is back in control
+		// Now if there are multiple players (or is this not the case, is Player a special case of Avatar)
+		public function handleModelEvents( $me:ModelEvent ):void {
+			if ( ModelEvent.RELEASE_CONTROL == $me.type ) {
+				var classCalled:String = $me.parentInstanceGuid;
+Log.out( "VoxelModel.handleModelEvents - classCalled" + classCalled );				
+				if ( classCalled != "com.voxelengine.worldmodel.models::Player" )
+					Globals.player.takeControl( null, false );
+					// TODO Need something here to determine which model
+					//if ( $me.instanceGuid
+				
+			}
+		}
+		
 		public function takeControl( $modelLosingControl:VoxelModel, $addAsChild:Boolean = true ):void
 		{
 			if ( $modelLosingControl )
@@ -1665,8 +1678,6 @@ package com.voxelengine.worldmodel.models
 			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			Globals.g_app.stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 			
-			if ( Globals.player )
-				Globals.player.loseControl(this);
 			Globals.controlledModel = this;
 			
 			// adds the player to the child list
@@ -1689,7 +1700,8 @@ package com.voxelengine.worldmodel.models
 			if ( $detachChild )
 				childDetach($modelDetaching);
 			camera.index = 0;
-			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.RELEASE_CONTROL, instanceInfo.instanceGuid ) );
+			var className:String = getQualifiedClassName(this)
+			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.RELEASE_CONTROL, instanceInfo.instanceGuid, null, null, className ) );
 		}
 		
 		// these are overriden in subclasses to allow for custom movement
@@ -1755,7 +1767,7 @@ package com.voxelengine.worldmodel.models
 			if ( (_anim && _anim.name == $state) || 0 == modelInfo.animations.length )
 				return;
 			
-			Log.out( "VoxelModel.stateSet: " + $state ); 
+			//Log.out( "VoxelModel.stateSet: " + $state ); 
 			if (_anim)
 			{
 				//Log.out( "VoxelModel.stateSet - Stopping anim: " + _anim.name + "  starting: " + $state ); 
