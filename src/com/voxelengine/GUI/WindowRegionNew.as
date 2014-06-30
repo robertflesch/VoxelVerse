@@ -28,11 +28,6 @@ import com.voxelengine.Log;
 
 public class WindowRegionNew extends VVPopup
 {
-	private var _loadFileButton:Button;
-	private var _saveFileButton:Button;
-	private var _deleteFileButton:Button;
-	private var _bigDBButton:Button;
-	
 	private static const WIDTH:int = 300;
 	private static const BORDER_WIDTH:int = 4;
 	private static const BORDER_WIDTH_2:int = BORDER_WIDTH * 2;
