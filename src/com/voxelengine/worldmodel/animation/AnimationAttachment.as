@@ -32,6 +32,7 @@ package com.voxelengine.worldmodel.animation
 			else
 				throw new Error( "AnimationAttachment.construct - NO attachsTo" );
 			
+			Log.out( "AnimationAttachment - _attachsTo: " + _attachsTo + " fileName: " + $json.fileName );
 			_instanceInfo = new InstanceInfo();
 			_instanceInfo.initJSON( $json );
 		}
@@ -48,6 +49,7 @@ package com.voxelengine.worldmodel.animation
 		
 		public function create( $owner:VoxelModel ):void
 		{
+			Log.out( "AnimationAttachment.create owner: " + $owner.toString() );
 			_owner = $owner;
 			_instanceInfo.controllingModel = $owner;
 			if ( null == _voxelModel )
@@ -57,21 +59,25 @@ package com.voxelengine.worldmodel.animation
 			}
 			else
 			{
+				//Log.out( "AnimationAttachment.create owner: " + $owner.toString() + "   attachment: " + _voxelModel.toString() );
 				$owner.childAdd( _voxelModel );
 			}
 		}
 		
 		public function detach():void
 		{
+			//Log.out( "AnimationAttachment.detach owner: " + _owner.toString() + "   attachment: " + _voxelModel.toString() );
 			if ( null != _voxelModel && null != _owner )
 				_owner.childRemove( _voxelModel );
 		}
 		
 		private function onAttachmentCreated( event:ModelEvent ):void
 		{
+			//Log.out( "AnimationAttachment.onAttachmentCreated owner: " + _owner.toString() );
 			if ( event.instanceGuid == _instanceInfo.instanceGuid )
 			{
 				_voxelModel = Globals.g_modelManager.getModelInstance( _instanceInfo.instanceGuid );
+				_owner.childAdd( _voxelModel );
 				Globals.g_app.removeEventListener( ModelEvent.CHILD_MODEL_ADDED, onAttachmentCreated );			
 			}
 				
