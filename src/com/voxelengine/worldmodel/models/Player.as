@@ -1,5 +1,6 @@
 ﻿package com.voxelengine.worldmodel.models
 {
+	import com.voxelengine.events.GUIEvent;
 	import com.voxelengine.renderer.BlackLamp;
 	import com.voxelengine.renderer.Lamp;
 	import com.voxelengine.renderer.Torch;
@@ -231,9 +232,9 @@
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 0 ) );
 //			camera.addLocation( new CameraLocation( true, 0, Globals.AVATAR_HEIGHT - 4, 0) );
 			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2 - 4) );
-			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 50) );
+			camera.addLocation( new CameraLocation( false, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 50) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT + 20, 50) );
-			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 100) );
+			camera.addLocation( new CameraLocation( false, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 100) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT, 250) );
 		}
 
@@ -244,6 +245,8 @@
 			// We need to grab the rotation of the old parent, otherwise we get rotated back to 0 since last rotation is 0
 			if ( $modelLosingControl )
 				instanceInfo.rotationSet = $modelLosingControl.instanceInfo.rotationGet;
+
+			Globals.g_app.dispatchEvent(new GUIEvent(GUIEvent.TOOLBAR_SHOW));
 		}
 
 		override public function loseControl($modelDetaching:VoxelModel, $detachChild:Boolean = true):void

@@ -179,8 +179,8 @@ package com.voxelengine.worldmodel.models
 		protected function cameraAddLocations():void
 		{
 			camera.addLocation(new CameraLocation(false, 8, Globals.AVATAR_HEIGHT, 0));
-			camera.addLocation(new CameraLocation(true, 8, Globals.AVATAR_HEIGHT, 40));
-			camera.addLocation(new CameraLocation(true, 8, Globals.AVATAR_HEIGHT, 100));
+			camera.addLocation(new CameraLocation(false, 8, Globals.AVATAR_HEIGHT, 40));
+			camera.addLocation(new CameraLocation(false, 8, Globals.AVATAR_HEIGHT, 100));
 			//_cameras.push( new CameraLocation( true, 0, 100, 100, 45 ) );
 			//_cameras.push( new CameraLocation( true, 0, 100, 0, 90 ) );
 			//_cameras.push( new CameraLocation( true, 0, 0, 100) );
