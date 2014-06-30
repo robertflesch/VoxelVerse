@@ -59,7 +59,6 @@ package com.voxelengine.GUI
 //			addInt( "       Flow Tasks: ", FlowTaskController.taskCount );
 //			addSpace();
 
-			//addInt( "Allocated Vertex Buf:", VertexIndexBuilderPool.total );
 			addInt( "Used Vertex Buf:", VertexIndexBuilderPool.totalUsed );
 			addInt( "Remaining:", VertexIndexBuilderPool.remaining );
 			addSpace();
@@ -80,12 +79,10 @@ package com.voxelengine.GUI
 			addInt( "Remaining:", ChildOxelPool.remaining );
 			addSpace();
 			
-			//addInt( "     Total GrainCursor:", GrainCursorPool.total );
 			addInt( "Used GrainCursor:", GrainCursorPool.totalUsed );
 			addInt( "Remaining:", GrainCursorPool.remaining );
 			addSpace();
 				
-			//addInt( "     Total OxelPool:", OxelPool.total );
 			addInt( "Used OxelPool:", OxelPool.totalUsed );
 			addInt( "Remaining:", OxelPool.remaining );
 			addSpace();
@@ -106,6 +103,7 @@ package com.voxelengine.GUI
 			addInt( "Flow Tasks:", Globals.g_flowTaskController.queueSize );
 			addInt( "Light Tasks:", Globals.g_lightTaskController.queueSize );
 			addSpace();
+			
 			_gcLabel.textAlign = TextAlign.CENTER;
 			_gcLabel.textFormat.color = 0xFFFFFF;
 			addElement( _gcLabel );
@@ -142,7 +140,7 @@ package com.voxelengine.GUI
 		
 		private function fullScreenHandler(e:UIMouseEvent):void 
 		{
-			Globals.g_renderer.toggleFullscreen();
+			VoxelVerseGUI.currentInstance.toggleFullscreen();
 		}
 		
 		private function onEnterFrame( event:Event ):void

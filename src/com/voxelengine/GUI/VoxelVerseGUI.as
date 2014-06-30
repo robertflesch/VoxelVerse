@@ -16,6 +16,8 @@ package com.voxelengine.GUI
 	import flash.utils.ByteArray;
 	import flash.utils.Timer;
 	import flash.utils.getQualifiedClassName;
+	import flash.events.FullScreenEvent;
+	import flash.display.StageDisplayState;
 	
 	import org.flashapi.swing.UIManager;
 	
@@ -78,7 +80,34 @@ package com.voxelengine.GUI
 
 		//	CONSTRUCTOR
 		//	----------------------------------------------------------------
-		public function VoxelVerseGUI(title : String = null) { }
+		public function VoxelVerseGUI(title : String = null) { 
+			
+					Globals.g_app.stage.addEventListener( FullScreenEvent.FULL_SCREEN_INTERACTIVE_ACCEPTED, fullScreenEvent );
+		}
+		
+		public function fullScreenEvent(event:FullScreenEvent):void {
+			if ( event.fullScreen )
+			{
+				//Log.out( "Renderer - enter fullscreen has been called" + event );
+				if( !Globals.g_app.stage.mouseLock )
+					Globals.g_app.stage.mouseLock = true;
+			}
+			else if ( !event.fullScreen )
+			{
+				//Log.out( "Renderer - leaving fullscreen has been called" + event );
+			}
+		}
+		
+		public function toggleFullscreen():void
+		{
+			if ( StageDisplayState.NORMAL == Globals.g_app.stage.displayState )
+				Globals.g_app.stage.displayState =	StageDisplayState.FULL_SCREEN_INTERACTIVE;
+			else
+				Globals.g_app.stage.displayState =	StageDisplayState.NORMAL;
+		}
+
+		
+		
 		public function get toolBar(): Hub { return _hub; }
 		
 		private static var _openWindowCount:int = 0;
@@ -86,12 +115,19 @@ package com.voxelengine.GUI
 		static public function set openWindowCount(value:int):void  
 		{ 
 			_openWindowCount = value; 
-Log.out( "openWindowCount: " + _openWindowCount ); 
+Log.out( "VVGUI.toolBar - openWindowCount: " + _openWindowCount ); 
+Log.out( "VVGUI.toolBar - Globals.g_app.stage.mouseLock: " + Globals.g_app.stage.mouseLock ); 
 			
-			if ( 0 == _openWindowCount )
+			if ( 0 == _openWindowCount ) {
 				Globals.GUIControl = false;
-			else
+				Globals.g_app.stage.mouseLock = true;
+			}
+			else {
 				Globals.GUIControl = true;
+				Globals.g_app.stage.mouseLock = false;
+			}
+Log.out( "VVGUI.toolBar - Globals.g_app.stage.mouseLock: " + Globals.g_app.stage.mouseLock ); 
+Log.out( "VVGUI.toolBar - -----------------------" );
 		}
 		
 		
@@ -448,6 +484,9 @@ Log.out( "openWindowCount: " + _openWindowCount );
 //			if ( true == Globals.g_debug )
 			if ( !Log.showing )
 			{
+				if ( Keyboard.T == e.keyCode )
+					Globals.player.torchToggle();
+					
 				if ( Keyboard.F11 == e.keyCode )
 					Globals.g_renderer.screenShot( true );
 
@@ -455,7 +494,7 @@ Log.out( "openWindowCount: " + _openWindowCount );
 					Globals.g_renderer.screenShot( false );
 					
 				if ( Keyboard.F9 == e.keyCode )
-					Globals.g_renderer.toggleFullscreen();
+					toggleFullscreen();
 					
 					
 				//if ( Keyboard.O == e.keyCode )

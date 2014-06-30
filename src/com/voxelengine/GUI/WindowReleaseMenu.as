@@ -85,7 +85,7 @@ package com.voxelengine.GUI
 		
 		private function fullScreenHandler(e:UIMouseEvent):void 
 		{
-			Globals.g_renderer.toggleFullscreen();
+			VoxelVerseGUI.currentInstance.toggleFullscreen();
 		}
 		
 		private function sandboxHandler(e:UIMouseEvent):void 
