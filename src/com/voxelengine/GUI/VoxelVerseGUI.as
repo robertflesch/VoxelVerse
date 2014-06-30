@@ -115,8 +115,6 @@ package com.voxelengine.GUI
 		static public function set openWindowCount(value:int):void  
 		{ 
 			_openWindowCount = value; 
-Log.out( "VVGUI.toolBar - openWindowCount: " + _openWindowCount ); 
-Log.out( "VVGUI.toolBar - Globals.g_app.stage.mouseLock: " + Globals.g_app.stage.mouseLock ); 
 			
 			if ( 0 == _openWindowCount ) {
 				Globals.GUIControl = false;
@@ -126,8 +124,6 @@ Log.out( "VVGUI.toolBar - Globals.g_app.stage.mouseLock: " + Globals.g_app.stage
 				Globals.GUIControl = true;
 				Globals.g_app.stage.mouseLock = false;
 			}
-Log.out( "VVGUI.toolBar - Globals.g_app.stage.mouseLock: " + Globals.g_app.stage.mouseLock ); 
-Log.out( "VVGUI.toolBar - -----------------------" );
 		}
 		
 		
