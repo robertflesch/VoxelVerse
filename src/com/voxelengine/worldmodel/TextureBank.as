@@ -12,6 +12,7 @@ package com.voxelengine.worldmodel
 	import flash.utils.Timer;
 	import flash.utils.getTimer;
 	import flash.events.Event; // needed for local loading
+	import flash.display3D.Context3D;
 	
 	// need for loading the texture, this needs to be pulled out to its own class
 	import flash.display.Bitmap;
@@ -53,7 +54,7 @@ package com.voxelengine.worldmodel
 		{
 		}
 		
-		public function getTexture( textureNameAndPath:String ):Texture
+		public function getTexture( $context:Context3D, textureNameAndPath:String ):Texture
 		{
 			// is this texture loaded already?
 			var tex:Texture = _textures[textureNameAndPath];
@@ -62,7 +63,7 @@ package com.voxelengine.worldmodel
 
 			var result:Boolean = _texturesLoading[ textureNameAndPath ];
 			if ( false == result )
-				loadTexture( textureNameAndPath );	
+				loadTexture( $context, textureNameAndPath );	
 				
 			//Log.out("TextureBank.getTexture - texture not found: " + textureNameAndPath, Log.ERROR );
 				
@@ -76,8 +77,11 @@ package com.voxelengine.worldmodel
 			Log.out("----------------------------------------------------------------------------------" );
 		}		
 		
-		private function loadTexture( textureNameAndPath:String ):void 
+		import com.voxelengine.utils.ContextAwareLoader;
+
+		private function loadTexture( $context:Context3D, textureNameAndPath:String ):void 
 		{
+			_tempContext = $context;
 			var loader:Loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onTextureLoadComplete);
 			loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onFileLoadError);
@@ -86,7 +90,7 @@ package com.voxelengine.worldmodel
 			
 			_texturesLoading[textureNameAndPath] = true;
 		}
-		
+
 		public function getFileNameFromString( fileNameAndPath:String ):String 
 		{
 			var lastIndex:int = fileNameAndPath.lastIndexOf('\\');
@@ -123,24 +127,26 @@ package com.voxelengine.worldmodel
 			return fileName;	
 		}
 		
+		private var _tempContext:Context3D;
 		public function onTextureLoadComplete (event:Event):void 
 		{
 			var textureBitmap:Bitmap = Bitmap(LoaderInfo(event.target).content);// .bitmapData;
 			var fileNameAndPath:String = event.target.url
-			Log.out( "TextureBank.onTextureLoadComplete: " + fileNameAndPath );					
+//			Log.out( "TextureBank.onTextureLoadComplete: " + fileNameAndPath );	
 			
-			var tex:Texture = uploadTexture( textureBitmap );
-			//var textureNameAndPath:String = getTextureNameAndPath(fileNameAndPath);
+			var tex:Texture = uploadTexture( _tempContext, textureBitmap );
 			var textureNameAndPath:String = removeGlobalAppPath(fileNameAndPath);
+//			Log.out( "TextureBank.onTextureLoadComplete: " + textureNameAndPath );					
 			
 			_bitmapData[textureNameAndPath] = textureBitmap;
 			_textures[textureNameAndPath] = tex;
 			_texturesLoading[textureNameAndPath] = false;
+			_tempContext = null;
 		}			
 		
-		public function uploadTexture( bmp:Bitmap, useMips:Boolean = true ):Texture	
+		public function uploadTexture( $context:Context3D, bmp:Bitmap, useMips:Boolean = true ):Texture	
 		{
-			var tex:Texture = Globals.g_renderer.context.createTexture(bmp.width, bmp.height, Context3DTextureFormat.BGRA, false);
+			var tex:Texture = $context.createTexture(bmp.width, bmp.height, Context3DTextureFormat.BGRA, false);
 			if ( useMips )
 				uploadTextureWithMipmaps( tex, bmp.bitmapData );
 			else
@@ -154,14 +160,14 @@ package com.voxelengine.worldmodel
 			// Dont I need to release texture from a when a context is lost?
 		}
 		
-		public function reinitialize():void {
+		public function reinitialize( $context:Context3D ):void {
 			
 			//Log.out("TextureBank.reinitialize" );
 			for ( var key:String in _bitmapData )
 			{
 				_textures[key] = null;
 				var bmp:Bitmap = _bitmapData[key];
-				var tex:Texture = uploadTexture( bmp, true );
+				var tex:Texture = uploadTexture( $context, bmp, true );
 				_textures[key] = tex;
 			}
 		}
