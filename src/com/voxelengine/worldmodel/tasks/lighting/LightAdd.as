@@ -338,10 +338,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		private function add( $o:Oxel ):void {
 			
 			if ( checkIfProcessed( $o ) )
-			{
-				//Log.out( "LightAdd.add - ALREADY PROCESSED LightID: " + lightID + "  gc: " + $o.gc.toString() );
 				return;
-			}
 			
 			if ( $o.isSolid )
 			{
@@ -349,20 +346,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 				return;
 			}
 			
-			if ( $o.gc.grain < 4 )
-			{
-				Log.out( "LightAdd.add - TOO SMALL" );
-				return;
-			}
-			
 			if ( $o.brightness.valuesHas() )
-			{
-				//Log.out( "LightAdd.add - REPLACE ALL_DIRS HERE" );
 				addTask( _guid, $o.gc, lightID, Globals.ALL_DIRS );
-					
-//				if ( false == addTask( _guid, $o.gc, lightID ) )
-//					Log.out( "LightAdd.add - DUP gc: " + $o.gc.toString() );
-			}
 		}
 	}
 }
