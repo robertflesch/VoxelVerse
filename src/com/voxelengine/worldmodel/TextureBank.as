@@ -77,8 +77,6 @@ package com.voxelengine.worldmodel
 			Log.out("----------------------------------------------------------------------------------" );
 		}		
 		
-		import com.voxelengine.utils.ContextAwareLoader;
-
 		private function loadTexture( $context:Context3D, textureNameAndPath:String ):void 
 		{
 			_tempContext = $context;
