@@ -1426,10 +1426,18 @@ package com.voxelengine.worldmodel.oxel
 			else if ( validFace && !quad ) 
 			{
 				quad = QuadPool.poolGet();
-				if ( flowInfo && isFlowable )
-					quad.buildScaled( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness, flowInfo );
-				else
-					quad.build( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness );
+				if ( flowInfo && isFlowable ) {
+					if ( !quad.buildScaled( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness, flowInfo ) ) {
+						QuadPool.poolDispose( quad );
+						return 0;
+					}
+				}
+				else {
+					if ( !quad.build( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness ) ) {
+						QuadPool.poolDispose( quad );
+						return 0;
+					}
+				}
 				_quads[$face] = quad;
 				return 1;
 			}
@@ -2656,6 +2664,12 @@ package com.voxelengine.worldmodel.oxel
 				// Still something wrong here...
 				
 				// This is on the boarder, it needs to be broken up
+				// I am seeing app trying to create children on a grain 0 here.
+				if ( 0 == gc.grain ) {
+					var s:uint = gc.size();	
+					s = gc.size();	
+				}
+				
 				if ( !childrenHas() )
 				{
 					TEMP_COUNT += 8;
