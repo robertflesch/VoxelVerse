@@ -243,7 +243,6 @@ package com.voxelengine.worldmodel.models
 		
 		public function VoxelModel(ii:InstanceInfo, mi:ModelInfo, initializeRoot:Boolean = true):void {
 			_instanceInfo = ii;
-			_instanceInfo.owner = this; // This tells the instanceInfo that this voxel model is its owner.
 			_modelInfo = mi;
 			
 			if (initializeRoot)
@@ -276,6 +275,8 @@ package com.voxelengine.worldmodel.models
 			
 			if (instanceInfo.state != "")
 				stateSet(instanceInfo.state)
+				
+			_instanceInfo.owner = this; // This tells the instanceInfo that this voxel model is its owner.
 		}
 		
 		public function clone():VoxelModel {
@@ -728,6 +729,7 @@ package com.voxelengine.worldmodel.models
 		
 		private function initialize_root_oxel(grainSize:int):void
 		{
+			try {
 			var gc:GrainCursor = GrainCursorPool.poolGet(grainSize);
 			gc.grain = grainSize;
 			oxelReset();
@@ -737,6 +739,10 @@ package com.voxelengine.worldmodel.models
 			// this replaces the placeholder and replaces it with a new root.
 			oxel.type = Globals.AIR;
 			GrainCursorPool.poolDispose(gc);
+			}
+			catch (e:Error) {
+				Log.out( "VoxelModel.initialize_root_oxel - _instanceInfo.instanceGuid: " + _instanceInfo.instanceGuid + " grain: " + gc.grain + "(" + oxel.size_in_world_coordinates() + ") out of " + Globals.Info[oxel.type].name );					
+			}
 		
 			//Log.out( "VoxelModel.initialize_root_oxel - _instanceInfo.instanceGuid: " + _instanceInfo.instanceGuid + " grain: " + gc.grain + "(" + oxel.size_in_world_coordinates() + ") out of " + Globals.Info[type].name );					
 		}
