@@ -806,6 +806,7 @@ package com.voxelengine.worldmodel.models
 			{
 				if (child == vm)
 				{
+					Log.out(  "VoxelModel.childRemove - removing Model: " + child.toString() );
 					_children.splice(index, 1);
 					break;
 				}
@@ -884,25 +885,24 @@ package com.voxelengine.worldmodel.models
 			}
 		}
 		
-		public function reinitialize():void
+		public function reinitialize( $context:Context3D ):void
 		{
 			//trace("VoxelModel.reinitialize - modelInfo: " + modelInfo.fileName );
-			var context:Context3D = Globals.g_renderer.context;
 			for each ( var shader:Shader in _shaders )
-				shader.createProgram( context );
+				shader.createProgram( $context );
 				
 			for each (var child:VoxelModel in _children)
 			{
-				child.reinitialize();
+				child.reinitialize( $context );
 			}
 
 			if ( editCursor )
-				editCursor.reinitialize();
+				editCursor.reinitialize( $context );
 		}
 		
 		public function dispose():void
 		{
-			//trace("VoxelModel.dispose - modelInfo: " + modelInfo.fileName );
+			trace("VoxelModel.dispose - modelInfo: " + modelInfo.fileName + " ----------- START -------------" );
 			for each ( var shader:Shader in _shaders )
 				shader.dispose();
 				
@@ -911,11 +911,14 @@ package com.voxelengine.worldmodel.models
 				
 			for each (var child:VoxelModel in _children)
 			{
+				trace("VoxelModel.dispose CHILDREN of: " + modelInfo.fileName + "   modelInfo: " + child.modelInfo.fileName );
+
 				child.dispose();
 			}
 			
 			if ( editCursor )
 				editCursor.dispose();
+			trace("VoxelModel.dispose - modelInfo: " + modelInfo.fileName + " ----------- END -------------" );
 		}
 		
 		public function release():void
