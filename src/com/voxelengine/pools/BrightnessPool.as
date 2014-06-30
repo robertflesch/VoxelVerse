@@ -44,7 +44,7 @@ public final class BrightnessPool
 			return _pool[--_counter]; 
 		}
 			 
-		Log.out( "BrightnessPool.poolGet - Allocating more Brightness: " + _currentPoolSize, Log.ERROR );
+		Log.out( "BrightnessPool.poolGet - Allocating more Brightness: " + _currentPoolSize );
 		var timer:int = getTimer();
 
 		_currentPoolSize += GROWTH_VALUE;
@@ -56,7 +56,7 @@ public final class BrightnessPool
 		}
 		_counter = newIndex - 1; 
 		
-		Log.out( "BrightnessPool.poolGet - Done allocating more Brightness: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
+		Log.out( "BrightnessPool.poolGet - Done allocating more Brightness: " + _currentPoolSize  + " took: " + (getTimer() - timer) );
 		return poolGet(); 
 	} 
 

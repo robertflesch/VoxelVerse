@@ -43,7 +43,7 @@ public final class NeighborPool
 		if ( counter > 0 ) 
 			return pool[--counter]; 
 				
-		Log.out( "NeighborPool.poolGet - Allocating more NeighborPool: " + GROWTH_VALUE, Log.ERROR );
+		Log.out( "NeighborPool.poolGet - Allocating more NeighborPool: " + GROWTH_VALUE );
 		var timer:int = getTimer();
 
 		_currentPoolSize += GROWTH_VALUE;
@@ -55,7 +55,7 @@ public final class NeighborPool
 		}
 		
 		counter = newIndex - 1; 
-		Log.out( "NeighborPool.poolGet - Done allocating more NeighborPool, total size: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
+		Log.out( "NeighborPool.poolGet - Done allocating more NeighborPool, total size: " + _currentPoolSize  + " took: " + (getTimer() - timer) );
 
 		return poolGet(); 
 		 

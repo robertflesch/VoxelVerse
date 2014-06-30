@@ -43,7 +43,7 @@ public final class ChildOxelPool
 		if ( _counter > 0 ) 
 			return _pool[--_counter]; 
 			 
-		Log.out( "ChildOxelPool.poolGet  - Allocating more ChildOxels: " + _currentPoolSize, Log.ERROR );
+		Log.out( "ChildOxelPool.poolGet  - Allocating more ChildOxels: " + _currentPoolSize );
 		var timer:int = getTimer();
 
 		_currentPoolSize += _growthValue;
@@ -55,7 +55,7 @@ public final class ChildOxelPool
 		}
 		_counter = newIndex - 1; 
 		
-		Log.out( "ChildOxelPool.poolGet - Done allocating more ChildOxels: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
+		Log.out( "ChildOxelPool.poolGet - Done allocating more ChildOxels: " + _currentPoolSize  + " took: " + (getTimer() - timer) );
 		return poolGet(); 
 	} 
 

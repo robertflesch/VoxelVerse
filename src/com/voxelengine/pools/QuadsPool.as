@@ -52,8 +52,6 @@ public final class QuadsPool
 		counter = newIndex - 1; 
 		
 		return poolGet(); 
-		
-		 
 	} 
 
 	public static function poolDispose( disposedQuads:Vector.<Quad> ):void 
