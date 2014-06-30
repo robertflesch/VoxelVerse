@@ -38,7 +38,7 @@
 						"y": 0,
 						"z": 30
 					},
-					"time": 0.3,
+					"time": 0.1,
 					"type": "rotation_repeating"
 				}
 			]

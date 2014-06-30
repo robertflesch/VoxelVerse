@@ -2,7 +2,6 @@
     "model": {
         "editable": false,
         "template": "false",
-        "modelClass": "Player",
         "biomes": {
             "layers": [
                 {
@@ -14,39 +13,23 @@
             ]
         },
         "animations": [
-			{ "name": "PlayerAniStand" },
-			{ "name": "PlayerAniJump" },
-			{ "name": "PlayerAniFall" },
-			{ "name": "PlayerAniWalk" },
-			{ "name": "PlayerAniPick" },
-			{ "name": "PlayerAniRaptorRide" },
-			{ "name": "PlayerAniSlide" }
+			{ "name": "Stand" },
+			{ "name": "Jump" },
+			{ "name": "Fall" },
+			{ "name": "Walk" },
+			{ "name": "Pick" },
+			{ "name": "Ride" },
+			{ "name": "Slide" }
 		],
-		
         "children": [
-                        {
-                "fileName": "PlayerHeadNew",
-                "location": {
-                    "x": -8,
-                    "y": 6,
-                    "z": -7
-                },
-				"scale": { 
-                    "x": 1,
-                    "y": 1,
-                    "z": 1
-                },
-				"rotation": { 
-                    "x": 0,
-                    "y": 180,
-                    "z": 0
-                }
+            {
+                "fileName": "1meterRedBlock"
             },
-			{
+            {
                 "fileName": "PlayerTorso",
                 "location": {
                     "x": 0,
-                    "y": 8,
+                    "y": 16,
                     "z": 5
                 },
 				"scale": { 
@@ -56,39 +39,39 @@
                 }
             },
             {
-                "fileName": "PlayerLimb",
+                "fileName": "PlayerThigh",
 				"name" : "LeftArm",
                 "location": {
                     "x": -1,
-                    "y": 6,
+                    "y": 18,
                     "z": 4
                 },
 				"scale": { 
                     "x": 2,
-                    "y": 1,
+                    "y": 2,
                     "z": 2
                 }
             },
             {
-                "fileName": "PlayerLimb",
+                "fileName": "PlayerThigh",
 				"name" : "RightArm",
                 "location": {
                     "x": 9,
-                    "y": 6,
+                    "y": 18,
                     "z": 4
                 },
 				"scale": { 
                     "x": 2,
-                    "y": 1,
+                    "y": 2,
                     "z": 2
                 }
             },
             {
-                "fileName": "PlayerLimb",
+                "fileName": "PlayerThigh",
 				"name" : "LeftThigh",
                 "location": {
                     "x": -2,
-                    "y": 0,
+                    "y": 8,
                     "z": 0
                 },
                 "rotation": {
@@ -98,11 +81,11 @@
                 }
             },
             {
-                "fileName": "PlayerLimb",
+                "fileName": "PlayerThigh",
 				"name" : "RightThigh",
                 "location": {
                     "x": 2,
-                    "y": 0,
+                    "y": 8,
                     "z": 0
                 },
                 "rotation": {
@@ -112,6 +95,5 @@
                 }
             }
 		]
-
 	}
 }

@@ -1,17 +1,39 @@
 {
     "model": {
-		"grainSize" : 12,
+		"grainSize" : 15,
         "editable": "true",
         "template": "true",
         "biomes": {
             "layers": [
-                                {
+                {
 					"functionName" : "GenerateVolcano",
 					"type": "STONE",
-					"range": 30,
+					"range": 20,
 					"offset": 10,
-					"optionalInt": 6
+					"oxelRange": 6
+				},
+                {
+					"functionName" : "GenerateLayer",
+					"type": "DIRT",
+					"range": 10,
+					"offset": 20,
+					"oxelRange": 7
+				},
+                {
+					"functionName" : "CarveOutsideSurfaceNoTaper",
+					"range": 100,
+					"offset": 40,
+					"optionalInt": 5
+				},
+                {
+					"functionName" : "DirtToGrassAndSand"
+				},
+                {
+					"functionName" : "GrowTreesOn",
+					"type": "GRASS",
+					"range": 100
 				}
+				
             ]
         }
     }

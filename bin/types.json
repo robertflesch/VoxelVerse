@@ -6,6 +6,7 @@
             "category": "AIR",
 			"placeable" : "false",
             "solid": "false",
+            "attn": "50",
             "color": {
                 "r": 0,
                 "g": 0,
@@ -251,6 +252,12 @@
 				{ "ASH_BURNING" : [ "LAVA", 25, "na" ] },
 				{ "LAVA"    	: [ "LAVA", 25, "na" ] }
 			],			
+            "color": {
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 1
+            },
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
@@ -769,7 +776,6 @@
             "fullbright": "true",
             "flame": "true",
             "solid": "false",
-			"flowable": [ 2, 8, 8 ],
             "animated": "true",
 			"interactions": [
 				{ "PICK"		: [ "ASH_BURNING", 25, "change" ] },
@@ -931,6 +937,30 @@
                 "vs": 0.3125,
                 "ub": 0.125,
                 "vb": 0.3125
+            }
+        },
+        {   "name": "REDG",
+            "image": "invalid.png",
+            "id": 153,
+            "category": "UTIL",
+            "color": {
+                "r": 1,
+                "g": 0,
+                "b": 0,
+                "a": 0.99
+            },
+             "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+                "ut": 0.046875,
+                "vt": 0.265625,
+                "us": 0.046875,
+                "vs": 0.265625,
+                "ub": 0.046875,
+                "vb": 0.265625
             }
         },
 		{   "name": "UNKNOWN",

@@ -1,4 +1,20 @@
 {
+    "attachment": [
+		{
+			"fileName": "Torch",
+			"attachsTo": "LeftArm",
+			"location": {
+				"x": 0,
+				"y": -16,
+				"z": 2
+			},
+			"rotation": {
+				"x": 90,
+				"y": 0,
+				"z": 0
+			}
+		}
+	],
 	"animation": [
 		{
 			"attachmentName": "LeftArm",
