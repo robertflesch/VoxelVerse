@@ -11,14 +11,12 @@ package com.voxelengine.renderer
 	import flash.display.Stage3D;
 	import flash.display.BitmapData;
 	import flash.display.Stage;
-	import flash.display.StageDisplayState;
 	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.ErrorEvent;
 	import flash.events.EventDispatcher;
-	import flash.events.FullScreenEvent;
 	//import flash.system.Capabilities;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
@@ -71,7 +69,6 @@ package com.voxelengine.renderer
 		private function addStageListeners():void 
 		{
 			Globals.g_app.stage.addEventListener( Event.RESIZE, resizeEvent );
-			Globals.g_app.stage.addEventListener( FullScreenEvent.FULL_SCREEN_INTERACTIVE_ACCEPTED, fullScreenEvent );
 		}
 		
 		private function addStage3DListeners():void 
@@ -114,27 +111,6 @@ package com.voxelengine.renderer
 			_startingHeight = _height;
 		}
 		
-		public function fullScreenEvent(event:FullScreenEvent):void {
-			if ( event.fullScreen )
-			{
-				//Log.out( "Renderer - enter fullscreen has been called" + event );
-				if( !Globals.g_app.stage.mouseLock )
-					Globals.g_app.stage.mouseLock = true;
-			}
-			else if ( !event.fullScreen )
-			{
-				//Log.out( "Renderer - leaving fullscreen has been called" + event );
-			}
-		}
-		
-		public function toggleFullscreen():void
-		{
-			if ( StageDisplayState.NORMAL == Globals.g_app.stage.displayState )
-				Globals.g_app.stage.displayState =	StageDisplayState.FULL_SCREEN_INTERACTIVE;
-			else
-				Globals.g_app.stage.displayState =	StageDisplayState.NORMAL;
-		}
-
 		public function screenShot( drawUI:Boolean ):void
 		{
 			var tmp : BitmapData = new BitmapData( _width, _height, false );
@@ -177,7 +153,7 @@ package com.voxelengine.renderer
 					_context.enableErrorChecking = true;
 				else	
 					_context.enableErrorChecking = false;
-				Globals.g_modelManager.reinitialize();
+				Globals.g_modelManager.reinitialize( _context );
 			}
 
 			if ( _context )

@@ -14,7 +14,6 @@ package com.voxelengine.renderer.shaders
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTriangleFace;
 	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 
 	import com.adobe.utils.AGALMiniAssembler;
 	
@@ -27,38 +26,38 @@ package com.voxelengine.renderer.shaders
 			createProgram( $context );
 		}
 		
-		override public function update( mvp:Matrix3D, $vm:VoxelModel, selected:Boolean, $isChild:Boolean = false ): Boolean {
-			if ( !update_texture() )
+		override public function update( mvp:Matrix3D, $vm:VoxelModel, $context:Context3D, selected:Boolean, $isChild:Boolean = false ): Boolean {
+			if ( !update_texture( $context ) )
 				return false;
 			
-			_context.setProgram( program3D );	
-			setVertexData( mvp, $vm );
-			setFragmentData( $isChild, $vm );
+			$context.setProgram( program3D );	
+			setVertexData( mvp, $vm, $context );
+			setFragmentData( $isChild, $vm, $context );
 			
-			//_context.setCulling(Context3DTriangleFace.NONE);
-			_context.setCulling(Context3DTriangleFace.BACK);
+			//$context.setCulling(Context3DTriangleFace.NONE);
+			$context.setCulling(Context3DTriangleFace.BACK);
 			
 			var sourceFactor:String = Context3DBlendFactor.SOURCE_ALPHA;
 			//var destinationFactor:String = Context3DBlendFactor.SOURCE_COLOR;
 			var destinationFactor:String = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR
-			_context.setBlendFactors( sourceFactor, destinationFactor );
+			$context.setBlendFactors( sourceFactor, destinationFactor );
 			
 			return true;
 		}
 
-		override protected function setVertexData( mvp:Matrix3D, $vm:VoxelModel ): void {
+		override protected function setVertexData( mvp:Matrix3D, $vm:VoxelModel, $context:Context3D ): void {
 			// send down the view matrix
-			_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, mvp, true); // aka vc0
+			$context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, mvp, true); // aka vc0
 
 			var invmat:Matrix3D = $vm.instanceInfo.modelMatrix.clone();
 			if ( _isAnimated ) 
 			{
 				animationOffsets();
 			}
-			_context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, _offsets);
+			$context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 4, _offsets);
 		}
 		
-		override protected function setFragmentData( $isChild:Boolean, $vm:VoxelModel ): void { return; } // nothing needed here
+		override protected function setFragmentData( $isChild:Boolean, $vm:VoxelModel, $context:Context3D ): void { return; } // nothing needed here
 		
 		override public function animationOffsets():void {
 				_textureOffsetV += 0.0078125;
@@ -74,7 +73,6 @@ package com.voxelengine.renderer.shaders
 		}
 		
 		override public function createProgram( $context:Context3D ):void {
-			_context = $context;
 			// This uses 3 peices of vertex data from - setVertexData
 			// va0 holds the vertex locations
 			// va1 holds the UV texture offset
@@ -88,6 +86,8 @@ package com.voxelengine.renderer.shaders
 				"add v0, va1, vc4.xy",	// add in the UV offset (va1) and the animated offset (vc12) (may be 0 for non animated), and put in v0 which holds the UV offset
 				"mov v1, va3",        	// pass texture color and brightness (va3) to the fragment shader via v1
 				"mov v2, va2",        	// need to pass normals to keep shader compiler happy
+				"m44 v3, va0, vc8",  	// the transformed vertices with out the camera data, works great for default AND for translated cube, rotated cube broken still
+				"mov v4, va4",        	// pass light color and brightness (va4) to the fragment shader via v4
 			];
 			var vertexShaderAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			vertexShaderAssembler.assemble(Context3DProgramType.VERTEX, vertexShader.join("\n"));
@@ -116,7 +116,7 @@ package com.voxelengine.renderer.shaders
 			var fragmentAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentAssembler.assemble(Context3DProgramType.FRAGMENT, fragmentShader.join("\n"));
 			
-			_program3D = _context.createProgram();
+			_program3D = $context.createProgram();
 			_program3D.upload(vertexShaderAssembler.agalcode, fragmentAssembler.agalcode);
 		}
 		

@@ -27,19 +27,19 @@ package com.voxelengine.renderer.shaders
 			createProgram( $context );
 		}
 
-		override public function update( $mvp:Matrix3D, $vm:VoxelModel, $selected:Boolean, $isChild:Boolean = false ): Boolean {
-			if ( !update_texture() )
+		override public function update( $mvp:Matrix3D, $vm:VoxelModel, $context:Context3D, $selected:Boolean, $isChild:Boolean = false ): Boolean {
+			if ( !update_texture( $context ) )
 			{
 				//Log.out( "ShaderOxel.update = update_texture returned false" );
 				return false;
 			}
 			
-			_context.setProgram( program3D );	
-			setVertexData( $mvp, $vm );
-			setFragmentData( $isChild, $vm );
+			$context.setProgram( program3D );	
+			setVertexData( $mvp, $vm, $context );
+			setFragmentData( $isChild, $vm, $context );
 			
-			_context.setBlendFactors( Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
-			_context.setCulling(Context3DTriangleFace.BACK);
+			$context.setBlendFactors( Context3DBlendFactor.ONE, Context3DBlendFactor.ZERO);
+			$context.setCulling(Context3DTriangleFace.BACK);
 			
 			return true;
 		}

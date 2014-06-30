@@ -95,7 +95,7 @@ public class VertexManager {
 		// need to draw ALL of the non alpha oxels first, not just the ones in THIS vertex manager.
 		if ( _vertBuf && _vertBuf.length )
 		{
-			if ( $shaders[0].update( $mvp, $vm, $selected, $isChild ) )
+			if ( $shaders[0].update( $mvp, $vm, $context, $selected, $isChild ) )
 			{
 				_vertBuf.buffersBuildFromOxels( $context );
 				_vertBuf.BufferCopyToGPU( $context );
@@ -104,7 +104,7 @@ public class VertexManager {
 		
 		if ( _vertBufAnimated && _vertBufAnimated.length )
 		{
-			if ( $shaders[1].update( $mvp, $vm, $selected, $isChild ) )
+			if ( $shaders[1].update( $mvp, $vm, $context, $selected, $isChild ) )
 			{
 				_vertBufAnimated.buffersBuildFromOxels( $context );
 				_vertBufAnimated.BufferCopyToGPU( $context );
@@ -118,7 +118,7 @@ public class VertexManager {
 		// TODO - RSF - We should probably NOT upload the shaders unless they are being used.
 		if ( _vertBufAlpha && _vertBufAlpha.length )
 		{
-			if ( $shaders[2].update( $mvp, $vm, $selected, $isChild ) )
+			if ( $shaders[2].update( $mvp, $vm, $context, $selected, $isChild ) )
 			{
 				_vertBufAlpha.sort();
 				_vertBufAlpha.buffersBuildFromOxels( $context );
@@ -128,7 +128,7 @@ public class VertexManager {
 		
 		if ( _vertBufAnimatedAlpha && _vertBufAnimatedAlpha.length )
 		{
-			if ( $shaders[3].update( $mvp, $vm, $selected, $isChild ) )
+			if ( $shaders[3].update( $mvp, $vm, $context, $selected, $isChild ) )
 			{
 				_vertBufAnimatedAlpha.sort();
 				_vertBufAnimatedAlpha.buffersBuildFromOxels( $context );
@@ -138,7 +138,7 @@ public class VertexManager {
 		
 		if ( _vertBufFire && _vertBufFire.length )
 		{
-			if ( $shaders[4].update( $mvp, $vm, $selected, $isChild ) )
+			if ( $shaders[4].update( $mvp, $vm, $context, $selected, $isChild ) )
 			{
 				_vertBufFire.sort();
 				_vertBufFire.buffersBuildFromOxels( $context );

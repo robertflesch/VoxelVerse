@@ -30,7 +30,6 @@ package com.voxelengine.renderer.shaders
 
 		static private      var     _s_lights:Vector.<ShaderLight> = new Vector.<ShaderLight>();
 		
-		protected			var		_context:Context3D = null;
 		protected			var		_program3D:Program3D = null;	
 		protected			var		_textureName:String = "assets/textures/oxel.png";
 		protected			var		_textureScale:Number = 2048; 
@@ -58,14 +57,13 @@ package com.voxelengine.renderer.shaders
 		
 
 		
-		public function Shader( context:Context3D ) {
-			_context = context;
+		public function Shader( $context:Context3D ) {
 			Quad.texture_scale_set( textureScale );
 		}
 		
 		public function release():void { dispose(); }
-		public function reinitialize( $context:Context3D ):void  { _context = $context; }
-		public function update( mvp:Matrix3D, vm:VoxelModel, selected:Boolean, $isChild:Boolean = false ): Boolean { throw new Error( "Shader.update - NEEDS TO BE OVERRIDED" ); return true; }
+		//public function reinitialize( $context:Context3D ):void  { _context = $context; }
+		public function update( mvp:Matrix3D, vm:VoxelModel, $context:Context3D, selected:Boolean, $isChild:Boolean = false ): Boolean { throw new Error( "Shader.update - NEEDS TO BE OVERRIDED" ); return true; }
 		
 		public function animationOffsets():void { 
 			
@@ -79,7 +77,8 @@ package com.voxelengine.renderer.shaders
 		}
 		
 		public function createProgram( $context:Context3D ):void {
-			_context = $context;
+			//Log.out( "Shader.createProgram" );
+//			_context = $context;
 			// This uses 3 peices of vertex data from - setVertexData
 			// va0 holds the vertex locations
 			// va1 holds the UV texture offset
@@ -201,11 +200,11 @@ package com.voxelengine.renderer.shaders
 			var fragmentAssembler:AGALMiniAssembler = new AGALMiniAssembler();
 			fragmentAssembler.assemble(Context3DProgramType.FRAGMENT, fragmentShader.join("\n"));
 			
-			_program3D = _context.createProgram();
+			_program3D = $context.createProgram();
 			_program3D.upload(vertexShaderAssembler.agalcode, fragmentAssembler.agalcode);
 		}
 		
-		protected function setFragmentData( $isChild:Boolean, $vm:VoxelModel ): void {
+		protected function setFragmentData( $isChild:Boolean, $vm:VoxelModel, $context:Context3D ): void {
 			
 			// TODO - pass in multiple lights
 			var lp:Vector3D;
@@ -241,28 +240,28 @@ package com.voxelengine.renderer.shaders
 			}
 			
 			// This allows for moving light posision, light color
-			_context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT , 0 , _constants );
+			$context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT , 0 , _constants );
 		}
 
-		protected function setVertexData( mvp:Matrix3D, $vm:VoxelModel ): void {
+		protected function setVertexData( mvp:Matrix3D, $vm:VoxelModel, $context:Context3D ): void {
 			// send down the view matrix
-			_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, mvp, true); // aka vc0
+			$context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, mvp, true); // aka vc0
 			
 			// now the model matrix so I can get the normals
 			var invmat:Matrix3D = $vm.instanceInfo.modelMatrix.clone();
 			invmat.transpose();
-			_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, invmat, true); // aka vc4
+			$context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, invmat, true); // aka vc4
 			
 			// and the inverted model matrix, which is world position ( free from camera data )
 			var wsmat:Matrix3D = $vm.instanceInfo.worldSpaceMatrix.clone();
-			_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 8, wsmat, true); // aka vc8
+			$context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 8, wsmat, true); // aka vc8
 			
 			if ( _isAnimated ) 
 			{
 				animationOffsets();
 			}
 			
-			_context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, _offsets);
+			$context.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 12, _offsets);
 		}
 		
 		public function setTextureInfo( json:Object ):void {
@@ -272,22 +271,22 @@ package com.voxelengine.renderer.shaders
 				_textureScale = Number(json.textureScale);
 		}
 		
-		protected function update_texture(): Boolean {
+		protected function update_texture( $context:Context3D ): Boolean {
 			
-			var tex0:Texture = Globals.g_textureBank.getTexture( textureName );
+			var tex0:Texture = Globals.g_textureBank.getTexture( $context, textureName );
 			//var tex1:Texture = Globals.g_textureBank.getTexture( "assets/textures/x.png" );
 			if ( !tex0 )
 			{
 				//Log.out( "Shader.update_texture - not ready textureName: " + textureName );
 				return false;
 			}
-			if ( _context )
+			if ( $context )
 			{
 				//Log.out( "Shader.update_texture - textureName: " + textureName );
-				//_context.setTextureAt( 0, null );
-				//_context.setTextureAt( 1, null );
-				_context.setTextureAt( 0, tex0 );
-				//_context.setTextureAt( 1, tex1 );
+				//$context.setTextureAt( 0, null );
+				//$context.setTextureAt( 1, null );
+				$context.setTextureAt( 0, tex0 );
+				//$context.setTextureAt( 1, tex1 );
 			}
 			Quad.texture_scale_set( textureScale );
 			
@@ -297,9 +296,11 @@ package com.voxelengine.renderer.shaders
 		public function dispose():void {
 			_textureOffsetU = 0.0;
 			_textureOffsetV = 0.0;
-			_context = null;
-			_program3D.dispose();
-			_program3D = null;
+//			_context = null;
+			if ( null != _program3D ) {
+				_program3D.dispose();
+				_program3D = null;
+			}
 			//Log.out( "Shader.dispose" );
 		}
 	}

@@ -8,16 +8,13 @@
 
 package com.voxelengine.renderer.shaders 
 {
-	import com.voxelengine.worldmodel.models.VoxelModel;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DBlendFactor;
-	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTriangleFace;
 	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 
 	import com.voxelengine.renderer.shaders.Shader;
-	import com.adobe.utils.AGALMiniAssembler;
+	import com.voxelengine.worldmodel.models.VoxelModel;
 	
 	public class ShaderAlpha extends Shader {
 
@@ -27,30 +24,30 @@ package com.voxelengine.renderer.shaders
 			createProgram( $context );
 		}
 		
-		override public function update( mvp:Matrix3D, $vm:VoxelModel, selected:Boolean, $isChild:Boolean = false ): Boolean {
-			if ( !update_texture() )
+		override public function update( mvp:Matrix3D, $vm:VoxelModel, $context:Context3D, selected:Boolean, $isChild:Boolean = false ): Boolean {
+			if ( !update_texture( $context ) )
 				return false;
 			
-			_context.setProgram( program3D );	
-			setVertexData( mvp, $vm );
-			setFragmentData( $isChild, $vm );
+			$context.setProgram( program3D );	
+			setVertexData( mvp, $vm, $context );
+			setFragmentData( $isChild, $vm, $context );
 			
-			//_context.setCulling(Context3DTriangleFace.NONE);
-			_context.setCulling(Context3DTriangleFace.BACK);
+			//$context.setCulling(Context3DTriangleFace.NONE);
+			$context.setCulling(Context3DTriangleFace.BACK);
 			
 			var sourceFactor:String = Context3DBlendFactor.SOURCE_ALPHA;
 			var destinationFactor:String = Context3DBlendFactor.SOURCE_COLOR;
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ZERO);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_COLOR);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
-			//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ZERO);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_COLOR);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
+			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
 
-			_context.setBlendFactors( sourceFactor, destinationFactor );
+			$context.setBlendFactors( sourceFactor, destinationFactor );
 			
 			return true;
 		}
