@@ -624,19 +624,19 @@ package com.voxelengine.worldmodel.models
 			}
 		}
 		
-		public function reinitialize():void 	{
+		public function reinitialize( $context:Context3D ):void 	{
 			
 			//Log.out("ModelManager.reinitialize" );
-			Globals.g_textureBank.reinitialize();
+			Globals.g_textureBank.reinitialize( $context );
 			
 			for each ( var dm:VoxelModel in _modelDynamicInstances )
 			{
-				dm.reinitialize();
+				dm.reinitialize( $context );
 			}
 			
 			for each ( var vm:VoxelModel in _modelInstances )
 			{
-				vm.reinitialize();	
+				vm.reinitialize( $context );	
 			}
 		}
 		
