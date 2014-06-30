@@ -902,7 +902,6 @@ package com.voxelengine.worldmodel.models
 		
 		public function dispose():void
 		{
-			trace("VoxelModel.dispose - modelInfo: " + modelInfo.fileName + " ----------- START -------------" );
 			for each ( var shader:Shader in _shaders )
 				shader.dispose();
 				
@@ -910,15 +909,10 @@ package com.voxelengine.worldmodel.models
 				oxel.dispose();
 				
 			for each (var child:VoxelModel in _children)
-			{
-				trace("VoxelModel.dispose CHILDREN of: " + modelInfo.fileName + "   modelInfo: " + child.modelInfo.fileName );
-
 				child.dispose();
-			}
 			
 			if ( editCursor )
 				editCursor.dispose();
-			trace("VoxelModel.dispose - modelInfo: " + modelInfo.fileName + " ----------- END -------------" );
 		}
 		
 		public function release():void
