@@ -46,27 +46,20 @@ public final class GrainCursorPool
 			return currentGrainCursor; 
 		}
 			 
-		Log.out( "GrainCursorPool.poolGet - Allocating more GrainCursors: " + _currentPoolSize, Log.ERROR );
+		Log.out( "GrainCursorPool.poolGet - Allocating more GrainCursors: " + GROWTH_VALUE, Log.ERROR );
 		var timer:int = getTimer();
 
-		const newPoolSize:int = _currentPoolSize + GROWTH_VALUE;
-		var newPool:Vector.<GrainCursor> = new Vector.<GrainCursor>(newPoolSize);
-		for ( var index:int = 0; index < _currentPoolSize; index++ )
-		{
-			newPool[index] = pool[index];
-		}
-		for ( var newIndex:int = _currentPoolSize; newIndex < newPoolSize; newIndex++ )
-		{
-			newPool[newIndex] = new GrainCursor();
-		}
-		
-		counter = _currentPoolSize; 
 		_currentPoolSize += GROWTH_VALUE;
 		pool = null
-		pool = newPool;
-		newPool = null;
+		pool = new Vector.<GrainCursor>(_currentPoolSize);
+		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
+		{
+			pool[newIndex] = new GrainCursor();
+		}
 		
-		Log.out( "GrainCursorPool.poolGet - Done allocating more GrainCursors: " + newPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
+		counter = newIndex - 1; 
+		
+		Log.out( "GrainCursorPool.poolGet - Done allocating more GrainCursors, total size: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
 		return poolGet(boundingGrain); 
 		 
 	} 

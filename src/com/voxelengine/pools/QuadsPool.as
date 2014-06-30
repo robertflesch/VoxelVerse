@@ -16,10 +16,9 @@ public final class QuadsPool
 { 
 	private static const COUNT:int = 6;
 	private static var _currentPoolSize:uint; 
-	private static var GROWTH_VALUE:uint; 
+	private static var _growthValue:uint; 
 	private static var counter:uint; 
 	private static var pool:Vector.<Vector.<Quad>>; 
-	private static var currentQuad:Vector.<Quad>; 
 	
 	static public function remaining():uint { return counter; }
 	static public function total():uint { return _currentPoolSize; }
@@ -28,7 +27,7 @@ public final class QuadsPool
 	public static function initialize( maxPoolSize:uint, growthValue:uint ):void 
 	{ 
 		_currentPoolSize = maxPoolSize; 
-		GROWTH_VALUE = growthValue; 
+		_growthValue = growthValue; 
 		counter = maxPoolSize; 
 		 
 		var i:uint = maxPoolSize; 
@@ -41,15 +40,19 @@ public final class QuadsPool
 	public static function poolGet():Vector.<Quad> 
 	{ 
 		if ( counter > 0 ) 
-			return currentQuad = pool[--counter]; 
+			return pool[--counter]; 
 			 
-		var i:uint = GROWTH_VALUE; 
-		_currentPoolSize += GROWTH_VALUE;
-		Log.out( "QuadsPool  - Allocating more Quads: " + _currentPoolSize, Log.ERROR );
-		while( --i > -1 ) 
-				pool.unshift ( new Vector.<Quad>(COUNT, true) ); 
-		counter = GROWTH_VALUE; 
+		_currentPoolSize += _growthValue;
+		pool = null
+		pool = new Vector.<Vector.<Quad>>(_currentPoolSize); 
+		for ( var newIndex:int = 0; newIndex < _growthValue; newIndex++ )
+		{
+			pool[newIndex] = new Vector.<Quad>(6, true);
+		}
+		counter = newIndex - 1; 
+		
 		return poolGet(); 
+		
 		 
 	} 
 

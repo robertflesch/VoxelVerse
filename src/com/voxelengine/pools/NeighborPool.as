@@ -9,6 +9,7 @@
 package com.voxelengine.pools 
 {
 
+import flash.utils.getTimer;
 import com.voxelengine.Log;
 import com.voxelengine.worldmodel.oxel.Oxel;
      
@@ -34,22 +35,28 @@ public final class NeighborPool
 		var i:uint = _currentPoolSize; 
 		pool = new Vector.<Vector.<Oxel>>(_currentPoolSize); 
 		while( --i > -1 ) 
-			pool[i] = new Vector.<Oxel>( 6 , true ); 
+			pool[i] = new Vector.<Oxel>( COUNT , true )
 	} 
 	 
 	public static function poolGet():Vector.<Oxel> 
 	{ 
-		if ( counter > 0 ) {
-			currentNeighbor = pool[--counter];
-			return currentNeighbor; 
-		}
-			 
-		var i:uint = GROWTH_VALUE; 
+		if ( counter > 0 ) 
+			return pool[--counter]; 
+				
+		Log.out( "NeighborPool.poolGet - Allocating more NeighborPool: " + GROWTH_VALUE, Log.ERROR );
+		var timer:int = getTimer();
+
 		_currentPoolSize += GROWTH_VALUE;
-		Log.out( "NeighborPool  - Allocating more Neighbors: " + _currentPoolSize, Log.ERROR );
-		while( --i > -1 ) 
-				pool.unshift ( new Vector.<Oxel>( COUNT , true ) ); 
-		counter = GROWTH_VALUE; 
+		pool = null
+		pool = new Vector.<Vector.<Oxel>>(_currentPoolSize); 
+		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
+		{
+			pool[newIndex] = new Vector.<Oxel>( COUNT , true );
+		}
+		
+		counter = newIndex - 1; 
+		Log.out( "NeighborPool.poolGet - Done allocating more NeighborPool, total size: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
+
 		return poolGet(); 
 		 
 	} 

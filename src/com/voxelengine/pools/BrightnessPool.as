@@ -9,6 +9,7 @@
 package com.voxelengine.pools 
 {
 
+import flash.utils.getTimer;
 import com.voxelengine.Log;
 import com.voxelengine.worldmodel.oxel.Brightness;
      
@@ -44,26 +45,19 @@ public final class BrightnessPool
 		}
 			 
 		Log.out( "BrightnessPool.poolGet - Allocating more Brightness: " + _currentPoolSize, Log.ERROR );
+		var timer:int = getTimer();
 
-		const newPoolSize:int = _currentPoolSize + GROWTH_VALUE;
-		var newPool:Vector.<Brightness> = new Vector.<Brightness>(newPoolSize);
-		for ( var index:int = 0; index < _currentPoolSize; index++ )
-		{
-			newPool[index] = _pool[index];
-		}
-		for ( var newIndex:int = _currentPoolSize; newIndex < newPoolSize; newIndex++ )
-		{
-			newPool[newIndex] = new Brightness();
-		}
-		
-		_counter = _currentPoolSize; 
 		_currentPoolSize += GROWTH_VALUE;
 		_pool = null
-		_pool = newPool;
-		newPool = null;
+		_pool = new Vector.<Brightness>(_currentPoolSize);
+		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
+		{
+			_pool[newIndex] = new Brightness();
+		}
+		_counter = newIndex - 1; 
 		
+		Log.out( "BrightnessPool.poolGet - Done allocating more Brightness: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
 		return poolGet(); 
-		 
 	} 
 
 	public static function poolReturn( $disposedBrightness:Brightness ):void 

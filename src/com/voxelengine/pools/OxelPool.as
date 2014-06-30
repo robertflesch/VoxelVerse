@@ -41,34 +41,21 @@ public final class OxelPool
 	public static function poolGet():Oxel 
 	{ 
 		if ( _counter > 0 ) 
-		{
-			_currentOxel = _pool[--_counter]; 
-			
-			//Log.out( "OxelPool.oxel_get: " + getMemoryHash( _currentOxel ) + " currentCount: " + _counter );
-			return _currentOxel;
-		}
+			return _pool[--_counter]; 
 			 
 		Log.out( "OxelPool.poolGet - Allocating more Oxel: " + _currentPoolSize, Log.ERROR );
 		var timer:int = getTimer();
 
-		const newPoolSize:int = _currentPoolSize + GROWTH_VALUE;
-		var newPool:Vector.<Oxel> = new Vector.<Oxel>(newPoolSize);
-		for ( var index:int = 0; index < _currentPoolSize; index++ )
-		{
-			newPool[index] = _pool[index];
-		}
-		for ( var newIndex:int = _currentPoolSize; newIndex < newPoolSize; newIndex++ )
-		{
-			newPool[newIndex] = new Oxel();
-		}
-		
-		_counter = _currentPoolSize; 
 		_currentPoolSize += GROWTH_VALUE;
 		_pool = null
-		_pool = newPool;
-		newPool = null;
+		_pool = new Vector.<Oxel>(_currentPoolSize);
+		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
+		{
+			_pool[newIndex] = new Oxel();
+		}
+		_counter = newIndex - 1; 
 		
-		Log.out( "OxelPool.poolGet - Done allocating more Oxel: " + newPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
+		Log.out( "OxelPool.poolGet - Done allocating more Oxel: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
 		
 		return poolGet(); 
 		 

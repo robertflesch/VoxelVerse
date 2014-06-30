@@ -9,47 +9,53 @@
 package com.voxelengine.pools 
 {
 
+import flash.utils.getTimer;
 import com.voxelengine.Log;
 import com.voxelengine.worldmodel.oxel.Oxel
      
 public final class ChildOxelPool 
 { 
-	private static const COUNT:int = 6;
+	private static const COUNT:int = 8;
 	private static var _currentPoolSize:uint; 
-	private static var GROWTH_VALUE:uint; 
-	private static var counter:uint; 
-	private static var pool:Vector.<Vector.<Oxel>>; 
-	private static var currentOxel:Vector.<Oxel>;
+	private static var _growthValue:uint; 
+	private static var _counter:uint; 
+	private static var _pool:Vector.<Vector.<Oxel>>; 
 	
-	static public function remaining():uint { return counter; }
+	static public function remaining():uint { return _counter; }
 	static public function total():uint { return _currentPoolSize; }
-	static public function totalUsed():uint { return _currentPoolSize - counter; }
+	static public function totalUsed():uint { return _currentPoolSize - _counter; }
 
 	public static function initialize( maxPoolSize:uint, growthValue:uint ):void 
 	{ 
 		_currentPoolSize = maxPoolSize; 
-		GROWTH_VALUE = growthValue; 
-		counter = maxPoolSize; 
+		_growthValue = growthValue; 
+		_counter = maxPoolSize; 
 		 
 		var i:uint = maxPoolSize; 
 		 
-		pool = new Vector.<Vector.<Oxel> >(_currentPoolSize); 
+		_pool = new Vector.<Vector.<Oxel> >(_currentPoolSize); 
 		while( --i > -1 ) 
-			pool[i] = new Vector.<Oxel>(8,true); 
+			_pool[i] = new Vector.<Oxel>(COUNT,true); 
 	} 
 	 
 	public static function poolGet():Vector.<Oxel> 
 	{ 
-		if ( counter > 0 ) 
-			return currentOxel = pool[--counter]; 
+		if ( _counter > 0 ) 
+			return _pool[--_counter]; 
 			 
-		var i:uint = GROWTH_VALUE; 
-		_currentPoolSize += GROWTH_VALUE;
 		Log.out( "ChildOxelPool.poolGet  - Allocating more ChildOxels: " + _currentPoolSize, Log.ERROR );
+		var timer:int = getTimer();
 
-		while( --i > -1 ) 
-				pool.unshift ( new Vector.<Oxel>() ); 
-		counter = GROWTH_VALUE; 
+		_currentPoolSize += _growthValue;
+		_pool = null
+		_pool = new Vector.<Vector.<Oxel> >(_currentPoolSize); 
+		for ( var newIndex:int = 0; newIndex < _growthValue; newIndex++ )
+		{
+			_pool[newIndex] = new Vector.<Oxel>(COUNT,true);
+		}
+		_counter = newIndex - 1; 
+		
+		Log.out( "ChildOxelPool.poolGet - Done allocating more ChildOxels: " + _currentPoolSize  + " took: " + (getTimer() - timer), Log.ERROR );
 		return poolGet(); 
 	} 
 
@@ -58,7 +64,7 @@ public final class ChildOxelPool
 		for ( var i:int = 0; i < COUNT; i++ )
 			disposedChildVector[i] = null;
 			
-		pool[counter++] = disposedChildVector; 
+		_pool[_counter++] = disposedChildVector; 
 	} 
 } 
 }
