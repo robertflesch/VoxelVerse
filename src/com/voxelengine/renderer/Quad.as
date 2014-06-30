@@ -72,13 +72,14 @@ public class Quad {
 						   $face:int,						// which 
 						   $plane_facing:int,				// facing
 						   $scale:Number,                   // the world size of the quad 
-						   $brightness:Brightness ):void			
+						   $brightness:Brightness ):Boolean			
 	{
 		var typeInfo:TypeInfo = Globals.Info[$type];
 		if ( !calculateUV( typeInfo, $face, $scale, null ) )
-			return;
+			return false;
 			
 		add( $type, $x, $y, $z, $face, $plane_facing, $scale, typeInfo, $brightness );
+		return true;
 	}
 	
 	public function buildScaled( $type:int,						// material type
@@ -87,13 +88,14 @@ public class Quad {
 										$plane_facing:int,				// facing
 										$scale:Number,
 									    $brightness:Brightness,
-										$flowInfo:FlowInfo ):void			// the scaled for flow distance
+										$flowInfo:FlowInfo ):Boolean			// the scaled for flow distance
 	{
 		var typeInfo:TypeInfo = Globals.Info[$type];
 		if ( !calculateUV( typeInfo, $face, $scale, $flowInfo ) )
-			return;
+			return false;
 		
 		addScaled( $type, $x, $y, $z, $face, $plane_facing, $scale, typeInfo, $brightness, $flowInfo );
+		return true;
 	}
 	
 	public function print():void 
@@ -127,18 +129,6 @@ public class Quad {
 		}
 	}
 	
-	//public function copy( rhs:Quad ):void {
-		//
-		//for ( var vindex:int = 0; vindex < VERTICES; vindex++ )
-		//{
-			//_vertices[vindex] = rhs._vertices[vindex];
-		//}
-			//
-		//for ( var iindex:int = 0; iindex < VERTICES; iindex++ )
-		//{
-			//_indices[iindex] = rhs._indices[iindex];
-		//}
-	//}
 	private function randomTextureOffset( maxpix:int, scale:Number ):Number
 	{
 		// if the requested texture is larger then the size that can return a random texture
@@ -206,7 +196,7 @@ public class Quad {
 
 		if ( TileType.TILE_NONE == tilingType )
 		{
-			return false;
+			return false; // I am not suppose to build this quad.
 		}
 		
 		if ( TileType.TILE_RANDOM_CENTERED == tilingType )
@@ -574,6 +564,10 @@ public class Quad {
 		}
 			
 		buildIndices( normal );
+		
+		for each ( var component:VertexComponent in components )
+			if ( null == component )
+				Log.out("ERROR" );
 	}
 }
 }
