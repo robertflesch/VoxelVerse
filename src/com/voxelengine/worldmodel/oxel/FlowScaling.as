@@ -101,7 +101,7 @@ public class FlowScaling
 			if ( Globals.BAD_OXEL == fromOxel )
 				continue;
 				
-			if ( fromOxel.type == $oxel.type )
+			if ( fromOxel.type == $oxel.type && null != fromOxel.flowInfo )
 				fromOxel.flowInfo.flowScaling.scaleRecalculate( fromOxel );
 		}
 	}
