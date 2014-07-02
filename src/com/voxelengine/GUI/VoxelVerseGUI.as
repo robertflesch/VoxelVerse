@@ -118,11 +118,13 @@ package com.voxelengine.GUI
 			
 			if ( 0 == _openWindowCount ) {
 				Globals.GUIControl = false;
-				Globals.g_app.stage.mouseLock = true;
+				if ( StageDisplayState.FULL_SCREEN_INTERACTIVE == Globals.g_app.stage.displayState )
+					Globals.g_app.stage.mouseLock = true;
 			}
 			else {
 				Globals.GUIControl = true;
-				Globals.g_app.stage.mouseLock = false;
+				if ( StageDisplayState.FULL_SCREEN_INTERACTIVE == Globals.g_app.stage.displayState )
+					Globals.g_app.stage.mouseLock = false;
 			}
 		}
 		
@@ -381,7 +383,7 @@ package com.voxelengine.GUI
 				//new  WindowSplash();
 			
 			_releaseMenu = addReleaseMenu();
-//			if ( true == Globals.g_debug )
+			//if ( true == Globals.g_debug )
 				_debugMenu = new WindowDebugMenu();
 			
 			if ( Globals.g_app.configManager.showEditMenu )
