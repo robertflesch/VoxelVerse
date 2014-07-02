@@ -22,6 +22,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			CarveOutsideSurface; // Tested
 			CarveOutsideSurfaceNoTaper; // Tested
 			
+			CarveTunnel; // One tunnel starting at edit cursor location
 			CarveTunnels;
 			GenerateGrassAndTrees; // Old
 			

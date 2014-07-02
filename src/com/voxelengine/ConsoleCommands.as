@@ -13,11 +13,14 @@ package com.voxelengine
 	import com.furusystems.logging.slf4as.Logging;
 	import com.furusystems.logging.slf4as.ILogger;
 	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.worldmodel.biomes.LayerInfo;
 	import com.voxelengine.worldmodel.models.ControllableVoxelModel;
 	import com.voxelengine.worldmodel.models.EditCursor;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
-	import com.voxelengine.worldmodel.tasks.landscapetasks.TreeGenerator;
+	import com.voxelengine.worldmodel.tasks.landscapetasks.*;
+	import com.developmentarc.core.tasks.tasks.ITask;
+	import com.developmentarc.core.tasks.groups.TaskGroup;
 
 	
 	public class ConsoleCommands {
@@ -171,6 +174,33 @@ package com.voxelengine
 			Log.out( "autoFlow is " + (Globals.autoFlow ? "ON" : "OFF") );
 		}
 		
+		private static function carveTunnel():void
+		{
+//			Globals.g_landscapeTaskController.activeTaskLimit = 0;
+			if ( !Globals.selectedModel ) {
+				Log.out( "No model selected" );
+				return;
+			}
+			
+			var guid:String = Globals.selectedModel.instanceInfo.instanceGuid;
+
+			// Create task group
+			var taskGroup:TaskGroup = new TaskGroup("CarveTunnel for " + guid, 2);
+        
+			// This loads the tasks into the LandscapeTaskQueue
+			const numOfTunnel:uint = 1;
+			const tunnelLength:uint = 256;
+			const tunnelRadius:uint = 64;
+			var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", Globals.AIR, tunnelRadius, numOfTunnel, "", tunnelLength );
+			var task:ITask = null;
+			task = new CarveTunnel( guid, layer );
+			
+			taskGroup.addTask(task);
+			
+			Globals.g_landscapeTaskController.addTask( taskGroup );
+		}
+		
+		
 		public static function addCommands():void
 		{
 			DConsole.createCommand( "reset", reset );
@@ -186,6 +216,7 @@ package com.voxelengine
 			DConsole.createCommand( "harvestTrees", harvestTrees );
 			DConsole.createCommand( "markers", markers );
 			DConsole.createCommand( "flow", flow );
+			DConsole.createCommand( "carveTunnel", carveTunnel );
 		}
 	}
 }

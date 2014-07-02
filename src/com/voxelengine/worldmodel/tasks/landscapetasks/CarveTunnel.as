@@ -19,10 +19,10 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 	 * ...
 	 * @author Robert Flesch
 	 */
-	public class CarveTunnels extends LandscapeTask 
+	public class CarveTunnel extends LandscapeTask 
 	{		
-		public function CarveTunnels( guid:String,layer:LayerInfo ):void {
-			trace( "CarveTunnels - created" );					
+		public function CarveTunnel( guid:String,layer:LayerInfo ):void {
+			trace( "CarveTunnel - created" );					
 			super(guid,layer);
 		}
 		
@@ -31,13 +31,27 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			super.cancel();
 		}
 		
-        private function carveTunnel( ox:Oxel, length:int, radius:int, bid:int ):void 
-		{
+		override public function start():void {
+            super.start() // AbstractTask will send event
+			var timer:int = getTimer();
+            var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
+			if ( !vm ) {
+				super.complete() // AbstractTask will send event
+				return;
+			}
+			
+			var tunnelLength:int = Math.random() * 500;
+			if ( 0 <_layer.optionalInt )
+				tunnelLength =_layer.optionalInt;
+            var tunnelRadius:int =_layer.range;
+			var voxelType:int = _layer.type;
+			
             // pick a random starting location
-			var sx:int = ox.gc.size();
-            var sy:int = ox.gc.size() * 0.65;
-            var sz:int = ox.gc.size();
-
+			var sx:int = vm.editCursor.instanceInfo.positionGet.x;
+            var sy:int = vm.editCursor.instanceInfo.positionGet.y;
+            var sz:int = vm.editCursor.instanceInfo.positionGet.z;
+			trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " starting at x: " + sx + "  y: " + sy + "  z: " + sz );					
+/*
             // pick a random diections to go
             var xdir:int = Math.random() * 2; if (xdir == 0) xdir = -1;
             var ydir:int = ydir = -1; // Math.random() * 2); if (ydir == 0) ydir = -1;
@@ -69,29 +83,11 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 
                 length--;
             }
-        }
+*/			
 
-		override public function start():void {
-            super.start() // AbstractTask will send event
-			trace( "CarveTunnels - THIS FUNCTION NEEDS SO MORE FINE TUNING -------" );					
-			trace( "CarveTunnels - carveTunnels  - enter - carving " +_layer.offset + " tunnels of type " + (Globals.Info[_layer.type].name.toUpperCase()) );					
-			var timer:int = getTimer();
-            var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
-			
-            var numberOfTunnels:int =_layer.offset;
-			var tunnelLength:int = Math.random() * 200;
-			if ( 0 <_layer.optionalInt )
-				tunnelLength =_layer.optionalInt;
-            var tunnelRadius:int =_layer.range;
-			var voxelType:int =_layer.type;
-			for (var x:int = 0; x < numberOfTunnels; x++)
-            {
-                carveTunnel( vm.oxel, tunnelLength, tunnelRadius, voxelType );
-            }
-			
-
-			trace( "CarveTunnels - carveTunnels - took: " + (getTimer() - timer) + " in queue for: " + (timer-_startTime)  );					
+			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer-_startTime)  );					
             super.complete() // AbstractTask will send event
-        }
+		}
+
 	}
 }
