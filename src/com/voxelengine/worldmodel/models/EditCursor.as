@@ -468,7 +468,7 @@ package com.voxelengine.worldmodel.models
 				if ( Globals.g_app.toolOrBlockEnabled )
 				{
 					Globals.player.stateSet( "Pick", 1 );
-					Globals.player.stateLock( true, 600 );
+					Globals.player.stateLock( true, 300 );
 
 				}
 				
