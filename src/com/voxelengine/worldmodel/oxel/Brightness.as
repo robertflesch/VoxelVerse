@@ -68,7 +68,7 @@ public class Brightness  {  // extends BrightnessData
 	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
 	public function Brightness():void {
-		lightAdd( DEFAULT_LIGHT_ID, DEFAULT_COLOR, DEFAULT_BASE_LIGHT_LEVEL );
+		add( DEFAULT_LIGHT_ID, DEFAULT_COLOR, DEFAULT_BASE_LIGHT_LEVEL );
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
@@ -231,7 +231,7 @@ public class Brightness  {  // extends BrightnessData
 		for ( var i:int = 1; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
 			if ( null != li )
-				lightRemove( li.ID );
+				remove( li.ID );
 		}
 
 		fallOffPerMeter = DEFAULT_FALL_OFF_PER_METER;
@@ -262,7 +262,7 @@ public class Brightness  {  // extends BrightnessData
 		var sqrattn:Number =  Math.sqrt( 2 * (localattn * localattn) );
 		var csqrattn:Number =  Math.sqrt( (localattn * localattn) + (sqrattn * sqrattn) );
 		
-		if ( !lightAdd( $ID, sli.color, sli.avg ) )
+		if ( !add( $ID, sli.color, sli.avg ) )
 			return; // failed to add the light, This is a valid condition, if the light added is lower then the existing lights, it will not be added
 		var li:LightInfo =  lightGet( $ID );		
 		
@@ -401,7 +401,7 @@ public class Brightness  {  // extends BrightnessData
 		}	
 			
 		var li:LightInfo =  lightGet( $ID );		
-		if ( !$b.lightAdd( $ID, li.color, li.avg ) ) {
+		if ( !$b.add( $ID, li.color, li.avg ) ) {
 			//Log.out( "Brightness.childGet - $b does not have light info for lightID: " + $ID, Log.WARN )
 			return false;
 		}
@@ -569,7 +569,7 @@ public class Brightness  {  // extends BrightnessData
 		return _lights[maxAttnIndex];
 	}
 	
-	public function lightAdd( $ID:uint, $color:uint, $avgAttn:uint, $lightIs:Boolean = false ):Boolean {
+	public function add( $ID:uint, $color:uint, $avgAttn:uint, $lightIs:Boolean = false ):Boolean {
 		
 		if ( lightHas( $ID ) )
 			return true;
@@ -590,10 +590,10 @@ public class Brightness  {  // extends BrightnessData
 		return true;
 	}
 	
-	public function lightRemove( $ID:uint ):void {
+	public function remove( $ID:uint ):Boolean {
 		
 		if ( !lightHas( $ID ) )
-			return;
+			return false;
 		
 		for ( var i:int; i < _lights.length; i++ )
 		{
@@ -601,10 +601,12 @@ public class Brightness  {  // extends BrightnessData
 			if ( null != li ) {
 				if ( $ID == li.ID ) {
 					_lights[i] = null;
-					break;
+					return true
 				}
 			}
 		}
+		
+		return false; // Should never get here
 	}
 	
 	public function lightFullBright():void {
@@ -737,7 +739,7 @@ public class Brightness  {  // extends BrightnessData
 		var sli:LightInfo = $lob.lightGet( $ID );
 		if ( null == sli )
 			return false; // This should not really occur
-		if ( !lightAdd( $ID, sli.color, sli.avg ) )
+		if ( !add( $ID, sli.color, sli.avg ) )
 			return false;
 		var li:LightInfo = lightGet( $ID );
 		
@@ -888,7 +890,7 @@ public class Brightness  {  // extends BrightnessData
 		if ( !$b.lightHas( $ID ) )
 			return false; // if there is no value for the light, it is not added
 		var sli:LightInfo = $b.lightGet( $ID );
-		if ( !lightAdd( sli.ID, sli.color, sli.avg ) )
+		if ( !add( sli.ID, sli.color, sli.avg ) )
 			return false;
 		var li:LightInfo = lightGet( $ID );
 		

@@ -42,7 +42,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						if ( !lo.brightness.lightAdd( $le.lightID, ti.color, Brightness.MAX_LIGHT_LEVEL, true ) )
+						if ( !lo.brightness.add( $le.lightID, ti.color, Brightness.MAX_LIGHT_LEVEL, true ) )
 							throw new Error( "LightAdd.handleLightEvent - How did we get here?" );
 						lo.brightness.fallOffPerMeter = ti.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );

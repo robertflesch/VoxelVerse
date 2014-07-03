@@ -103,7 +103,7 @@ public class BrightnessTests  {
 			}
 			
 			bt.reset();
-			bt.lightAdd( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
+			bt.add( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
 			bt.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
 			if ( OneOhOneMax == bt.toString() )
 				Log.out( "BrightnessTests.setAllTests	pass 3" );
@@ -127,7 +127,7 @@ public class BrightnessTests  {
 			
 			var lob:Brightness = BrightnessPool.poolGet();
 			var lightId:uint = 101;
-			lob.lightAdd( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
+			lob.add( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
 			lob.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
 			var grainUnits:uint = 16;
 			
@@ -175,7 +175,7 @@ public class BrightnessTests  {
 			
 			var lob:Brightness = BrightnessPool.poolGet();
 			var lightId:uint = 101;
-			lob.lightAdd( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
+			lob.add( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
 			lob.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
 			
 			var btp:Brightness = BrightnessPool.poolGet();

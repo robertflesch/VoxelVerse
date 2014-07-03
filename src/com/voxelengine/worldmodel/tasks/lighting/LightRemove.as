@@ -33,11 +33,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( vmr ) {
 					var lor:Oxel = vmr.oxel.childFind( $le.gc );
 					if ( lor && valid( lor ) ) {
-						lor.brightness.lightRemove( $le.lightID );
+						lor.brightness.remove( $le.lightID );
 						var alphaCountr:int;
 						// walk thru the neighbors, if the no has less light then remove that light (just that or all lights?)
-						var facer:uint;
-						for ( facer = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
+						for ( var facer:uint = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
 							var nor:Oxel = lor.neighbor(facer);
 							if ( Globals.BAD_OXEL == nor )
 								continue;
@@ -155,56 +154,18 @@ package com.voxelengine.worldmodel.tasks.lighting
 			LightRemove.addTask( _guid, $o.gc, lightID );
 		}
 		
-		/*
-		static private function pathToParent( $o:Oxel, $face:uint, targetGrainSize:uint ):Vector.<uint> {
-			var childIDPath:Vector.<uint> = new Vector.<uint>;
-			var gct:GrainCursor = GrainCursorPool.poolGet( $o.gc.bound );
-			gct.copyFrom( $o.gc ); // light oxel location
-			gct.move( $face ); // now move it to location that we need the brightness from
-			// get a vector with the parent/child id relationships
-			while ( gct.grain < targetGrainSize ) {
-				childIDPath.push( gct.childId() );
-				gct.become_parent();
-			}
-			GrainCursorPool.poolDispose( gct );
-			
-			return childIDPath;
-		}
-		
-		static private function childBrightnessGet( $lob:Brightness, path:Vector.<uint>, $bt:Brightness ):void {
-
-			var btp:Brightness = BrightnessPool.poolGet();
-			btp.copyFrom( $lob );
-			var childIDPathIndex:int = path.length - 1;
-			for ( var i:int = childIDPathIndex ; i >= 0;  i-- )
-			{
-				btp.childGetAllLights( path[i], $bt );
-				btp.copyFrom( $bt );
-			}
-			$bt.copyFrom( btp );
-			BrightnessPool.poolReturn( btp );
-		}
-		*/
 		override public function start():void {
 			super.start();
 			
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
-			main:if ( vm ) {
-				
+			if ( vm ) {
 				var lo:Oxel = vm.oxel.childFind( _gc );
 				if ( valid( lo ) ) {
-					//if ( !lo.gc.is_equal( _gc ) ) {
-						// This is a distinct possibility for removal. If the light was last non air oxel
-						// then removing it merged it into its parent.
-						// Does it require different handling?
-						//Log.out ( "LightRemove.start - Didn't find child!" );
-					//}
-					lo.brightness.lightRemove( lightID );
+					lo.brightness.remove( lightID );
 					removeFromNeighbors( lo );
 				}
 				else
 					Log.out( "LightRemove.start - valid failed", Log.ERROR );
-
 			}
 			else
 				Log.out( "LightRemove.start - VoxelModel not found: " + _guid, Log.ERROR );
@@ -242,6 +203,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			}
 		}
 		
+		// This just applies to the light oxel that has been removed.
 		static private function shineBackOnRemovedLight( $lo:Oxel, $no:Oxel, $face:uint, excludedID:uint ):void {
 			var lightIDs:Vector.<uint> = $no.brightness.lightIDNonDefaultUsedGet();
 			// Default ID excluded
@@ -254,11 +216,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 		}
 		
 		private function removeFromChildren( $no:Oxel, $face:int ):void {
-			// I am getting the indexes for the imaginary children that are facing the real children
-			// and a list of the real children
 			var of:int = Oxel.face_get_opposite( $face );
 			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
-
 			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
 			{
 				var noChild:Oxel = dchild[childIndex];
@@ -272,19 +231,16 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		private function terminalLightRemove( $o:Oxel, $face:int ):void {
 			
-			if ( null == $o.brightness )
+			if ( null == $o.brightness ) {
+				Log.out( "LightRemove.terminalLightRemove - STOPPING NO BRIGHTNESS" );
 				return;
-				
-			$o.brightness.lightRemove( lightID );
-			if ( true == $o.isSolid ) { // this is a SOLID object which does not transmit light (leaves, water are exceptions)
-//				$o.brightness.influenceRemove( lightID, $face );
-//				if ( $o.brightness.lightHas( lightID ) && !$o.brightness.lightGet( lightID ).valuesHas() )
-				rebuildFaces( $o );
 			}
-			else if ( Globals.AIR == $o.type ) // this oxel does not have faces OR children, and transmits light
-					remove( $o );
-			else { // this oxel has faces and transmits light (water and leaves)
+				
+			if ( $o.brightness.remove( lightID ) ) {
+				if ( $o.quads ) // this oxel has faces which were lit
 					rebuildFaces( $o );
+					
+				if ( $o.hasAlpha ) // this oxel transmits light
 					remove( $o );
 			}
 		}
@@ -300,6 +256,38 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( $o.quads && 0 < $o.quads.length )
 				$o.quadsRebuildAll();
 		}
+		
+		/*
+		static private function pathToParent( $o:Oxel, $face:uint, targetGrainSize:uint ):Vector.<uint> {
+			var childIDPath:Vector.<uint> = new Vector.<uint>;
+			var gct:GrainCursor = GrainCursorPool.poolGet( $o.gc.bound );
+			gct.copyFrom( $o.gc ); // light oxel location
+			gct.move( $face ); // now move it to location that we need the brightness from
+			// get a vector with the parent/child id relationships
+			while ( gct.grain < targetGrainSize ) {
+				childIDPath.push( gct.childId() );
+				gct.become_parent();
+			}
+			GrainCursorPool.poolDispose( gct );
+			
+			return childIDPath;
+		}
+		
+		static private function childBrightnessGet( $lob:Brightness, path:Vector.<uint>, $bt:Brightness ):void {
+
+			var btp:Brightness = BrightnessPool.poolGet();
+			btp.copyFrom( $lob );
+			var childIDPathIndex:int = path.length - 1;
+			for ( var i:int = childIDPathIndex ; i >= 0;  i-- )
+			{
+				btp.childGetAllLights( path[i], $bt );
+				btp.copyFrom( $bt );
+			}
+			$bt.copyFrom( btp );
+			BrightnessPool.poolReturn( btp );
+		}
+		*/
+		
 	}
 }
 
