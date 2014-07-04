@@ -36,13 +36,16 @@ public class Brightness  {  // extends BrightnessData
 	 */
 	public static const MAX_LIGHT_LEVEL:uint = 0xff;
 	public static const DEFAULT_LIGHT_ID:uint = 1;
-	
-	private static const DEFAULT_PER_DISTANCE:int = 16;
 	private static const DEFAULT_COLOR:uint = 0x00ffffff;
+	
 	private static const DEFAULT_FALL_OFF_PER_METER:uint = 0x32; // how much attn per unit meter
+	
 	private static const DEFAULT_SIGMA:uint = 2;
-	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
-	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
+	
+	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x00; // out of 255
+	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x00000000;
+	//public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
+	//private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
 //	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x66; // out of 255
 //	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x66666666;
 
@@ -258,7 +261,7 @@ public class Brightness  {  // extends BrightnessData
 			return;
 			
 		// This is special case which needs to take into account attn
-		var localattn:uint = fallOffPerMeter * $grainUnits/DEFAULT_PER_DISTANCE
+		var localattn:uint = fallOffPerMeter * $grainUnits / Globals.UNITS_PER_METER;
 		var sqrattn:Number =  Math.sqrt( 2 * (localattn * localattn) );
 		var csqrattn:Number =  Math.sqrt( (localattn * localattn) + (sqrattn * sqrattn) );
 		
