@@ -116,8 +116,8 @@ public class LightInfo
 		return (b000 + b010 + b011 + b001 + b100 + b110 +  b111 + b101)/8
 	}
 	
-	public function valuesHas():Boolean {
-		if ( Brightness.DEFAULT_BASE_LIGHT_LEVEL == avg )
+	public function valuesHas( $minLevel:uint ):Boolean {
+		if ( $minLevel == avg )
 			return false;
 		return true;
 	}
