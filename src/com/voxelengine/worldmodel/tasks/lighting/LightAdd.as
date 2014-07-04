@@ -137,7 +137,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( !$o.brightness ) { // does this oxel already have a brightness?
 				$o.brightness = BrightnessPool.poolGet();
-//				$o.brightness.fallOffPerMeter = Globals.Info[$o.type].light.fallOffFactor;
+				$o.brightness.fallOffPerMeter = Globals.Info[$o.type].lightInfo.fallOffFactor;
 			}
 
 			return true;
