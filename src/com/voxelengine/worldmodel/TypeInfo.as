@@ -52,10 +52,8 @@ package com.voxelengine.worldmodel
 		private var _flame:Boolean  			= false;
 		private var _interactions:Interactions 	= null;
 		private var _flowInfo:FlowInfo 			= null;
-		private var _fullBright:Boolean 		= false;
+		private var _lightInfo:Light  			= new Light();
 		private var _color:uint					= 0xffffffff;
-		private var _light:Boolean  			= false;
-		private var _attn:uint					= 0x33;
 
 		public function set name(val:String):void 	{ _name = val; }
 		public function set image(val:String):void 	{ _image = val; }
@@ -75,9 +73,7 @@ package com.voxelengine.worldmodel
 		public function get flowInfo():FlowInfo		{ return _flowInfo; }
 		public function get placeable():Boolean 	{ return _placeable; }
 		
-		public function get light():Boolean 		{ return _light; }
-		public function get fullBright():Boolean 	{ return _fullBright; }
-		public function get attn():uint 			{ return _attn; }
+		public function get lightInfo():Light 		{ return _lightInfo; }
 		
 		public function get flame():Boolean 		{ return _flame; }
 		public function get solid():Boolean 		{ return _solid; }
@@ -183,11 +179,6 @@ package com.voxelengine.worldmodel
 				_color = ColorUtils.placeAlphaNumber( _color, typesJson.color.a );
 			}
 			
-			if ( typesJson.attn  )
-			{
-				_attn = typesJson.attn;
-			}
-			
 			if ( typesJson.uv )
 			{
 				_maxpix = typesJson.uv.maxpix;
@@ -250,10 +241,22 @@ package com.voxelengine.worldmodel
 			}
 			if ( typesJson.light )
 			{
-				if ( "true" ==  typesJson.light.toLowerCase() )
-					_light = true;
-				else
-					_light = false;
+				if ( typesJson.light.lightSource )
+					if ( "true" ==  typesJson.light.lightSource.toLowerCase() )
+						_lightInfo.lightSource = true;
+					
+				if ( typesJson.light.attn )
+					_lightInfo.attn = typesJson.light.attn;
+
+				if ( typesJson.light.color )
+					_lightInfo.color = typesJson.light.color;
+					
+				if ( typesJson.light.fullBright )
+					if ( "true" ==  typesJson.light.fullBright.toLowerCase() )
+						_lightInfo.fullBright = true;
+						
+				if ( typesJson.light.fallOffFactor )
+					_lightInfo.fallOffFactor = typesJson.light.fallOffFactor;
 			}
 			if ( typesJson.flame )
 			{
@@ -261,13 +264,6 @@ package com.voxelengine.worldmodel
 					_flame = true;
 				else
 					_flame = false;
-			}
-			if ( typesJson.fullbright )
-			{
-				if ( "true" ==  typesJson.fullbright.toLowerCase() )
-					_fullBright = true;
-				else
-					_fullBright = false;
 			}
 		}
 		

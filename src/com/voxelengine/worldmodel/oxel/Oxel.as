@@ -232,7 +232,7 @@ package com.voxelengine.worldmodel.oxel
 		public function get hasAlpha():Boolean { return Globals.hasAlpha( type ); }
 		public function get isFlowable():Boolean { return Globals.Info[type].flowable; }
 		public function get isSolid():Boolean { return Globals.Info[type].solid; }
-		public function get isLight():Boolean { return Globals.Info[type].light; }
+		public function get isLight():Boolean { return Globals.Info[type].lightInfo.lightSource; }
 		
 		// Intentionally empty, since these are allocated enmase in pool
 		public function Oxel() {
@@ -1288,7 +1288,7 @@ package com.voxelengine.worldmodel.oxel
 			}
 			else
 			{
-				if ( Globals.Info[type].light ) // had & quads, but that doesnt matter with this style
+				if ( isLight ) // had & quads, but that doesnt matter with this style
 					_s_lightsFound++;
 			}
 		}
@@ -1370,6 +1370,7 @@ package com.voxelengine.worldmodel.oxel
 			// Does this oxel have faces
 			if ( facesHas() )
 			{
+				var ti:TypeInfo  = Globals.Info[type];
 				if ( null == _quads )
 				{
 					_quads = QuadsPool.poolGet();
@@ -1383,10 +1384,10 @@ package com.voxelengine.worldmodel.oxel
 							}
 							li.setAll( rootOxel._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
 						}
-						_brightness.fallOffPerMeter = Globals.Info[type].attn;
+						_brightness.fallOffPerMeter = ti.lightInfo.attn;
 				}
 				
-				if ( Globals.Info[type].fullBright )
+				if ( ti.lightInfo.fullBright )
 					_brightness.lightFullBright();
 					
 				var scale:uint = 1 << gc.grain;
@@ -1631,7 +1632,7 @@ package com.voxelengine.worldmodel.oxel
 				
 				brightness = BrightnessPool.poolGet();
 				$ba = brightness.fromByteArray( $version, $ba );
-				brightness.fallOffPerMeter = Globals.Info[type].attn;
+				brightness.fallOffPerMeter = Globals.Info[type].lightInfo.fallOffFactor;
 			}
 			
 			if ( OxelData.data_is_parent( oxelData ) )

@@ -42,9 +42,9 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						if ( !lo.brightness.add( $le.lightID, ti.color, Brightness.MAX_LIGHT_LEVEL, true ) )
+						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Brightness.MAX_LIGHT_LEVEL, true ) )
 							throw new Error( "LightAdd.handleLightEvent - How did we get here?" );
-						lo.brightness.fallOffPerMeter = ti.attn;
+						lo.brightness.fallOffPerMeter = ti.lightInfo.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
 					}
 					else
@@ -137,7 +137,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( !$o.brightness ) { // does this oxel already have a brightness?
 				$o.brightness = BrightnessPool.poolGet();
-				$o.brightness.fallOffPerMeter = Globals.Info[$o.type].attn;
+//				$o.brightness.fallOffPerMeter = Globals.Info[$o.type].light.fallOffFactor;
 			}
 
 			return true;
@@ -236,7 +236,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
 			var changed:Boolean;
-			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas() )
+			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas( Brightness.DEFAULT_BASE_LIGHT_LEVEL ) )
 				changed = $no.brightness.brightnessMerge( lightID, bt );
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );

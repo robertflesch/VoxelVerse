@@ -456,7 +456,8 @@ package com.voxelengine.worldmodel.models
 			// requires some refactoring but not hard - RSF
 			var oldOxel:Oxel = oxel.childGetOrCreate( $gc );
 			var oldType:int = oldOxel.type;
-			if ( Globals.Info[oldType].light )
+			var oldTypeInfo:TypeInfo = Globals.Info[oldType]
+			if ( oldTypeInfo.lightInfo.lightSource )
 			{
 				var oldLightID:uint = oldOxel.brightness.lightIDGet();
 			}
@@ -486,12 +487,12 @@ package com.voxelengine.worldmodel.models
 						changedOxel.flowInfo = null;  // If it has flow info, release it, no need to check first
 				}
 					
-				if ( Globals.Info[oldType].light )
+				if ( oldTypeInfo.lightInfo.lightSource )
 				{
 					var rle:LightEvent = new LightEvent( LightEvent.REMOVE, instanceInfo.instanceGuid, $gc, oldLightID );
 					Globals.g_app.dispatchEvent( rle );
 				}
-				if ( typeInfo.light )
+				if ( typeInfo.lightInfo.lightSource )
 				{
 					var le:LightEvent = new LightEvent( LightEvent.ADD, instanceInfo.instanceGuid, $gc, getPerModelLightID );
 					Globals.g_app.dispatchEvent( le );
