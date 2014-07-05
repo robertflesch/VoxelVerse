@@ -37,6 +37,7 @@ package com.voxelengine.GUI
             bar.addItem("Util");
             bar.addItem("Gem");
             bar.addItem("Avatar");
+            bar.addItem("Light");
             var li:ListItem = bar.addItem("All");
 			bar.setButtonsWidth( 64 );
 			bar.selectedIndex = li.index;
@@ -113,16 +114,17 @@ package com.voxelengine.GUI
 		private function displaySelectedCategory( category:String ):void
 		{	
 			var count:int = 0;
-			var pc:Container = new Container( 512, 64 );
-			pc.autoSize = false;
+			var pc:Container = new Container( width, 64 );
+			//pc.autoSize = false;
+			var countMax:int = width/64
 			for each (var item:TypeInfo in Globals.Info )
 			{
 				if ( item.placeable && (item.category.toLowerCase() == String(category).toLowerCase() || "all" == String(category).toLowerCase() ) )
 				{
-					if ( 8 == count )
+					if ( countMax == count )
 					{
 						addElement( pc );
-						pc = new Container( 350, 64 );
+						pc = new Container( width, 64 );
 						count = 0;		
 					}
 					var box:Box = new Box(64, 64, BorderStyle.INSET);
