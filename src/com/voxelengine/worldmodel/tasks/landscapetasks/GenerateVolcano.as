@@ -64,7 +64,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 																							  , rangeInG0
 																							  , offsetInG0 );
 
-			var volcanoRadius:Number = masterMapSize / 2 * 0.3;
+			var volcanoRadius:Number = masterMapSize / 2 * 0.4;
 			var highestPoint:Number = 0;
 			for ( var x:int = 0; x < masterMapSize; x++ )
 			{
@@ -80,7 +80,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 						var offsetAmount:Number = (remainingRange * (volcanoRadius - distanceFromCenter) / volcanoRadius);
 						var angle:Number = dy / distanceFromCenter;
 						var sin:Number = Math.sin( dy / distanceFromCenter );
-						var angleOffsetAmount:Number = offsetAmount / 2 * sin;
+						var angleOffsetAmount:Number = offsetAmount/ 5 + offsetAmount / 2 * sin;
 						offsetAmount -= Math.abs( angleOffsetAmount );
 						
 						normalizedMasterHeightMap[x][y] = normalizedMasterHeightMap[x][y] + offsetAmount;

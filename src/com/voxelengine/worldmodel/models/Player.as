@@ -3,8 +3,11 @@
 	import com.voxelengine.events.GUIEvent;
 	import com.voxelengine.renderer.BlackLamp;
 	import com.voxelengine.renderer.Lamp;
+	import com.voxelengine.renderer.LampBright;
 	import com.voxelengine.renderer.Torch;
 	import com.voxelengine.renderer.RainbowLight;
+	import com.voxelengine.worldmodel.weapons.Gun;
+	import com.voxelengine.worldmodel.weapons.Bomb;
 	
 	import com.voxelengine.renderer.ShaderLight;
 	import com.voxelengine.renderer.shaders.Shader;
@@ -32,7 +35,8 @@
 		static private const 	FALL:String					= "FALL";
 		static private const 	FOOT:String					= "FOOT";
 		static private const 	HEAD:String					= "HEAD";
-		static private const 	MOUSE_LOOK_CHANGE_RATE:int 	= 10000;
+//		static private const 	MOUSE_LOOK_CHANGE_RATE:int 	= 10000;
+		static private const 	MOUSE_LOOK_CHANGE_RATE:int 	= 5000;
 		static private const 	MIN_TURN_AMOUNT:Number 		= 0.09;
 		static private const 	AVATAR_CLIP_FACTOR:Number 	= 0.90;
 		static private var  	STEP_UP_MAX:int 			= 16;
@@ -54,6 +58,7 @@
 			Globals.g_app.addEventListener( LoadingEvent.LOAD_COMPLETE, onLoadingComplete );
 			
 			Globals.g_app.addEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
+			Globals.g_app.addEventListener( ModelEvent.CHILD_MODEL_ADDED, onChildAdded );
 			
 			takeControl( null );
 			
@@ -62,6 +67,26 @@
 			//inventoryLoad();
 			torchToggle();
 		}
+		
+		override protected function onChildAdded( me:ModelEvent ):void
+		{
+			if ( me.parentInstanceGuid != instanceInfo.instanceGuid )
+				return;
+				
+			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( me.instanceGuid );
+Log.out( "Player.onChildAdded model: " + vm.toString() );
+			if ( vm is Engine )
+Log.out( "Player.onChildAdded - Player has ENGINE" )
+				//_engines.push( vm );
+			if ( vm is Gun )
+Log.out( "Player.onChildAdded - Player has GUN" )
+				//_guns.push( vm );
+			if ( vm is Bomb )
+Log.out( "Player.onChildAdded - Player has BOMP" )
+				//_bombs.push( vm );
+		}
+		
+		
 		
 		private var _torchIndex:int;
 		public function torchToggle():void 
@@ -81,6 +106,9 @@
 					break;
 				case 3:
 					sl = new BlackLamp();
+					break;
+				case 4:
+					sl = new LampBright();
 					_torchIndex = -1; // its going to get incremented
 					break;
 			}
@@ -231,6 +259,7 @@
 //			camera.addLocation( new CameraLocation( true, 0, 0, 0 ) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 0 ) );
 //			camera.addLocation( new CameraLocation( true, 0, Globals.AVATAR_HEIGHT - 4, 0) );
+			//camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2) );
 			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, Globals.AVATAR_WIDTH/2 - 4) );
 			camera.addLocation( new CameraLocation( false, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT - 4, 50) );
 //			camera.addLocation( new CameraLocation( true, Globals.AVATAR_WIDTH/2, Globals.AVATAR_HEIGHT + 20, 50) );
@@ -344,6 +373,7 @@
 				if ( MIN_TURN_AMOUNT >= Math.abs(dy) )
 					dy = 0;
 				//
+				//Log.out( "Player.handleMouseMovement - rotation: " + _instanceInfo.rotationGet );
 				// I only want to rotate the head here, not the whole body. in the X dir.
 				// so if I made the head the main body part, could I keep the rest of the head fixed on the x and z axis...
 				instanceInfo.rotationSetComp( instanceInfo.rotationGet.x, instanceInfo.rotationGet.y + dy, instanceInfo.rotationGet.z );

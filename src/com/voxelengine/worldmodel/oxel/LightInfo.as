@@ -31,16 +31,18 @@ public class LightInfo
 	public var color:uint;			// the RGBA color info
 	private var bLower:uint; 		// The 0xff values for the lower corners are stored in this uint
 	private var bHigher:uint; 		// The 0xff values for the upper corners are stored in this uint
+	public var attn:uint;
 	
 	
-	public function LightInfo( $ID:uint, $color:uint, $attn:uint, $lightIs:Boolean ) {		
+	public function LightInfo( $ID:uint, $color:uint, $baseAttn:uint, $attnPerMeter:uint, $lightIs:Boolean ) {		
 		ID = $ID;
 		color = $color;
 		lightIs = $lightIs;
-		bLower = $attn;
-		bHigher = $attn;
+		bLower = $baseAttn;
+		bHigher = $baseAttn;
 		if ( true == $lightIs )
 			setAll( 255 );
+		attn = $attnPerMeter;
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
@@ -110,6 +112,7 @@ public class LightInfo
 		bLower = $li.bLower;
 		bHigher = $li.bHigher;
 		lightIs = $li.lightIs;
+		attn = $li.attn;
 	}
 	
 	public function get avg():uint {

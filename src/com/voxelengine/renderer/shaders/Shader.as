@@ -180,6 +180,12 @@ package com.voxelengine.renderer.shaders
 				"mul ft2.xyz, ft2.xyz, fc2.xyz",  // take result and multiple by light color
 				// END light from dynamic lights
 				/////////////////////////////////////////////////
+				
+				////////////////////////////////////////////////////////////////////////////
+				// FOG
+				//"mul ft6",
+				// END FOG
+				////////////////////////////////////////////////////////////////////////////
 				"max ft3, ft2, ft4",    // take the larger value between the dynamic light and static light
 				"sat ft2, ft3",     	// Clamp ft2 between 1 and 0, put result in ft2.
 				// OR
@@ -225,18 +231,18 @@ package com.voxelengine.renderer.shaders
 					lp = topMost.instanceInfo.worldToModel( light.position );
 				}
 				var i:int = 0;
-				_constants[i++] = lp.x; // light position
-				_constants[i++] = lp.y;
-				_constants[i++] = lp.z;
-				_constants[i++] = lp.w; 
-				_constants[i++] = 0.5; // fc1 - x is not used, could be light intensity
-				_constants[i++] = nearDistance; // startLight;
-				_constants[i++] = endDistance; // endLight;
-				_constants[i++] = 1;
-				_constants[i++] = color.x; // fc2
-				_constants[i++] = color.y;
-				_constants[i++] = color.z;
-				_constants[i++] = 0;
+				_constants[i++] = lp.x; // light position    |
+				_constants[i++] = lp.y; //                   |
+				_constants[i++] = lp.z; //                   | FC0
+				_constants[i++] = lp.w; //                   |_
+				_constants[i++] = 0.5; // fc1.x -not used    |
+				_constants[i++] = nearDistance; // startLight|
+				_constants[i++] = endDistance; // endLight;  | FC1
+				_constants[i++] = 1;//                       |_
+				_constants[i++] = color.x; //                |
+				_constants[i++] = color.y; //                |
+				_constants[i++] = color.z; //                | FC2
+				_constants[i++] = 0;       //                |_
 			}
 			
 			// This allows for moving light posision, light color

@@ -250,7 +250,7 @@ package com.voxelengine.GUI
 				if ( 0 == EditCursor.editCursorSize )
 					Globals.controlledModel.instanceInfo.setSpeedMultipler( 0.5 ); 
 				else
-					Globals.controlledModel.instanceInfo.setSpeedMultipler( EditCursor.editCursorSize ); 
+					Globals.controlledModel.instanceInfo.setSpeedMultipler( EditCursor.editCursorSize * 1.5 ); 
 			}
 			
 			if ( null != Globals.selectedModel )

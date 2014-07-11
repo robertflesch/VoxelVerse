@@ -28,31 +28,34 @@ package com.voxelengine.worldmodel.tasks.lighting
 	{		
 		static public function handleLightEvents( $le:LightEvent ):void {
 			if ( LightEvent.REMOVE == $le.type ) {
-				Log.out( "LightRemove.handleLightEvents" );
-				var vmr:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
-				if ( vmr ) {
-					var lor:Oxel = vmr.oxel.childFind( $le.gc );
-					if ( lor && valid( lor ) ) {
-						lor.brightness.remove( $le.lightID );
-						var alphaCountr:int;
-						// walk thru the neighbors, if the no has less light then remove that light (just that or all lights?)
-						for ( var facer:uint = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
-							var nor:Oxel = lor.neighbor(facer);
-							if ( Globals.BAD_OXEL == nor )
-								continue;
-							
-							if ( nor.hasAlpha && nor.brightness ) {
-								shineBackOnRemovedLight( lor, nor, facer, $le.lightID );
-								alphaCountr++;
-							}
-						}
-						if ( 0 < alphaCountr ) {
-								var le:LightEvent = new LightEvent( LightEvent.ADD, $le.instanceGuid, lor.gc, lor.brightness.lightBrightestGet().ID );
-								Globals.g_app.dispatchEvent( le );
-						}
+				Log.out( "LightRemove.handleLightEvents - remove light id: " + $le.lightID );
+
+				var lor:Oxel = LightTask.isValidOxel( $le );
+				if ( !lor )
+					return;
+					
+				lor.brightness.remove( $le.lightID );
+				var alphaCountr:int;
+				// walk thru the neighbors, if the no has less light then remove that light (just that or all lights?)
+				for ( var facer:uint = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
+					var nor:Oxel = lor.neighbor(facer);
+					if ( Globals.BAD_OXEL == nor )
+						continue;
+					
+					if ( nor.hasAlpha && nor.brightness ) {
+						shineBackOnRemovedLight( lor, nor, facer, $le.lightID );
+						alphaCountr++;
 					}
 				}
 				addTask( $le.instanceGuid, $le.gc, $le.lightID );
+				// Now relight the oxel that the light was removed from using the new values.
+				if ( 0 < alphaCountr ) {
+					var lights:Vector.<uint> = lor.brightness.lightIDNonDefaultUsedGet();
+					for each ( var lightsOnThisOxel:uint in lights ) {
+						var le:LightEvent = new LightEvent( LightEvent.ADD, $le.instanceGuid, lor.gc, lightsOnThisOxel );
+						Globals.g_app.dispatchEvent( le );
+					}
+				}
 			}
 			else if ( LightEvent.ALPHA_TO_SOLID == $le.type )
 			{
@@ -160,7 +163,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( _guid );
 			if ( vm ) {
 				var lo:Oxel = vm.oxel.childFind( _gc );
-				if ( valid( lo ) ) {
+				if ( LightTask.valid( lo ) ) {
 					lo.brightness.remove( lightID );
 					removeFromNeighbors( lo );
 				}
@@ -173,16 +176,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
-		static private function valid( $o:Oxel ):Boolean {
-			
-			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
-				return false;
-			
-			if ( !$o.brightness ) // does this oxel already have a brightness?
-				return false;
-
-			return true;
-		}
 		 
 		private function removeFromNeighbors( $lo:Oxel ):void {
 				
@@ -236,6 +229,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				return;
 			}
 				
+			//Log.out( "LightRemove.terminal gc: " + $o.gc.toString() );
 			if ( $o.brightness.remove( lightID ) ) {
 				if ( $o.quads ) // this oxel has faces which were lit
 					rebuildFaces( $o );

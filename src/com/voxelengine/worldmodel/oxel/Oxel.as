@@ -574,7 +574,7 @@ package com.voxelengine.worldmodel.oxel
 					_children[i].brightness = BrightnessPool.poolGet();
 					brightness.childGetAllLights( gct.childId(), _children[i].brightness );
 					// child should attenuate light at same rate.
-					_children[i].brightness.fallOffPerMeter = brightness.fallOffPerMeter;
+					_children[i].brightness.materialFallOffFactor = brightness.materialFallOffFactor;
 				}
 				// use the super so you dont start a flow event on flowable types.
 				if ( Globals.GRASS == type )
@@ -806,7 +806,7 @@ package com.voxelengine.worldmodel.oxel
 						_brightness.mergeChildren( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size(), hasAlpha );
 						// Need to set this from a valid child
 						// Parent should have same brightness attn as children did.
-						_brightness.fallOffPerMeter = childForBrightness.brightness.fallOffPerMeter;
+						_brightness.materialFallOffFactor = childForBrightness.brightness.materialFallOffFactor;
 					}
 				}
 			}
@@ -1384,10 +1384,10 @@ package com.voxelengine.worldmodel.oxel
 							}
 							li.setAll( rootOxel._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
 						}
-						_brightness.fallOffPerMeter = ti.lightInfo.attn;
+						_brightness.materialFallOffFactor = ti.lightInfo.fallOffFactor;
 				}
 				
-				if ( ti.lightInfo.fullBright )
+				if ( true == ti.lightInfo.fullBright && false == ti.lightInfo.lightSource )
 					_brightness.lightFullBright();
 					
 				var scale:uint = 1 << gc.grain;
@@ -1632,7 +1632,7 @@ package com.voxelengine.worldmodel.oxel
 				
 				brightness = BrightnessPool.poolGet();
 				$ba = brightness.fromByteArray( $version, $ba );
-				brightness.fallOffPerMeter = Globals.Info[type].lightInfo.fallOffFactor;
+				brightness.materialFallOffFactor = Globals.Info[type].lightInfo.fallOffFactor;
 			}
 			
 			if ( OxelData.data_is_parent( oxelData ) )

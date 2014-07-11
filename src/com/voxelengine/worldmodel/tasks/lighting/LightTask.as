@@ -9,6 +9,8 @@
 package com.voxelengine.worldmodel.tasks.lighting
 {
 	import com.developmentarc.core.tasks.tasks.AbstractTask;
+	import com.voxelengine.events.LightEvent;
+	import com.voxelengine.worldmodel.models.VoxelModel;
 	
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
@@ -45,5 +47,31 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
+		static protected function isValidOxel( $le:LightEvent ):Oxel {
+			
+			var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
+			if ( vm ) {
+				var lo:Oxel = vm.oxel.childFind( $le.gc );
+				if ( lo && valid( lo ) )
+					return lo;
+					
+				Log.out( "LightTask.isValidOxel - valid oxel not found guid: " + $le.gc.toString(), Log.WARN );
+				return null;
+			}
+			
+			Log.out( "LightTask.isValidOxel - Voxel Model not found guid: " + $le.instanceGuid, Log.WARN );
+			return null;
+		}
+		
+		static protected function valid( $o:Oxel ):Boolean {
+			
+			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
+				return false;
+			
+			if ( !$o.brightness ) // does this oxel already have a brightness?
+				return false;
+
+			return true;
+		}
 	}
 }

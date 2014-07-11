@@ -106,7 +106,7 @@ package com.voxelengine.worldmodel.models
 			if ( OxelData.dataHasAdditional( data ) )
 			{
 				$ba = _TempFlowInfo.fromByteArray( $version, $ba );
-				$ba = _TempBrightness.fromByteArray( $version, $ba );
+				$ba = _TempBrightness.fromByteArray( $version, $ba, 0 );
 			}
 			
 			if ( OxelData.data_is_parent( data ) )

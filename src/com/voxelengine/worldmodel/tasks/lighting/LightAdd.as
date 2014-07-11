@@ -42,9 +42,9 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( valid( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Brightness.MAX_LIGHT_LEVEL, true ) )
+						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Brightness.MAX_LIGHT_LEVEL, ti.lightInfo.attn, true ) )
 							throw new Error( "LightAdd.handleLightEvent - How did we get here?" );
-						lo.brightness.fallOffPerMeter = ti.lightInfo.attn;
+//						lo.brightness.fallOffPerMeter = ti.lightInfo.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
 					}
 					else
@@ -62,10 +62,14 @@ package com.voxelengine.worldmodel.tasks.lighting
 					{
 						// This oxel changed from solid to AIR or Translucent
 						// So I just need to rebalance it as an AIR oxel
-						const attenScaled:uint = co.brightness.fallOffPerMeter * (co.gc.size()/16);
-						co.brightness.balanceAttnAll( attenScaled );
+						var airAttn:uint = Globals.Info[ Globals.AIR ].lightInfo.attn;
+						const attnScaling:uint = co.brightness.materialFallOffFactor * airAttn * (co.gc.size() / Globals.UNITS_PER_METER);
+						co.brightness.balanceAttnAll( attnScaling );
 						// REVIEW - Just grabbing the ID of the brightest light, but I THINK all will spread.
-						addTask( $le.instanceGuid, $le.gc, co.brightness.lightBrightestGet().ID, Globals.ALL_DIRS );
+						// Did not work correctly with just brightest light in other places, replacing here with all lights
+						var lights:Vector.<uint> = co.brightness.lightIDNonDefaultUsedGet();
+						for each ( var lightsOnThisOxel:uint in lights )
+							addTask( $le.instanceGuid, $le.gc, lightsOnThisOxel, Globals.ALL_DIRS );						
 					}
 					else
 						Log.out( "LightAdd.handleLightAddEvent - invalid light source", Log.ERROR );
@@ -87,7 +91,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		private function set lightDir( $val:uint ):void { _lightDir = $val; }
 		/**
 		 * NEVER NEVER NEVER use this, use the static addTask function 
-		 * @param $instanceGuid - guid of parent model
+		 * @param $instanceGuid1 - guid of parent model
 		 * @param $gc of oxel that HAS light attributes
 		 * @param $lightID a light id
 		 * @param $taskType each oxel gets a unique task id, so that only one task per oxel happens (at once)
@@ -137,7 +141,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( !$o.brightness ) { // does this oxel already have a brightness?
 				$o.brightness = BrightnessPool.poolGet();
-				$o.brightness.fallOffPerMeter = Globals.Info[$o.type].lightInfo.fallOffFactor;
+				$o.brightness.materialFallOffFactor = Globals.Info[$o.type].lightInfo.fallOffFactor;
 			}
 
 			return true;
