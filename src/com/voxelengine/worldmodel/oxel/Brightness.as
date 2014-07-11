@@ -34,21 +34,22 @@ public class Brightness  {  // extends BrightnessData
 	 *        |
 	 *        \/
 	 */
-	public static const MAX_LIGHT_LEVEL:uint = 0xff;
-	public static const DEFAULT_LIGHT_ID:uint = 1;
 	private static const DEFAULT_COLOR:uint = 0x00ffffff;
-	
-	private static const DEFAULT_FALL_OFF_PER_METER:uint = 0x32; // how much attn per unit meter
-	
 	private static const DEFAULT_SIGMA:uint = 2;
 	
-	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x00; // out of 255
-	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x00000000;
-	//public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x37; // out of 255
-	//private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x37373737;
-//	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x66; // out of 255
-//	private static const DEFAULT_LIGHT_LEVEL_SETTER:uint = 0x66666666;
-
+	public static const MAX_LIGHT_LEVEL:uint = 0xff;
+	public static const DEFAULT_LIGHT_ID:uint = 1;
+	//public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x00; // out of 255
+	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x33; // out of 255
+	
+	private static function defaultLightLevelSetter():uint { 
+		var temp:uint = DEFAULT_BASE_LIGHT_LEVEL;
+		temp = temp | (DEFAULT_BASE_LIGHT_LEVEL << 8);
+		temp = temp | (DEFAULT_BASE_LIGHT_LEVEL << 16);
+		temp = temp | (DEFAULT_BASE_LIGHT_LEVEL << 24);
+		return temp;
+	}
+	
 	static public const B000:uint = 0;
 	static public const B001:uint = 1;
 	static public const B100:uint = 2;
@@ -113,7 +114,7 @@ public class Brightness  {  // extends BrightnessData
 			var lightCount:int = $ba.readByte();
 			// Now read each light
 			for ( var i:int = 0; i < lightCount; i++ ) {
-				_lights[i] = new LightInfo(0, 0, DEFAULT_LIGHT_LEVEL_SETTER, $attnPerMeter, false );
+				_lights[i] = new LightInfo(0, 0, defaultLightLevelSetter(), $attnPerMeter, false );
 				_lights[i].fromByteArray( $ba );
 			}
 		}
@@ -138,7 +139,7 @@ public class Brightness  {  // extends BrightnessData
 			var sli:LightInfo = $b._lights[i];
 			if ( null != sli ) { 
 				if ( null == _lights[i] )
-					_lights[i] = new LightInfo(0, 0, DEFAULT_LIGHT_LEVEL_SETTER, 0, false );
+					_lights[i] = new LightInfo(0, 0, defaultLightLevelSetter(), 0, false );
 				_lights[i].copyFrom( sli );
 			}
 			else 
@@ -581,7 +582,7 @@ public class Brightness  {  // extends BrightnessData
 		if ( DEFAULT_LIGHT_ID != $ID && DEFAULT_BASE_LIGHT_LEVEL == $avgAttn )
 			return false;
 			
-		var newLi:LightInfo = new LightInfo( $ID, $color, DEFAULT_LIGHT_LEVEL_SETTER, $attnPerMeter, $lightIs );
+		var newLi:LightInfo = new LightInfo( $ID, $color, defaultLightLevelSetter(), $attnPerMeter, $lightIs );
 			// check for available slot first, if none found, add new light to end.
 		for ( var i:int; i < _lights.length; i++ ) {
 			if ( null == _lights[i] ) {
@@ -910,6 +911,11 @@ public class Brightness  {  // extends BrightnessData
 		if ( li.b110 < sli.b110 )	  { li.b110 = sli.b110; c = true; }
 		if ( li.b111 < sli.b111 )	  { li.b111 = sli.b111; c = true; }
 		return c;
+	}
+	
+	public function evaluateAmbientOcculusion():void {
+		
+		
 	}
 	
 } // end of class Brightness
