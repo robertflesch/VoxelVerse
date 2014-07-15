@@ -90,35 +90,135 @@ public class Brightness  {  // extends BrightnessData
 	public function get negZ100():uint { return ((_higherAmbient  & 0x00003000) >> 12 ); }
 	public function get negZ110():uint { return ((_higherAmbient  & 0x0000c000) >> 14 ); }
 	
-	public function set posX100( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffffffc) | attn); }	
-	public function set posX101( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffffff3) | attn << 2 ); }	
-	public function set posX110( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffffffcf) | attn << 4 ); }	
-	public function set posX111( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffffff3f) | attn << 6 ); }
+	public function set posX100( value:uint ):void {
+		// if we are setting the value of posX100 to ZERO, allow it here
+		if ( 0 == value ) value = 0;
+		// for any other number in value, we can only set posX100 to 1 or 2
+		// depending on its neighbors
+		else if ( 0 == posX100 ) value = 1;
+		else if  ( 1 <= posX110 && 1 <= posX101 ) value = 2;
+		// now take the number in value and put its bits into the bit holder
+		_lowerAmbient = ((_lowerAmbient & 0xfffffffc) | value); }	
+	public function set posX101( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posX101 ) value = 1;
+		else if  ( 1 <= posX100 && 1 <= posX111 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xfffffff3) | value << 2 ); }	
+	public function set posX110( value:uint ):void {
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posX110 ) value = 1;
+		else if  ( 1 <= posX100 && 1 <= posX111 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xffffffcf) | value << 4 ); }	
+	public function set posX111( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posX111 ) value = 1;
+		else if  ( 1 <= posX101 && 1 <= posX110 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xffffff3f) | value << 6 ); }
 	
-	public function set negX000( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffffcff) | attn << 8 ); }
-	public function set negX001( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffff3ff) | attn << 10 ); }
-	public function set negX010( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffffcfff) | attn << 12 ); }
-	public function set negX011( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffff3fff) | attn << 14 ); }
+	public function set negX000( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negX000 ) value = 1;
+		else if  ( 1 <= negX010 && 1 <= negX001 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xfffffcff) | value << 8 ); }
+	public function set negX001( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negX001 ) value = 1;
+		else if  ( 1 <= negX000 && 1 <= negX011 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xfffff3ff) | value << 10 ); }
+	public function set negX010( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negX010 ) value = 1;
+		else if  ( 1 <= negX000 && 1 <= negX011 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xffffcfff) | value << 12 ); }
+	public function set negX011( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negX011 ) value = 1;
+		else if  ( 1 <= negX010 && 1 <= negX001 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xffff3fff) | value << 14 ); }
 		
-	public function set posY010( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffcffff) | attn << 16 ); }
-	public function set posY011( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfff3ffff) | attn << 18 ); }
-	public function set posY110( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffcfffff) | attn << 20 ); }
-	public function set posY111( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xff3fffff) | attn << 22 ); }
+	public function set posY010( value:uint ):void {
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posY010 ) value = 1;
+		else if  ( 1 <= posY110 && 1 <= posY011 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xfffcffff) | value << 16 ); }
+	public function set posY011( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posY011 ) value = 1;
+		else if  ( 1 <= posY010 && 1 <= posY111 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xfff3ffff) | value << 18 ); }
+	public function set posY110( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posY110 ) value = 1;
+		else if  ( 1 <= posY010 && 1 <= posY111 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xffcfffff) | value << 20 ); }
+	public function set posY111( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posY111 ) value = 1;
+		else if  ( 1 <= posY110 && 1 <= posY011 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xff3fffff) | value << 22 ); }
 	
-	public function set negY000( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfcffffff) | attn << 24 ); }
-	public function set negY001( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xf3ffffff) | attn << 26 ); }
-	public function set negY100( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xcfffffff) | attn << 28 ); }
-	public function set negY101( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0x3fffffff) | attn << 30 ); }
+	public function set negY000( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negY000 ) value = 1;
+		else if  ( 1 <= negY100 && 1 <= negY001 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xfcffffff) | value << 24 ); }
+	public function set negY001( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negY001 ) value = 1;
+		else if  ( 1 <= negY000 && 1 <= negY101 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xf3ffffff) | value << 26 ); }
+	public function set negY100( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negY100 ) value = 1;
+		else if  ( 1 <= negY101 && 1 <= negY000 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0xcfffffff) | value << 28 ); }
+	public function set negY101( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negY101 ) value = 1;
+		else if  ( 1 <= negY100 && 1 <= negY001 ) value = 2;
+		_lowerAmbient = ((_lowerAmbient & 0x3fffffff) | value << 30 ); }
 		
-	public function set posZ001( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffffffc) | attn << 0 ); }
-	public function set posZ011( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffffff3) | attn << 2 ); }
-	public function set posZ101( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffffffcf) | attn << 4 ); }
-	public function set posZ111( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffffff3f) | attn << 6 ); }
+	public function set posZ001( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posZ001 ) value = 1;
+		else if  ( 1 <= posZ011 && 1 <= posZ101 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xfffffffc) | value << 0 ); }
+	public function set posZ011( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posZ011 ) value = 1;
+		else if  ( 1 <= posZ001 && 1 <= posZ111 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xfffffff3) | value << 2 ); }
+	public function set posZ101( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posZ101 ) value = 1;
+		else if  ( 1 <= posZ001 && 1 <= posZ111 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xffffffcf) | value << 4 ); }
+	public function set posZ111( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == posZ111 ) value = 1;
+		else if  ( 1 <= posZ101 && 1 <= posZ011 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xffffff3f) | value << 6 ); }
 	
-	public function set negZ000( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffffcff) | attn << 8 ); }
-	public function set negZ010( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffff3ff) | attn << 10 ); }
-	public function set negZ100( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffffcfff) | attn << 12 ); }
-	public function set negZ110( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffff3fff) | attn << 14 ); }
+	public function set negZ000( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negZ000 ) value = 1;
+		else if  ( 1 <= negZ010 && 1 <= negZ100 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xfffffcff) | value << 8 ); }
+	public function set negZ010( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negZ010 ) value = 1;
+		else if  ( 1 <= negZ000 && 1 <= negZ110 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xfffff3ff) | value << 10 ); }
+	public function set negZ100( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negZ100 ) value = 1;
+		else if  ( 1 <= negZ000 && 1 <= negZ110 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xffffcfff) | value << 12 ); }
+	public function set negZ110( value:uint ):void { 
+		if ( 0 == value ) value = 0;
+		else if ( 0 == negZ110 ) value = 1;
+		else if  ( 1 <= negZ010 && 1 <= negZ100 ) value = 2;
+		_higherAmbient = ((_higherAmbient & 0xffff3fff) | value << 14 ); }
 	
 	// Just a convience value to prevent the recalculation of the color values unless needed
 	private var _compositeColor:uint;
@@ -1036,6 +1136,7 @@ public class Brightness  {  // extends BrightnessData
 	 *        |
 	 *        \/
 	 */
+	private static const CORNER_BUMP_VAL:uint = 1;
 	private function incrementEdge( $majorFace:int, $minorFace:int ):void {
 		
  		if ( Globals.POSX == $majorFace ) {
@@ -1075,22 +1176,27 @@ public class Brightness  {  // extends BrightnessData
 				negX010 = negX010 + 1;
 			}
 		}
-		else if ( Globals.POSY == $majorFace ) {
-			if ( Globals.POSX == $minorFace ) {
-				posY110 = posY110 + 1;
-				posY111 = posY111 + 1;
+		else if ( Globals.POSY == $majorFace ) 
+		{
+			if ( Globals.POSX == $minorFace ) 
+			{
+				posY110 = CORNER_BUMP_VAL;
+				posY111 = CORNER_BUMP_VAL;
 			}
-			else if ( Globals.NEGX == $minorFace ) {
-				posY010 = posY010 + 1;
-				posY011 = posY011 + 1;
+			else if ( Globals.NEGX == $minorFace ) 
+			{
+				posY010 = CORNER_BUMP_VAL;
+				posY011 = CORNER_BUMP_VAL;
 			}
-			else if ( Globals.POSZ == $minorFace ) {
-				posY011 = posY011 + 1;
-				posY111 = posY111 + 1;
+			else if ( Globals.POSZ == $minorFace ) 
+			{
+				posY011 = CORNER_BUMP_VAL;
+				posY111 = CORNER_BUMP_VAL;
 			}
-			else if ( Globals.NEGZ == $minorFace ) {
-				posY010 = posY010 + 1;
-				posY110 = posY110 + 1;
+			else if ( Globals.NEGZ == $minorFace ) 
+			{
+				posY010 = CORNER_BUMP_VAL;
+				posY110 = CORNER_BUMP_VAL;
 			}
 		}
 		else if ( Globals.NEGY == $majorFace ) {
@@ -1169,7 +1275,10 @@ public class Brightness  {  // extends BrightnessData
 				Log.out( "evaluateAmbientOcculusion - neighbor has faces" );
 			}
 			else if ( nno.faceHas( Oxel.face_get_opposite( af ) ) ) {
+				// bump the count on edge of tested oxel.
 				incrementEdge( $face, af );
+				// bump the count on edge of tested oxel.
+				// TODO - Could this bump it too far?
 				nno.brightness.incrementEdge( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) )
 				nno.quadRebuild( Oxel.face_get_opposite( af ) );
 			}
