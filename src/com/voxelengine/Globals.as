@@ -50,7 +50,8 @@ package com.voxelengine {
 		static public const VERSION_001:String = "001";
 		static public const VERSION_002:String = "002";
 		static public const VERSION_003:String = "003";
-		static public const VERSION:String = VERSION_003;
+		static public const VERSION_004:String = "004";
+		static public const VERSION:String = VERSION_004;
 		
 		static public const MANIFEST_VERSION:int = 100;
 		

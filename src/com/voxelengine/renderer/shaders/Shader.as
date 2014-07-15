@@ -138,13 +138,14 @@ package com.voxelengine.renderer.shaders
 				// now apply the color and brightness from the vertex attirbutes
 				
 				/////////////////////////////////////////////////
-				// base texture
+				// TINT on base texture
 				/////////////////////////////////////////////////
 				"mul ft0, v1.xyz, ft0", // mutliply by texture tint - v1.xyz
 				
 				/////////////////////////////////////////////////
 				// light from brightness
-				"mul ft4, v4, ft0",   // modify the texture by multipling by the light color
+				"mul ft4, v4.xyz, ft0", // modify the texture by multipling by the light color
+"mul ft4, v4.w, ft4", 	// Ambient Occlusion - multiply by texture brightness ColorUINT.w
 				
 				/////////////////////////////////////////////////
 				// light from dynamic lights
@@ -178,6 +179,8 @@ package com.voxelengine.renderer.shaders
 				"mov ft5.xyw, fc2.w", // clear out other components to 0
 				"mul ft2, ft0, ft5.z",  // multiple the UNlit texture, with the attenuated light effect !Critical Change, otherwise the torch is dependant on the static texture color.
 				"mul ft2.xyz, ft2.xyz, fc2.xyz",  // take result and multiple by light color
+				
+"mul ft2, v4.w, ft2", 	// Ambient Occlusion - take result and multiple vertex brightness - not working....
 				// END light from dynamic lights
 				/////////////////////////////////////////////////
 				

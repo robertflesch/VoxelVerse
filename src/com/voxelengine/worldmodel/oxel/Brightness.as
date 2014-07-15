@@ -59,6 +59,67 @@ public class Brightness  {  // extends BrightnessData
 	static public const B110:uint = 6;
 	static public const B111:uint = 7;
 	
+	// Ambient occlusion needs per face data, and for per face I need to store per face.
+	// the choice is 0, 1, 2, so I need 2 bits of data to support that. 6 faces * 4 verts * 2 bits = 48 bits, 2 uints
+	private var _lowerAmbient:uint;
+	private var _higherAmbient:uint;
+	public function get posX100():uint { return ((_lowerAmbient  & 0x00000003)); }
+	public function get posX101():uint { return ((_lowerAmbient  & 0x0000000c) >> 2 ); }
+	public function get posX110():uint { return ((_lowerAmbient  & 0x00000030) >> 4 ); }
+	public function get posX111():uint { return ((_lowerAmbient  & 0x000000c0) >> 6 ); }
+	public function get negX000():uint { return ((_lowerAmbient  & 0x00000300) >> 8 ); }
+	public function get negX001():uint { return ((_lowerAmbient  & 0x00000c00) >> 10 ); }
+	public function get negX010():uint { return ((_lowerAmbient  & 0x00003000) >> 12 ); }
+	public function get negX011():uint { return ((_lowerAmbient  & 0x0000c000) >> 14 ); }
+	
+	public function get posY010():uint { return ((_lowerAmbient  & 0x00030000) >> 16 ); }
+	public function get posY011():uint { return ((_lowerAmbient  & 0x000c0000) >> 18 ); }
+	public function get posY110():uint { return ((_lowerAmbient  & 0x00300000) >> 20 ); }
+	public function get posY111():uint { return ((_lowerAmbient  & 0x00c00000) >> 22 ); }
+	public function get negY000():uint { return ((_lowerAmbient  & 0x03000000) >> 24 ); }
+	public function get negY001():uint { return ((_lowerAmbient  & 0x0c000000) >> 26 ); }
+	public function get negY100():uint { return ((_lowerAmbient  & 0x30000000) >> 28 ); }
+	public function get negY101():uint { return ((_lowerAmbient  & 0xc0000000) >> 30 ); }
+
+	public function get posZ001():uint { return ((_higherAmbient  & 0x00000003)); }
+	public function get posZ011():uint { return ((_higherAmbient  & 0x0000000c) >> 2 ); }
+	public function get posZ101():uint { return ((_higherAmbient  & 0x00000030) >> 4 ); }
+	public function get posZ111():uint { return ((_higherAmbient  & 0x000000c0) >> 6 ); }
+	public function get negZ000():uint { return ((_higherAmbient  & 0x00000300) >> 8 ); }
+	public function get negZ010():uint { return ((_higherAmbient  & 0x00000c00) >> 10 ); }
+	public function get negZ100():uint { return ((_higherAmbient  & 0x00003000) >> 12 ); }
+	public function get negZ110():uint { return ((_higherAmbient  & 0x0000c000) >> 14 ); }
+	
+	public function set posX100( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffffffc) | attn); }	
+	public function set posX101( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffffff3) | attn << 2 ); }	
+	public function set posX110( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffffffcf) | attn << 4 ); }	
+	public function set posX111( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffffff3f) | attn << 6 ); }
+	
+	public function set negX000( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffffcff) | attn << 8 ); }
+	public function set negX001( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffff3ff) | attn << 10 ); }
+	public function set negX010( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffffcfff) | attn << 12 ); }
+	public function set negX011( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffff3fff) | attn << 14 ); }
+		
+	public function set posY010( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfffcffff) | attn << 16 ); }
+	public function set posY011( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfff3ffff) | attn << 18 ); }
+	public function set posY110( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xffcfffff) | attn << 20 ); }
+	public function set posY111( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xff3fffff) | attn << 22 ); }
+	
+	public function set negY000( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xfcffffff) | attn << 24 ); }
+	public function set negY001( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xf3ffffff) | attn << 26 ); }
+	public function set negY100( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0xcfffffff) | attn << 28 ); }
+	public function set negY101( attn:uint ):void { _lowerAmbient = ((_lowerAmbient & 0x3fffffff) | attn << 30 ); }
+		
+	public function set posZ001( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffffffc) | attn << 0 ); }
+	public function set posZ011( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffffff3) | attn << 2 ); }
+	public function set posZ101( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffffffcf) | attn << 4 ); }
+	public function set posZ111( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffffff3f) | attn << 6 ); }
+	
+	public function set negZ000( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffffcff) | attn << 8 ); }
+	public function set negZ010( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffff3ff) | attn << 10 ); }
+	public function set negZ100( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffffcfff) | attn << 12 ); }
+	public function set negZ110( attn:uint ):void { _higherAmbient = ((_higherAmbient & 0xffff3fff) | attn << 14 ); }
+	
 	// Just a convience value to prevent the recalculation of the color values unless needed
 	private var _compositeColor:uint;
 
@@ -76,6 +137,9 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
 
+		$ba.writeUnsignedInt( _lowerAmbient );
+		$ba.writeUnsignedInt( _higherAmbient );
+		
 		// calculate how many lights this oxel is influcence by
 		var lightCount:uint;
 		for ( var i:int; i < _lights.length; i++ ) {
@@ -98,7 +162,9 @@ public class Brightness  {  // extends BrightnessData
 	// TODO Maybe - Not sure what attnPerMeter should be here, that value is not persisted to the ivm.
 	// However I dont know if it is ever used again, so what should I set it to?
 	public function fromByteArray( $version:String, $ba:ByteArray, $attnPerMeter:uint = 0x10 ):ByteArray {
-		if ( Globals.VERSION_001 == $version ) {
+		var lightCount:int;
+		var i:int;
+		if ( Globals.VERSION_001 == $version || Globals.VERSION_002 == $version ) {
 			// Old style, Just throw away this information.
 			$ba.readInt();
 			$ba.readInt();
@@ -109,11 +175,22 @@ public class Brightness  {  // extends BrightnessData
 			$ba.readInt();
 			$ba.readInt();			
 		}
-		else {
+		else if ( Globals.VERSION_003 == $version ){ 
 			// How many light do I need to read?
-			var lightCount:int = $ba.readByte();
+			lightCount = $ba.readByte();
 			// Now read each light
-			for ( var i:int = 0; i < lightCount; i++ ) {
+			for ( i = 0; i < lightCount; i++ ) {
+				_lights[i] = new LightInfo(0, 0, defaultLightLevelSetter(), $attnPerMeter, false );
+				_lights[i].fromByteArray( $ba );
+			}
+		}
+		else if ( Globals.VERSION_004 == $version ){ 
+			// How many light do I need to read?
+			_lowerAmbient = $ba.readUnsignedInt();
+			_higherAmbient = $ba.readUnsignedInt();
+			lightCount = $ba.readByte();
+			// Now read each light
+			for ( i = 0; i < lightCount; i++ ) {
 				_lights[i] = new LightInfo(0, 0, defaultLightLevelSetter(), $attnPerMeter, false );
 				_lights[i].fromByteArray( $ba );
 			}
@@ -623,16 +700,28 @@ public class Brightness  {  // extends BrightnessData
 	}
 
 	// this returns a composite color made of default color plus any additional colors for the indicated corner
-	public function lightGetComposite( $corner:uint ):uint {
+	public function lightGetComposite( $face:int, $corner:uint ):uint {
 		_compositeColor = 0;
 		
 		for ( var i:int; i < _lights.length; i++ )
 		{
 			var li:LightInfo = _lights[i];
-			if ( null != li )
+			if ( null != li ) {
 				_compositeColor = ColorUtils.testCombineARGB( _compositeColor, li.color, li.attnLevelGet( $corner ) );
+			}
 		}
 		
+		// FIX - not seeing any effect from this.
+		var cornerAttn:uint = cornerForFace( $face, $corner );
+		if ( 0 < cornerAttn ) {
+			cornerAttn = MAX_LIGHT_LEVEL - cornerAttn * li.attn * 2;
+			cornerAttn = Math.max( cornerAttn, 0 );
+			_compositeColor = ColorUtils.placeAlpha( _compositeColor, cornerAttn );
+			Log.out( "Brightness.lightGetComposite for corner - _compositeColor: " + ColorUtils.extractAlpha( _compositeColor ) );
+//_compositeColor = ColorUtils.placeAlpha( _compositeColor, 0x00 );
+		} else {
+			_compositeColor = ColorUtils.placeAlpha( _compositeColor, MAX_LIGHT_LEVEL );
+		}
 		return _compositeColor;
 	}
 		
@@ -686,52 +775,7 @@ public class Brightness  {  // extends BrightnessData
 			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
 			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
 		}
-		
-		//if ( Globals.POSX == $faceFrom ) {
-			//
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b000 ) { li.b100 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b010 ) { li.b110 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b011 ) { li.b111 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b001 ) { li.b101 = DEFAULT_BASE_LIGHT_LEVEL; }
-		//}
-		//else if ( Globals.NEGX == $faceFrom ) {
-//
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b100 ) { li.b000 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b110 ) { li.b010 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b111 ) { li.b011 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b101 ) { li.b001 = DEFAULT_BASE_LIGHT_LEVEL; }
-		//}
-		//else if ( Globals.POSY == $faceFrom ) {
-//
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b000 ) { li.b010 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b100 ) { li.b110 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b101 ) { li.b111 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b001 ) { li.b011 = DEFAULT_BASE_LIGHT_LEVEL; }
-		//}
-		//else if ( Globals.NEGY == $faceFrom ) {
-//
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b010 ) { li.b000 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b110 ) { li.b100 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b111 ) { li.b101 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b011 ) { li.b001 = DEFAULT_BASE_LIGHT_LEVEL; }
-		//}
-		//else if ( Globals.POSZ == $faceFrom ) {
-//
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b000 ) { li.b001 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b010 ) { li.b011 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b110 ) { li.b111 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b100 ) { li.b101 = DEFAULT_BASE_LIGHT_LEVEL; }
-		//}
-		//else if ( Globals.NEGZ == $faceFrom ) {
-			//
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b001 ) { li.b000 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b011 ) { li.b010 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b111 ) { li.b110 = DEFAULT_BASE_LIGHT_LEVEL; }
-			//if ( DEFAULT_BASE_LIGHT_LEVEL == li.b101 ) { li.b100 = DEFAULT_BASE_LIGHT_LEVEL; }
-		//}
-		//if ( DEFAULT_BASE_LIGHT_LEVEL == li.avg )
-			return true;
-		return false;
+		return true;
 	}
 	
 	public function influenceAdd( $ID:uint, $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
@@ -912,10 +956,224 @@ public class Brightness  {  // extends BrightnessData
 		if ( li.b111 < sli.b111 )	  { li.b111 = sli.b111; c = true; }
 		return c;
 	}
+
+	public function cornerForFace( $face:int, $corner:uint ):uint {
+		if ( Globals.POSX == $face ) {
+			if (       Brightness.B100 == $corner ) 
+				return posX100;
+			else if (  Brightness.B101 == $corner ) 
+				return posX101;
+			else if (  Brightness.B110 == $corner ) 
+				return posX110;
+			else 
+				return posX111;
+		}
+		else if ( Globals.NEGX == $face ) {
+			if (       Brightness.B000 == $corner ) 
+				return negX000;
+			else if (  Brightness.B001 == $corner ) 
+				return negX001;
+			else if (  Brightness.B010 == $corner ) 
+				return negX010;
+			else if (  Brightness.B011 == $corner ) 
+				return negX011;
+		}
+		else if ( Globals.POSY == $face ) {
+			if (  	   Brightness.B010 == $corner ) 
+				return posY010;
+			else if (  Brightness.B011 == $corner ) 
+				return posY011;
+			else if (  Brightness.B110 == $corner ) 
+				return posY110;
+			else 
+				return posY111;
+		}
+		else if ( Globals.NEGY == $face ) {
+			if (       Brightness.B000 == $corner ) 
+				return negY000;
+			else if (  Brightness.B001 == $corner ) 
+				return negY001;
+			else if (  Brightness.B100 == $corner ) 
+				return negY100;
+			else if (  Brightness.B101 == $corner ) 
+				return negY101;
+		}
+		else if ( Globals.POSZ == $face ) {
+			if (  Brightness.B001 == $corner ) 
+				return posZ001;
+			else if (  Brightness.B101 == $corner ) 
+				return posZ101;
+			else if (  Brightness.B011 == $corner ) 
+				return posZ011;
+			else 
+				return posZ111;
+		}
+		else if ( Globals.NEGZ == $face ) {
+			
+			if (       Brightness.B000 == $corner ) 
+				return negZ000;
+			else if (  Brightness.B100 == $corner ) 
+				return negZ100;
+			else if (  Brightness.B010 == $corner ) 
+				return negZ010;
+			else 
+				return negZ110;
+		}
+		return 0;
+	}
 	
-	public function evaluateAmbientOcculusion():void {
+	/*
+	 *           0,1,0  ___________ 1,1,0
+	 *                /|          /|
+	 *               / |   1,1,1 / |
+	 *     ^  0,1,1 /__|________/  |   POSX ->
+	 *     |       |   |        |  |
+	 *    POSY     |   |________|__|
+	 *             |  / 0,0,0   |  / 1,0,0
+	 *             | /          | /
+	 *             |/___________|/
+	 *      POSZ   0,0,1        1,0,1
+	 *        |
+	 *        \/
+	 */
+	private function incrementEdge( $majorFace:int, $minorFace:int ):void {
 		
+ 		if ( Globals.POSX == $majorFace ) {
+			
+			if ( Globals.POSY == $minorFace ) {
+				posX110 = posX110 + 1;
+				posX111 = posX111 + 1;
+			}
+			else if ( Globals.NEGY == $minorFace ) {
+				posX100 = posX100 + 1;
+				posX101 = posX101 + 1;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				posX101 = posX101 + 1;
+				posX111 = posX111 + 1;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
+				posX110 = posX110 + 1;
+				posX100 = posX100 + 1;
+			}
+		}
+		else if ( Globals.NEGX == $majorFace ) {
+			if ( Globals.POSY == $minorFace ) {
+				negX010 = negX010 + 1;
+				negX011 = negX010 + 1;
+			}
+			else if ( Globals.NEGY == $minorFace ) {
+				negX000 = negX000 + 1;
+				negX001 = negX001 + 1;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				negX001 = negX001 + 1;
+				negX011 = negX011 + 1;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
+				negX000 = negX000 + 1;
+				negX010 = negX010 + 1;
+			}
+		}
+		else if ( Globals.POSY == $majorFace ) {
+			if ( Globals.POSX == $minorFace ) {
+				posY110 = posY110 + 1;
+				posY111 = posY111 + 1;
+			}
+			else if ( Globals.NEGX == $minorFace ) {
+				posY010 = posY010 + 1;
+				posY011 = posY011 + 1;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				posY011 = posY011 + 1;
+				posY111 = posY111 + 1;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
+				posY010 = posY010 + 1;
+				posY110 = posY110 + 1;
+			}
+		}
+		else if ( Globals.NEGY == $majorFace ) {
+
+			if ( Globals.POSX == $minorFace ) {
+				negY100 = negY100 + 1;
+				negY101 = negY101 + 1;
+			}
+			else if ( Globals.NEGX == $minorFace ) {
+				negY000 = negY000 + 1;
+				negY001 = negY001 + 1;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				negY001 = negY001 + 1;
+				negY101 = negY101 + 1;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
+				negY000 = negY000 + 1;
+				negY100 = negY100 + 1;
+			}
+		}
+		else if ( Globals.POSZ == $majorFace ) {
+
+			if ( Globals.POSX == $minorFace ) {
+				posZ101 = posZ101 + 1;
+				posZ111 = posZ111 + 1;
+			}
+			else if ( Globals.NEGX == $minorFace ) {
+				posZ001 = posZ001 + 1;
+				posZ011 = posZ011 + 1;
+			}
+			else if ( Globals.POSY == $minorFace ) {
+				posZ011 = posZ011 + 1;
+				posZ111 = posZ111 + 1;
+			}
+			else if ( Globals.NEGY == $minorFace ) {
+				posZ001 = posZ001 + 1;
+				posZ101 = posZ101 + 1;
+			}
+		}
+		else if ( Globals.NEGZ == $majorFace ) {
+			
+			if ( Globals.POSX == $minorFace ) {
+				negZ100 = negZ100 + 1;
+				negZ110 = negZ110 + 1;
+			}
+			else if ( Globals.NEGX == $minorFace ) {
+				negZ000 = negZ000 + 1;
+				negZ010 = negZ010 + 1;
+			}
+			else if ( Globals.POSY == $minorFace ) {
+				negZ010 = negZ010 + 1;
+				negZ110 = negZ110 + 1;
+			}
+			else if ( Globals.NEGY == $minorFace ) {
+				negZ000 = negZ000 + 1;
+				negZ100 = negZ100 + 1;
+			}
+		}
+	}
+	
+	public function evaluateAmbientOcculusion( $oxel:Oxel, $face:int ):void {
+		var no:Oxel = $oxel.neighbor( $face );
+		if ( Globals.BAD_OXEL == no )
+			return;
+		var nno:Oxel;
+		var afs:Array = Globals.adjacentFaces( $face );
 		
+		for ( var index:int = 0; index < 5; index++ ) {
+			var af:int = afs[index];
+			nno = no.neighbor( af );
+			// FIX - if nno is larger, then, how do I evaluate?
+			// FIX - if nno is larger, then, how do I evaluate?
+			// FIX - if nno is larger, then, how do I evaluate?
+			if ( nno.childrenHas() ) {
+				Log.out( "evaluateAmbientOcculusion - neighbor has faces" );
+			}
+			else if ( nno.faceHas( Oxel.face_get_opposite( af ) ) ) {
+				incrementEdge( $face, af );
+				nno.brightness.incrementEdge( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) )
+				nno.quadRebuild( Oxel.face_get_opposite( af ) );
+			}
+		}
 	}
 	
 } // end of class Brightness

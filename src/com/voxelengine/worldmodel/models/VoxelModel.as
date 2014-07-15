@@ -1010,6 +1010,13 @@ package com.voxelengine.worldmodel.models
 				ba.writeByte(Globals.VERSION_003.charCodeAt(2));
 				ba.writeByte(0);
 			}
+			else if ( Globals.VERSION_004 == $version ) 
+			{
+				ba.writeByte(Globals.VERSION_004.charCodeAt(0));
+				ba.writeByte(Globals.VERSION_004.charCodeAt(1));
+				ba.writeByte(Globals.VERSION_004.charCodeAt(2));
+				ba.writeByte(0);
+			}
 		}
 		
 		public function removeFromBigDB():void

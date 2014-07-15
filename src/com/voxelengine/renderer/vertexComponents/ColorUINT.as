@@ -32,6 +32,14 @@ public class ColorUINT extends VertexComponent {
 	override public function writeToByteArray( $ba:ByteArray ):void {
 		$ba.writeUnsignedInt( _ABGR );
 	}
+	
+	public function toString():String
+	{
+		var str:String = _ABGR.toString(16)
+		var hex:String = ("0x00000000").substr(2,8 - str.length) + str;
+		return hex;
+	}
+	
 }
 }
 

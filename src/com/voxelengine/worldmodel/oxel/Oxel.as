@@ -333,7 +333,7 @@ package com.voxelengine.worldmodel.oxel
 		// This is used to initialize all oxel nodes that are read from the byte array
 		public function initializeVersionedData( $version:String, $parent:Oxel, $gc:GrainCursor, $byteData:uint, $stats:ModelStatisics ):void {
 
-			if ( $version == Globals.VERSION_003 || $version == Globals.VERSION_002 || $version == Globals.VERSION_001 || $version == Globals.VERSION_000 )
+			if ( $version == Globals.VERSION_004 || $version == Globals.VERSION_003 || $version == Globals.VERSION_002 || $version == Globals.VERSION_001 || $version == Globals.VERSION_000 )
 			{
 				initialize( $parent, $gc, $byteData, $stats );	
 				return;
@@ -1106,6 +1106,24 @@ package com.voxelengine.worldmodel.oxel
 			
 			return continueProcessing;
 		}
+		
+		private function quadAmbient( $face:int ):void {
+			
+			if ( !_brightness ) {
+				var ti:TypeInfo = Globals.Info[type];
+				_brightness = BrightnessPool.poolGet();
+				if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+					li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
+				}
+				_brightness.materialFallOffFactor = ti.lightInfo.fallOffFactor;
+				
+				if ( true == ti.lightInfo.fullBright && false == ti.lightInfo.lightSource )
+					_brightness.lightFullBright();
+			}
+			
+			_brightness.evaluateAmbientOcculusion( this, $face );
+		}
 
 		protected function faces_build_terminal():void {
 			//trace( "Oxel.faces_build_terminal");
@@ -1131,7 +1149,6 @@ package com.voxelengine.worldmodel.oxel
 						if ( Globals.BAD_OXEL == no ) 
 						{
 							// this is an external face. that is on the edge of the grain space
-							// If this face_set is removed, then faces on invalid sides will not draw
 							face_set( face );
 						}
 						else if ( no.type == type )
@@ -1372,24 +1389,8 @@ package com.voxelengine.worldmodel.oxel
 			{
 				var ti:TypeInfo  = Globals.Info[type];
 				if ( null == _quads )
-				{
 					_quads = QuadsPool.poolGet();
-					if ( !_brightness )
-						_brightness = BrightnessPool.poolGet();
-						if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
-							var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
-							var rootOxel:Oxel = root_get();
-							if ( null == rootOxel._brightness ) {
-								rootOxel._brightness = BrightnessPool.poolGet();
-							}
-							li.setAll( rootOxel._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
-						}
-						_brightness.materialFallOffFactor = ti.lightInfo.fallOffFactor;
-				}
 				
-				if ( true == ti.lightInfo.fullBright && false == ti.lightInfo.lightSource )
-					_brightness.lightFullBright();
-					
 				var scale:uint = 1 << gc.grain;
 				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 					quadCount += quadAddOrRemoveFace( face, $plane_facing, scale );
@@ -1426,6 +1427,7 @@ package com.voxelengine.worldmodel.oxel
 			// face but no quad
 			else if ( validFace && !quad ) 
 			{
+				quadAmbient( $face );				
 				quad = QuadPool.poolGet();
 				if ( flowInfo && isFlowable ) {
 					if ( !quad.buildScaled( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness, flowInfo ) ) {
@@ -1630,7 +1632,8 @@ package com.voxelengine.worldmodel.oxel
 					flowInfo = new FlowInfo();
 				$ba = flowInfo.fromByteArray( $version, $ba );
 				
-				brightness = BrightnessPool.poolGet();
+				if ( !brightness )
+					brightness = BrightnessPool.poolGet();
 				$ba = brightness.fromByteArray( $version, $ba );
 				brightness.materialFallOffFactor = Globals.Info[type].lightInfo.fallOffFactor;
 			}
