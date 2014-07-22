@@ -150,20 +150,13 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			var gc:GrainCursor = GrainCursorPool.poolGet(rootGrainSize);
 			gc.grain = rootGrainSize;
 			
-			vm.statisics.gather( $ba, rootGrainSize );
+//			gather( _version, $ba, rootGrainSize);
+			vm.statisics.gather( version, $ba, rootGrainSize );
 			
-			vm.oxelReset();
-			var oxel:Oxel = OxelPool.poolGet();	
-			vm.oxel = oxel;
-			vm.oxel.byteArrayLoad( null, gc, $ba, vm.statisics );
+			vm.loadOxelFromByteArray( $ba );
 				
-			vm.oxel.gc.bound = rootGrainSize;
-			vm.instanceInfo.grainSize = rootGrainSize;
-//			if ( vm.mi.editable && Globals.g_app.configManager.showEditMenu )
-//				vm._editCursor.oxel.gc.bound = oxel.gc.bound;
 			GrainCursorPool.poolDispose(gc);
 			vm.calculateCenter();
-	//		set_camera_data();
 			Log.out( "LoadModelFromBigDB.successHandler - completed: " + fileName );
 			
 			super.complete() // AbstractTask will send event
