@@ -501,16 +501,15 @@ package com.voxelengine.worldmodel.models
 				if ( Globals.isSolid( oldType ) && Globals.hasAlpha( $type ) ) {
 					
 					// we removed a solid block, and are replacing it with air or transparent
-					if ( changedOxel.brightness.valuesHas() )
+					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.SOLID_TO_ALPHA, instanceInfo.instanceGuid, changedOxel.gc ) );
 				} 
 				else if ( Globals.isSolid( $type ) && Globals.hasAlpha( oldType ) ) {
 					
-					// we add a solid block, and are replacing the transparent block that was there
+					// we added a solid block, and are replacing the transparent block that was there
 					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.ALPHA_TO_SOLID, instanceInfo.instanceGuid, changedOxel.gc ) );
 				}
-				
 			}
 			
 			return result;
