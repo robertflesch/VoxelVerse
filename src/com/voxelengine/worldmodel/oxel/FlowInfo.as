@@ -92,7 +92,8 @@ public class FlowInfo
 	public function downDec():void { var i:int = down; i--; down = i; out = outRef; }
 	
 	public function get flowScaling():FlowScaling 	{ return _flowScaling; }
-	public function scale():Number 				{ return Math.max( 0.0625, ( out / outRef ) ); }	
+	//public function scale():Number 				{ return Math.max( 0.0625, ( out / outRef ) ); }	
+	public function scale():uint 				{ return Math.max( 1, ( out / outRef ) * 16 ); }  //	x/8
 	
 	
 	public function FlowInfo() {

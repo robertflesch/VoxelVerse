@@ -643,17 +643,17 @@ package com.voxelengine.worldmodel.models
 				
 				if (oxel && oxel.dirty)
 				{
-					//_timer = getTimer();
-					//Log.out( "VoxelModel.internal_update - starting facing and quad building" );	
+					_timer = getTimer();
+					Log.out( "VoxelModel.internal_update - starting facing and quad building" );	
 					oxel.timeBuilding = getTimer();
 					var newFacesFound:Boolean = oxel.faces_build();
 					//Log.out( "VoxelModel.internal_update - faces_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					if (newFacesFound)
 					{
 //Log.out( "VoxelModel.internal_update - new faces found - faces_build - model guid: " + modelInfo.fileName + " time: " + oxel.timeBuilding );					
-						//_timer = getTimer();
+						_timer = getTimer();
 						oxel.quadsBuild();
-						//Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
+						Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					}
 				}
 			}
@@ -1171,34 +1171,11 @@ package com.voxelengine.worldmodel.models
 			registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
 			if (Globals.VERSION_000 == _version)
 			{
-				//Log.out("VoxelModel.loadFromIVMFormat - Globals.VERSION_000 fileName: " + modelInfo.fileName );
-				//Log.out("VoxelModel.loadFromIVMFormat - byteArrayLoad - took: " + (getTimer() - timer) );
 				oxel.readData( null, gct, $ba, _statisics );
-			}
-			else if (Globals.VERSION_001 == _version)
-			{
-				oxel.readVersionedData( Globals.VERSION_001, null, gct, $ba, _statisics );
-			}
-			else if (Globals.VERSION_002 == _version)
-			{
-				// Version 2 is handled in different way, since it has modelInfo and byteArray in same object
-				//throw new Error("VoxelModel.loadFromIVMFormat - VERSION NOT SUPPORTED IN THIS FUNCTION");
-				// This version requires a new readData function
-				// changes in read are in the Brightness...
-				oxel.readVersionedData( Globals.VERSION_002, null, gct, $ba, _statisics );
-			}
-			else if (Globals.VERSION_003 == _version)
-			{
-				oxel.readVersionedData( Globals.VERSION_003, null, gct, $ba, _statisics );
-			}
-			else if (Globals.VERSION_004 == _version)
-			{
-				oxel.readVersionedData( Globals.VERSION_003, null, gct, $ba, _statisics );
 			}
 			else
 			{
-				// Version 2 is handled in different way, since it has modelInfo and byteArray in same object
-				throw new Error("VoxelModel.loadFromIVMFormat - UNSUPPORTED VERSION");
+				oxel.readVersionedData( _version, null, gct, $ba, _statisics );
 			}
 			
 			oxel.gc.bound = rootGrainSize;

@@ -285,7 +285,7 @@ public class Brightness  {  // extends BrightnessData
 				_lights[i].fromByteArray( $ba );
 			}
 		}
-		else if ( Globals.VERSION_004 == $version ){ 
+		else { 
 			// How many light do I need to read?
 			_lowerAmbient = $ba.readUnsignedInt();
 			_higherAmbient = $ba.readUnsignedInt();

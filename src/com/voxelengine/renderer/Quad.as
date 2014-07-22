@@ -417,6 +417,7 @@ public class Quad {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//     Member Functions 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	static private const SCALE_FACTOR:uint = 16;
 	private function addScaled( $type:int, $x:Number, $y:Number, $z:Number, $face:int, $planeFacing:int, $scale:Number, $ti:TypeInfo, $brightness:Brightness, $flowInfo:FlowInfo ):void
 	{
 		var sideBrightness:Number = 0.5;
@@ -433,8 +434,8 @@ public class Quad {
 				//trace( "Quad.addScaledVertices - addQuad POSX" );
 				normal = -1 * $planeFacing;
 				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y         			 , $z			, _U[1]		, _V[3]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B100 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxNz), $z			, _U[2]		, _V[0]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B110 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxPz), $z + $scale	, _U[3]		, _V[1]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B111 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxNz)/SCALE_FACTOR, $z			, _U[2]		, _V[0]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B110 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxPz)/SCALE_FACTOR, $z + $scale	, _U[3]		, _V[1]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B111 ) );
 				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y         			 , $z + $scale	, _U[0]		, _V[2]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B101 ) );
 				break;
 				
@@ -442,8 +443,8 @@ public class Quad {
 				//trace( "Quad.addScaledVertices - addQuad NEGX" );
 				normal = 1 * $planeFacing;
 				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y         			 , $z			, _U[3]		, _V[3]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B000 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxNz), $z			, _U[0]		, _V[0]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B010 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxPz), $z + $scale	, _U[1]		, _V[1]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B011 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxNz)/SCALE_FACTOR, $z			, _U[0]		, _V[0]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B010 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxPz)/SCALE_FACTOR, $z + $scale	, _U[1]		, _V[1]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B011 ) );
 				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y         			 , $z + $scale	, _U[2]		, _V[2]		, normal, 0, 0, tint, $brightness.lightGetComposite( $face, Brightness.B001 ) );
 				break;
 				
@@ -459,10 +460,10 @@ public class Quad {
 		case Globals.POSY:
 				//trace( "Quad.addStraightVertices - addQuad NEGY" );
 				normal = -1 * $planeFacing;
-				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxNz)	, $z			, _U[0]		, _V[0]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B010 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxPz)	, $z + $scale	, _U[3]		, _V[3]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B011 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxPz)	, $z + $scale	, _U[2]		, _V[2]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B111 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxNz)	, $z			, _U[1]		, _V[1]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B110 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxNz)/SCALE_FACTOR	, $z			, _U[0]		, _V[0]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B010 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxPz)/SCALE_FACTOR	, $z + $scale	, _U[3]		, _V[3]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B011 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxPz)/SCALE_FACTOR	, $z + $scale	, _U[2]		, _V[2]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B111 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxNz)/SCALE_FACTOR	, $z			, _U[1]		, _V[1]		, 0, normal, 0, tint, $brightness.lightGetComposite( $face, Brightness.B110 ) );
 				break;
 
 			case Globals.POSZ:
@@ -470,8 +471,8 @@ public class Quad {
 				normal = -1 * $planeFacing;
 				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y						, $z + $scale	, _U[0]		, _V[2]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B001 ) );
 				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y						, $z + $scale	, _U[1]		, _V[3]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B101 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxPz)	, $z + $scale	, _U[2]		, _V[0]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B111 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxPz)	, $z + $scale	, _U[3]		, _V[1]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B011 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxPz)/SCALE_FACTOR	, $z + $scale	, _U[2]		, _V[0]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B111 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxPz)/SCALE_FACTOR	, $z + $scale	, _U[3]		, _V[1]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B011 ) );
 				break;
 				
 			case Globals.NEGZ:
@@ -479,8 +480,8 @@ public class Quad {
 				normal = 1 * $planeFacing;
 				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y						, $z			, _U[2]		, _V[2]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B000 ) );
 				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y						, $z			, _U[3]		, _V[3]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B100 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxNz)	, $z			, _U[0]		, _V[0]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B110 ) );
-				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxNz)	, $z			, _U[1]		, _V[1]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B010 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x + $scale	, $y + ($scale * fs.PxNz)/SCALE_FACTOR	, $z			, _U[0]		, _V[0]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B110 ) );
+				vertexIndex = buildVerticeComponents( vertexIndex, $x			, $y + ($scale * fs.NxNz)/SCALE_FACTOR	, $z			, _U[1]		, _V[1]		, 0, 0, normal, tint, $brightness.lightGetComposite( $face, Brightness.B010 ) );
 				break;
 				
 			default:

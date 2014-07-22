@@ -19,13 +19,31 @@ package com.voxelengine.worldmodel.oxel
  */
 public class FlowScaling
 {
-	public var PxPz:Number = DEFAULT_SCALE;
+	/*
+	private var pxPz:Number = DEFAULT_SCALE;
 	public var PxNz:Number = DEFAULT_SCALE;
 	public var NxNz:Number = DEFAULT_SCALE;
 	public var NxPz:Number = DEFAULT_SCALE;
+	*/
+
+	private var _scale:uint;
+	public function get PxPz():uint { return ((_scale  & 0x0000000f)) + 1; }
+	public function get PxNz():uint { return ((_scale  & 0x000000f0) >> 4 ) + 1; }
+	public function get NxNz():uint { return ((_scale  & 0x00000f00) >> 8 ) + 1; }
+	public function get NxPz():uint { return ((_scale  & 0x0000f000) >> 12 ) + 1; }
 	
-	private const CORNER_MIN:Number = 0.0625;
-	private const DEFAULT_SCALE:Number = 1;
+	public function set PxPz( value:uint ):void { 
+		Log.out( "PxPz set pre: " + PxPz + "  value: " + value );
+		_scale = ((_scale & 0xfffffff0) | ( value - 1 )); 
+		Log.out( "PxPz set pst: " + PxPz );
+	}	
+	
+	public function set PxNz( value:uint ):void { _scale = ((_scale & 0xffffff0f) | (( value - 1 ) << 4) ); }
+	public function set NxNz( value:uint ):void { _scale = ((_scale & 0xfffff0ff) | (( value - 1 ) << 8) ); }
+	public function set NxPz( value:uint ):void { _scale = ((_scale & 0xffff0fff) | (( value - 1 ) << 12) ); }
+	
+	private const CORNER_MIN:Number = 1;
+	private const DEFAULT_SCALE:Number = 16;
 	
 	// has scaling for this oxel be calcualted
 	private var _calculated:Boolean = false
@@ -51,25 +69,32 @@ public class FlowScaling
 	 *              |_____Pz_____|
 	 * 
 	 */
+	public function FlowScaling():void {
+		_scale = 0xffffffff;
+	}
 	
 	private function rnd( $val:Number ):Number {
 		return int($val*100)/100;
 	}
+	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
 		
-		$ba.writeFloat( rnd( PxPz ) );
-		$ba.writeFloat( rnd( PxNz ) );
-		$ba.writeFloat( rnd( NxNz ) );
-		$ba.writeFloat( rnd( NxPz ) );
+		$ba.writeUnsignedInt( _scale );
 		return $ba;
 	}
 	
 	public function fromByteArray( $version:String, $ba:ByteArray ):ByteArray {
 		// No need to handle versions yet
-		PxPz = rnd( $ba.readFloat() );
-		PxNz = rnd( $ba.readFloat() );
-		NxNz = rnd( $ba.readFloat() );
-		NxPz = rnd( $ba.readFloat() );
+		if ( Globals.VERSION_004 == $version ) {
+			PxPz = rnd( $ba.readFloat() );
+			PxNz = rnd( $ba.readFloat() );
+			NxNz = rnd( $ba.readFloat() );
+			NxPz = rnd( $ba.readFloat() );
+		}
+		else
+		{
+			_scale = $ba.readUnsignedInt();
+		}
 		return $ba;
 	}
 	 
@@ -108,7 +133,7 @@ public class FlowScaling
 	
 	
 	public function scalingHas():Boolean {
-		return ( PxPz != DEFAULT_SCALE || PxNz != DEFAULT_SCALE || NxNz != DEFAULT_SCALE ||	NxPz != DEFAULT_SCALE );
+		return ( _scale != 0xffffffff );
 	}
 	
 	public function scaleRecalculate( $oxel:Oxel ):void	{
@@ -149,7 +174,7 @@ public class FlowScaling
 			NxNz = fi.scale()/_scaleRate;
 		if ( CORNER_MIN == NxPz )
 			NxPz = fi.scale()/_scaleRate;
-		//Log.out( "FlowScaling.scalingCalculate caculated: " + toString() );
+		Log.out( "FlowScaling.scalingCalculate caculated: " + toString() );
 	}
 		
 	private function grabNeighborInfluences( $oxel:Oxel, $dir:int ):void {
