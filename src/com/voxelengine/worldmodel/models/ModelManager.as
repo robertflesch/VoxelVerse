@@ -7,6 +7,7 @@
 ==============================================================================*/
 package com.voxelengine.worldmodel.models
 {
+	import com.voxelengine.worldmodel.biomes.LayerInfo;
 	import com.voxelengine.worldmodel.oxel.GrainCursorIntersection;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
@@ -156,6 +157,7 @@ package com.voxelengine.worldmodel.models
 		}
 		
 		public function create( instance:InstanceInfo ):void {
+			Log.out( "ModelManager.create: instance.templateName" + instance.templateName )
 			instanceInfoAdd( instance );
 			
 			if ( !Globals.isGuid( instance.templateName ) && instance.templateName != "LoadModelFromBigDB" )
@@ -250,6 +252,8 @@ package com.voxelengine.worldmodel.models
 			if ( null == vm )
 				throw new Error( "ModelManager.instantiate - Model failed in creation - modelClass: " + modelClass );
 			
+			
+			Log.out( "ModelManager.instantiate - modelClass: " + modelClass + "  instanceInfo: " + $instanceInfo.toString() );
 			modelAdd( vm );
 		}
 		
@@ -357,6 +361,7 @@ package com.voxelengine.worldmodel.models
 			
 		public function onModelLoadedAction(event:Event):void {
 			var req:URLRequest = CustomURLLoader(event.target).request;			
+Log.out("ModelManager.onModelLoadedAction - requested: " + req.url );
 			var fileName:String = CustomURLLoader(event.target).fileName;			
 			
 			var fileData:String = String(event.target.data);
@@ -1109,26 +1114,28 @@ package com.voxelengine.worldmodel.models
 		}	
 		
 		public function createInstanceFromTemplate( vm:VoxelModel ):void {
-			if ( vm.modelInfo.template )
+			//if ( vm.modelInfo.template )
 			{
 	//			var oldGuid:String = vm.instanceInfo.templateName;
 				//vm.instanceInfo.fileName = vm.modelInfo.fileName;
-				vm.modelInfo.biomes.layerReset();
-				//var newLayerInfo:LayerInfo
 				//if ( Globals.MODE_PRIVATE == Globals.mode || Globals.MODE_PUBLIC == Globals.mode )
 				//{
-					//newLayerInfo = new LayerInfo( "LoadModelFromBigDB", vm.instanceInfo.instanceGuid );
+				var newLayerInfo:LayerInfo;
+				newLayerInfo = new LayerInfo( "LoadModelFromBigDB", vm.instanceInfo.instanceGuid );
+				vm.modelInfo.biomes.layerReset();
+				vm.modelInfo.biomes.add_layer( newLayerInfo );
 					//vm.modelInfo.fileName = "LoadModelFromBigDB";
+				vm.modelInfo.jsonReset();
 				//}
 				//else
 				//{
 					// Not really sure when this would get called if ever
 					//newLayerInfo = new LayerInfo( "LoadModelFromIVM", "./assets/models/" + vm.instanceInfo.instanceGuid );
 				//}
-				//vm.modelInfo.biomes.add_layer( newLayerInfo );
-				vm.modelInfo.template = false;
-				vm.instanceInfo.templateName = "LoadModelFromBigDB";
+				
 			}
+			//vm.instanceInfo.templateName = "LoadModelFromBigDB";
+			vm.modelInfo.template = false;
 		}
 		
 		public function loadRegionObjects( objects:Array ):int {
