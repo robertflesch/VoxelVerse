@@ -955,70 +955,6 @@ package com.voxelengine.worldmodel.models
 			}
 		}
 		
-		private function writeVersionedHeader( $version:String, ba:ByteArray):void
-		{
-			/*
-			   ------------------------------------------
-			   0 char 'i'
-			   1 char 'v'
-			   2 char 'm'
-			   3 char '0' (zero) major version
-			   4 char '' (0-9) minor version
-			   5 char '' (0-9) lesser version
-			   6 unsigned char model info version - (0) for local models
-			   n unsigned char root grain size
-			   n+1 oxel data
-			   ------------------------------------------
-			 */
-			
-			ba.writeByte('i'.charCodeAt());
-			ba.writeByte('v'.charCodeAt());
-			ba.writeByte('m'.charCodeAt());
-			if ( Globals.VERSION_000 == $version ) 
-			{
-				ba.writeByte(Globals.VERSION_000.charCodeAt(0));
-				ba.writeByte(Globals.VERSION_000.charCodeAt(1));
-				ba.writeByte(Globals.VERSION_000.charCodeAt(2));
-				ba.writeByte(0);
-			}
-			else if ( Globals.VERSION_001 == $version ) 
-			{
-				ba.writeByte(Globals.VERSION_001.charCodeAt(0));
-				ba.writeByte(Globals.VERSION_001.charCodeAt(1));
-				ba.writeByte(Globals.VERSION_001.charCodeAt(2));
-				ba.writeByte(0);
-			}
-			else if ( Globals.VERSION_002 == $version ) 
-			{
-				ba.writeByte(Globals.VERSION_002.charCodeAt(0));
-				ba.writeByte(Globals.VERSION_002.charCodeAt(1));
-				ba.writeByte(Globals.VERSION_002.charCodeAt(2));
-				ba.writeByte(Globals.MANIFEST_VERSION);
-				var modelJson:String = modelInfo.getJSON();
-				//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
-				modelJson = encodeURI(modelJson);
-				//trace( "VoxelModel.writeHeaderVersion002: " + modelJson );
-				ba.writeInt(modelJson.length);
-				ba.writeUTFBytes(modelJson);
-				//trace( "VoxelModel.writeHeaderVersion002 modelInfo ends at: " + ba.position );
-				//trace( "VoxelModel.writeHeaderVersion002 oxel ends at: " + ba.position );
-			}
-			else if ( Globals.VERSION_003 == $version ) 
-			{
-				ba.writeByte(Globals.VERSION_003.charCodeAt(0));
-				ba.writeByte(Globals.VERSION_003.charCodeAt(1));
-				ba.writeByte(Globals.VERSION_003.charCodeAt(2));
-				ba.writeByte(0);
-			}
-			else if ( Globals.VERSION_004 == $version ) 
-			{
-				ba.writeByte(Globals.VERSION_004.charCodeAt(0));
-				ba.writeByte(Globals.VERSION_004.charCodeAt(1));
-				ba.writeByte(Globals.VERSION_004.charCodeAt(2));
-				ba.writeByte(0);
-			}
-		}
-		
 		public function removeFromBigDB():void
 		{
 			/**
@@ -1051,13 +987,11 @@ package com.voxelengine.worldmodel.models
 		
 		public function save():void
 		{
-			var ba:ByteArray = new ByteArray();
-			ba.clear();
-			
+			var ba:ByteArray;
 			if (databaseObject)
 			{
 				trace("VoxelModel.save - saving object back to BigDB: " + instanceInfo.instanceGuid);
-				IVMSave(ba);
+				ba = IVMSave();
 				databaseObject.data = ba;
 				databaseObject.save(false, false, function created():void
 					{
@@ -1070,12 +1004,12 @@ package com.voxelengine.worldmodel.models
 			else
 			{
 				Globals.g_modelManager.createInstanceFromTemplate(this);
-				IVMSave(ba);
+				ba = IVMSave();
 				trace("VoxelModel.save - creating new object: " + instanceInfo.instanceGuid);
 				Persistance.createObject("voxelModels", instanceInfo.instanceGuid, {owner: Network.userId, template: modelInfo.template, name: _name, description: _description, data: ba}, function(o:DatabaseObject):void
 					{
 						databaseObject = o;
-						Log.out("VoxelModel.save - created: " + instanceInfo.instanceGuid);
+						Log.out("VoxelModel.save - created: " + instanceInfo.instanceGuid + "  setting database object to: " + databaseObject );
 					}, function(e:PlayerIOError):void
 					{
 						Log.out("VoxelModel.save - error creating: " + instanceInfo.instanceGuid + " error data: " + e);
@@ -1088,7 +1022,21 @@ package com.voxelengine.worldmodel.models
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// Loading and Saving Voxel Models
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		public function IVMSave(ba:ByteArray):void
+		public function IVMSave():ByteArray
+		{
+			var ba:ByteArray = new ByteArray();
+			writeVersionedHeader( ba);
+			//  n unsigned char root grain size
+			//  n+1 oxel data
+			ba.writeByte(oxel.gc.bound);
+			oxel.writeData( ba);
+			
+			ba.compress();
+			
+			return ba;
+		}
+		
+		private function writeVersionedHeader( $ba:ByteArray):void
 		{
 			/*
 			   ------------------------------------------
@@ -1098,24 +1046,42 @@ package com.voxelengine.worldmodel.models
 			   3 char '0' (zero) major version
 			   4 char '' (0-9) minor version
 			   5 char '' (0-9) lesser version
-			   6 unsigned char model info version
-			   7...n-1 modelInfo
-			   n unsigned char root grain size
-			   n+1 oxel data
+			   6 unsigned char model info version - (0) for local models
+			   ...n-1 if 0 then oxel data next, otherwise next byte is size of model json
 			   ------------------------------------------
 			 */
-			throw new Error( "Not supported" );   
-			writeHeaderVersion002(ba);
-			oxel.writeData(ba);
+			
+			$ba.writeByte('i'.charCodeAt());
+			$ba.writeByte('v'.charCodeAt());
+			$ba.writeByte('m'.charCodeAt());
+			$ba.writeByte(Globals.VERSION.charCodeAt(0));
+			$ba.writeByte(Globals.VERSION.charCodeAt(1));
+			$ba.writeByte(Globals.VERSION.charCodeAt(2));
+			writeManifest( $ba );
 		}
 		
-		public function IVMSaveLocal(ba:ByteArray):void
-		{
-			writeVersionedHeader( Globals.VERSION, ba);
-			// have to do this here since writeVersionedData is recursive
-			ba.writeByte(oxel.gc.bound);
-			oxel.writeData( ba);
-			ba.compress();
+		private function writeManifest( $ba:ByteArray ):ByteArray {
+			
+			/*
+			   ------------------------------------------
+				0 for local models
+			   OR for network models
+				0 => Globals.MANIFEST_VERSION 
+			    1 => size of model json
+			    2 - n => model json uncompressed
+			   ------------------------------------------
+			 */
+			if ( false == Globals.sandbox ) {
+				$ba.writeByte(Globals.MANIFEST_VERSION);
+				var modelJson:String = modelInfo.getJSON();
+				modelJson = encodeURI(modelJson);
+				$ba.writeInt(modelJson.length);
+				$ba.writeUTFBytes(modelJson);
+			}
+			else
+				$ba.writeByte(0);
+
+			return $ba;	
 		}
 		
 		// This reads the format info and advances position on byteArray
@@ -1201,6 +1167,8 @@ package com.voxelengine.worldmodel.models
 			_statisics.gather( _version, $ba, rootGrainSize);
 			// Version specific data
 			//Log.out( "VoxelModel.loadOxelFromByteArray - modelInfo: " + modelInfo.fileName );
+			registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
+			registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
 			if (Globals.VERSION_000 == _version)
 			{
 				//Log.out("VoxelModel.loadFromIVMFormat - Globals.VERSION_000 fileName: " + modelInfo.fileName );
@@ -1209,8 +1177,6 @@ package com.voxelengine.worldmodel.models
 			}
 			else if (Globals.VERSION_001 == _version)
 			{
-				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
-				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
 				oxel.readVersionedData( Globals.VERSION_001, null, gct, $ba, _statisics );
 			}
 			else if (Globals.VERSION_002 == _version)
@@ -1218,21 +1184,21 @@ package com.voxelengine.worldmodel.models
 				// Version 2 is handled in different way, since it has modelInfo and byteArray in same object
 				//throw new Error("VoxelModel.loadFromIVMFormat - VERSION NOT SUPPORTED IN THIS FUNCTION");
 				// This version requires a new readData function
-				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
-				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
 				// changes in read are in the Brightness...
 				oxel.readVersionedData( Globals.VERSION_002, null, gct, $ba, _statisics );
 			}
 			else if (Globals.VERSION_003 == _version)
 			{
-				registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
-				registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
+				oxel.readVersionedData( Globals.VERSION_003, null, gct, $ba, _statisics );
+			}
+			else if (Globals.VERSION_004 == _version)
+			{
 				oxel.readVersionedData( Globals.VERSION_003, null, gct, $ba, _statisics );
 			}
 			else
 			{
 				// Version 2 is handled in different way, since it has modelInfo and byteArray in same object
-				throw new Error("VoxelModel.loadFromIVMFormat - BAD VERSION");
+				throw new Error("VoxelModel.loadFromIVMFormat - UNSUPPORTED VERSION");
 			}
 			
 			oxel.gc.bound = rootGrainSize;
@@ -1520,27 +1486,6 @@ package com.voxelengine.worldmodel.models
 		public function validate():void
 		{
 			oxel.validate();
-		}
-		
-		public function validateOld():void
-		{
-			// get the ivm data.
-			var layer:LayerInfo = modelInfo.biomes.layers[0];
-			var ivmName:String = "";
-			if ("LoadModelFromIVM" == layer.functionName)
-			{
-				ivmName = layer.data;
-			}
-			else
-			{
-				throw new Error("VoxelModel.validate - unable to operate on dynamically generated data");
-				return;
-			}
-			
-			var ba:ByteArray = Globals.g_modelManager.findIVM(ivmName);
-			ba.position = OXEL_DATA_STARTING_LOC;
-			validateOxel(ba, oxel.gc.grain);
-			ba.position = OXEL_DATA_STARTING_LOC;
 		}
 		
 		private function validateOxel(ba:ByteArray, currentGrain:int):ByteArray
