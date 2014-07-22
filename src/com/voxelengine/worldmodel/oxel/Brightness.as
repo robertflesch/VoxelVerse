@@ -7,6 +7,7 @@
 ==============================================================================*/
 package com.voxelengine.worldmodel.oxel
 {
+	import com.voxelengine.renderer.Quad;
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 
@@ -79,7 +80,7 @@ public class Brightness  {  // extends BrightnessData
 	public function get negY000():uint { return ((_lowerAmbient  & 0x03000000) >> 24 ); }
 	public function get negY001():uint { return ((_lowerAmbient  & 0x0c000000) >> 26 ); }
 	public function get negY100():uint { return ((_lowerAmbient  & 0x30000000) >> 28 ); }
-	public function get negY101():uint { return ((_lowerAmbient  & 0xc0000000) >> 30 ); }
+	public function get negY101():uint { return ((_lowerAmbient  & 0xc0000000) >>> 30 ); }
 
 	public function get posZ001():uint { return ((_higherAmbient  & 0x00000003)); }
 	public function get posZ011():uint { return ((_higherAmbient  & 0x0000000c) >> 2 ); }
@@ -811,13 +812,12 @@ public class Brightness  {  // extends BrightnessData
 			}
 		}
 		
-		// FIX - not seeing any effect from this.
 		var cornerAttn:uint = cornerForFace( $face, $corner );
 		if ( 0 < cornerAttn ) {
-			cornerAttn = MAX_LIGHT_LEVEL - cornerAttn * li.attn * 2;
+			cornerAttn = MAX_LIGHT_LEVEL - cornerAttn * li.attn * 4; //* 2;
 			cornerAttn = Math.max( cornerAttn, 0 );
 			_compositeColor = ColorUtils.placeAlpha( _compositeColor, cornerAttn );
-			Log.out( "Brightness.lightGetComposite for corner - _compositeColor: " + ColorUtils.extractAlpha( _compositeColor ) );
+//			Log.out( "Brightness.lightGetComposite for corner - _compositeColor: " + ColorUtils.extractAlpha( _compositeColor ) );
 //_compositeColor = ColorUtils.placeAlpha( _compositeColor, 0x00 );
 		} else {
 			_compositeColor = ColorUtils.placeAlpha( _compositeColor, MAX_LIGHT_LEVEL );
@@ -1136,65 +1136,466 @@ public class Brightness  {  // extends BrightnessData
 	 *        |
 	 *        \/
 	 */
-	private static const CORNER_BUMP_VAL:uint = 1;
-	private function incrementEdge( $majorFace:int, $minorFace:int ):void {
-		
+	private function incrementEdgeAdjacent( $oxel:Oxel, $majorFace:int, $edgeFace:int ):void {
+		var an:Oxel;
  		if ( Globals.POSX == $majorFace ) {
 			
-			if ( Globals.POSY == $minorFace ) {
-				posX110 = posX110 + 1;
-				posX111 = posX111 + 1;
+			if ( Globals.POSY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX110 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX111 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
-			else if ( Globals.NEGY == $minorFace ) {
-				posX100 = posX100 + 1;
-				posX101 = posX101 + 1;
+			else if ( Globals.NEGY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX100 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX101 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
-			else if ( Globals.POSZ == $minorFace ) {
-				posX101 = posX101 + 1;
-				posX111 = posX111 + 1;
+			else if ( Globals.POSZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX101 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX111 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
-			else if ( Globals.NEGZ == $minorFace ) {
-				posX110 = posX110 + 1;
-				posX100 = posX100 + 1;
+			else if ( Globals.NEGZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX100 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posX110 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
 		}
 		else if ( Globals.NEGX == $majorFace ) {
-			if ( Globals.POSY == $minorFace ) {
-				negX010 = negX010 + 1;
-				negX011 = negX010 + 1;
+			if ( Globals.POSY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX010 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX011 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			} 
+			else if ( Globals.NEGY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX000 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX001 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
-			else if ( Globals.NEGY == $minorFace ) {
-				negX000 = negX000 + 1;
-				negX001 = negX001 + 1;
+			else if ( Globals.POSZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX001 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX011 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
-			else if ( Globals.POSZ == $minorFace ) {
-				negX001 = negX001 + 1;
-				negX011 = negX011 + 1;
-			}
-			else if ( Globals.NEGZ == $minorFace ) {
-				negX000 = negX000 + 1;
-				negX010 = negX010 + 1;
+			else if ( Globals.NEGZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX000 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negX010 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
 			}
 		}
 		else if ( Globals.POSY == $majorFace ) 
 		{
-			if ( Globals.POSX == $minorFace ) 
-			{
+			if ( Globals.POSX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY110 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY111 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY010 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY011 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.POSZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY011 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY111 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY010 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posY110 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+		}
+		else if ( Globals.NEGY == $majorFace ) {
+
+			if ( Globals.POSX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY100 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY101 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSZ);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY000 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGZ)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY001 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.POSZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY001 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY101 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGZ == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY000 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negY100 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+		}
+		else if ( Globals.POSZ == $majorFace ) {
+
+			if ( Globals.POSX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ101 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ111 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ001 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ011 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.POSY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ011 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ111 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ001 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.posZ101 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+		}
+		else if ( Globals.NEGZ == $majorFace ) {
+			
+			if ( Globals.POSX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ100 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ110 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSY);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ000 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGY)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ010 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.POSY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ010 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ110 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+			else if ( Globals.NEGY == $edgeFace ) {
+				an = $oxel.neighbor(Globals.POSX);
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ000 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+					
+				an = $oxel.neighbor(Globals.NEGX)
+				if ( Oxel.validLightable( an ) ) {
+					an.brightness.negZ100 = CORNER_BUMP_VAL;
+					an.quadRebuild( $majorFace ); }
+			}
+		}
+
+	}
+	
+	private static const CORNER_RESET_VAL:uint = 0;
+	private static const CORNER_BUMP_VAL:uint = 1;
+	private function edgeIncrement( $majorFace:int, $edgeFace:int ):void {
+		
+ 		if ( Globals.POSX == $majorFace ) {
+			
+			if ( Globals.POSY == $edgeFace ) {
+				posX110 = CORNER_BUMP_VAL;
+				posX111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGY == $edgeFace ) {
+				posX100 = CORNER_BUMP_VAL;
+				posX101 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSZ == $edgeFace ) {
+				posX101 = CORNER_BUMP_VAL;
+				posX111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGZ == $edgeFace ) {
+				posX110 = CORNER_BUMP_VAL;
+				posX100 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.NEGX == $majorFace ) {
+			if ( Globals.POSY == $edgeFace ) {
+				negX010 = CORNER_BUMP_VAL;
+				negX011 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGY == $edgeFace ) {
+				negX000 = CORNER_BUMP_VAL;
+				negX001 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSZ == $edgeFace ) {
+				negX001 = CORNER_BUMP_VAL;
+				negX011 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGZ == $edgeFace ) {
+				negX000 = CORNER_BUMP_VAL;
+				negX010 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.POSY == $majorFace ) {
+			if ( Globals.POSX == $edgeFace ) {
 				posY110 = CORNER_BUMP_VAL;
 				posY111 = CORNER_BUMP_VAL;
 			}
-			else if ( Globals.NEGX == $minorFace ) 
-			{
+			else if ( Globals.NEGX == $edgeFace ) {
 				posY010 = CORNER_BUMP_VAL;
 				posY011 = CORNER_BUMP_VAL;
 			}
-			else if ( Globals.POSZ == $minorFace ) 
-			{
+			else if ( Globals.POSZ == $edgeFace ) {
 				posY011 = CORNER_BUMP_VAL;
 				posY111 = CORNER_BUMP_VAL;
 			}
-			else if ( Globals.NEGZ == $minorFace ) 
-			{
+			else if ( Globals.NEGZ == $edgeFace ) {
+				posY010 = CORNER_BUMP_VAL;
+				posY110 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.NEGY == $majorFace ) {
+
+			if ( Globals.POSX == $edgeFace ) {
+				negY100 = CORNER_BUMP_VAL;
+				negY101 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				negY000 = CORNER_BUMP_VAL;
+				negY001 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSZ == $edgeFace ) {
+				negY001 = CORNER_BUMP_VAL;
+				negY101 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGZ == $edgeFace ) {
+				negY000 = CORNER_BUMP_VAL;
+				negY100 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.POSZ == $majorFace ) {
+
+			if ( Globals.POSX == $edgeFace ) {
+				posZ101 = CORNER_BUMP_VAL;
+				posZ111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				posZ001 = CORNER_BUMP_VAL;
+				posZ011 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSY == $edgeFace ) {
+				posZ011 = CORNER_BUMP_VAL;
+				posZ111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGY == $edgeFace ) {
+				posZ001 = CORNER_BUMP_VAL;
+				posZ101 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.NEGZ == $majorFace ) {
+			
+			if ( Globals.POSX == $edgeFace ) {
+				negZ100 = CORNER_BUMP_VAL;
+				negZ110 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGX == $edgeFace ) {
+				negZ000 = CORNER_BUMP_VAL;
+				negZ010 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSY == $edgeFace ) {
+				negZ010 = CORNER_BUMP_VAL;
+				negZ110 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGY == $edgeFace ) {
+				negZ000 = CORNER_BUMP_VAL;
+				negZ100 = CORNER_BUMP_VAL;
+			}
+		}
+	}
+	
+	private function incrementCorner( $majorFace:int, $minorFace:int, $corner:int ):void {
+		
+ 		if ( Globals.POSX == $majorFace ) {
+			
+			if ( Globals.POSY == $minorFace ) {
+				if ( 0 == $corner )
+					posX110 = CORNER_BUMP_VAL;
+				else
+					posX111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGY == $minorFace ) {
+				posX100 = CORNER_BUMP_VAL;
+				posX101 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				posX101 = CORNER_BUMP_VAL;
+				posX111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
+				posX110 = CORNER_BUMP_VAL;
+				posX100 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.NEGX == $majorFace ) {
+			if ( Globals.POSY == $minorFace ) {
+				negX010 = CORNER_BUMP_VAL;
+				negX011 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGY == $minorFace ) {
+				negX000 = CORNER_BUMP_VAL;
+				negX001 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				negX001 = CORNER_BUMP_VAL;
+				negX011 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
+				negX000 = CORNER_BUMP_VAL;
+				negX010 = CORNER_BUMP_VAL;
+			}
+		}
+		else if ( Globals.POSY == $majorFace ) 
+		{
+			if ( Globals.POSX == $minorFace ) {
+				posY110 = CORNER_BUMP_VAL;
+				posY111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGX == $minorFace ) {
+				posY010 = CORNER_BUMP_VAL;
+				posY011 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.POSZ == $minorFace ) {
+				posY011 = CORNER_BUMP_VAL;
+				posY111 = CORNER_BUMP_VAL;
+			}
+			else if ( Globals.NEGZ == $minorFace ) {
 				posY010 = CORNER_BUMP_VAL;
 				posY110 = CORNER_BUMP_VAL;
 			}
@@ -1202,64 +1603,111 @@ public class Brightness  {  // extends BrightnessData
 		else if ( Globals.NEGY == $majorFace ) {
 
 			if ( Globals.POSX == $minorFace ) {
-				negY100 = negY100 + 1;
-				negY101 = negY101 + 1;
+				negY100 = CORNER_BUMP_VAL;
+				negY101 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.NEGX == $minorFace ) {
-				negY000 = negY000 + 1;
-				negY001 = negY001 + 1;
+				negY000 = CORNER_BUMP_VAL;
+				negY001 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.POSZ == $minorFace ) {
-				negY001 = negY001 + 1;
-				negY101 = negY101 + 1;
+				negY001 = CORNER_BUMP_VAL;
+				negY101 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.NEGZ == $minorFace ) {
-				negY000 = negY000 + 1;
-				negY100 = negY100 + 1;
+				negY000 = CORNER_BUMP_VAL;
+				negY100 = CORNER_BUMP_VAL;
 			}
 		}
 		else if ( Globals.POSZ == $majorFace ) {
 
 			if ( Globals.POSX == $minorFace ) {
-				posZ101 = posZ101 + 1;
-				posZ111 = posZ111 + 1;
+				posZ101 = CORNER_BUMP_VAL;
+				posZ111 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.NEGX == $minorFace ) {
-				posZ001 = posZ001 + 1;
-				posZ011 = posZ011 + 1;
+				posZ001 = CORNER_BUMP_VAL;
+				posZ011 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.POSY == $minorFace ) {
-				posZ011 = posZ011 + 1;
-				posZ111 = posZ111 + 1;
+				posZ011 = CORNER_BUMP_VAL;
+				posZ111 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.NEGY == $minorFace ) {
-				posZ001 = posZ001 + 1;
-				posZ101 = posZ101 + 1;
+				posZ001 = CORNER_BUMP_VAL;
+				posZ101 = CORNER_BUMP_VAL;
 			}
 		}
 		else if ( Globals.NEGZ == $majorFace ) {
 			
 			if ( Globals.POSX == $minorFace ) {
-				negZ100 = negZ100 + 1;
-				negZ110 = negZ110 + 1;
+				negZ100 = CORNER_BUMP_VAL;
+				negZ110 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.NEGX == $minorFace ) {
-				negZ000 = negZ000 + 1;
-				negZ010 = negZ010 + 1;
+				negZ000 = CORNER_BUMP_VAL;
+				negZ010 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.POSY == $minorFace ) {
-				negZ010 = negZ010 + 1;
-				negZ110 = negZ110 + 1;
+				negZ010 = CORNER_BUMP_VAL;
+				negZ110 = CORNER_BUMP_VAL;
 			}
 			else if ( Globals.NEGY == $minorFace ) {
-				negZ000 = negZ000 + 1;
-				negZ100 = negZ100 + 1;
+				negZ000 = CORNER_BUMP_VAL;
+				negZ100 = CORNER_BUMP_VAL;
 			}
 		}
 	}
 	
-	public function evaluateAmbientOcculusion( $oxel:Oxel, $face:int ):void {
-		var no:Oxel = $oxel.neighbor( $face );
+	
+	public function occlusionResetAll():void {
+		_lowerAmbient = 0;
+		_higherAmbient = 0;
+	}
+	
+	public function occlusionResetFace( $face:int ):void {
+ 		if ( Globals.POSX == $face ) {
+			posX110 = CORNER_RESET_VAL;
+			posX111 = CORNER_RESET_VAL;
+			posX100 = CORNER_RESET_VAL;
+			posX101 = CORNER_RESET_VAL;
+		}
+		else if ( Globals.NEGX == $face ) {
+			negX010 = CORNER_RESET_VAL;
+			negX011 = CORNER_RESET_VAL;
+			negX000 = CORNER_RESET_VAL;
+			negX001 = CORNER_RESET_VAL;
+		}
+		else if ( Globals.POSY == $face ) 	{
+			posY110 = CORNER_RESET_VAL;
+			posY111 = CORNER_RESET_VAL;
+			posY010 = CORNER_RESET_VAL;
+			posY011 = CORNER_RESET_VAL;
+		}
+		else if ( Globals.NEGY == $face ) {
+			negY100 = CORNER_RESET_VAL;
+			negY101 = CORNER_RESET_VAL;
+			negY000 = CORNER_RESET_VAL;
+			negY001 = CORNER_RESET_VAL;
+		}
+		else if ( Globals.POSZ == $face ) {
+			posZ101 = CORNER_RESET_VAL;
+			posZ111 = CORNER_RESET_VAL;
+			posZ001 = CORNER_RESET_VAL;
+			posZ011 = CORNER_RESET_VAL;
+		}
+		else if ( Globals.NEGZ == $face ) {
+			negZ100 = CORNER_RESET_VAL;
+			negZ110 = CORNER_RESET_VAL;
+			negZ000 = CORNER_RESET_VAL;
+			negZ010 = CORNER_RESET_VAL;
+		}
+	}
+	
+	public function evaluateAmbientOcculusion( $o:Oxel, $face:int ):void {
+		
+		var no:Oxel = $o.neighbor( $face );
+		var childId:uint = $o.gc.childId();
 		if ( Globals.BAD_OXEL == no )
 			return;
 		var nno:Oxel;
@@ -1268,19 +1716,25 @@ public class Brightness  {  // extends BrightnessData
 		for ( var index:int = 0; index < 5; index++ ) {
 			var af:int = afs[index];
 			nno = no.neighbor( af );
+			if ( !Oxel.validLightable( nno ) )
+				continue;
 			// FIX - if nno is larger, then, how do I evaluate?
 			// FIX - if nno is larger, then, how do I evaluate?
 			// FIX - if nno is larger, then, how do I evaluate?
 			if ( nno.childrenHas() ) {
-				Log.out( "evaluateAmbientOcculusion - neighbor has faces" );
+				//Log.out( "evaluateAmbientOcculusion - neighbor has faces" );
 			}
 			else if ( nno.faceHas( Oxel.face_get_opposite( af ) ) ) {
 				// bump the count on edge of tested oxel.
-				incrementEdge( $face, af );
+				edgeIncrement( $face, af );
 				// bump the count on edge of tested oxel.
 				// TODO - Could this bump it too far?
-				nno.brightness.incrementEdge( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) )
+				nno.brightness.edgeIncrement( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
+				// Problem with this is it makes the next frame dirty too, which causes every frame to be dirty, not good!
+				//nno.quadMarkDirty( Oxel.face_get_opposite( af ) );
 				nno.quadRebuild( Oxel.face_get_opposite( af ) );
+				
+				nno.brightness.incrementEdgeAdjacent( nno, Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
 			}
 		}
 	}

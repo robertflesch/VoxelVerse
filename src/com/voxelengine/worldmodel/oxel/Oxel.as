@@ -94,6 +94,7 @@ package com.voxelengine.worldmodel.oxel
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		public function get quads():Vector.<Quad> { return _quads; }
+		public function quad( $face:int ):Quad { return _quads[$face]; }
 		public function get children():Vector.<Oxel> { return _children; }
 
 		// Type is stored in the lower 2 bytes ( or 1 ) of the _data variable
@@ -236,6 +237,19 @@ package com.voxelengine.worldmodel.oxel
 		
 		// Intentionally empty, since these are allocated enmase in pool
 		public function Oxel() {
+		}
+
+		static public function validLightable( $o:Oxel ):Boolean {
+			
+			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
+				return false;
+			
+			if ( !$o.brightness ) { // does this oxel already have a brightness?
+				$o.brightness = BrightnessPool.poolGet();
+				$o.brightness.materialFallOffFactor = Globals.Info[$o.type].lightInfo.fallOffFactor;
+			}
+
+			return true;
 		}
 		
 		public function validate():void
@@ -655,7 +669,7 @@ package com.voxelengine.worldmodel.oxel
 				return this;
 			
 			// anytime oxel changes, neighbors need to know
-			neighborsMarkDirtyFaces( $guid );
+			neighborsMarkDirtyFaces( $guid, gc.size() );
 			
 			if ( Globals.AIR == type && _parent )
 			{
@@ -990,15 +1004,19 @@ package com.voxelengine.worldmodel.oxel
 		}
 		
 		// Mark all of the faces opposite this oxel as dirty
-		public function neighborsMarkDirtyFaces( $guid:String ):void {
+		public function neighborsMarkDirtyFaces( $guid:String, $size:int ):void {
 			var no:Oxel = null;
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
 			{
 				no = neighbor(face);
-				if ( Globals.BAD_OXEL != no )
-				{
+				if ( Globals.BAD_OXEL == no )
+					continue;
+				else if ( no.isSolid ) {
 					//trace( "Oxel.neighborsMarkDirtyFaces - our face: " + Globals.Plane[face].name + " their face: " + Globals.Plane[face_get_opposite( face )].name );
 					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
+				}
+				else if ( no.hasAlpha && 0 < $size ) {
+					no.neighborsMarkDirtyFaces( $guid, $size - gc.size() );
 				}
 			}
 		}
@@ -1056,6 +1074,12 @@ package com.voxelengine.worldmodel.oxel
 				// TODO This needs to be refactored to remove this from this function, so more likely go in the write function of the voxelModel.
 				if ( Globals.Info[type].flowable && Globals.autoFlow && EditCursor.EDIT_CURSOR != $guid )
 					Flow.addTask( $guid, gc, type, flowInfo, 1 );
+					
+				if ( _quads && _quads[$face] )
+					_quads[$face].dirty = 1;
+
+				if ( brightness )
+					brightness.occlusionResetFace( $face );
 
 				super.face_mark_dirty( $guid, $face );
 			}
@@ -1070,7 +1094,7 @@ package com.voxelengine.worldmodel.oxel
 			quadsDeleteAll();
 			
 			// anytime oxel changes, neighbors need to know
-			neighborsMarkDirtyFaces( $guid );
+			neighborsMarkDirtyFaces( $guid, gc.size() );
 			faces_mark_all_dirty();
 		}
 		
@@ -1085,7 +1109,9 @@ package com.voxelengine.worldmodel.oxel
 				if ( childrenHas() )
 				{
 					// parents dont have faces!
-					faces_clear_all();
+					if ( facesHas() )
+						faces_clear_all();
+						
 					dirty = false;
 					
 					for each ( var child:Oxel in _children ) {
@@ -1107,22 +1133,22 @@ package com.voxelengine.worldmodel.oxel
 			return continueProcessing;
 		}
 		
-		private function quadAmbient( $face:int ):void {
+		private function quadAmbient( $face:int, $ti:TypeInfo ):void {
 			
 			if ( !_brightness ) {
-				var ti:TypeInfo = Globals.Info[type];
 				_brightness = BrightnessPool.poolGet();
-				if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
-					var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
-					li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
-				}
-				_brightness.materialFallOffFactor = ti.lightInfo.fallOffFactor;
+				//if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
+					//var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+					//li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
+				//}
+				_brightness.materialFallOffFactor = $ti.lightInfo.fallOffFactor;
 				
-				if ( true == ti.lightInfo.fullBright && false == ti.lightInfo.lightSource )
-					_brightness.lightFullBright();
 			}
 			
-			_brightness.evaluateAmbientOcculusion( this, $face );
+			if ( true == $ti.lightInfo.fullBright && false == $ti.lightInfo.lightSource )
+				_brightness.lightFullBright();
+			
+			//_brightness.evaluateAmbientOcculusion( this, $face );
 		}
 
 		protected function faces_build_terminal():void {
@@ -1384,16 +1410,19 @@ package com.voxelengine.worldmodel.oxel
 		protected function quadsBuildTerminal( $plane_facing:int = 1 ):void {
 			var quadCount:int = 0;
 
+			if ( gc.eval( 4, 0, 4, 15 ) )
+				Log.out( "watch faces get built" );
 			// Does this oxel have faces
 			if ( facesHas() )
 			{
-				var ti:TypeInfo  = Globals.Info[type];
 				if ( null == _quads )
 					_quads = QuadsPool.poolGet();
 				
+				var ti:TypeInfo = Globals.Info[type];
 				var scale:uint = 1 << gc.grain;
+				// We have to go thru each one, since some may be added, and others removed.
 				for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
-					quadCount += quadAddOrRemoveFace( face, $plane_facing, scale );
+					quadCount += quadAddOrRemoveFace( face, $plane_facing, scale, ti );
 			}
 			else 
 			{
@@ -1417,17 +1446,22 @@ package com.voxelengine.worldmodel.oxel
 			dirty = false;
 		}
 		
-		protected function quadAddOrRemoveFace( $face:int, $plane_facing:int, $scale:uint ):int {
+		protected function quadAddOrRemoveFace( $face:int, $plane_facing:int, $scale:uint, $ti:TypeInfo ):int {
 			var validFace:Boolean = faceHas($face);
 			var quad:Quad = _quads[$face];
 			
 			// has face and quad
-			if ( validFace && quad )
+			if ( validFace && quad ) {
+				if ( quad.dirty ) {
+					quadAmbient( $face, $ti );
+					quad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness );
+				}
 				return 1;
+			}
 			// face but no quad
 			else if ( validFace && !quad ) 
 			{
-				quadAmbient( $face );				
+				quadAmbient( $face, $ti );				
 				quad = QuadPool.poolGet();
 				if ( flowInfo && isFlowable ) {
 					if ( !quad.buildScaled( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness, flowInfo ) ) {
@@ -1476,6 +1510,17 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 
+		public function quadMarkDirty( $face:int ):void {
+			if  ( !_quads )
+				return;
+			dirty = true;
+			var quad:Quad = _quads[$face];
+			if ( quad )
+			{
+				quad.dirty = 1;
+			}
+		}
+		
 		public function quadsRebuildAll():void {
 			if  ( !_quads )
 				return;

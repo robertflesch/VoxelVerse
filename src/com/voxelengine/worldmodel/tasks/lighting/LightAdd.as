@@ -39,7 +39,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				var vm:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				if ( vm ) {
 					var lo:Oxel = vm.oxel.childFind( $le.gc );
-					if ( valid( lo ) )
+					if ( Oxel.validLightable( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
 						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Brightness.MAX_LIGHT_LEVEL, ti.lightInfo.attn, true ) )
@@ -58,7 +58,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				var vmc:VoxelModel = Globals.g_modelManager.getModelInstance( $le.instanceGuid );
 				if ( vmc ) {
 					var co:Oxel = vmc.oxel.childFind( $le.gc );
-					if ( co && valid( co ) )
+					if ( co && Oxel.validLightable( co ) )
 					{
 						// This oxel changed from solid to AIR or Translucent
 						// So I just need to rebalance it as an AIR oxel
@@ -111,7 +111,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 				try {
 					var lo:Oxel = vm.oxel.childFind( _gc );
-					if ( valid( lo ) ) {
+					if ( Oxel.validLightable( lo ) ) {
 						
 						if ( !lo.gc.is_equal( _gc ) )
 							Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
@@ -134,19 +134,6 @@ package com.voxelengine.worldmodel.tasks.lighting
 			super.complete();
 		}
 		
-		static private function valid( $o:Oxel ):Boolean {
-			
-			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
-				return false;
-			
-			if ( !$o.brightness ) { // does this oxel already have a brightness?
-				$o.brightness = BrightnessPool.poolGet();
-				$o.brightness.materialFallOffFactor = Globals.Info[$o.type].lightInfo.fallOffFactor;
-			}
-
-			return true;
-		}
-		
 		private function spreadToNeighbors( $lo:Oxel ):void {
 				
 			for ( var face:int = Globals.POSX; face <= Globals.NEGZ; face++ )
@@ -157,7 +144,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				
 				var no:Oxel = $lo.neighbor(face);
 					
-				if ( !valid( no ) ) continue;
+				if ( !Oxel.validLightable( no ) ) continue;
 				if ( no.isLight ) continue;
 				if ( checkIfProcessed( no ) ) continue;
 				
@@ -314,7 +301,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					// add influence from the temp child to the actual child.
 					if ( bt.valuesHas() )
 					{
-						if ( !valid( noChild ) )
+						if ( !Oxel.validLightable( noChild ) )
 							Log.out( "LightAdd.projectOnNeighborChildren - How do I get here?", Log.ERROR );
 						
 						// Project the virtual brightness object on the real child of the same size

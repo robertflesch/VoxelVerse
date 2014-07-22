@@ -49,10 +49,14 @@ public class Quad {
 	//     Member Variables
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// These are accessed by the VertexIndexBuilder when building the Vertex and Index buffers
-	public var components:Vector.<VertexComponent> = new Vector.<VertexComponent>(COMPONENT_COUNT * VERTEX_PER_QUAD, true);
-	public var _indices:Vector.<uint> 		= new Vector.<uint>(INDICES,true);
-	private var _U:Vector.<Number> = new Vector.<Number>(QUAD_UV_COUNT,true);
-	private var _V:Vector.<Number> = new Vector.<Number>(QUAD_UV_COUNT,true);
+	public  var components:Vector.<VertexComponent> = new Vector.<VertexComponent>(COMPONENT_COUNT * VERTEX_PER_QUAD, true);
+	public  var _indices:Vector.<uint> 				= new Vector.<uint>(INDICES,true);
+	private var _U:Vector.<Number> 					= new Vector.<Number>(QUAD_UV_COUNT,true);
+	private var _V:Vector.<Number> 					= new Vector.<Number>(QUAD_UV_COUNT, true);
+	private var _data:uint;
+
+	public function get dirty():uint { return ((_data & 0x00000001)); }
+	public function set dirty( value:uint ):void { _data = ((_data & 0xfffffffe) | value); }	
 	
 	// Empty constuctor for QuadPool
 	public function Quad():void { };
@@ -65,6 +69,7 @@ public class Quad {
 						     $brightness:Brightness ):void			
 	{
 		add( $type, $x, $y, $z, $face, $$planeFacing, $scale, Globals.Info[$type], $brightness );
+		dirty = 0;
 	}
 	
 	public function build( $type:int,						// material type
@@ -555,10 +560,6 @@ public class Quad {
 		}
 			
 		buildIndices( normal );
-		
-		for each ( var component:VertexComponent in components )
-			if ( null == component )
-				Log.out("ERROR" );
 	}
 }
 }
