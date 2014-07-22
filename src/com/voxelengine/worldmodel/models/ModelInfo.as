@@ -34,6 +34,7 @@ package com.voxelengine.worldmodel.models
 		private var _animations:Vector.<Animation> 		= new Vector.<Animation>();
 
 		public function get json():Object 						{ return _modelJson; }
+		public function jsonReset():void 						{ _modelJson = toJSON(null); }
 		public function get fileName():String 					{ return _fileName; }
 		public function set fileName(val:String):void 			{ _fileName = val; }
 		public function get editable():Boolean 					{ return _editable; }
