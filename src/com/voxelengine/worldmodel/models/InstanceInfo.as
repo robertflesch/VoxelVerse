@@ -181,7 +181,7 @@ package com.voxelengine.worldmodel.models
 
 		public function toString():String
 		{
-			return templateName + " " + positionGet + " controllingModel: " + (controllingModel ? controllingModel.instanceInfo.instanceGuid : "None" + "  instanceGuid: " + instanceGuid );
+			return " templateName: " + templateName + " " + positionGet + " controllingModel: " + (controllingModel ? controllingModel.instanceInfo.instanceGuid : "None" + "  instanceGuid: " + instanceGuid );
 		}
 
 		private function onLoadingComplete( le:LoadingEvent ):void
