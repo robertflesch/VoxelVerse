@@ -1011,7 +1011,7 @@ package com.voxelengine.worldmodel.oxel
 				no = neighbor(face);
 				if ( Globals.BAD_OXEL == no )
 					continue;
-				else if ( no.isSolid ) {
+				else if ( no.isSolid || no.childrenHas() ) {
 					//trace( "Oxel.neighborsMarkDirtyFaces - our face: " + Globals.Plane[face].name + " their face: " + Globals.Plane[face_get_opposite( face )].name );
 					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
 				}
