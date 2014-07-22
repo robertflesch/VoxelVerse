@@ -41,11 +41,9 @@ public class FlowInfo
 	private static const FLOW_CONTRIBUTE_OFFSET:uint		= 24;
 
 	public static const FLOW_TYPE_UNDEFINED:int				= 0;
-	public static const FLOW_TYPE_MELT:int						= 1;
-	public static const FLOW_TYPE_CONTINUOUS:int					= 2;
-	public static const FLOW_TYPE_SPRING:int						= 3;
-	
-	public static const FLOW_DIR_UNDEFINED:int				= 6;
+	public static const FLOW_TYPE_MELT:int					= 1;
+	public static const FLOW_TYPE_CONTINUOUS:int			= 2;
+	public static const FLOW_TYPE_SPRING:int				= 3;
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//  _flowInfo function this is a bitwise data field. which holds flow type, CONTRIBUTE, count out and count down
@@ -71,12 +69,16 @@ public class FlowInfo
 		_flowInfo &= FLOW_FLOW_DIR_MASK;
 		_flowInfo = $val | _flowInfo;
 		
-		if ( FLOW_DIR_UNDEFINED == direction )
+		if ( Globals.ALL_DIRS == direction )
 			return;
-		else if ( Globals.POSY == direction || Globals.NEGY == direction )
-			downDec();
-		else 
-			outDec();
+		else if ( Globals.POSY == direction || Globals.NEGY == direction ) {
+			if ( 0 < down )
+				downDec();
+		}
+		else {
+			if ( 0 < out )
+				outDec();
+		}
 	}
 	
 	//public 	function get contribute():int { return (_flowInfo & FLOW_FLOW_CONTRIBUTE) >> FLOW_CONTRIBUTE_OFFSET; }
@@ -94,10 +96,14 @@ public class FlowInfo
 	
 	
 	public function FlowInfo() {
-		direction = FLOW_DIR_UNDEFINED;
+		direction = Globals.ALL_DIRS;
 		// TODO this should be melt/pour type 
 		type = FLOW_TYPE_UNDEFINED;
 		//Log.out( "FlowInfo.constructor" );
+	}
+	
+	public function toString():String {
+		return "FlowInfo - type: " + type + "  out: " + out + "  down: " + down + "  dir: " + direction;
 	}
 	
 	public function clone( isChild:Boolean = false ):FlowInfo {
@@ -122,7 +128,7 @@ public class FlowInfo
 			out =  outVal;
 			outRef = outVal;
 			down = $flowJson[2];
-			direction = FlowInfo.FLOW_DIR_UNDEFINED;
+			direction = Globals.ALL_DIRS;
 		}
 		else
 			Log.out( "FlowInfo.fromJson - INCORRECT NUMBER OF PARAMETERS, EXPECTED 3, GOT: " + $flowJson.length );

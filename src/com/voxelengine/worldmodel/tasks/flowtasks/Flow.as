@@ -31,13 +31,15 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 	 */
 	public class Flow extends FlowTask 
 	{		
-		static public function addTask( $instanceGuid:String, gc:GrainCursor, $type:int, $flowInfo:FlowInfo, $taskPriority:int ):void 
+		static public function addTask( $instanceGuid:String, $gc:GrainCursor, $type:int, $flowInfo:FlowInfo, $taskPriority:int ):void 
 		{
-			Globals.g_flowTaskController.addTask( new Flow( $instanceGuid, gc, $type, $flowInfo, FlowTask.TASK_TYPE, FlowTask.TASK_PRIORITY + $taskPriority ) );
+			var f:Flow = new Flow( $instanceGuid, $gc, $type, $flowInfo, $gc.toID(), $taskPriority );
+			f.selfOverride = true;
+			Globals.g_flowTaskController.addTask( f );
 		}
 		
-		public function Flow( $instanceGuid:String, $gc:GrainCursor, $type:int, $flowInfo:FlowInfo, $taskType:String = TASK_TYPE, $taskPriority:int = TASK_PRIORITY ):void {
-			//Log.out( "Flow.create" );
+		public function Flow( $instanceGuid:String, $gc:GrainCursor, $type:int, $flowInfo:FlowInfo, $taskType:String, $taskPriority:int ):void {
+			Log.out( "Flow.create flowInfo: " + $flowInfo.toString() );
 			_flowInfo = $flowInfo;
 			super( $instanceGuid, $gc, $type, $taskType, $taskPriority );
 			
@@ -100,7 +102,7 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 		public function flowTerminal( flowOxel:Oxel ):void {
 
 			var ft:int = flowOxel.flowInfo.type;
-			Log.out( "Flow.flowTerminal - flowable oxel of type: " + ft );
+			//Log.out( "Flow.flowTerminal - flowable oxel of type: " + ft );
 			if ( FlowInfo.FLOW_TYPE_CONTINUOUS == ft )
 				flowStartContinous(flowOxel);
 			else if ( FlowInfo.FLOW_TYPE_MELT == ft )
@@ -108,12 +110,12 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 			else if ( FlowInfo.FLOW_TYPE_SPRING == ft )
 				flowStartSpring(flowOxel);
 			else
-				Log.out( "Flow.flowTerminal - NO FLOW TYPE FOUND", Log.ERROR );
+				Log.out( "Flow.flowTerminal - NO FLOW TYPE FOUND ft: " + ft, Log.ERROR );
 		}
 		
 		private function scale( flowOxel:Oxel ):void
 		{
-			Log.out( "Flow.scale.start - FlowOxel scaleInfo: " + flowOxel.flowInfo.flowScaling.toString() );
+			//Log.out( "Flow.scale.start - FlowOxel scaleInfo: " + flowOxel.flowInfo.flowScaling.toString() );
 				
 			if ( flowOxel.type == _type )
 			{
@@ -126,7 +128,6 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 				return; 
 			}
 				
-			Log.out( "Flow.scale.past returns" );
 			if ( Globals.getTypeId( "obsidian" ) == flowOxel.type )
 			{
 				flowOxel.flowInfo.flowScaling.scaleRecalculate( flowOxel );
@@ -166,7 +167,7 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 
 				_flowInfo = null;
 			}
-			Log.out( "Flow.scale.end - FlowOxel scaleInfo: " + flowOxel.flowInfo.flowScaling.toString() );
+			//Log.out( "Flow.scale.end - FlowOxel scaleInfo: " + flowOxel.flowInfo.flowScaling.toString() );
 		}
 		
 		override public function cancel():void {
@@ -191,21 +192,18 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 
 		private function flowStartContinous(flowOxel:Oxel):void {
 			// Prefer going down if possible (or up for floatium)
+			var floatiumTypeID:uint = Globals.getTypeId( "floatium" );
 			var fc:Vector.<FlowTest> = new Vector.<FlowTest>;
 			var partial:Boolean = false;
-			if ( Globals.getTypeId( "floatium" ) == type )
-			{
+			if ( floatiumTypeID == type )
 				partial = flowable( flowOxel, Globals.POSY, fc );
-			}
 			else
-			{
 				partial = flowable( flowOxel, Globals.NEGY, fc );
-			}
 				
 			// if there is water below us, dont do anything
 			if ( 0 == fc.length && partial )
 				return;
-			// if we found a down, add that as a priority
+			// if we found a down/up, add that as a priority
 			else if ( 0 < fc.length )
 			{
 				flowTasksAdd( fc, true, flowOxel.flowInfo );
@@ -244,6 +242,8 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 				var fi:FlowInfo = $flowInfo.clone();
 				fi.direction = flowTest.dir;
 				if ( 0 == fi.out )
+					continue;
+				if ( 0 == fi.down )
 					continue;
 
 				Flow.addTask( _guid, flowTest.flowCandidate.gc, type, fi, taskPriority + 1 )
@@ -395,8 +395,9 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 
 import com.voxelengine.worldmodel.oxel.Oxel;
 import com.voxelengine.worldmodel.oxel.FlowInfo;
+import com.voxelengine.Globals;
 internal class FlowTest
 {
 	public var flowCandidate:Oxel = null;
-	public var dir:int = FlowInfo.FLOW_DIR_UNDEFINED;
+	public var dir:int = Globals.ALL_DIRS;
 }
