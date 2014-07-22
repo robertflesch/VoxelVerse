@@ -19,29 +19,6 @@ package com.voxelengine.worldmodel.oxel
  */
 public class FlowScaling
 {
-	/*
-	private var pxPz:Number = DEFAULT_SCALE;
-	public var PxNz:Number = DEFAULT_SCALE;
-	public var NxNz:Number = DEFAULT_SCALE;
-	public var NxPz:Number = DEFAULT_SCALE;
-	*/
-
-	private var _scale:uint;
-	public function get PxPz():uint { return ((_scale  & 0x0000000f)) + 1; }
-	public function get PxNz():uint { return ((_scale  & 0x000000f0) >> 4 ) + 1; }
-	public function get NxNz():uint { return ((_scale  & 0x00000f00) >> 8 ) + 1; }
-	public function get NxPz():uint { return ((_scale  & 0x0000f000) >> 12 ) + 1; }
-	
-	public function set PxPz( value:uint ):void { 
-		Log.out( "PxPz set pre: " + PxPz + "  value: " + value );
-		_scale = ((_scale & 0xfffffff0) | ( value - 1 )); 
-		Log.out( "PxPz set pst: " + PxPz );
-	}	
-	
-	public function set PxNz( value:uint ):void { _scale = ((_scale & 0xffffff0f) | (( value - 1 ) << 4) ); }
-	public function set NxNz( value:uint ):void { _scale = ((_scale & 0xfffff0ff) | (( value - 1 ) << 8) ); }
-	public function set NxPz( value:uint ):void { _scale = ((_scale & 0xffff0fff) | (( value - 1 ) << 12) ); }
-	
 	private const CORNER_MIN:Number = 1;
 	private const DEFAULT_SCALE:Number = 16;
 	
@@ -49,6 +26,17 @@ public class FlowScaling
 	private var _calculated:Boolean = false
 	private var _scaleRate:Number = 2;
 	public function get calculated():Boolean { return _calculated; }
+	
+	private var _scale:uint;
+	public function get PxPz():uint { return ((_scale  & 0x0000000f)) + 1; }
+	public function get PxNz():uint { return ((_scale  & 0x000000f0) >> 4 ) + 1; }
+	public function get NxNz():uint { return ((_scale  & 0x00000f00) >> 8 ) + 1; }
+	public function get NxPz():uint { return ((_scale  & 0x0000f000) >> 12 ) + 1; }
+	
+	public function set PxPz( value:uint ):void { _scale = ((_scale & 0xfffffff0) | ( value - 1 )); }
+	public function set PxNz( value:uint ):void { _scale = ((_scale & 0xffffff0f) | (( value - 1 ) << 4) ); }
+	public function set NxNz( value:uint ):void { _scale = ((_scale & 0xfffff0ff) | (( value - 1 ) << 8) ); }
+	public function set NxPz( value:uint ):void { _scale = ((_scale & 0xffff0fff) | (( value - 1 ) << 12) ); }
 	
 	/*
 	 *               _____Nz_____
@@ -70,11 +58,11 @@ public class FlowScaling
 	 * 
 	 */
 	public function FlowScaling():void {
-		_scale = 0xffffffff;
+		reset();
 	}
 	
-	private function rnd( $val:Number ):Number {
-		return int($val*100)/100;
+	private function reset():void {
+		_scale = 0xffffffff;	
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
@@ -96,6 +84,10 @@ public class FlowScaling
 			_scale = $ba.readUnsignedInt();
 		}
 		return $ba;
+		
+		function rnd( $val:Number ):Number {
+			return int($val*100)/100;
+		}
 	}
 	 
 	/*
@@ -109,11 +101,7 @@ public class FlowScaling
 		// first reset this oxels scaling
 		if ( scalingHas() )
 		{
-			PxPz = DEFAULT_SCALE;
-			PxNz = DEFAULT_SCALE;
-			NxNz = DEFAULT_SCALE;
-			NxPz = DEFAULT_SCALE;
-			
+			reset();
 			$oxel.rebuildAll();
 		}
 	}
@@ -153,10 +141,7 @@ public class FlowScaling
 	
 		_calculated = true;
 		// set these to a minimum level, so that their influence for the other corners can be felt
-		PxPz = CORNER_MIN;
-		PxNz = CORNER_MIN;
-		NxNz = CORNER_MIN;
-		NxPz = CORNER_MIN;
+		_scale = 0x00000000;
 		
 		for each ( var horizontalDir:int in Globals.horizontalDirections )
 		{
@@ -174,7 +159,7 @@ public class FlowScaling
 			NxNz = fi.scale()/_scaleRate;
 		if ( CORNER_MIN == NxPz )
 			NxPz = fi.scale()/_scaleRate;
-		Log.out( "FlowScaling.scalingCalculate caculated: " + toString() );
+		//Log.out( "FlowScaling.scalingCalculate caculated: " + toString() );
 	}
 		
 	private function grabNeighborInfluences( $oxel:Oxel, $dir:int ):void {
