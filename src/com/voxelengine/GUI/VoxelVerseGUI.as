@@ -126,6 +126,7 @@ package com.voxelengine.GUI
 				if ( StageDisplayState.FULL_SCREEN_INTERACTIVE == Globals.g_app.stage.displayState )
 					Globals.g_app.stage.mouseLock = false;
 			}
+			Log.out( "VoxelVerseGui.openWindowCount - adjust - current count: " + _openWindowCount );
 		}
 		
 		
@@ -175,9 +176,7 @@ package com.voxelengine.GUI
 					vm.save();
 				else
 				{
-					var ba:ByteArray = new ByteArray();
-					ba.clear();
-					vm.IVMSaveLocal( ba );
+					var ba:ByteArray = vm.IVMSave();
 
 					_fileReference.save( ba, vm.modelInfo.fileName + "_new.ivm");
 					_fileReference.addEventListener( Event.CANCEL, function ( e:Event ):void { Globals.GUIControl = false; } );
