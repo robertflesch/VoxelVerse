@@ -1144,10 +1144,10 @@ package com.voxelengine.worldmodel.oxel
 			
 			if ( !_brightness ) {
 				_brightness = BrightnessPool.poolGet();
-				//if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
-					//var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
-					//li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
-				//}
+				if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+					li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
+				}
 				_brightness.materialFallOffFactor = $ti.lightInfo.fallOffFactor;
 				
 			}
