@@ -2014,7 +2014,7 @@ package com.voxelengine.worldmodel.oxel
 			for each ( var child:Oxel in _children )
 			{
 				// make sure child has not already been released.
-				if ( child.gc )
+				if ( child && child.gc )
 					child.write_sphere( $guid, cx, cy, cz, radius, $newType, gmin );
 			}
 			
