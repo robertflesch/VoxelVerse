@@ -289,9 +289,17 @@ Log.out( "Player.onChildAdded - Player has BOMP" )
 
 			if ( 0 < Shader.lightCount() ) {
 				var sl:ShaderLight = Shader.lights(0);
-				sl.position = instanceInfo.positionGet.clone();
-				sl.position.y += 30;
-				sl.position.x += 4;
+				if ( Globals.controlledModel != this ) {
+					sl.position = Globals.controlledModel.instanceInfo.positionGet.clone();
+					sl.position.y += 30;
+					sl.position.x += 4;
+				}
+				else 
+				{
+					sl.position = instanceInfo.positionGet.clone();
+					sl.position.y += 30;
+					sl.position.x += 4;
+				}
 				sl.update();
 			}
 
