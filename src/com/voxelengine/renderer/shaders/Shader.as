@@ -213,6 +213,23 @@ package com.voxelengine.renderer.shaders
 			_program3D.upload(vertexShaderAssembler.agalcode, fragmentAssembler.agalcode);
 		}
 		
+		protected function constantsReset():void {
+			
+				var i:int = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+				_constants[i++] = 0;
+		}
+		
 		protected function setFragmentData( $isChild:Boolean, $vm:VoxelModel, $context:Context3D ): void {
 			
 			// TODO - pass in multiple lights
@@ -221,18 +238,20 @@ package com.voxelengine.renderer.shaders
 			var light:ShaderLight;
 			var nearDistance:Number;
 			var endDistance:Number;
-			if ( 0 < Shader.lightCount() ) {
+			if ( 0 < Shader.lightCount() ) { // This is currently ALWAYS true, no light is just a black light
 				light = lights(0);
 				lp = light.position;
 				color = light.color;
 				nearDistance = light.nearDistance;
 				endDistance = light.endDistance;
-				if ( $isChild )
-				{
+				// this seems to be useless, but I might need to to light children models correctly.
+				//if ( $isChild )
+				//{
 					// TO DO  - RSF - I think I need to handle the torch differently
-					var topMost:VoxelModel = $vm.topmostControllingModel();
-					lp = topMost.instanceInfo.worldToModel( light.position );
-				}
+					//var topMost:VoxelModel = $vm.topmostControllingModel();
+					//lp = topMost.instanceInfo.worldToModel( light.position );
+					//lp = topMost.instanceInfo.modelToWorld( light.position );
+				//}
 				var i:int = 0;
 				_constants[i++] = lp.x; // light position    |
 				_constants[i++] = lp.y; //                   |
@@ -247,6 +266,8 @@ package com.voxelengine.renderer.shaders
 				_constants[i++] = color.z; //                | FC2
 				_constants[i++] = 0;       //                |_
 			}
+			else
+				constantsReset();
 			
 			// This allows for moving light posision, light color
 			$context.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT , 0 , _constants );
