@@ -157,7 +157,7 @@ package com.voxelengine.worldmodel.models
 		}
 		
 		public function create( instance:InstanceInfo ):void {
-			Log.out( "ModelManager.create: instance.templateName" + instance.templateName )
+			//Log.out( "ModelManager.create: instance.templateName" + instance.templateName )
 			instanceInfoAdd( instance );
 			
 			if ( !Globals.isGuid( instance.templateName ) && instance.templateName != "LoadModelFromBigDB" )
@@ -253,7 +253,7 @@ package com.voxelengine.worldmodel.models
 				throw new Error( "ModelManager.instantiate - Model failed in creation - modelClass: " + modelClass );
 			
 			
-			Log.out( "ModelManager.instantiate - modelClass: " + modelClass + "  instanceInfo: " + $instanceInfo.toString() );
+			//Log.out( "ModelManager.instantiate - modelClass: " + modelClass + "  instanceInfo: " + $instanceInfo.toString() );
 			modelAdd( vm );
 		}
 		
@@ -361,7 +361,7 @@ package com.voxelengine.worldmodel.models
 			
 		public function onModelLoadedAction(event:Event):void {
 			var req:URLRequest = CustomURLLoader(event.target).request;			
-Log.out("ModelManager.onModelLoadedAction - requested: " + req.url );
+//Log.out("ModelManager.onModelLoadedAction - requested: " + req.url );
 			var fileName:String = CustomURLLoader(event.target).fileName;			
 			
 			var fileData:String = String(event.target.data);
@@ -579,7 +579,7 @@ Log.out("ModelManager.onModelLoadedAction - requested: " + req.url );
 		public function createPlayer():void	{
 			
 			//private static var g_player:Player = null;			
-			Log.out("ModelManager.createPlayer" );
+			//Log.out("ModelManager.createPlayer" );
 			var instanceInfo:InstanceInfo = new InstanceInfo();
 			instanceInfo.instanceGuid = PLAYER_ID;
 			instanceInfo.templateName = "Player"
