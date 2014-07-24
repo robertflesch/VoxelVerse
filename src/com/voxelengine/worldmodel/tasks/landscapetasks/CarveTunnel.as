@@ -13,6 +13,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 	import com.voxelengine.worldmodel.biomes.*;
 	import com.voxelengine.worldmodel.tasks.landscapetasks.LandscapeTask;
 	import com.voxelengine.Globals;
+	import flash.geom.Vector3D;
 	import flash.utils.getTimer;
 	
 	/**
@@ -51,39 +52,19 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
             var sy:int = vm.editCursor.instanceInfo.positionGet.y;
             var sz:int = vm.editCursor.instanceInfo.positionGet.z;
 			trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " starting at x: " + sx + "  y: " + sy + "  z: " + sz );					
-/*
-            // pick a random diections to go
-            var xdir:int = Math.random() * 2; if (xdir == 0) xdir = -1;
-            var ydir:int = ydir = -1; // Math.random() * 2); if (ydir == 0) ydir = -1;
-            var zdir:int = Math.random() * 2; if (zdir == 0) zdir = -1;
-
-            const radiusParameter:int = radius;
-			while (length > 0)
-            {
-                if (sx>radius + 5 && sy >radius + 5 && sz>radius + 5 &&
-                    sx < ox.gc.size() - radius - 5 &&
-                    sy < ox.gc.size() - radius - 5 &&
-                    sz < ox.gc.size() - radius - 5) {
-                        ox.empty_sphere( _guid, sx, sy, sz, radius, 2 );
-                }
-                sx += (Math.random() * 3 * xdir);
-                sy += (Math.random() * 2 * ydir);
-                sz += (Math.random() * 3 * zdir);
-
-				// Old way
-				//	radius += Math.random() * 2 - Math.random() * 2;
-
-				//	if (radius < 1) radius = 2;
-				//	if (radius > 4) radius = 3;
-				 
-                //radius += Math.random() * radiusParameter - Math.random() * radiusParameter/2;
-
-                //if (radius < 1) radius = 0;
-                //if (radius > 4) radius = 3;
-
-                length--;
-            }
-*/			
+			
+			// I need a normalize view vector
+			// And then expand from that location
+			var vv:Vector3D = Globals.g_modelManager.getViewVectorNormalized();
+			vv.scaleBy( 24 );
+			for ( var i:int = 1; i < 50; i++ ) {
+				vm.oxel.write_sphere( _guid, sx, sy, sz, Math.min( 32, Math.random() * 64), Globals.AIR, 3);
+				//vm.oxel.write_sphere( _guid, sx, sy, sz, 48, Globals.AIR, 3);
+				sx += vv.x;
+				sy += vv.y;
+				sz += vv.z;
+				trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " next at x: " + sx + "  y: " + sy + "  z: " + sz );					
+			}
 
 			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer-_startTime)  );					
             super.complete() // AbstractTask will send event
