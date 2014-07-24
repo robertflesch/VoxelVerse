@@ -672,6 +672,12 @@ package com.voxelengine.worldmodel.models
 		private var _worldSpaceStartPoint:Vector3D;
 		private var _worldSpaceEndPoint:Vector3D;
 		
+		public function getViewVectorNormalized():Vector3D {
+			var newV:Vector3D = _worldSpaceEndPoint.subtract( _worldSpaceStartPoint );
+			newV.normalize();
+			return newV;
+		}
+		
 		public function highLightEditableOxel():void {
 			if ( !Globals.controlledModel )
 				return;
