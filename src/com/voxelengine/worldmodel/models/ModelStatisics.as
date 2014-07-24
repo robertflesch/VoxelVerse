@@ -12,6 +12,7 @@ package com.voxelengine.worldmodel.models
 	import com.voxelengine.worldmodel.oxel.FlowInfo;
 	import flash.utils.ByteArray;
 	
+	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
 	import com.voxelengine.worldmodel.oxel.OxelData;
 	import com.voxelengine.worldmodel.oxel.Oxel;
@@ -75,6 +76,7 @@ package com.voxelengine.worldmodel.models
 				$ba.position = 8;
 			initialize();
 			_rootGrain = $rootGrain;
+			/*
 			process( $version, $ba, _rootGrain );
 			$ba.position = orginalPosition;
 			
@@ -98,6 +100,7 @@ package com.voxelengine.worldmodel.models
 //			statsPrint();
 //			trace( "ModelStatisics.grather - old count: " + count );
 //			trace( "ModelStatisics.grather - meter count: " + countInMeters );
+*/
 		}
 		
 		private function process( $version:String, $ba:ByteArray, currentGrain:int ):ByteArray
@@ -134,6 +137,8 @@ package com.voxelengine.worldmodel.models
 		
 		public function statAdd( type:int, grain:int ):void
 		{
+			if ( type < 100 )
+				Log.out( "ModelStatisics.statAdd - Where does this come from?" );
 			if ( isNaN( _stats[type] ) )
 				_stats[type]  = 0;
 			var count:int = Math.pow( Math.pow( 2, grain ), 3 );			
