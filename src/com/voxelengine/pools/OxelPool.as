@@ -16,7 +16,7 @@ import com.voxelengine.worldmodel.oxel.Oxel
 public final class OxelPool 
 { 
 	private static var _currentPoolSize:uint; 
-	private static var GROWTH_VALUE:uint; 
+	private static var _growthValue:uint; 
 	private static var _counter:uint; 
 	private static var _pool:Vector.<Oxel>; 
 	private static var _currentOxel:Oxel; 
@@ -28,7 +28,7 @@ public final class OxelPool
 	public static function initialize( maxPoolSize:uint, growthValue:uint ):void 
 	{ 
 		_currentPoolSize = maxPoolSize; 
-		GROWTH_VALUE = growthValue; 
+		_growthValue = growthValue; 
 		_counter = maxPoolSize; 
 		 
 		var i:uint = maxPoolSize; 
@@ -46,10 +46,10 @@ public final class OxelPool
 		Log.out( "OxelPool.poolGet - Allocating more Oxel: " + _currentPoolSize );
 		var timer:int = getTimer();
 
-		_currentPoolSize += GROWTH_VALUE;
+		_currentPoolSize += _growthValue;
 		_pool = null
 		_pool = new Vector.<Oxel>(_currentPoolSize);
-		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
+		for ( var newIndex:int = 0; newIndex < _growthValue; newIndex++ )
 		{
 			_pool[newIndex] = new Oxel();
 		}
@@ -65,21 +65,5 @@ public final class OxelPool
 	{ 
 		_pool[_counter++] = $disposedOxel; 
 	} 
-	
-	static private function getMemoryHash( oxel:Oxel ):String
-	{
-		var memoryHash:String;
-		try
-		{
-			FakeClass(_currentOxel);
-		}
-		catch (e:Error)
-		{
-			memoryHash = String(e).replace(/.*([@|\$].*?) to .*$/gi, '$1');
-		}
-		return memoryHash;
-	}
 } 
 }
-
-internal final class FakeClass { }

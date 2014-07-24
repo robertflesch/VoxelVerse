@@ -10,54 +10,56 @@ package com.voxelengine.pools
 {
 
 import flash.utils.getTimer;
-import com.voxelengine.worldmodel.oxel.GrainCursor
+
 import com.voxelengine.Log;
+import com.voxelengine.worldmodel.oxel.GrainCursor
      
 public final class GrainCursorPool 
 { 
 	private static var _currentPoolSize:uint; 
-	private static var GROWTH_VALUE:uint; 
-	private static var counter:uint; 
-	private static var pool:Vector.<GrainCursor>; 
-	private static var currentGrainCursor:GrainCursor; 
+	private static var _growthValue:uint; 
+	private static var _counter:uint; 
+	private static var _pool:Vector.<GrainCursor>; 
+	private static var _currentGrainCursor:GrainCursor; 
 	
-	static public function remaining():uint { return counter; }
+	static public function remaining():uint { return _counter; }
 	static public function total():uint { return _currentPoolSize; }
-	static public function totalUsed():uint { return _currentPoolSize - counter; }
+	static public function totalUsed():uint { return _currentPoolSize - _counter; }
 
 	public static function initialize( maxPoolSize:uint, growthValue:uint ):void 
 	{ 
 		_currentPoolSize = maxPoolSize; 
-		GROWTH_VALUE = growthValue; 
-		counter = maxPoolSize; 
+		_growthValue = growthValue; 
+		_counter = maxPoolSize; 
 		 
 		var i:uint = maxPoolSize; 
 		 
-		pool = new Vector.<GrainCursor>(_currentPoolSize); 
+		_pool = new Vector.<GrainCursor>(_currentPoolSize); 
 		while( --i > -1 ) 
-			pool[i] = new GrainCursor(); 
+			_pool[i] = new GrainCursor(); 
 	} 
 	 
 	public static function poolGet( boundingGrain:int ):GrainCursor 
 	{ 
-		if ( counter > 0 ) {
-			currentGrainCursor = pool[--counter];
-			currentGrainCursor.bound = boundingGrain;
-			return currentGrainCursor; 
+		if ( _counter > 0 ) {
+			_currentGrainCursor = _pool[--_counter];
+			_currentGrainCursor.bound = boundingGrain;
+			return _currentGrainCursor; 
 		}
 			 
-		Log.out( "GrainCursorPool.poolGet - Allocating more GrainCursors: " + GROWTH_VALUE );
+		Log.out( "GrainCursorPool.poolGet - Allocating more GrainCursors: " + _growthValue );
 		var timer:int = getTimer();
 
-		_currentPoolSize += GROWTH_VALUE;
-		pool = null
-		pool = new Vector.<GrainCursor>(_currentPoolSize);
-		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
+		_currentPoolSize += _growthValue;
+		_pool = null
+		_pool = new Vector.<GrainCursor>(_currentPoolSize);
+		for ( var newIndex:int = 0; newIndex < _growthValue; newIndex++ )
 		{
-			pool[newIndex] = new GrainCursor();
+			_pool[newIndex] = new GrainCursor();
 		}
 		
-		counter = newIndex - 1; 
+		_counter = newIndex - 1; 
+		_growthValue *= 2;
 		
 		Log.out( "GrainCursorPool.poolGet - Done allocating more GrainCursors, total size: " + _currentPoolSize  + " took: " + (getTimer() - timer) );
 		return poolGet(boundingGrain); 
@@ -67,7 +69,7 @@ public final class GrainCursorPool
 	public static function poolDispose(disposedGrainCursor:GrainCursor):void 
 	{ 
 		disposedGrainCursor.reset();
-		pool[counter++] = disposedGrainCursor; 
+		_pool[_counter++] = disposedGrainCursor; 
 	} 
 } 
 }
