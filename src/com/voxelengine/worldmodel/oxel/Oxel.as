@@ -671,12 +671,19 @@ package com.voxelengine.worldmodel.oxel
 			// anytime oxel changes, neighbors need to know
 			neighborsMarkDirtyFaces( $guid, gc.size() );
 			
-			if ( Globals.AIR == type && _parent )
+			var p:Oxel = _parent;
+			// This is only a two level merge, brain not up to a n level recursive today...
+			if ( Globals.AIR == type && p )
 			{
 				// make a copy since this oxel may be going away.
-				var p:Oxel = _parent;
-				if ( _parent.checkForMerge() )
-					return p;
+				if ( p.checkForMerge() )
+				{
+					p = p.parent;
+					if ( p && p.checkForMerge() )
+						return p;
+					else 
+						return _parent;
+				}
 			}
 			
 			return this;
