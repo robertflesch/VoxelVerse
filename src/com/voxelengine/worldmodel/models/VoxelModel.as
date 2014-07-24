@@ -643,7 +643,7 @@ package com.voxelengine.worldmodel.models
 				if (oxel && oxel.dirty)
 				{
 					_timer = getTimer();
-					Log.out( "VoxelModel.internal_update - starting facing and quad building" );	
+					//Log.out( "VoxelModel.internal_update - starting facing and quad building" );	
 					oxel.timeBuilding = getTimer();
 					var newFacesFound:Boolean = oxel.faces_build();
 					//Log.out( "VoxelModel.internal_update - faces_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
@@ -652,7 +652,7 @@ package com.voxelengine.worldmodel.models
 //Log.out( "VoxelModel.internal_update - new faces found - faces_build - model guid: " + modelInfo.fileName + " time: " + oxel.timeBuilding );					
 						_timer = getTimer();
 						oxel.quadsBuild();
-						Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
+						//Log.out( "VoxelModel.internal_update - quads_build - model guid: " + modelInfo.fileName + " - inst guid: " + instanceInfo.instanceGuid + " took: " + (getTimer() - _timer) );					
 					}
 				}
 			}
@@ -1133,9 +1133,10 @@ package com.voxelengine.worldmodel.models
 			$ba.position = 0;
 			var format:String = VoxelModel.readFormat($ba);
 			if ("ivm" != format)
-				throw new Error("VoxelModel.IVMLoad - Exception - unsupported format");
+				throw new Error("VoxelModel.IVMLoadUncompressed - Exception - unsupported format");
 			
 			_version = VoxelModel.readVersion($ba);
+			//Log.out( "VoxelModel.IVMLoadUncompressed - loading model: " + modelInfo.fileName + "  of version: " + _version );
 			loadOxelFromByteArray($ba);
 		}
 		
