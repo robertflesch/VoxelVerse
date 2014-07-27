@@ -224,7 +224,7 @@ public class VertexIndexBuilder
 
 				oxelStartingIndex = oxelsProcessed;
 				remainingOxels = _oxels.length - oxelsProcessed;
-				//trace( "VertexIndexBuilder.buffersBuildFromOxels oxelStartingIndex: " + oxelStartingIndex + " oxelsProcessed: " + oxelsProcessed + " remainingQuads: " + remainingQuads + " quadsProcessed: " + quadsProcessed );
+				trace( "VertexIndexBuilder.buffersBuildFromOxels oxelStartingIndex: " + oxelStartingIndex + " oxelsProcessed: " + oxelsProcessed + " quadsProcessed: " + quadsProcessed );
 			}
 		}	
 		
@@ -295,7 +295,11 @@ public class VertexIndexBuilder
 
 	private function addComponentData():void {
 		_vertexDataSize = 0;
-		for each ( var oxel:Oxel in _oxels ) {
+		var oxelSize:int = _oxels.length;
+		var oxel:Oxel;
+		//for each ( var oxel:Oxel in _oxels ) { // This is a slower way
+		for ( var index:int; index < oxelSize; index++ ) {
+		    oxel = _oxels[index];
 			if ( oxel.quads ) {
 				for each ( var quad:Quad in oxel.quads ) {
 					if ( quad && 0 < quad.components.length ) {
@@ -313,21 +317,15 @@ public class VertexIndexBuilder
 
 	public function BufferCopyToGPU( context:Context3D ) : void 
 	{
-		//var timer:int = getTimer();
 		var vb:VertexBuffer3D;
 		var ib:IndexBuffer3D;
 		var index:uint;
 		var offset:uint;
+		var timer:int = getTimer();
 		for (var i:int = 0; i < _buffers; i++) {
 			vb = _vertexBuffers[i];
 			
-			//index = 0;
 			offset = 0;
-			//for each ( var vc:VertexComponent in _vc ) {
-				//context.setVertexBufferAt( index++, vb, offset, vc.type() );
-				//offset += vc.size();
-			//}
-			
 			for ( index = 0; index < _vc.length; index++ ) {
 				context.setVertexBufferAt( index, vb, offset, _vc[index].type() );
 				offset += _vc[index].size();
