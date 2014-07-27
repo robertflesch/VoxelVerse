@@ -679,10 +679,16 @@ package com.voxelengine.worldmodel.oxel
 				if ( p.checkForMerge() )
 				{
 					p = p.parent;
-					if ( p && p.checkForMerge() )
+					if ( p && p.checkForMerge() ) {
+						if ( null == p )
+							Log.out( "out" );
 						return p;
+						
+					}
 					else 
-						return _parent;
+						if ( null == p )
+							Log.out( "out1" );
+						return p;
 				}
 			}
 			
@@ -701,6 +707,7 @@ package com.voxelengine.worldmodel.oxel
 		public function write( $guid:String, $gc:GrainCursor, $newType:int, $onlyChangeType:Boolean = false ):Oxel	{
 			
 			var co:Oxel = childGetOrCreate( $gc );
+				
 			if ( Globals.BAD_OXEL == co )
 			{
 				Log.out( "Oxel.write - cant find child!", Log.ERROR );
@@ -709,8 +716,8 @@ package com.voxelengine.worldmodel.oxel
 			
 			if ( $newType == co.type && $gc.bound == co.gc.bound && !co.childrenHas() )
 				return co;
-				
-			return co.writeInternal( $guid, $newType, $onlyChangeType );
+			
+			return co.writeInternal( $guid, $newType, $onlyChangeType );	
 		}
 				
 		public function dispose():void {
