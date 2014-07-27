@@ -8,10 +8,14 @@
 
 package com.voxelengine.worldmodel.tasks.landscapetasks
 {
+	import flash.utils.getTimer;
+	
 	import com.developmentarc.core.tasks.tasks.AbstractTask;
+	
 	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.biomes.LayerInfo;
-	import flash.utils.getTimer;
+	import com.voxelengine.worldmodel.oxel.Oxel;
+	import com.voxelengine.Log;
 	
 	/**
 	 * ...
@@ -32,6 +36,20 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			_startTime = getTimer();
 			
 			super(taskType, taskPriority);
+		}
+
+		protected function merge( $o:Oxel ):void {
+			var stillNodes:Boolean = true;
+			var timer:int;
+			while ( stillNodes )
+			{
+				timer = getTimer();
+				Oxel.nodes = 0;
+				$o.mergeRecursive();
+				if ( 50 > Oxel.nodes )
+					stillNodes = false;
+				Log.out( "LandscapeTask - merging recovered: " + Oxel.nodes + " took: " + (getTimer() - timer) );
+			}
 		}
 		
 	}
