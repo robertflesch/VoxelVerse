@@ -672,12 +672,13 @@ package com.voxelengine.worldmodel.models
 		private var _worldSpaceStartPoint:Vector3D;
 		private var _worldSpaceEndPoint:Vector3D;
 		
-		public function getViewVectorNormalized():Vector3D {
+		public function viewVectorNormalizedGet():Vector3D {
 			var newV:Vector3D = _worldSpaceEndPoint.subtract( _worldSpaceStartPoint );
 			newV.normalize();
 			return newV;
 		}
 		
+		public var _gci:GrainCursorIntersection;
 		public function highLightEditableOxel():void {
 			if ( !Globals.controlledModel )
 				return;
@@ -709,12 +710,12 @@ package com.voxelengine.worldmodel.models
 					}
 					_totalIntersections.sort( sortIntersections );
 
-					var gci:GrainCursorIntersection = _totalIntersections.shift();
+					_gci = _totalIntersections.shift();
 					/////////////////////////////////////////
-					if ( gci )
+					if ( _gci )
 					{
-						gci.point = editableModel.worldToModel( gci.point );
-						editableModel.editCursor.setGCIData( gci );
+						_gci.point = editableModel.worldToModel( _gci.point );
+						editableModel.editCursor.setGCIData( _gci );
 					}
 					else	
 					{
