@@ -18,6 +18,13 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 	
 	/**
 	 * ...
+	 * 
+	 * 	const numOfTunnel:uint = 1;
+		const tunnelLength:uint = 256;
+		const tunnelRadius:uint = 64;
+		var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", Globals.AIR, tunnelRadius, numOfTunnel, "", tunnelLength );
+	 * 
+	 * 
 	 * @author Robert Flesch
 	 */
 	public class CarveTunnel extends LandscapeTask 
@@ -41,32 +48,42 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 				return;
 			}
 			
-			var tunnelLength:int = Math.random() * 500;
-			if ( 0 <_layer.optionalInt )
-				tunnelLength =_layer.optionalInt;
-            var tunnelRadius:int =_layer.range;
+            var tunnelLength:int =_layer.range;
+            var tunnelRadius:int =_layer.offset;
 			var voxelType:int = _layer.type;
 			
-            // pick a random starting location
-			var sx:int = vm.editCursor.instanceInfo.positionGet.x;
-            var sy:int = vm.editCursor.instanceInfo.positionGet.y;
-            var sz:int = vm.editCursor.instanceInfo.positionGet.z;
+			if ( Globals.g_modelManager._gci ) {
+				
+				var sx:int = Globals.g_modelManager._gci.point.x;				
+				var sy:int = Globals.g_modelManager._gci.point.y;				
+				var sz:int = Globals.g_modelManager._gci.point.z;				
+			}
+			else 
+			{
+				super.complete()
+				return;
+			}
+				
 			trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " starting at x: " + sx + "  y: " + sy + "  z: " + sz );					
 			
 			// I need a normalize view vector
 			// And then expand from that location
-			var vv:Vector3D = Globals.g_modelManager.getViewVectorNormalized();
-			vv.scaleBy( 24 );
-			for ( var i:int = 1; i < 50; i++ ) {
-				vm.oxel.write_sphere( _guid, sx, sy, sz, Math.min( 32, Math.random() * 64), Globals.AIR, 3);
-				//vm.oxel.write_sphere( _guid, sx, sy, sz, 48, Globals.AIR, 3);
-				sx += vv.x;
-				sy += vv.y;
-				sz += vv.z;
+			var vv:Vector3D = Globals.g_modelManager.viewVectorNormalizedGet();
+			var stepSize:int = 24;
+			vv.scaleBy( stepSize );
+			for ( var i:int = 1; i < tunnelLength/stepSize; i++ ) {
+				//vm.oxel.write_sphere( _guid, sx, sy, sz, Math.min( 36, Math.random() * 96), Globals.AIR, 3);
+				//vm.oxel.write_sphere( _guid, sx, sy, sz, stepSize * 1.5, Globals.AIR, 3);
+				var dia:int = Math.min( tunnelRadius * 0.85, Math.random() * tunnelRadius * 4);
+				vm.oxel.write_sphere( _guid, sx, sy, sz, dia, Globals.AIR, 3);
+				sx += vv.x + Math.random() * 5;
+				sy += vv.y + Math.random() * 5;
+				sz += vv.z + Math.random() * 5;
 				trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " next at x: " + sx + "  y: " + sy + "  z: " + sz );					
 			}
 
-			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer-_startTime)  );					
+			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime)  );
+			merge( vm.oxel );
             super.complete() // AbstractTask will send event
 		}
 
