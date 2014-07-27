@@ -188,10 +188,10 @@ package com.voxelengine
 			var taskGroup:TaskGroup = new TaskGroup("CarveTunnel for " + guid, 2);
         
 			// This loads the tasks into the LandscapeTaskQueue
-			const numOfTunnel:uint = 1;
-			const tunnelLength:uint = 256;
-			const tunnelRadius:uint = 64;
-			var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", Globals.AIR, tunnelRadius, numOfTunnel, "", tunnelLength );
+			const tunnelLength:uint = 512;
+			const tunnelRadius:uint = 32;
+			//public function LayerInfo( functionName:String = null, data:String = "", type:int = 0 , range:int = 0, offset:int = 0, optional1:String = "", optional2:int = 0 )
+			var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", Globals.AIR, tunnelLength, tunnelRadius );
 			var task:ITask = null;
 			task = new CarveTunnel( guid, layer );
 			

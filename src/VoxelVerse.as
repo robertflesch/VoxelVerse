@@ -183,6 +183,7 @@ package {
 //			Log.out( "VoxelVerse.active" + e.toString() );
 			Globals.active = true;
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, keyUp);
 			dispatchEvent( new GUIEvent( GUIEvent.APP_ACTIVATE ) );
 		}
 		
@@ -246,6 +247,7 @@ package {
 			Globals.mouseView = false;
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
 			stage.removeEventListener(KeyboardEvent.KEY_DOWN, keyDown);
+			stage.removeEventListener(KeyboardEvent.KEY_UP, keyUp);
 		}
 
 		private function toggleConsole():void 
@@ -257,13 +259,36 @@ package {
 				Log.show();
 		}
 		
+		private var _shiftDown:Boolean;
+		private var _controlDown:Boolean;
 		private function keyDown(e:KeyboardEvent):void 
 		{
 			switch (e.keyCode) {
-				case Keyboard.BACKQUOTE:
+				//case Keyboard.BACKQUOTE:
+				case Keyboard.SHIFT:
+					_shiftDown = true;
+					break;
+				case Keyboard.CONTROL:
+					_controlDown = true;
+					break;
+				case Keyboard.ENTER:
 					// trying to stop the BACKQUOTE from getting to the doomsday console.
 					//e.stopImmediatePropagation();
-					showConsole = true;
+					if ( _controlDown )
+						showConsole = true;
+					break;
+			}
+		}
+		
+		private function keyUp(e:KeyboardEvent):void 
+		{
+			switch (e.keyCode) {
+				//case Keyboard.BACKQUOTE:
+				case Keyboard.SHIFT:
+					_shiftDown = false;
+					break;
+				case Keyboard.CONTROL:
+					_controlDown = false;
 					break;
 			}
 		}
