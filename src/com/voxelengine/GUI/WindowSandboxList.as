@@ -75,7 +75,7 @@ public class WindowSandboxList extends VVPopup
 			buttonPanel.addElement( _createFileButton );
 			addElement( buttonPanel );
 			eventCollector.addEvent( _createFileButton , UIMouseEvent.CLICK
-								   , function( e:UIMouseEvent ):void { Globals.g_app.dispatchEvent( new RegionEvent( RegionEvent.REGION_PERSISTANCE_CREATE, "" ) ); remove(); } );
+								   , createRegion )
 		}
 	
 		
@@ -98,6 +98,12 @@ public class WindowSandboxList extends VVPopup
 		displaySelectedRegionList( openType );
 		
 		display( Globals.g_renderer.width / 2 - (((width + 10) / 2) + x ), Globals.g_renderer.height / 2 - (((height + 10) / 2) + y) );
+	}
+	
+	private function createRegion(e:UIMouseEvent):void
+	{
+		Globals.g_app.dispatchEvent( new RegionEvent( RegionEvent.REGION_PERSISTANCE_CREATE, "" ) ); 
+		remove();
 	}
 	
 	private function pressWindow(e:UIMouseEvent):void
