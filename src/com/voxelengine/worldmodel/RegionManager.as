@@ -90,7 +90,7 @@ public class RegionManager
 	
 	private function loadKeysSuccessHandler( dba:Array ):void
 	{
-		trace( "loadKeysSuccessHandler: " + dba );
+		trace( "RegionManager.loadKeysSuccessHandler - regions loaded: " + dba.length );
 		for each ( var dbo:DatabaseObject in dba )
 		{
 			var newRegion:Region = new Region();
@@ -159,7 +159,7 @@ public class RegionManager
 	{
 		Globals.g_app.removeEventListener( PersistanceEvent.PERSISTANCE_CREATE_SUCCESS, newRegionCreateSucceed ); 
 		Globals.g_app.removeEventListener( PersistanceEvent.PERSISTANCE_CREATE_FAILURE, newRegionCreateFailure ); 
-		new Alert( "Failed to create new Region on Server" );
+		new Alert( "RegionManager.newRegionCreateFailure - Failed to create new Region on Server" );
 		if ( !WindowSandboxList.isActive )
 			WindowSandboxList.create();
 	}
@@ -257,8 +257,13 @@ public class RegionManager
 		for each ( var region:Region in _regions )
 		{
 			if ( region && "" != region.regionId  )
-				if ( region.changed )
-					region.saveBigDB();
+				if ( region.changed ) {
+					if ( region.databaseObject )
+						region.saveBigDB();
+					else
+						//region.saveLocal();
+						Log.out( "RegionManager.save - AUTOMATIC local saves are disabled" );
+				}
 		}
 	}
 } // RegionManager
