@@ -41,14 +41,14 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 	 */
 	public class LoadModelFromBigDB extends AbstractTask 
 	{		
-		private var _fileName:String;
+		private var _keyName:String;
 		protected var _startTime:int;
 		
-		public function LoadModelFromBigDB( $fileName:String ):void {
+		public function LoadModelFromBigDB( $keyName:String, $layer:LayerInfo = null ):void {
 			Log.out( "LoadModelFromBigDB.construct " );
-			_fileName = $fileName
+			_keyName = $keyName
 			_startTime = getTimer();
-			super( _fileName );
+			super( _keyName );
 		}
 		
 		// use data = for model guid
@@ -58,10 +58,9 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			var timer:int = getTimer();
 			super.start() // AbstractTask will send event
 			
-			Persistance.loadObject( "voxelModels", _fileName, successHandler, errorHandler );
+			Persistance.loadObject( "voxelModels", _keyName, successHandler, errorHandler );
 		}
 		
-		private static const MANIFEST_VERSION:int = 100;
 		private 	function successHandler(o:DatabaseObject):void 
 		{ 
 			Log.out( "LoadModelFromBigDB.successHandler" );
@@ -74,91 +73,14 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 				return;
 			}
 
-			var fileName:String = o.key;
+			var keyName:String = o.key;
 			var $ba:ByteArray = o.data as ByteArray;
 			$ba.uncompress();
 			$ba.position = 0;
 			
-			// Read off 3 bytes, the data format "ivm"
-			var format:String = VoxelModel.readFormat( $ba );
-			if ( "ivm" != format ) 
-			{
-				Log.out( "LoadModelFromBigDB.successHandler - Exception - unsupported format: " + format, Log.ERROR );
-				super.complete() // AbstractTask will send event
-				return;
-			}
-
-			// Read off 3 bytes, the data version 
-			var version:String = VoxelModel.readVersion( $ba );
-				
-			// Read off 1 bytes, the manifestVersion 
-			var manifestVersion:int = $ba.readByte();
-			if ( MANIFEST_VERSION != manifestVersion )
-			{
-				Log.out( "LoadModelFromBigDB.successHandler - Exception - bad version: " + manifestVersion, Log.ERROR );
-				super.complete() // AbstractTask will send event
-				return;
-			}
-			
-			// how many bytes is the modelInfo
-			var strLen:int = $ba.readInt();
-			// read off that many bytes
-			var modelInfoJson:String = $ba.readUTFBytes( strLen );
-			modelInfoJson = decodeURI(modelInfoJson);
-			
-			// create the modelInfo object from embedded metadata
-			var mi:ModelInfo = new ModelInfo();
-			var jsonResult:Object = JSON.parse(modelInfoJson);
-			mi.init( fileName, jsonResult );
-			
-			// add the modelInfo to the repo
-			Globals.g_modelManager.modelInfoAdd( mi );
-			var ii:InstanceInfo = Globals.g_modelManager.instanceInfoGet( fileName );
-			if ( ii )
-			{
-				var modelAsset:String = mi.modelClass;
-				var modelClass:Class = ModelLibrary.getAsset( modelAsset )
-				var vm:* = new modelClass( ii, mi );
-				if ( null == vm )
-				{
-					Log.out( "LoadModelFromBigDB.successHandler - failed to create new instance of modelClass: " + modelClass, Log.ERROR );
-					super.complete() // AbstractTask will send event
-					return;
-				}
-				
-				if ( "Player" == modelAsset )
-				{
-					Globals.player = vm;
-					Globals.controlledModel = vm;
-					super.complete() // AbstractTask will send event
-					return;
-				}
-				
-				Globals.g_modelManager.modelAdd( vm );
-			}
-			else
-			{
-				Log.out( "LoadModelFromBigDB.successHandler - No instanceInfo was found for: " + mi.fileName, Log.ERROR );
-				super.complete() // AbstractTask will send event
-				return;
-			}
-			
-			vm.databaseObject = o;
-			
-			// Finally we get to the byte array which holds the oxel data
-			var rootGrainSize:int = $ba.readByte();
-			var gc:GrainCursor = GrainCursorPool.poolGet(rootGrainSize);
-			gc.grain = rootGrainSize;
-			
-//			gather( _version, $ba, rootGrainSize);
-			vm.statisics.gather( version, $ba, rootGrainSize );
-			
-			vm.loadOxelFromByteArray( $ba );
-				
-			GrainCursorPool.poolDispose(gc);
-			vm.calculateCenter();
-			Log.out( "LoadModelFromBigDB.successHandler - completed: " + fileName );
-			
+			var vm:VoxelModel = VoxelModel.loadFromManifestByteArray( $ba, keyName );
+			if ( vm )
+				vm.databaseObject = o;
 			super.complete() // AbstractTask will send event
 		}
 		
