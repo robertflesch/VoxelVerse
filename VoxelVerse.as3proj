@@ -8,8 +8,8 @@
     <movie fps="60" />
     <movie width="1920" />
     <movie height="1280" />
-    <movie version="11" />
-    <movie minorVersion="8" />
+    <movie version="13" />
+    <movie minorVersion="0" />
     <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
   </output>
