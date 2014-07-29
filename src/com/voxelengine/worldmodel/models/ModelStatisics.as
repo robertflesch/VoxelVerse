@@ -76,9 +76,9 @@ package com.voxelengine.worldmodel.models
 				$ba.position = 8;
 			initialize();
 			_rootGrain = $rootGrain;
-			/*
-			process( $version, $ba, _rootGrain );
+			//process( $version, $ba, _rootGrain );
 			$ba.position = orginalPosition;
+			/*
 			
 			for ( var key:* in _stats )
 			{
