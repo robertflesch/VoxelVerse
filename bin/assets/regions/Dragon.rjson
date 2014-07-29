@@ -10,10 +10,12 @@
                     "z": 90
                 },
 				"collision": false,
-				"state" :"DragonAniFly"
+				"state" :"DragonAniFly",
+				"baseLightLevel": 150,
+				"script": "AutoControlObjectScript"
             }
 		},
-        {
+		{
             "model": {
                 "fileName": "BjornCastle",
                 "location": {
@@ -22,12 +24,12 @@
                     "z": -1500
                 }
             }
-		}
+		}		
     ],
 	"skyColor": {
-                    "r": 192,
-                    "g": 172,
-                    "b": 238
+                    "r": 66,
+                    "g": 66,
+                    "b": 66
                 },
 	"gravity": true,
 	"playerPosition": {

@@ -91,17 +91,6 @@
                     "offset": "0"
                 }
             ]
-        },
-		"children": [
-            {
-                "name": "Barrel",
-                "fileName": "CannonBarrelCopper",
-                "location": {
-                    "z": 0,
-                    "y": 0,
-                    "x": 0
-                }
-            }
-		]
+        }
 	}
 }

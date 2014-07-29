@@ -4,13 +4,15 @@
              "model": {
                 "fileName": "Dragon",
                 "name": "Smuag",
+				"baseLightLevel": 150,
+				"script": "AutoControlObjectScript",
+				"collision": false,
+				"critical" : "true",
                 "location": {
                     "x": 0,
                     "y": 90,
                     "z": 150
-                },
-				"collision": false,
-				"critical" : "true"
+                }
             }
 		},
         {

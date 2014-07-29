@@ -3,6 +3,7 @@
         {
             "model": {
                 "fileName": "LightTest",
+				"baseLightLevel": 150,
                 "location": {
                     "x": 0,
                     "y": 0,
@@ -14,9 +15,9 @@
     ]
 	,
 	"skyColor": {
-                    "r": 192,
-                    "g": 172,
-                    "b": 238
+                    "r": 0,
+                    "g": 128,
+                    "b": 128
                 },
 	"gravity": false,
 	"playerPosition": {

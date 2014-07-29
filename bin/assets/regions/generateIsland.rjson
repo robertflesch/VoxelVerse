@@ -2,7 +2,7 @@
     "region": [
         {
              "model": {
-                "fileName": "GenerateIslandTest",
+                "fileName": "GenerateBjornIsland",
                 "grainSize" : 12,
 				"location": {
                     "x": -1020,
@@ -13,7 +13,7 @@
 		},
         {
              "model": {
-                "fileName": "Raptor",
+                "fileName": "Dragon",
                 "location": {
                     "x": -720,
                     "y": 720,
