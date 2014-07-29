@@ -1,10 +1,11 @@
 {
     "types": [
-        {   "name": "AIR",
+        {
+            "name": "AIR",
             "image": "invalid.png",
             "id": 100,
             "category": "AIR",
-			"placeable" : "false",
+            "placeable": "false",
             "solid": "false",
             "attn": "50",
             "color": {
@@ -15,27 +16,82 @@
             },
             "comment": "Air is not alpha, since if it is, it makes me allocate a alpha vertex buffer"
         },
-        {   "name": "GRASS",
+        {
+            "name": "GRASS",
             "image": "grass.png",
             "id": 101,
             "category": "EARTH",
-			"interactions": [
-				{ "PICK"	: [ "AIR", 25, "collect" ] },
-				{ "SHOVEL"	: [ "AIR", 50, "collect" ] },
-				{ "AXE"		: [ "DIRT", 100, "change" ] },
-				{ "BUCKET"	: [ "GRASS", 100, "change" ] },
-				{ "DFIRE"	: [ "DIRT", 100, "change" ] },
-				{ "DICE"	: [ "DIRT", 100, "change" ] },
-				{ "WATER"   : [ "GRASS", 25, "change" ] },
-				{ "AIR"     : [ "AIR", 25, "change" ] },
-				{ "EARTH"   : [ "AIR", 25, "change" ] }
-			],
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        25,
+                        "collect"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "AIR",
+                        50,
+                        "collect"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "DIRT",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "BUCKET": [
+                        "GRASS",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "DFIRE": [
+                        "DIRT",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "DICE": [
+                        "DIRT",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "WATER": [
+                        "GRASS",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "AIR": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "EARTH": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                }
+            ],
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 2,
-				"bottom": 1,
+                "top": 1,
+                "side": 2,
+                "bottom": 1,
                 "ut": 0.125,
                 "vt": 0,
                 "us": 0.125,
@@ -45,16 +101,17 @@
             },
             "comment": "Grass uses a different tiling system on the sides, 2 is sample around vertical center"
         },
-        {   "name": "DIRT",
-			"image": "dirt.png",
+        {
+            "name": "DIRT",
+            "image": "dirt.png",
             "id": 102,
             "category": "EARTH",
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.25,
                 "vt": 0,
                 "us": 0.25,
@@ -63,16 +120,17 @@
                 "vb": 0
             }
         },
-        {   "name": "SAND",
+        {
+            "name": "SAND",
             "image": "sand.png",
             "id": 103,
             "category": "EARTH",
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.375,
                 "vt": 0,
                 "us": 0.375,
@@ -81,27 +139,82 @@
                 "vb": 0
             }
         },
-        {   "name": "STONE",
+        {
+            "name": "STONE",
             "image": "stone.png",
             "id": 104,
             "category": "EARTH",
-			"interactions": [
-				{ "PICK"	: [ "AIR", 0, "collect" ] },
-				{ "SHOVEL"	: [ "STONE", 0, "change" ] },
-				{ "AXE"		: [ "STONE", 0, "change" ] },
-				{ "BUCKET"	: [ "STONE", 100, "change" ] },
-				{ "DFIRE"	: [ "LAVA", 100, "melt" ] },
-				{ "DICE"	: [ "STONE", 0, "freeze" ] },
-				{ "WATER"   : [ "STONE", 0, "change" ] },
-				{ "AIR"     : [ "AIR", 25, "change" ] },
-				{ "EARTH"   : [ "AIR", 25, "change" ] }	
-			],
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        0,
+                        "collect"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "STONE",
+                        0,
+                        "change"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "STONE",
+                        0,
+                        "change"
+                    ]
+                },
+                {
+                    "BUCKET": [
+                        "STONE",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "DFIRE": [
+                        "LAVA",
+                        100,
+                        "melt"
+                    ]
+                },
+                {
+                    "DICE": [
+                        "STONE",
+                        0,
+                        "freeze"
+                    ]
+                },
+                {
+                    "WATER": [
+                        "STONE",
+                        0,
+                        "change"
+                    ]
+                },
+                {
+                    "AIR": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "EARTH": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                }
+            ],
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.5,
                 "vt": 0,
                 "us": 0.5,
@@ -110,16 +223,17 @@
                 "vb": 0
             }
         },
-        {   "name": "GRAVEL",
+        {
+            "name": "GRAVEL",
             "image": "gravel.png",
             "id": 105,
             "category": "EARTH",
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.625,
                 "vt": 0,
                 "us": 0.625,
@@ -128,16 +242,17 @@
                 "vb": 0
             }
         },
-        {   "name": "PLANK",
+        {
+            "name": "PLANK",
             "image": "plank.png",
             "id": 106,
             "category": "PLANT",
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 3,
-				"side": 3,
-				"bottom": 3,
+                "top": 3,
+                "side": 3,
+                "bottom": 3,
                 "ut": 0.375,
                 "vt": 0.25,
                 "us": 0.375,
@@ -146,27 +261,100 @@
                 "vb": 0.25
             }
         },
-        {   "name": "WATER",
+        {
+            "name": "WATER",
             "image": "water.png",
             "id": 107,
             "category": "LIQUID",
             "solid": "false",
-			"flowable": [ 2, 8, 255 ],
+            "flowable": [ 2, 8, 255 ],
             "animated": "true",
-			"interactions": [
-				{ "PICK"		: [ "WATER", 25, "change" ] },
-				{ "SHOVEL"		: [ "WATER", 50, "change" ] },
-				{ "AXE"			: [ "DIRT", 100, "change" ] },
-				{ "BUCKET"		: [ "AIR", 100, "collectInBucket" ] },
-				{ "DFIRE"		: [ "AIR", 100, "change" ] },
-				{ "DICE"		: [ "ICE", 100, "change" ] },
-				{ "WATER"  		: [ "WATER", 25, "change" ] },
-				{ "AIR"    		: [ "AIR", 25, "change" ] },
-				{ "EARTH"  		: [ "STONE", 25, "change" ] },
-				{ "ASH_BURNING" : [ "COAL", 25, "change" ] },
-				{ "LAVA"    	: [ "OBSIDIAN", 25, "change" ] },
-				{ "FLOATIUM"   	: [ "WATER", 25, "change" ] }
-			],			
+            "interactions": [
+                {
+                    "PICK": [
+                        "WATER",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "WATER",
+                        50,
+                        "change"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "DIRT",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "BUCKET": [
+                        "AIR",
+                        100,
+                        "collectInBucket"
+                    ]
+                },
+                {
+                    "DFIRE": [
+                        "AIR",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "DICE": [
+                        "ICE",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "WATER": [
+                        "WATER",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "AIR": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "EARTH": [
+                        "STONE",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "ASH_BURNING": [
+                        "COAL",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "LAVA": [
+                        "OBSIDIAN",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "FLOATIUM": [
+                        "WATER",
+                        25,
+                        "change"
+                    ]
+                }
+            ],
             "color": {
                 "r": 1,
                 "g": 1,
@@ -176,9 +364,9 @@
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.9765625,
                 "vt": 0.953125,
                 "us": 0.9765625,
@@ -187,10 +375,14 @@
                 "vb": 0.953125
             }
         },
-        {   "name": "LEAF",
+        {
+            "name": "LEAF",
             "image": "leaf.png",
             "id": 109,
             "category": "PLANT",
+            "light": {
+                "fallOffFactor": "0x20"
+            },
             "solid": "true",
             "color": {
                 "r": 1,
@@ -201,9 +393,9 @@
             "uv": {
                 "maxpix": 32,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.25,
                 "vt": 0.25,
                 "us": 0.25,
@@ -212,46 +404,118 @@
                 "vb": 0.25
             }
         },
-        {   "name": "BARK",
+        {
+            "name": "BARK",
             "image": "bark.png",
             "id": 110,
             "category": "PLANT",
             "uv": {
                 "maxpix": 64,
                 "minpix": 1,
-				"top": 5,
-				"side": 6,
-				"bottom": 5,
+                "top": 5,
+                "side": 6,
+                "bottom": 5,
                 "ut": 0.21875,
                 "vt": 0.3125,
                 "us": 0.75,
-                "vs": 0,
-                "ut": 0.21875,
-                "vt": 0.3125
+                "vs": 0
             }
         },
-        {   "name": "LAVA",
+        {
+            "name": "LAVA",
             "image": "lava.png",
             "id": 111,
             "category": "LIQUID",
-			"light" : "true",
-			"fullbright": "true",
+            "light": {
+                "color": "0xffff0000",
+                "fullBright": "true"
+            },
             "solid": "false",
-			"flowable": [ 2, 8, 255 ],
+            "flowable": [
+                2,
+                8,
+                8
+            ],
             "animated": "true",
-			"interactions": [
-				{ "PICK"		: [ "LAVA", 25, "na" ] },
-				{ "SHOVEL"		: [ "LAVA", 50, "na" ] },
-				{ "AXE"			: [ "LAVA", 100, "na" ] },
-				{ "BUCKET"		: [ "AIR", 100, "collectInBucket" ] },
-				{ "DFIRE"		: [ "LAVA", 100, "na" ] },
-				{ "DICE"		: [ "STONE", 100, "na" ] },
-				{ "WATER"  		: [ "OBSIDIAN", 25, "na" ] },
-				{ "AIR"    		: [ "AIR", 25, "change" ] },
-				{ "EARTH"  		: [ "AIR", 25, "na" ] },
-				{ "ASH_BURNING" : [ "LAVA", 25, "na" ] },
-				{ "LAVA"    	: [ "LAVA", 25, "na" ] }
-			],			
+            "interactions": [
+                {
+                    "PICK": [
+                        "LAVA",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "LAVA",
+                        50,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "LAVA",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "BUCKET": [
+                        "AIR",
+                        100,
+                        "collectInBucket"
+                    ]
+                },
+                {
+                    "DFIRE": [
+                        "LAVA",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "DICE": [
+                        "STONE",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "WATER": [
+                        "OBSIDIAN",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "AIR": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "EARTH": [
+                        "AIR",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "ASH_BURNING": [
+                        "LAVA",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "LAVA": [
+                        "LAVA",
+                        25,
+                        "na"
+                    ]
+                }
+            ],
             "color": {
                 "r": 1,
                 "g": 0,
@@ -261,9 +525,9 @@
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.984375,
                 "vt": 0.953125,
                 "us": 0.984375,
@@ -272,7 +536,8 @@
                 "vb": 0.953125
             }
         },
-        {   "name": "RED",
+        {
+            "name": "RED",
             "image": "red.png",
             "id": 112,
             "category": "UTIL",
@@ -283,7 +548,8 @@
                 "a": 1
             }
         },
-        {   "name": "BLUE",
+        {
+            "name": "BLUE",
             "image": "blue.png",
             "id": 113,
             "category": "UTIL",
@@ -294,7 +560,8 @@
                 "a": 1
             }
         },
-        {   "name": "GREEN",
+        {
+            "name": "GREEN",
             "image": "green.png",
             "id": 114,
             "category": "UTIL",
@@ -305,7 +572,8 @@
                 "a": 1
             }
         },
-        {   "name": "CLOUD",
+        {
+            "name": "CLOUD",
             "image": "cloud.png",
             "id": 115,
             "category": "AIR",
@@ -316,22 +584,22 @@
                 "b": 1,
                 "a": 0.99
             },
-             "uv": {
+            "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.25,
                 "vt": 0.375,
                 "us": 0.25,
                 "vs": 0.375,
                 "ub": 0.25,
                 "vb": 0.375
-
             }
         },
-        {   "name": "BALLOON",
+        {
+            "name": "BALLOON",
             "image": "balloon.png",
             "id": 116,
             "category": "UTIL",
@@ -342,16 +610,17 @@
                 "a": 1
             }
         },
-        {   "name": "ROPE", 
+        {
+            "name": "ROPE",
             "image": "rope.png",
             "id": 117,
             "category": "UTIL",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.15625,
                 "vt": 0.25,
                 "us": 0.15625,
@@ -360,7 +629,8 @@
                 "vb": 0.25
             }
         },
-        {   "name": "IRON",
+        {
+            "name": "IRON",
             "image": "iron.png",
             "id": 118,
             "category": "METAL",
@@ -371,16 +641,17 @@
                 "a": 1
             }
         },
-        {   "name": "WALL",
+        {
+            "name": "WALL",
             "image": "stonewall.png",
             "id": 120,
             "category": "EARTH",
             "uv": {
                 "maxpix": 64,
-                "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "minpix": 1,
+                "top": 6,
+                "side": 6,
+                "bottom": 6,
                 "ut": 0.1875,
                 "vt": 0.25,
                 "us": 0.1875,
@@ -389,40 +660,44 @@
                 "vb": 0.25
             }
         },
-        {   "name": "COPPER",
+        {
+            "name": "COPPER",
             "image": "copper.png",
             "id": 121,
             "category": "METAL",
             "color": {
-                "r": 0.72156862745098039215686274509804,
-                "g": 0.45098039215686274509803921568627,
+                "r": 0.7215686274509804,
+                "g": 0.45098039215686275,
                 "b": 0.2,
                 "a": 1
             }
         },
-        {   "name": "BRONZE",
+        {
+            "name": "BRONZE",
             "image": "bronze.png",
             "id": 122,
             "category": "METAL",
-			"color": {
-                "r": 0.54901960784313725490196078431373,
-                "g": 0.47058823529411764705882352941176,
-                "b": 0.32549019607843137254901960784314,
+            "color": {
+                "r": 0.5490196078431373,
+                "g": 0.47058823529411764,
+                "b": 0.3254901960784314,
                 "a": 1
             }
         },
-        {   "name": "STEEL",
+        {
+            "name": "STEEL",
             "image": "steel.png",
             "id": 123,
             "category": "METAL",
             "color": {
-                "r": 0.87843137254901960784313725490196,
-                "g": 0.87450980392156862745098039215686,
-                "b": 0.85882352941176470588235294117647,
+                "r": 0.8784313725490196,
+                "g": 0.8745098039215686,
+                "b": 0.8588235294117647,
                 "a": 1
             }
         },
-        {   "name": "GLASS",
+        {
+            "name": "GLASS",
             "image": "glass.png",
             "id": 124,
             "category": "UTIL",
@@ -432,12 +707,12 @@
                 "b": 1,
                 "a": 0.99
             },
-             "uv": {
+            "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.046875,
                 "vt": 0.265625,
                 "us": 0.046875,
@@ -446,16 +721,17 @@
                 "vb": 0.265625
             }
         },
-        {   "name": "BRAND",
+        {
+            "name": "BRAND",
             "image": "yourbrandhere.png",
             "id": 129,
             "category": "UTIL",
             "uv": {
                 "maxpix": 256,
                 "minpix": 256,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.375,
                 "vt": 0.125,
                 "us": 0.375,
@@ -463,10 +739,9 @@
                 "ub": 0.375,
                 "vb": 0.125
             }
-
-
         },
-        {   "name": "SKIN",
+        {
+            "name": "SKIN",
             "image": "skin.png",
             "id": 130,
             "category": "AVATAR",
@@ -479,9 +754,9 @@
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0,
                 "vt": 0.125,
                 "us": 0,
@@ -489,18 +764,18 @@
                 "ub": 0,
                 "vb": 0.125
             }
-			
         },
-        {   "name": "SCLRED",
+        {
+            "name": "SCLRED",
             "image": "scaleRed.png",
             "id": 131,
             "category": "DRAGON",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.21875,
                 "vt": 0.25,
                 "us": 0.21875,
@@ -509,7 +784,8 @@
                 "vb": 0.25
             }
         },
-        {   "name": "SCLREDT", 
+        {
+            "name": "SCLREDT",
             "image": "scaleRedT.png",
             "id": 132,
             "category": "DRAGON",
@@ -522,9 +798,9 @@
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.21875,
                 "vt": 0.28125,
                 "us": 0.21875,
@@ -533,7 +809,8 @@
                 "vb": 0.28125
             }
         },
-        {   "name": "SCLWHT",
+        {
+            "name": "SCLWHT",
             "image": "scaleWhite.png",
             "id": 133,
             "category": "DRAGON",
@@ -546,9 +823,9 @@
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.1875,
                 "vt": 0.28125,
                 "us": 0.1875,
@@ -557,7 +834,8 @@
                 "vb": 0.28125
             }
         },
-        {   "name": "SCLWHTT",
+        {
+            "name": "SCLWHTT",
             "image": "scaleWhite.png",
             "id": 134,
             "category": "DRAGON",
@@ -570,9 +848,9 @@
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.1875,
                 "vt": 0.28125,
                 "us": 0.1875,
@@ -581,12 +859,13 @@
                 "vb": 0.28125
             }
         },
-        {   "name": "DragonFire",
+        {
+            "name": "DragonFire",
             "image": "dragonFire.png",
             "id": 135,
             "category": "DRAGON",
             "b": "true",
-			"placeable" : "false",
+            "placeable": "false",
             "animated": "true",
             "color": {
                 "r": 1,
@@ -597,9 +876,9 @@
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.984375,
                 "vt": 0.953125,
                 "us": 0.984375,
@@ -608,12 +887,15 @@
                 "vb": 0.953125
             }
         },
-        {   "name": "DragonIce",
+        {
+            "name": "DragonIce",
             "image": "dragonIce.png",
             "id": 136,
             "category": "DRAGON",
-            "fullbright": "true",
-			"placeable" : "false",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
             "color": {
                 "r": 0,
                 "g": 0,
@@ -621,11 +903,12 @@
                 "a": 1
             }
         },
-        {   "name": "DragonAcid", 
+        {
+            "name": "DragonAcid",
             "image": "dragonAcid.png",
             "id": 137,
             "category": "DRAGON",
-			"placeable" : "false",
+            "placeable": "false",
             "color": {
                 "r": 0,
                 "g": 1,
@@ -633,12 +916,15 @@
                 "a": 1
             }
         },
-        {   "name": "DragonWater",
+        {
+            "name": "DragonWater",
             "image": "water.png",
             "id": 138,
             "category": "UTIL",
-            "fullbright": "true",
-			"placeable" : "false",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
             "color": {
                 "r": 0,
                 "g": 1,
@@ -646,12 +932,15 @@
                 "a": 1
             }
         },
-        {   "name": "DragonEarth",
+        {
+            "name": "DragonEarth",
             "image": "stone.png",
             "id": 139,
             "category": "UTIL",
-            "fullbright": "true",
-			"placeable" : "false",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
             "color": {
                 "r": 1,
                 "g": 1,
@@ -659,12 +948,15 @@
                 "a": 1
             }
         },
-        {   "name": "DragonAcid",
+        {
+            "name": "DragonAcid",
             "image": "stone.png",
             "id": 140,
             "category": "UTIL",
-            "fullbright": "true",
-			"placeable" : "false",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
             "color": {
                 "r": 0.5,
                 "g": 1,
@@ -672,24 +964,26 @@
                 "a": 1
             }
         },
-        {   "name": "MUD",
+        {
+            "name": "MUD",
             "image": "mud.png",
             "id": 141,
             "category": "EARTH",
-			"placeable" : "true",
-			"solid" : "false",
+            "placeable": "true",
+            "solid": "false",
             "color": {
                 "r": 0.6784313725490196,
-                "g": 0.5058823529411765,
+                "g": 0.5058823529411764,
                 "b": 0.3137254901960784,
                 "a": 1
             }
         },
-        {   "name": "QUICKSAND",
+        {
+            "name": "QSAND",
             "image": "quicksand.png",
             "id": 142,
             "category": "EARTH",
-			"solid": "false",
+            "solid": "false",
             "color": {
                 "r": 0.8,
                 "g": 0.8,
@@ -699,9 +993,9 @@
             "uv": {
                 "maxpix": 256,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.375,
                 "vt": 0,
                 "us": 0.375,
@@ -710,17 +1004,18 @@
                 "vb": 0
             }
         },
-        {   "name": "OBSIDIAN",
+        {
+            "name": "OBSIDIAN",
             "image": "obsidian.png",
             "id": 143,
             "category": "EARTH",
-			"solid": "true",
+            "solid": "true",
             "uv": {
                 "maxpix": 128,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.375,
                 "vt": 0.375,
                 "us": 0.375,
@@ -729,68 +1024,213 @@
                 "vb": 0.375
             }
         },
-        {   "name": "FLOATIUM",
+        {
+            "name": "FLOATIUM",
             "image": "floatium.png",
             "id": 144,
             "category": "AIR",
-			"solid": "false",
-			"fullbright": "true",
-			"flowable": [ 2, 8, 8 ],
-			"interactions": [
-				{ "PICK"		: [ "FLOATIUM", 25, "na" ] },
-				{ "SHOVEL"		: [ "FLOATIUM", 50, "na" ] },
-				{ "AXE"			: [ "FLOATIUM", 100, "na" ] },
-				{ "BUCKET"		: [ "AIR", 100, "collectInBucket" ] },
-				{ "DFIRE"		: [ "FLOATIUM", 100, "na" ] },
-				{ "DICE"		: [ "FLOATIUM", 100, "na" ] },
-				{ "WATER"  		: [ "FLOATIUM", 25, "na" ] },
-				{ "AIR"    		: [ "FLOATIUM", 25, "na" ] },
-				{ "EARTH"  		: [ "FLOATIUM", 25, "na" ] },
-				{ "ASH_BURNING" : [ "FLOATIUM", 25, "na" ] },
-				{ "LAVA"    	: [ "FLOATIUM", 25, "na" ] }
-			],			
-			"color": {
+            "solid": "false",
+            "flowable": [
+                2,
+                8,
+                8
+            ],
+            "interactions": [
+                {
+                    "PICK": [
+                        "FLOATIUM",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "FLOATIUM",
+                        50,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "FLOATIUM",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "BUCKET": [
+                        "AIR",
+                        100,
+                        "collectInBucket"
+                    ]
+                },
+                {
+                    "DFIRE": [
+                        "FLOATIUM",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "DICE": [
+                        "FLOATIUM",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "WATER": [
+                        "FLOATIUM",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "AIR": [
+                        "FLOATIUM",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "EARTH": [
+                        "FLOATIUM",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "ASH_BURNING": [
+                        "FLOATIUM",
+                        25,
+                        "na"
+                    ]
+                },
+                {
+                    "LAVA": [
+                        "FLOATIUM",
+                        25,
+                        "na"
+                    ]
+                }
+            ],
+            "color": {
                 "r": 0.6,
                 "g": 0.7,
                 "b": 0.8,
                 "a": 0.99
             },
-			"uv": {
+            "uv": {
                 "maxpix": 4,
                 "minpix": 1,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.375,
                 "vt": 0.375,
                 "us": 0.375,
                 "vs": 0.375,
                 "ub": 0.375,
                 "vb": 0.375
-            }			
+            }
         },
-        {   "name": "BURNING",
+        {
+            "name": "BURNING",
             "image": "ash_burning.png",
             "id": 145,
             "category": "PLANT",
-            "fullbright": "true",
+            "light": {
+                "fullBright": "true"
+            },
             "flame": "true",
             "solid": "false",
             "animated": "true",
-			"interactions": [
-				{ "PICK"		: [ "ASH_BURNING", 25, "change" ] },
-				{ "SHOVEL"		: [ "ASH_BURNING", 50, "change" ] },
-				{ "AXE"			: [ "ASH_BURNING", 100, "change" ] },
-				{ "BUCKET"		: [ "ASH_BURNING", 100, "collectInBucket" ] },
-				{ "DFIRE"		: [ "ASH_BURNING", 100, "change" ] },
-				{ "DICE"		: [ "COAL", 100, "change" ] },
-				{ "WATER"  		: [ "COAL", 25, "change" ] },
-				{ "AIR"    		: [ "AIR", 25, "change" ] },
-				{ "EARTH"  		: [ "ASH_BURNING", 25, "change" ] },
-				{ "ASH_BURNING" : [ "ASH_BURNING", 25, "change" ] },
-				{ "LAVA"    	: [ "LAVA", 25, "change" ] },
-				{ "FLOATIUM"   	: [ "ASH_BURNING", 25, "change" ] }
-			],			
+            "interactions": [
+                {
+                    "PICK": [
+                        "ASH_BURNING",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "ASH_BURNING",
+                        50,
+                        "change"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "ASH_BURNING",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "BUCKET": [
+                        "ASH_BURNING",
+                        100,
+                        "collectInBucket"
+                    ]
+                },
+                {
+                    "DFIRE": [
+                        "ASH_BURNING",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "DICE": [
+                        "COAL",
+                        100,
+                        "change"
+                    ]
+                },
+                {
+                    "WATER": [
+                        "COAL",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "AIR": [
+                        "AIR",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "EARTH": [
+                        "ASH_BURNING",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "ASH_BURNING": [
+                        "ASH_BURNING",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "LAVA": [
+                        "LAVA",
+                        25,
+                        "change"
+                    ]
+                },
+                {
+                    "FLOATIUM": [
+                        "ASH_BURNING",
+                        25,
+                        "change"
+                    ]
+                }
+            ],
             "color": {
                 "r": 1,
                 "g": 1,
@@ -800,9 +1240,9 @@
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 7,
-				"side": 0,
-				"bottom": 7,
+                "top": 7,
+                "side": 0,
+                "bottom": 7,
                 "ut": 0.9921875,
                 "vt": 0,
                 "us": 0.9921875,
@@ -811,19 +1251,21 @@
                 "vb": 0
             }
         },
-		{   "name": "DIAMOND",
+        {
+            "name": "DIAMOND",
             "image": "diamond.png",
             "id": 146,
             "category": "GEM",
-			"placeable" : "true",
+            "placeable": "true",
             "color": {
                 "r": 0.5784313725490196,
-                "g": 0.5058823529411765,
+                "g": 0.5058823529411764,
                 "b": 0.8137254901960784,
                 "a": 1
             }
         },
-        {   "name": "COAL",
+        {
+            "name": "COAL",
             "image": "coal.png",
             "id": 147,
             "category": "STONE",
@@ -836,9 +1278,9 @@
             "uv": {
                 "maxpix": 64,
                 "minpix": 16,
-				"top": 1,
-				"side": 1,
-				"bottom": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
                 "ut": 0.15625,
                 "vt": 0.28125,
                 "us": 0.15625,
@@ -847,7 +1289,8 @@
                 "vb": 0.28125
             }
         },
-		{   "name": "ICE",
+        {
+            "name": "ICE",
             "image": "ice.png",
             "id": 148,
             "category": "LIQUID",
@@ -858,12 +1301,17 @@
                 "a": 1
             }
         },
-        {   "name": "MIST",
+        {
+            "name": "MIST",
             "image": "mist.png",
             "id": 149,
             "category": "AIR",
             "solid": "false",
-			"flowable": [ 2, 8, 8 ],
+            "flowable": [
+                2,
+                8,
+                8
+            ],
             "animated": "true",
             "color": {
                 "r": 1,
@@ -874,9 +1322,9 @@
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.96875,
                 "vt": 0.953125,
                 "us": 0.96875,
@@ -885,16 +1333,17 @@
                 "vb": 0.953125
             }
         },
-        {   "name": "LEFT",
+        {
+            "name": "LEFT",
             "image": "eye.png",
             "id": 150,
             "category": "AVATAR",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.125,
                 "vt": 0.28125,
                 "us": 0.125,
@@ -903,16 +1352,17 @@
                 "vb": 0.28125
             }
         },
-        {   "name": "RIGHT",
+        {
+            "name": "RIGHT",
             "image": "eye.png",
             "id": 151,
             "category": "AVATAR",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.125,
                 "vt": 0.3125,
                 "us": 0.125,
@@ -921,16 +1371,17 @@
                 "vb": 0.3125
             }
         },
-        {   "name": "VINE",
+        {
+            "name": "VINE",
             "image": "vine.png",
             "id": 152,
             "category": "PLANT",
             "uv": {
                 "maxpix": 64,
                 "minpix": 64,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.125,
                 "vt": 0.3125,
                 "us": 0.125,
@@ -939,22 +1390,24 @@
                 "vb": 0.3125
             }
         },
-        {   "name": "REDG",
+        {
+            "name": "REDG",
             "image": "invalid.png",
             "id": 153,
             "category": "UTIL",
+            "light": { "fullBright": "true" },
             "color": {
                 "r": 1,
                 "g": 0,
                 "b": 0,
                 "a": 0.99
             },
-             "uv": {
+            "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.046875,
                 "vt": 0.265625,
                 "us": 0.046875,
@@ -963,17 +1416,45 @@
                 "vb": 0.265625
             }
         },
-		{   "name": "UNKNOWN",
+                {
+            "name": "COLOR",
+            "image": "invalid.png",
+            "id": 154,
+            "category": "EARTH",
+            "solid": "false",
+            "light": { "fullBright": "true" },
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
+                "ut": 0,
+                "vt": 0,
+                "us": 0,
+                "vs": 0,
+                "ub": 0,
+                "vb": 0
+            }
+        },
+		{
+            "name": "UNKNOWN",
             "image": "invalid.png",
             "id": 166,
             "category": "UTIL",
-			"placeable" : "false",
+            "placeable": "false",
             "uv": {
                 "maxpix": 256,
                 "minpix": 256,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.875,
                 "vt": 0.875,
                 "us": 0.875,
@@ -982,18 +1463,41 @@
                 "vb": 0.875
             }
         },
-        {   "name": "REDL",
+        {
+            "name": "REDL",
             "image": "lightRed.png",
             "id": 990,
-            "category": "LIQUID",
-			"light" : "true",
+            "category": "LIGHT",
+            "light": {
+                "color": "0xffff0000",
+                "attn": "0x10",
+                "lightSource": "true"
+            },
             "solid": "false",
-			"interactions": [
-				{ "PICK"		: [ "AIR", 100, "na" ] },
-				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
-				{ "AXE"			: [ "AIR", 100, "na" ] }
-			],			
-			"placeable" : "true",
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                }
+            ],
+            "placeable": "true",
             "color": {
                 "r": 1,
                 "g": 0,
@@ -1001,18 +1505,41 @@
                 "a": 0.9999999
             }
         },
-        {   "name": "BLUEL",
+        {
+            "name": "BLUEL",
             "image": "lightBlue.png",
             "id": 991,
-            "category": "LIQUID",
-			"light" : "true",
+            "category": "LIGHT",
+            "light": {
+                "color": "0xff0000ff",
+                "attn": "0x10",
+                "lightSource": "true"
+            },
             "solid": "false",
-			"interactions": [
-				{ "PICK"		: [ "AIR", 100, "na" ] },
-				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
-				{ "AXE"			: [ "AIR", 100, "na" ] }
-			],			
-			"placeable" : "true",
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                }
+            ],
+            "placeable": "true",
             "color": {
                 "r": 0,
                 "g": 0,
@@ -1020,18 +1547,41 @@
                 "a": 0.999999
             }
         },
-        {   "name": "GREENL",
+        {
+            "name": "GREENL",
             "image": "lightGreen.png",
             "id": 992,
-            "category": "LIQUID",
-			"light" : "true",
+            "category": "LIGHT",
+            "light": {
+                "color": "0xff00ff00",
+                "attn": "0x10",
+                "lightSource": "true"
+            },
             "solid": "false",
-			"interactions": [
-				{ "PICK"		: [ "AIR", 100, "na" ] },
-				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
-				{ "AXE"			: [ "AIR", 100, "na" ] }
-			],			
-			"placeable" : "true",
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                }
+            ],
+            "placeable": "true",
             "color": {
                 "r": 0,
                 "g": 1,
@@ -1039,18 +1589,41 @@
                 "a": 0.9999999
             }
         },
-        {   "name": "WHITEL",
+        {
+            "name": "WHITEL",
             "image": "lightWhite.png",
             "id": 993,
-            "category": "LIQUID",
-			"light" : "true",
+            "category": "LIGHT",
+            "light": {
+                "color": "0xffffffff",
+                "attn": "0x10",
+                "lightSource": "true"
+            },
             "solid": "false",
-			"interactions": [
-				{ "PICK"		: [ "AIR", 100, "na" ] },
-				{ "SHOVEL"		: [ "AIR", 100, "na" ] },
-				{ "AXE"			: [ "AIR", 100, "na" ] }
-			],			
-			"placeable" : "true",
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                }
+            ],
+            "placeable": "true",
             "color": {
                 "r": 1,
                 "g": 1,
@@ -1058,12 +1631,57 @@
                 "a": 0.99
             }
         },
-        {   "name": "EDITCURSOR_SQUARE",
+        {
+            "name": "WHITELD",
+            "image": "lightWhite.png",
+            "id": 994,
+            "category": "LIGHT",
+            "light": {
+                "color": "0xffffffff",
+                "attn": "0x20",
+                "lightSource": "true"
+            },
+            "solid": "false",
+            "interactions": [
+                {
+                    "PICK": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "SHOVEL": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                },
+                {
+                    "AXE": [
+                        "AIR",
+                        100,
+                        "na"
+                    ]
+                }
+            ],
+            "placeable": "true",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            }
+        },
+        {
+            "name": "EDITCURSOR_SQUARE",
             "image": "invalid.png",
             "id": 1000,
             "category": "INTERNAL",
-            "fullbright": "true",
-			"placeable" : "false",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
             "color": {
                 "r": 1,
                 "g": 1,
@@ -1073,9 +1691,9 @@
             "uv": {
                 "maxpix": 32,
                 "minpix": 32,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0.0546875,
                 "vt": 0.25,
                 "us": 0.0546875,
@@ -1084,90 +1702,15 @@
                 "vb": 0.25
             }
         },
-        {   "name": "EDITCURSOR_ROUND",
+        {
+            "name": "EDITCURSOR_ROUND",
             "image": "invalid.png",
             "id": 1001,
             "category": "INTERNAL",
-            "fullbright": "true",
-			"placeable" : "false",
-            "color": {
-                "r": 1,
-                "g": 1,
-                "b": 1,
-                "a": 0.99
+            "light": {
+                "fullBright": "true"
             },
-             "uv": {
-                "maxpix": 16,
-                "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
-                "ut": 0,
-                "vt": 0.2890625,
-                "us": 0,
-                "vs": 0.2890625,
-                "ub": 0,
-                "vb": 0.2890625
-            }
-        },
-        {   "name": "EDITCURSOR_CYLINDER", 
-            "image": "invalid.png",
-            "id": 1002,
-            "category": "INTERNAL",
-            "fullbright": "true",
-			"placeable" : "false",
-            "color": {
-                "r": 1,
-                "g": 1,
-                "b": 1,
-                "a": 0.99
-            },
-             "uv": {
-                "maxpix": 32,
-                "minpix": 32,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
-                "ut": 0.0703125,
-                "vt": 0.25,
-                "us": 0.0703125,
-                "vs": 0.25,
-                "ub": 0.0703125,
-                "vb": 0.25
-            }
-        },
-        {   "name": "EDITCURSOR_CYLINDER_ANIMATED", 
-            "image": "invalid.png",
-            "id": 1003,
-            "fullbright": "true",
-            "category": "INTERNAL",
-			"placeable" : "false",
-            "color": {
-                "r": 1,
-                "g": 1,
-                "b": 1,
-                "a": 0.99
-            },
-             "uv": {
-                "maxpix": 16,
-                "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
-                "ut": 0,
-                "vt": 0.2734375,
-                "us": 0,
-                "vs": 0.2734375,
-                "ub": 0,
-                "vb": 0.2734375
-            }
-        },
-        {   "name": "EDITCURSOR_INVALID",
-            "image": "invalid.png",
-            "id": 1004,
-            "category": "INTERNAL",
-            "fullbright": "true",
-			"placeable" : "false",
+            "placeable": "false",
             "color": {
                 "r": 1,
                 "g": 1,
@@ -1177,9 +1720,67 @@
             "uv": {
                 "maxpix": 16,
                 "minpix": 16,
-				"top": 0,
-				"side": 0,
-				"bottom": 0,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
+                "ut": 0,
+                "vt": 0.2890625,
+                "us": 0,
+                "vs": 0.2890625,
+                "ub": 0,
+                "vb": 0.2890625
+            }
+        },
+        {
+            "name": "EDITCURSOR_CYLINDER",
+            "image": "invalid.png",
+            "id": 1002,
+            "category": "INTERNAL",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 32,
+                "minpix": 32,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
+                "ut": 0.0703125,
+                "vt": 0.25,
+                "us": 0.0703125,
+                "vs": 0.25,
+                "ub": 0.0703125,
+                "vb": 0.25
+            }
+        },
+        {
+            "name": "EDITCURSOR_CYLINDER_ANIMATED",
+            "image": "invalid.png",
+            "id": 1003,
+            "light": {
+                "fullBright": "true"
+            },
+            "category": "INTERNAL",
+            "placeable": "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
                 "ut": 0,
                 "vt": 0.2734375,
                 "us": 0,
@@ -1187,6 +1788,35 @@
                 "ub": 0,
                 "vb": 0.2734375
             }
-        }		
-   ]
+        },
+        {
+            "name": "EDITCURSOR_INVALID",
+            "image": "invalid.png",
+            "id": 1004,
+            "category": "INTERNAL",
+            "light": {
+                "fullBright": "true"
+            },
+            "placeable": "false",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+            "uv": {
+                "maxpix": 16,
+                "minpix": 16,
+                "top": 0,
+                "side": 0,
+                "bottom": 0,
+                "ut": 0,
+                "vt": 0.2734375,
+                "us": 0,
+                "vs": 0.2734375,
+                "ub": 0,
+                "vb": 0.2734375
+            }
+        }
+    ]
 }
