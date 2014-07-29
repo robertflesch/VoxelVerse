@@ -1,27 +1,23 @@
-HOME
 
 
 WORK
 
-BOB NOTES:
-FIX:Lava - flows forever now.
-FIX:make smaller model for dragon breath
+Coding Standards
+camelCase used for variables, and function names
+member variables start with _ first letter lower case
+parameters start with $
+local variables use lowerCase letter
+avoid using New
 
-BJORN NOTES:
- *** Interactions.IOGet for LAVA no interaction defined
-[11:56:18 AM] Bjorn: not sure , I had a pit of lava and a placed water so it flowed into lava, I wanted obsidian :P
-
-ALEXA NOTES:
-Avatar angle is wrong on dragon sometimes.
+Check out
+Global Games Fund ( 25 million investment from Tango messaging app )
 
 CRITICAL:
-Dispose on torch attachment is cause exception
-Mouse lock in full screen doesnt allow you to use GUI at all.
-Lava Flow should stop at X when flowing straight down? Break into rock emitter?
-Water Flow should stop at X when flowing straight down? Break into mist and then mist emitter?
+REENABLE: Saving on the network.
+IMPROVE: Lava Flow should stop at X when flowing straight down? Break into rock emitter?
+IMPROVE: Water Flow should stop at X when flowing straight down? Break into mist and then mist emitter?
+TODO: Camera collision - ideally the camera will want to go back to its default distance and height, but collision with things around it can cause it to move closer to avatar at minimum, and ideally to move up and closers as needed
 
-IDEA: How can I add voxel models as voxels? e.g. I torch is really voxel model, but it would be handy to have it as just a voxel(oxel).
-IDEA: Have clouds flow like a liquid
 
 TODO: Backside of water oxels
 TODO: Fix fire animation around wood so that it can work with any voxel. Is it a double voxel? Is there a limit to the amound of faces an oxel can have?
@@ -33,13 +29,13 @@ DRAGON
 IMPROVE: Dragon: Needs idle animation, being stopped plays walk animation now
 IMPROVE: Dragon: Needs walk animation
 TODO:  Dragon: Dragon fire should only melt an oxel for a few turns, then it turns back solid. And when it flows, it doesnt leave anything behind.
-FIX: Change the model for dragon breath so its not cannon
 FIX: Give each breath its own sound
 FIX: When dragon hits something, it pops to the top of object
 FIX: After landing goes back to flying too easy.
+IMPROVE: Dragon: Starts going TOO fast when diving (really just moving forward).
+IMPROVE: Pops between states (?) after landing
+FIX: If you get on and off multiple times, the avatar angle gets off.
 
-AVATAR
-FIX: Torch attachment to hand doesnt dispose correctly
 
 ZEPPELIN
 TODO: Add new hud
@@ -53,30 +49,40 @@ PARTICLE
 TODO: All(Many) particles should share the same vertex manager, and maybe a modified rendering loop?
 
 EMITTER
-Create emitter manager and emitter class to use in showing splash, mist, fire, etc
+TODO: Create emitter manager and emitter class to use in showing splash, mist, fire, etc
 
 WATER
 FIX: Water not lighting correctly
 FIX: Faces getting generated for when larger water oxel is next to smaller solid oxel
 TODO: Water faces next to solid should be inverted, arg, how does this work with FIX above? have to split oxel?
+ADJUST: Water speed.
 
-Dragon
-IMPROVE: Dragon: Starts going TOO fast when diving (really just moving forward).
-IMPROVE: Pops between states (?) after landing
-FIX: If you get on and off multiple times, the avatar angle gets off.
 
 LIGHTING - STATIC
-FINISH: directional component of lighting
-FINISH: per material attenuation
-FIX: Still bug in propogation by light enclousure
+FINISH: WORKING - directional component of lighting
+FINISH: WORKING - per material attenuation
+FIX: HOLD - Still bug in propogation by light enclousure
+FIX: In ambient Occlusion - quads need to be flipped some times to show lighting correctly
+
 LIGHTING - DYNAMIC
 TODO: Add lighting manager for dynamic lights, so the closest X lights can be retrived
 
-VERTEXINDEXMANAGER
-FIX - MINOR: Oxels appear to not already being removed. I just saw a oxel with no quads in addComponentData
-
 RENDERING
 IMPROVE: When adjusting screen size, the dispose/create cycle is called multiple times. Should only re-get context when mouse is released.
+
+////////////////////////////////////////////
+
+IDEA: FOG
+IDEA: How can I add voxel models as voxels? e.g. I torch is really voxel model, but it would be handy to have it as just a voxel(oxel). Solution: Add a model manager, that would add in torch models where ever the lights were.
+IDEA: Low Prioity - Have clouds flow like a liquid
+IDEA: Nice to be able to toggle autoflow
+IDEA: Nice to be able to cancel flow and light tasks
+IDEA: Great mini game, stop the water that is flowing into the town! Watch alexa trying to stop it was SO funny.
+IDEA: Break out contour from flow, so any block can contour (like grass)
+IDEA: Glass voxel are full bright
+IDEA: on ambient occlusion, if neighbor is larger...
+IDEA: on ambient occlusion, if neighbor is smaller...
+
 
 ////////////////////////////////////////////
 COMPLETED
@@ -91,6 +97,12 @@ DONE: Lights below 1 meter dont work correctly
 DONE: Arm on left with torch is annoying - clear view
 DONE: Head voxel are annoying - clear view
 DONE: Torch on and off!
+FIX: Change the model for dragon breath so its not cannon
+FIX: Torch attachment to hand doesnt dispose correctly
+FIX: Dispose on torch attachment is cause exception
+FIX: Mouse lock in full screen doesnt allow you to use GUI at all.
+IMPROVE: She wants fullbright, any color
+FIX - MINOR: Oxels appear to not already being removed. I just saw a oxel with no quads in addComponentData
 
 /////////////////////////////////////////////////////
 Goal: to become a profitable game studio in 1 year
@@ -120,3 +132,7 @@ steam punk space under targeted.
 Threats
 Adobe Flash is 5-10 years from end of lifecycle
 While other next generation voxel engines exist. None are targeted toward this space currently.
+
+Other
+https://www.kickstarter.com/projects/nerdkingdom/tug-1
+https://www.kickstarter.com/projects/winterkewlgames/yogventures/comments
