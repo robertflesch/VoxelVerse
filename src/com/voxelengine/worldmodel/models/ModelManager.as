@@ -159,7 +159,7 @@ package com.voxelengine.worldmodel.models
 		public function create( instance:InstanceInfo ):void {
 			//Log.out( "ModelManager.create: instance.templateName" + instance.templateName )
 			instanceInfoAdd( instance );
-			
+Log.out( "ModelManager.create - instance.templateName: " + instance.templateName + " ii: " + instance.toString() );
 			if ( !Globals.isGuid( instance.templateName ) && instance.templateName != "LoadModelFromBigDB" )
 			{
 				var modelInfo:ModelInfo = modelInfoFindOrCreate( instance.templateName, instance.instanceGuid );
@@ -177,7 +177,7 @@ package com.voxelengine.worldmodel.models
 			
 				// This loads the tasks into the LandscapeTaskQueue
 				//var layer:LayerInfo = new LayerInfo( "LoadModelFromBigDB", instance.instanceGuid ); 
-				var task:ITask = new LoadModelFromBigDB( instance.instanceGuid );
+				var task:ITask = new LoadModelFromBigDB( instance.instanceGuid, null );
 				taskGroup.addTask(task);
 				
 				task = new CompletedModel( instance.instanceGuid, null );
@@ -400,7 +400,7 @@ package com.voxelengine.worldmodel.models
 					vm.save();
 				}
 				else
-					Log.out( "ModelManager.save - NOT save model, unmodified: " + vm.instanceInfo.templateName );
+					Log.out( "ModelManager.save - unmodified: " + vm.instanceInfo.templateName );
 
 			}
 		}
@@ -1104,13 +1104,16 @@ package com.voxelengine.worldmodel.models
 			return outString;
 		}
 		
-		public function removeAllModelInstances():void {
+		public function removeAllModelInstances( $removePlayer:Boolean = false ):void {
 			Log.out( "ModelManager.removeAllModelInstances" );
 			// clear out old models
 			for each ( var vm:VoxelModel in _modelInstances )
 			{
 				if ( vm )
 				{
+					if (vm is Player)
+						if ( !$removePlayer )
+							continue;
 					trace( "ModelManager.removeAllModelInstances - marking as dead: " + vm.instanceInfo.instanceGuid );
 					markDead( vm.instanceInfo.instanceGuid );
 				}
@@ -1141,7 +1144,7 @@ package com.voxelengine.worldmodel.models
 				//}
 				
 			}
-			//vm.instanceInfo.templateName = "LoadModelFromBigDB";
+			vm.instanceInfo.templateName = vm.instanceInfo.instanceGuid;
 			vm.modelInfo.template = false;
 		}
 		
