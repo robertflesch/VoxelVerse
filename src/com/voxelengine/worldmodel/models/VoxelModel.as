@@ -676,7 +676,7 @@ package com.voxelengine.worldmodel.models
 			//if ( 1 == _modelInfo.biomes.layers.length && "LoadModelFromIVM" == _modelInfo.biomes.layers[0].functionName && null != Globals.g_modelManager.modelByteArrays[_modelInfo.biomes.layers[0].data] )	
 			//	byteArrayLoad( Globals.g_modelManager.modelByteArrays[_modelInfo.biomes.layers[0].data] );
 			//else 
-			if (_modelInfo.biomes && false == complete )
+			if (_modelInfo.biomes && false == complete && null == databaseObject )
 				_modelInfo.biomes.add_to_task_controller(_instanceInfo);
 			else
 				complete = true; // no model info to load, so just mark it as complete
@@ -716,8 +716,6 @@ package com.voxelengine.worldmodel.models
 		public function initialize($context:Context3D):void
 		{
 			internal_initialize($context);
-			if (modelInfo.editable && Globals.g_app.configManager.showEditMenu)
-				_editCursor = EditCursor.create();
 		}
 		
 		private function set_camera_data():void
@@ -1127,23 +1125,98 @@ package com.voxelengine.worldmodel.models
 			IVMLoadUncompressed( $ba );
 		}
 		
-		public function IVMLoadUncompressed($ba:ByteArray):void
+		public function IVMLoadUncompressed( $ba:ByteArray ):void
 		{
-			// Read off 3 bytes, the data format
+			var versionInfo:Object = readMetaInfo( $ba );
+			_version = versionInfo.version;
+			if ( 0 != versionInfo.manifestVersion )
+				throw new Error("VoxelModel.IVMLoadUncompressed - Exception - manifest not supported for local format" );
+				
+			loadOxelFromByteArray($ba);
+		}
+		
+		static public function readMetaInfo( $ba:ByteArray ):Object
+		{
 			$ba.position = 0;
+			// Read off first 3 bytes, the data format
 			var format:String = VoxelModel.readFormat($ba);
 			if ("ivm" != format)
-				throw new Error("VoxelModel.IVMLoadUncompressed - Exception - unsupported format");
+				throw new Error("VoxelModel.readMetaInfo - Exception - unsupported format: " + format );
 			
-			_version = VoxelModel.readVersion($ba);
-			//Log.out( "VoxelModel.IVMLoadUncompressed - loading model: " + modelInfo.fileName + "  of version: " + _version );
-			loadOxelFromByteArray($ba);
+			var metaInfo:Object = new Object();
+			// Read off next 3 bytes, the data version
+			metaInfo.version = VoxelModel.readVersion($ba);
+			// Read off next byte, the manifest version
+			metaInfo.manifestVersion = $ba.readByte();
+			return metaInfo;
+		}
+
+		private static const MANIFEST_VERSION:int = 100;
+		static public function loadFromManifestByteArray( $ba:ByteArray, $fileName:String ):VoxelModel {
+				
+			var versionInfo:Object = readMetaInfo( $ba );
+			if ( MANIFEST_VERSION != versionInfo.manifestVersion )
+			{
+				Log.out( "VoxelModel.loadFromManifestByteArray - Exception - bad version: " + versionInfo.manifestVersion, Log.ERROR );
+				return null;
+			}
+			
+			// how many bytes is the modelInfo
+			var strLen:int = $ba.readInt();
+			// read off that many bytes
+			var modelInfoJson:String = $ba.readUTFBytes( strLen );
+			modelInfoJson = decodeURI(modelInfoJson);
+			
+			// create the modelInfo object from embedded metadata
+			var mi:ModelInfo = new ModelInfo();
+			var jsonResult:Object = JSON.parse(modelInfoJson);
+			mi.init( $fileName, jsonResult );
+			
+			// add the modelInfo to the repo
+			Globals.g_modelManager.modelInfoAdd( mi );
+			var ii:InstanceInfo = Globals.g_modelManager.instanceInfoGet( $fileName );
+			if ( ii )
+			{
+				var modelAsset:String = mi.modelClass;
+				var modelClass:Class = ModelLibrary.getAsset( modelAsset )
+				var vm:* = new modelClass( ii, mi );
+				if ( null == vm )
+				{
+					Log.out( "VoxelModel.loadFromManifestByteArray - failed to create new instance of modelClass: " + modelClass, Log.ERROR );
+					return null;
+				}
+				
+				if ( "Player" == modelAsset )
+				{
+					Globals.player = vm;
+					Globals.controlledModel = vm;
+					return null;
+				}
+				
+				Globals.g_modelManager.modelAdd( vm );
+			}
+			else
+			{
+				Log.out( "VoxelModel.loadFromManifestByteArray - No instanceInfo was found for: " + mi.fileName, Log.ERROR );
+				return null;
+			}
+			
+			vm._version = versionInfo.version;
+
+			try {
+				vm.loadOxelFromByteArray( $ba );
+				Log.out( "VoxelModel.loadFromManifestByteArray - completed: " + $fileName );
+			}
+			catch ( e:Error ) {
+				Log.out( "VoxelModel.loadFromManifestByteArray in loadOxelFromByteArray: " + $fileName );
+			}
+			
+			return vm;
 		}
 		
 		public function loadOxelFromByteArray($ba:ByteArray):void
 		{
 			// Read off 1 bytes, the manifestVersion 
-			var manifestVersion:int = $ba.readByte();
 			// Read off 1 bytes, the root size
 			var rootGrainSize:int = -1;
 			var gct:GrainCursor = null;
@@ -1180,8 +1253,11 @@ package com.voxelengine.worldmodel.models
 			
 			oxel.gc.bound = rootGrainSize;
 			instanceInfo.grainSize = rootGrainSize;
-			if (modelInfo.editable && Globals.g_app.configManager.showEditMenu)
+			if (modelInfo.editable && Globals.g_app.configManager.showEditMenu) {
+				if ( null == _editCursor )
+					_editCursor = EditCursor.create();
 				_editCursor.oxel.gc.bound = oxel.gc.bound;
+			}
 			GrainCursorPool.poolDispose(gct);
 			calculateCenter();
 			set_camera_data();
