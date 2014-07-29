@@ -13,7 +13,7 @@ package com.voxelengine
 	import com.furusystems.logging.slf4as.Logging;
 	import com.furusystems.logging.slf4as.ILogger;
 
-	import com.junkbyte.console.Cc;
+	//import com.junkbyte.console.Cc;
 	
 	
 	public class Log {
