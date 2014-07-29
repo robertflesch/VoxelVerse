@@ -4,6 +4,7 @@ package com.voxelengine.GUI
 
 	import com.voxelengine.events.ModelEvent;
 	import com.voxelengine.worldmodel.models.ModelInfo;
+	import com.voxelengine.worldmodel.models.Player;
 	import org.flashapi.swing.*;
     import org.flashapi.swing.event.*;
     import org.flashapi.swing.constants.*;
@@ -323,6 +324,8 @@ package com.voxelengine.GUI
 			{
 				if ( vm && !vm.instanceInfo.dynamicObject && !vm.instanceInfo.dead )
 				{
+					if ( vm is Player )
+						continue;
 					if ( "Default_Name" != vm.instanceInfo.name )
 						_listbox1.addItem( vm.instanceInfo.name + " - " + vm.instanceInfo.instanceGuid, vm );
 					else
