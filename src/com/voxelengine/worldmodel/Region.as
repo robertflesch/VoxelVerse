@@ -193,7 +193,7 @@ package com.voxelengine.worldmodel
 			_regionId = $regionId;
 			if ( Globals.isGuid( $regionId ) )
 			{
-				Log.out( "Region.loadRegion - loading from DB: " + regionId );
+				Log.out( "Region.request - loading from DB: " + regionId );
 				Persistance.loadObject( Persistance.DB_TABLE_REGIONS
 								, regionId
 								, successHandlerDBO
@@ -203,7 +203,7 @@ package com.voxelengine.worldmodel
 			{
 				var _urlLoader:URLLoader = new URLLoader();
 				var fileNameWithExt:String = $regionId + ".rjson"
-				Log.out( "Region.new - loading: " + Globals.regionPath + fileNameWithExt );
+				Log.out( "Region.request - loading: " + Globals.regionPath + fileNameWithExt );
 				_urlLoader.load(new URLRequest( Globals.regionPath + fileNameWithExt ));
 				_urlLoader.addEventListener(Event.COMPLETE, onRegionLoadedAction);
 				_urlLoader.addEventListener(IOErrorEvent.IO_ERROR, errorAction);			
@@ -245,7 +245,7 @@ package com.voxelengine.worldmodel
 			var strLen:int = $ba.readInt();
 			// read off that many bytes
 			var regionJson:String = $ba.readUTFBytes( strLen );
-			Log.out( "Region.successHandler - regionJson: " + regionJson );
+			Log.out( "Region.loadFromDBO - regionJson: " + regionJson );
 			//regionJson = decodeURI(regionJson);
 			newRegion.processRegionJson( regionJson );
 		}
@@ -375,6 +375,8 @@ package com.voxelengine.worldmodel
 			fr.save( outString, regionId );
 		}
 		
+		// TO do I dont like that I have reference to BigDB here
+		// this should all get refactored out to be part of the Persistance Object
 		public function saveBigDB():void 
 		{
 			var ba:ByteArray = new ByteArray();
