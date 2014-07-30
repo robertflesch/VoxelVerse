@@ -1,0 +1,14 @@
+{
+    "model": {
+        "editable": "true",
+        "template": "true",
+        "biomes": {
+            "layers": [
+                {
+                    "data": "VolcanoIslandG15",
+                    "functionName": "LoadModelFromIVM"
+                }
+            ]
+        }
+    }
+}
