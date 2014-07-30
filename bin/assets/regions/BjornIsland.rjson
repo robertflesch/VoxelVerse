@@ -1,0 +1,43 @@
+{
+    "region": [
+		{
+             "model": {
+                "fileName": "Dragon",
+                "name": "Bjorn",
+                "location": {
+                    "x": 32,
+                    "y": 100,
+                    "z": 90
+                },
+				"collision": false,
+				"state" :"DragonAniFly",
+				"baseLightLevel": 150,
+				"script": "AutoControlObjectScript"
+            }
+		},
+		{
+            "model": {
+                "fileName": "BjornIsland",
+                "location": {
+                    "x": -500,
+                    "y": -3100,
+                    "z": -1500
+                }
+            }
+		}		
+    ],
+	"skyColor": {
+                    "r": 66,
+                    "g": 66,
+                    "b": 66
+                },
+	"gravity": true,
+	"playerPosition": {
+                    "x": 47,
+                    "y": 141,
+                    "z": 103
+                },
+	"playerRotation": 0,
+	"name": "Collision Test",
+	"desc": "Used to make sure avatar collide works as expected"
+}

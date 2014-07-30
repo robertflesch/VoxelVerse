@@ -1,0 +1,45 @@
+{
+    "region": [
+		{
+             "model": {
+                "fileName": "Dragon",
+                "name": "Smuag",
+				"baseLightLevel": 150,
+				"script": "AutoControlObjectScript",
+				"collision": false,
+				"critical" : "true",
+                "location": {
+                    "x": 0,
+                    "y": 90,
+                    "z": 150
+                }
+            }
+		},
+        {
+            "model": {
+                "fileName": "VolcanoIslandG15",
+                "location": {
+                    "x": 0,
+                    "y": -12000,
+                    "z": -5000
+                }
+
+            }
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": 16,
+                    "y": 122,
+                    "z": 160
+                },
+	"playerRotation": 0,
+	"name": "Cube Test",
+	"desc": ""
+}
