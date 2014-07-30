@@ -22,6 +22,7 @@ package com.voxelengine.events
 		
 		static public const DETACH:String					= "DETACH";
 		static public const ATTACH:String					= "ATTACH";
+		static public const MODEL_MODIFIED:String			= "MODEL_MODIFIED";
 		
 		static public const DESTROYED:String				= "DESTROYED";
 

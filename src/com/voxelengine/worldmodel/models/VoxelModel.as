@@ -128,6 +128,7 @@ package com.voxelengine.worldmodel.models
 		public function set description(val:String):void			{ _description = val; }
 		public function get children():Vector.<VoxelModel>			{ return _children; }
 		public function get modified():Boolean						{ return _modified; }
+		public function set modified( $val:Boolean):void			{ _modified = $val; }
 		public function get selected():Boolean 						{ return _selected; }
 		public function set selected(val:Boolean):void  			{ _selected = val; }
 		public function get onSolidGround():Boolean 				{ return _onSolidGround; }
@@ -256,6 +257,8 @@ package com.voxelengine.worldmodel.models
 			{
 				if ( modelInfo.editable )
 				{
+					Globals.g_app.addEventListener(ModelEvent.MODEL_MODIFIED, handleModelEvents);
+					
 					Globals.g_app.addEventListener(ImpactEvent.EXPLODE, impactEventHandler);
 					Globals.g_app.addEventListener(ImpactEvent.DFIRE, impactEventHandler);
 					Globals.g_app.addEventListener(ImpactEvent.DICE, impactEventHandler);
@@ -925,6 +928,8 @@ package com.voxelengine.worldmodel.models
 			
 			if ( modelInfo.editable )
 			{
+				Globals.g_app.removeEventListener(ModelEvent.MODEL_MODIFIED, handleModelEvents);
+				
 				Globals.g_app.removeEventListener(ImpactEvent.EXPLODE, impactEventHandler);
 				Globals.g_app.removeEventListener(ImpactEvent.DFIRE, impactEventHandler);
 				Globals.g_app.removeEventListener(ImpactEvent.DICE, impactEventHandler);
@@ -1674,6 +1679,9 @@ Log.out( "VoxelModel.handleModelEvents - classCalled" + classCalled );
 					// TODO Need something here to determine which model
 					//if ( $me.instanceGuid
 				
+			}
+			else if ( ModelEvent.MODEL_MODIFIED && $me.instanceGuid == instanceInfo.instanceGuid ) {
+				modified = true;
 			}
 		}
 		

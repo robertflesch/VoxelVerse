@@ -182,6 +182,7 @@ package com.voxelengine.worldmodel
 			Log.out( "Region.unloadRegion: " + regionId );
 			_currentRegion = false;
 			// Removes anonymous function
+			Globals.g_app.removeEventListener( RegionEvent.REGION_MODIFIED, handleRegionModified );
 			Globals.g_app.removeEventListener( ModelEvent.PARENT_MODEL_ADDED, function( me:ModelEvent ):void { ; } );
 			Globals.g_app.removeEventListener( ModelEvent.PARENT_MODEL_REMOVED, function( me:ModelEvent ):void { ; } );
 			Globals.g_app.removeEventListener( ModelEvent.CRITICAL_MODEL_DETECTED, onCriticalModelDetected );
@@ -290,6 +291,11 @@ package com.voxelengine.worldmodel
 				
 			Globals.g_app.dispatchEvent( new RegionEvent( RegionEvent.REGION_CACHE_COMPLETE, regionId ) );
 		}
+		
+		private function handleRegionModified( $re:RegionEvent ):void {
+			changed = true;	
+			Globals.g_regionManager.save();
+		}
 				
 		public function load():void
 		{
@@ -297,6 +303,7 @@ package com.voxelengine.worldmodel
 			Globals.g_app.addEventListener( RegionEvent.REGION_UNLOAD, onRegionUnload );
 			Globals.g_app.addEventListener( LoadingEvent.LOAD_COMPLETE, onLoadingComplete );
 			Globals.g_app.addEventListener( ModelEvent.CRITICAL_MODEL_DETECTED, onCriticalModelDetected );
+			Globals.g_app.addEventListener( RegionEvent.REGION_MODIFIED, handleRegionModified);
 
 			var count:int = Globals.g_modelManager.loadRegionObjects(_regionObject.region);
 			//if ( 0 == count )

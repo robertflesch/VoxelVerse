@@ -1,7 +1,10 @@
 
 package com.voxelengine.GUI
 {
+	import com.voxelengine.events.ModelEvent;
+	import com.voxelengine.events.RegionEvent;
 	import com.voxelengine.worldmodel.models.InstanceInfo;
+	import com.voxelengine.worldmodel.Region;
 	import flash.events.MouseEvent;
 	import flash.geom.Vector3D;
 	import org.flashapi.collector.EventCollector;
@@ -195,6 +198,9 @@ package com.voxelengine.GUI
 //			Globals.GUIControl = false;
 			_s_inExistance--;
 			_s_currentInstance = null;
+			
+			Globals.g_app.dispatchEvent( new ModelEvent( ModelEvent.MODEL_MODIFIED, _ii.instanceGuid ) );
+			Globals.g_app.dispatchEvent( new RegionEvent( RegionEvent.REGION_MODIFIED, "" ) );
 		}
 		
 		private function spe_x(event:SpinButtonEvent):void

@@ -24,6 +24,7 @@ package com.voxelengine.events
 		static public const REGION_LOAD_BEGUN:String				= "REGION_LOAD_BEGUN";
 		//static public const REGION_LOAD_COMPLETE:String				= "REGION_LOAD_COMPLETE";
 		static public const REGION_UNLOAD:String					= "REGION_UNLOAD";
+		static public const REGION_MODIFIED:String					= "REGION_MODIFIED";
 		
 		static public const REGION_CREATE_SUCCESS:String			= "REGION_CREATE_SUCCESS";
 		static public const REGION_CREATE_CANCEL:String				= "REGION_CREATE_CANCEL";
