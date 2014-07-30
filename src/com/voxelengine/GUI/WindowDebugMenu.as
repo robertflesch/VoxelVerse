@@ -165,11 +165,13 @@ package com.voxelengine.GUI
 
 		private function updateGC():void
 		{
-			if (Globals.g_app.editing && Globals.selectedModel && Globals.selectedModel.editCursor.gciData )
-			{
-				var gci:GrainCursorIntersection = Globals.selectedModel.editCursor.gciData;
-				var rot:Vector3D = Globals.controlledModel.instanceInfo.rotationGet;
-				_gcLabel.text = "grain: " + gci.gc.grain + " x: " + int( gci.gc.grainX ) + "  y: " + int( gci.gc.grainY ) + "  z: " + int( gci.gc.grainZ ); 
+			if (Globals.g_app && Globals.g_app.editing ) {
+				if ( Globals.selectedModel &&Globals.selectedModel.editCursor && Globals.selectedModel.editCursor.gciData )
+				{
+					var gci:GrainCursorIntersection = Globals.selectedModel.editCursor.gciData;
+					var rot:Vector3D = Globals.controlledModel.instanceInfo.rotationGet;
+					_gcLabel.text = "grain: " + gci.gc.grain + " x: " + int( gci.gc.grainX ) + "  y: " + int( gci.gc.grainY ) + "  z: " + int( gci.gc.grainZ ); 
+				}
 			}
 		}
 		
