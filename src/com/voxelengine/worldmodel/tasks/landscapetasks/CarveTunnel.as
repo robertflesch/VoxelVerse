@@ -8,35 +8,40 @@
 
 package com.voxelengine.worldmodel.tasks.landscapetasks
 {
-	import com.voxelengine.worldmodel.oxel.Oxel;
-	import com.voxelengine.worldmodel.models.VoxelModel;
-	import com.voxelengine.worldmodel.biomes.*;
-	import com.voxelengine.worldmodel.tasks.landscapetasks.LandscapeTask;
-	import com.voxelengine.Globals;
 	import flash.geom.Vector3D;
 	import flash.utils.getTimer;
 	
-	/**
-	 * ...
-	 * 
-	 * 	const numOfTunnel:uint = 1;
-		const tunnelLength:uint = 256;
-		const tunnelRadius:uint = 64;
-		var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", Globals.AIR, tunnelRadius, numOfTunnel, "", tunnelLength );
-	 * 
-	 * 
-	 * @author Robert Flesch
-	 */
+	import com.developmentarc.core.tasks.tasks.ITask;
+	import com.developmentarc.core.tasks.groups.TaskGroup;
+	
+	import com.voxelengine.Globals;
+	import com.voxelengine.worldmodel.oxel.Oxel;
+	import com.voxelengine.worldmodel.models.VoxelModel;
+	import com.voxelengine.worldmodel.biomes.LayerInfo;
+	import com.voxelengine.worldmodel.tasks.landscapetasks.LandscapeTask;
+	
 	public class CarveTunnel extends LandscapeTask 
 	{		
-		public function CarveTunnel( guid:String,layer:LayerInfo ):void {
-			trace( "CarveTunnel - created" );					
-			super(guid,layer);
+		public var startLoc:Vector3D;
+		public var view:Vector3D;
+		public var radiusMultiplierMax:Number = 4;
+		public var radiusMultiplierMin:Number = 0.85;
+		public var stepSize:int = 24;
+		
+		static public function carveTunnelContructor( $guid:String, $start:Vector3D, $view:Vector3D, $type:int, $length:int, $radius:int, $minGrain:int = 4 ):void {
+			
+			//public function LayerInfo( functionName:String = null, data:String = "", type:int = 0 , range:int = 0, offset:int = 0, optional1:String = "", optional2:int = 0 )
+			var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", $type, $length, $radius, "", $minGrain );
+			var ct:CarveTunnel = new CarveTunnel( $guid, layer );
+			ct.startLoc = $start.clone();
+			ct.view = $view.clone();
+			var taskGroup:TaskGroup = new TaskGroup("CarveTunnel for " + $guid, 2);
+			taskGroup.addTask( ct );
+			Globals.g_landscapeTaskController.addTask( taskGroup );
 		}
 		
-		override public function cancel():void {
-			// TODO stop this somehow?
-			super.cancel();
+		public function CarveTunnel( guid:String,layer:LayerInfo ):void {
+			super(guid,layer);
 		}
 		
 		override public function start():void {
@@ -51,40 +56,43 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
             var tunnelLength:int =_layer.range;
             var tunnelRadius:int =_layer.offset;
 			var voxelType:int = _layer.type;
+			var minGrain:int = _layer.optionalInt;
 			
-			if ( Globals.g_modelManager._gci ) {
-				
-				var sx:int = Globals.g_modelManager._gci.point.x;				
-				var sy:int = Globals.g_modelManager._gci.point.y;				
-				var sz:int = Globals.g_modelManager._gci.point.z;				
-			}
-			else 
-			{
-				super.complete()
-				return;
-			}
-				
-			trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " starting at x: " + sx + "  y: " + sy + "  z: " + sz );					
+			trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " starting at x: " + startLoc.x + "  y: " + startLoc.y + "  z: " + startLoc.z );					
 			
-			// I need a normalize view vector
-			// And then expand from that location
-			var vv:Vector3D = Globals.g_modelManager.viewVectorNormalizedGet();
-			var stepSize:int = 24;
-			vv.scaleBy( stepSize );
-			for ( var i:int = 1; i < tunnelLength/stepSize; i++ ) {
-				//vm.oxel.write_sphere( _guid, sx, sy, sz, Math.min( 36, Math.random() * 96), Globals.AIR, 3);
-				//vm.oxel.write_sphere( _guid, sx, sy, sz, stepSize * 1.5, Globals.AIR, 3);
-				var dia:int = Math.min( tunnelRadius * 0.85, Math.random() * tunnelRadius * 4);
-				vm.oxel.write_sphere( _guid, sx, sy, sz, dia, Globals.AIR, 3);
-				sx += vv.x + Math.random() * 5;
-				sy += vv.y + Math.random() * 5;
-				sz += vv.z + Math.random() * 5;
-				trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " next at x: " + sx + "  y: " + sy + "  z: " + sz );					
+			view.scaleBy( stepSize );
+			for ( var i:int = 1; i < tunnelLength / stepSize; i++ ) {
+				
+				var radius:int = Math.min( tunnelRadius * radiusMultiplierMin, Math.random() * tunnelRadius * radiusMultiplierMax );
+				vm.oxel.write_sphere( _guid, startLoc.x, startLoc.y, startLoc.z, radius, Globals.AIR, minGrain );
+				startLoc.x += view.x + rndOffset( tunnelRadius );
+				startLoc.y += view.y + rndOffset( tunnelRadius );
+				startLoc.z += view.z + rndOffset( tunnelRadius );
+				if ( 0.80 < Math.random() ) {
+					trace( "CarveTunnel.start - Carve SIDE TUNNEL ---------------------------------------------------------------" );					
+					var vv:Vector3D = Globals.g_modelManager.viewVectorNormalizedGet();
+					vv = vv.crossProduct( new Vector3D( 1, 0, 1 ) );
+					CarveTunnel.carveTunnelContructor( _guid
+								 , startLoc
+								 , vv
+								 , Globals.AIR
+								 , tunnelLength / 2
+								 , tunnelRadius * 0.75 );
+
+				}
+				trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " next at x: " + startLoc.x + "  y: " + startLoc.y + "  z: " + startLoc.z );					
 			}
 
 			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime)  );
 			merge( vm.oxel );
             super.complete() // AbstractTask will send event
+		}
+		
+		private function rndOffset( $max:int ):int {
+			
+			var offset:int = 0.5 < Math.random() ? -Math.random() * $max/2 : Math.random() * $max/2
+			trace( "rndOffset: " + offset );
+			return offset;
 		}
 
 	}

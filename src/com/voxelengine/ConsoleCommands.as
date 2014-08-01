@@ -178,26 +178,26 @@ package com.voxelengine
 		{
 //			Globals.g_landscapeTaskController.activeTaskLimit = 0;
 			if ( !Globals.selectedModel ) {
-				Log.out( "No model selected" );
+				Log.out( "ConsoleCommands.carveTunnel  No model selected" );
 				return;
 			}
 			
-			var guid:String = Globals.selectedModel.instanceInfo.instanceGuid;
+			if ( !Globals.selectedModel.instanceInfo ) {
+				Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model" );
+				return;
+			}
 
-			// Create task group
-			var taskGroup:TaskGroup = new TaskGroup("CarveTunnel for " + guid, 2);
-        
-			// This loads the tasks into the LandscapeTaskQueue
-			const tunnelLength:uint = 512;
-			const tunnelRadius:uint = 32;
-			//public function LayerInfo( functionName:String = null, data:String = "", type:int = 0 , range:int = 0, offset:int = 0, optional1:String = "", optional2:int = 0 )
-			var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", Globals.AIR, tunnelLength, tunnelRadius );
-			var task:ITask = null;
-			task = new CarveTunnel( guid, layer );
-			
-			taskGroup.addTask(task);
-			
-			Globals.g_landscapeTaskController.addTask( taskGroup );
+			if ( !Globals.g_modelManager._gci ) {
+				Log.out( "ConsoleCommands.carveTunnel  No location selected" );
+				return;
+			}
+				
+			CarveTunnel.carveTunnelContructor( Globals.selectedModel.instanceInfo.instanceGuid
+			                                 , Globals.g_modelManager._gci.point
+			                                 , Globals.g_modelManager.viewVectorNormalizedGet()
+											 , Globals.AIR
+											 , 512
+											 , 64 );
 		}
 		
 		
