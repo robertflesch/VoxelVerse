@@ -69,14 +69,20 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 				_playerLoaded = true;
 			}
 			
+			vm.calculateCenter();
+			
+			if (vm.modelInfo.editable && Globals.g_app.configManager.showEditMenu) {
+				if ( null == vm.editCursor )
+					vm.editCursor = EditCursor.create();
+				vm.editCursor.oxel.gc.bound = vm.oxel.gc.bound;
+			}
+				
 			if ( 0 == _count && _playerLoaded )
 			{
-				Log.out( "CompletedModel.start - ALL MODELS LOADED - dispatching the LoadingEvent.LOAD_COMPLETE event" );
+				Log.out( "CompletedModel.start - ALL MODELS LOADED - dispatching the LoadingEvent.LOAD_COMPLETE event vm: " + vm.modelInfo.fileName );
 				Globals.g_app.dispatchEvent( new LoadingEvent( LoadingEvent.LOAD_COMPLETE ) );
 			}
 			
-			vm.calculateCenter();
-				
 			super.complete(); // This MUST be called for tasks to continue
 		}
 		
