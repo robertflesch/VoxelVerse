@@ -117,7 +117,7 @@ package com.voxelengine.worldmodel.models
 		public function get statisics():ModelStatisics				{ return _statisics; }
 		public function get instanceInfo():InstanceInfo				{ return _instanceInfo; }
 		public function get editCursor():EditCursor 				{ return _editCursor; }
-		//public function set editCursor(val:EditCursor):void { _editCursor = val; }
+		public function set editCursor(val:EditCursor):void 		{ _editCursor = val; }
 		public function get visible():Boolean 						{ return _visible; }
 		public function set visible(val:Boolean):void 				{ _visible = val; }
 		public function get modelInfo():ModelInfo 					{ return _modelInfo; }
@@ -1258,12 +1258,8 @@ package com.voxelengine.worldmodel.models
 			
 			oxel.gc.bound = rootGrainSize;
 			instanceInfo.grainSize = rootGrainSize;
-			if (modelInfo.editable && Globals.g_app.configManager.showEditMenu) {
-				if ( null == _editCursor )
-					_editCursor = EditCursor.create();
-				_editCursor.oxel.gc.bound = oxel.gc.bound;
-			}
 			GrainCursorPool.poolDispose(gct);
+Log.out( "VoxelModel.loadOxelFromByteArray - CALCULATE CENTER" );
 			calculateCenter();
 			set_camera_data();
 			oxelLoaded();

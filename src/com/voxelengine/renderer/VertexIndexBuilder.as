@@ -224,7 +224,7 @@ public class VertexIndexBuilder
 
 				oxelStartingIndex = oxelsProcessed;
 				remainingOxels = _oxels.length - oxelsProcessed;
-				trace( "VertexIndexBuilder.buffersBuildFromOxels oxelStartingIndex: " + oxelStartingIndex + " oxelsProcessed: " + oxelsProcessed + " quadsProcessed: " + quadsProcessed );
+				//trace( "VertexIndexBuilder.buffersBuildFromOxels oxelStartingIndex: " + oxelStartingIndex + " oxelsProcessed: " + oxelsProcessed + " quadsProcessed: " + quadsProcessed );
 			}
 		}	
 		
