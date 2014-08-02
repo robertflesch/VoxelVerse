@@ -196,7 +196,7 @@ package com.voxelengine
 			                                 , Globals.g_modelManager._gci.point
 			                                 , Globals.g_modelManager.viewVectorNormalizedGet()
 											 , Globals.AIR
-											 , 512
+											 , 2048
 											 , 64 );
 		}
 		
