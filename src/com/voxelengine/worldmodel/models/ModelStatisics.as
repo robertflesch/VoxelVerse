@@ -76,9 +76,8 @@ package com.voxelengine.worldmodel.models
 				$ba.position = 8;
 			initialize();
 			_rootGrain = $rootGrain;
-			//process( $version, $ba, _rootGrain );
+			process( $version, $ba, _rootGrain );
 			$ba.position = orginalPosition;
-			/*
 			
 			for ( var key:* in _stats )
 			{
@@ -97,10 +96,10 @@ package com.voxelengine.worldmodel.models
 				}
 			}
 			
-//			statsPrint();
+			statsPrint();
 //			trace( "ModelStatisics.grather - old count: " + count );
 //			trace( "ModelStatisics.grather - meter count: " + countInMeters );
-*/
+
 		}
 		
 		private function process( $version:String, $ba:ByteArray, currentGrain:int ):ByteArray
