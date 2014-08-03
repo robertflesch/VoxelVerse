@@ -103,6 +103,12 @@ public class FlowInfo
 		//Log.out( "FlowInfo.constructor" );
 	}
 	
+	public function reset( $oxel:Oxel ):void {
+		direction = Globals.ALL_DIRS;
+		type = FLOW_TYPE_UNDEFINED;
+		_flowScaling.scalingReset( $oxel );
+	}
+	
 	public function toString():String {
 		return "FlowInfo - type: " + type + "  out: " + out + "  down: " + down + "  dir: " + direction;
 	}

@@ -2230,6 +2230,21 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 	
+		public function resetFlowInfo():void {
+			if ( childrenHas() )
+			{
+				for each ( var child:Oxel in _children )
+				{
+					child.resetFlowInfo();
+				}
+			}
+			else
+			{
+				if ( null != _flowInfo )
+					_flowInfo.reset( this );
+			}
+		}
+		
 		public function rotateCCW():void
 		{
 			var range:uint = gc.bound - gc.grain;

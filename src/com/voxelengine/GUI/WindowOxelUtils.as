@@ -78,6 +78,11 @@ package com.voxelengine.GUI
 			baseLightLevelB.width = 150;
 			addElement( baseLightLevelB );
 
+			var resetFlowInfo:Button = new Button( "Reset FlowInfo..." );
+			resetFlowInfo.addEventListener(UIMouseEvent.CLICK, resetFlowInfoHandler );
+			resetFlowInfo.width = 150;
+			addElement( resetFlowInfo );
+			
 			//var fullBrightB:Button = new Button( "Full Bright" );
 			//fullBrightB.addEventListener(UIMouseEvent.CLICK, fullBrightHandler );
 			//fullBrightB.width = 150;
@@ -98,6 +103,11 @@ package com.voxelengine.GUI
 			var ba:ByteArray = Globals.g_modelManager.findIVM( _vm.modelInfo.biomes.layers[0].data );
 			_vm.statisics.gather( Globals.VERSION, ba, _vm.oxel.gc.grain );
 			_vm.statisics.statsPrint();
+		}
+		
+		
+		private function resetFlowInfoHandler(event:UIMouseEvent):void {
+			_vm.oxel.resetFlowInfo();
 		}
 		
 		private function baseLightLevelHandler(event:UIMouseEvent):void {
