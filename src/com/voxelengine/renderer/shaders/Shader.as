@@ -135,16 +135,24 @@ package com.voxelengine.renderer.shaders
 				// texture filtering. Options: nearest, linear
 				// texture repeat. Options: repeat, wrap, clamp
 				"tex ft0, v0, fs0 <2d,clamp,mipnearest>", // v1 is passed in from vertex, UV coordinates
-				// now apply the color and brightness from the vertex attirbutes
 				
 				/////////////////////////////////////////////////
 				// TINT on base texture
+				"mul ft0.xyz, v1.xyz, ft0.xyz", // mutliply by texture tint - v1.xyz
 				/////////////////////////////////////////////////
-				"mul ft0, v1.xyz, ft0", // mutliply by texture tint - v1.xyz
 				
 				/////////////////////////////////////////////////
 				// light from brightness
-				"mul ft4, v4.xyz, ft0", // modify the texture by multipling by the light color
+				"mul ft4.xyz, v4.xyz, ft0.xyz", // modify the texture by multipling by the light color
+				/////////////////////////////////////////////////
+				
+				/////////////////////////////////////////////////
+				// ALPHA VALUES --------------------------------
+				// take the smallest value from the tint and the source texture
+				"min ft4.w, v1.w, ft0.w",
+				// END ALPHA VALUES --------------------------------
+				/////////////////////////////////////////////////
+				
 "mul ft4, v4.w, ft4", 	// Ambient Occlusion - multiply by texture brightness ColorUINT.w
 				
 				/////////////////////////////////////////////////
@@ -180,7 +188,7 @@ package com.voxelengine.renderer.shaders
 				"mul ft2, ft0, ft5.z",  // multiple the UNlit texture, with the attenuated light effect !Critical Change, otherwise the torch is dependant on the static texture color.
 				"mul ft2.xyz, ft2.xyz, fc2.xyz",  // take result and multiple by light color
 				
-"mul ft2, v4.w, ft2", 	// Ambient Occlusion - take result and multiple vertex brightness - not working....
+"mul ft2, v4.w, ft2", 	// Ambient Occlusion - take result and multiple vertex brightness
 				// END light from dynamic lights
 				/////////////////////////////////////////////////
 				
@@ -189,21 +197,18 @@ package com.voxelengine.renderer.shaders
 				//"mul ft6",
 				// END FOG
 				////////////////////////////////////////////////////////////////////////////
-				"max ft3, ft2, ft4",    // take the larger value between the dynamic light and static light
+				"max ft3, ft2.xyz, ft4.xyz",    // take the larger value between the dynamic light and static light, for the RGB values
+				// grab the alpha value from the min of original texture and tint value.
+				"max ft3.w, ft4.w, ft4.w",
 				"sat ft2, ft3",     	// Clamp ft2 between 1 and 0, put result in ft2.
-				// OR
-				// Not sure why it seemed this method was needed. - RSF
-				//"max ft3.x, ft2.x, ft4.x",    // take the larger value between the dynamic light and brightness
-				//"max ft3.y, ft2.y, ft4.y",    // take the larger value between the dynamic light and brightness
-				//"max ft3.z, ft2.z, ft4.z",    // take the larger value between the dynamic light and brightness
-				//"max ft3.w, ft2.w, ft4.w",    // take the larger value between the dynamic light and brightness
-				//"sat ft2, ft3",     	// Clamp ft2 between 1 and 0, put result in ft2.
 
+				////////////////////////////////////////////////////////////////////////////
+				// OUTPUT
 				// mixed static and dynamic values
 				"mov oc ft2"
-				
 				// static only values
-				//"mov oc ft4"
+				// "mov oc ft4"
+				////////////////////////////////////////////////////////////////////////////
 			];
 			
 			var fragmentAssembler:AGALMiniAssembler = new AGALMiniAssembler();

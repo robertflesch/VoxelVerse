@@ -34,19 +34,11 @@ package com.voxelengine.renderer.shaders
 			
 			//$context.setCulling(Context3DTriangleFace.NONE);
 			$context.setCulling(Context3DTriangleFace.BACK);
-			
-			var sourceFactor:String = Context3DBlendFactor.SOURCE_ALPHA;
-			var destinationFactor:String = Context3DBlendFactor.SOURCE_COLOR;
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ZERO);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_COLOR);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_DESTINATION_ALPHA);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_DESTINATION_COLOR);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.DESTINATION_ALPHA);
-			//$context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA);
 
+			var sourceFactor:String = Context3DBlendFactor.SOURCE_ALPHA;
+			//var destinationFactor:String = Context3DBlendFactor.SOURCE_COLOR;
+		   // var destinationFactor:String = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR
+			var destinationFactor:String = Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA
 			$context.setBlendFactors( sourceFactor, destinationFactor );
 			
 			return true;

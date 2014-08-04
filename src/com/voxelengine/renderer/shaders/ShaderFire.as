@@ -38,8 +38,9 @@ package com.voxelengine.renderer.shaders
 			$context.setCulling(Context3DTriangleFace.BACK);
 			
 			var sourceFactor:String = Context3DBlendFactor.SOURCE_ALPHA;
-			//var destinationFactor:String = Context3DBlendFactor.SOURCE_COLOR;
-			var destinationFactor:String = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR
+		//	var destinationFactor:String = Context3DBlendFactor.SOURCE_COLOR;
+		//  var destinationFactor:String = Context3DBlendFactor.ONE_MINUS_SOURCE_COLOR
+			var destinationFactor:String = Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA
 			$context.setBlendFactors( sourceFactor, destinationFactor );
 			
 			return true;
@@ -104,9 +105,14 @@ package com.voxelengine.renderer.shaders
 				// mip mapping. Options: nomip (or mipnone , they are the same) , mipnearest, miplinear
 				// texture filtering. Options: nearest, linear
 				// texture repeat. Options: repeat, wrap, clamp
-				"tex ft0, v0, fs0 <2d,clamp,mipnearest>", // v1 is passed in from vertex, UV coordinates
-				// now apply the color and brightness from the vertex attirbutes
-				"mul ft0, v1.xyz, ft0", // texture color - v3.xyz
+				"tex ft0, v0, fs0 <2d,clamp,mipnearest>", // v0 is passed in from vertex, UV coordinates
+				
+				/////////////////////////////////////////////////
+				// TINT on base texture
+				/////////////////////////////////////////////////
+				"mul ft0, v1.xyz, ft0", // mutliply by texture tint - v1.xyz
+				
+				
 				// should this or light from dynamic source take greater value?
 				"mul ft0, ft0, v1.w",   // brightness - v3.w
 				"mov oc ft0"
