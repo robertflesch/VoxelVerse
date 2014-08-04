@@ -427,7 +427,7 @@ public class Quad {
 		var normal:int = 1;
 		var vertexIndex:int = 0;
 		var fs:FlowScaling = $flowInfo.flowScaling;
-		var tint:uint = $ti.color;
+		var tint:uint = $brightness.color;
 		switch ( $face ) 
 		{
 			case Globals.POSX:
@@ -496,7 +496,7 @@ public class Quad {
 		//Log.out( "Quad.addStraightVerticesNew temp: " + brightness );
 		//Log.out( "Quad.asvn - $planeFacing: " + $planeFacing );
 		var componentIndex:int;
-		var tint:uint = $ti.color;
+		var tint:uint = $brightness.color;
 		
 		var sideBrightness:Number = 0.5;
 		var normal:int = 1;

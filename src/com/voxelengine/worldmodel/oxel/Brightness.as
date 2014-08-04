@@ -230,6 +230,10 @@ public class Brightness  {  // extends BrightnessData
 	
 	private var _lights:Vector.<LightInfo> = new Vector.<LightInfo>();
 	
+	private var _color:uint = 0xffffffff;
+	public function get color():uint { return _color; }
+	public function set color( val:uint ):void { _color = val; }
+	
 	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
 	public function Brightness():void {
@@ -238,6 +242,7 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
 
+		$ba.writeUnsignedInt( _color );
 		$ba.writeUnsignedInt( _lowerAmbient );
 		$ba.writeUnsignedInt( _higherAmbient );
 		
@@ -285,8 +290,7 @@ public class Brightness  {  // extends BrightnessData
 				_lights[i].fromByteArray( $ba );
 			}
 		}
-		else { 
-			// How many light do I need to read?
+		else if ( Globals.VERSION_004 == $version || Globals.VERSION_005 == $version ) { 
 			_lowerAmbient = $ba.readUnsignedInt();
 			_higherAmbient = $ba.readUnsignedInt();
 			lightCount = $ba.readByte();
@@ -296,6 +300,20 @@ public class Brightness  {  // extends BrightnessData
 				_lights[i].fromByteArray( $ba );
 			}
 		}
+		else if ( Globals.VERSION_006 == $version ) { 
+			_color = $ba.readUnsignedInt();
+			_lowerAmbient = $ba.readUnsignedInt();
+			_higherAmbient = $ba.readUnsignedInt();
+			lightCount = $ba.readByte();
+			// Now read each light
+			for ( i = 0; i < lightCount; i++ ) {
+				_lights[i] = new LightInfo(0, 0, defaultLightLevelSetter(), $attnPerMeter, false );
+				_lights[i].fromByteArray( $ba );
+			}
+		}
+		else
+			throw new Error( "Brightness.fromByteArray - unsupported version: " + $version );
+			
 		return $ba;
 	}
 

@@ -589,6 +589,7 @@ package com.voxelengine.worldmodel.oxel
 					brightness.childGetAllLights( gct.childId(), _children[i].brightness );
 					// child should attenuate light at same rate.
 					_children[i].brightness.materialFallOffFactor = brightness.materialFallOffFactor;
+					_children[i].brightness.color = brightness.color;
 				}
 				// use the super so you dont start a flow event on flowable types.
 				if ( Globals.GRASS == type )
@@ -835,6 +836,7 @@ package com.voxelengine.worldmodel.oxel
 						// Need to set this from a valid child
 						// Parent should have same brightness attn as children did.
 						_brightness.materialFallOffFactor = childForBrightness.brightness.materialFallOffFactor;
+						_brightness.color = childForBrightness.brightness.color;
 					}
 				}
 			}
@@ -1156,7 +1158,7 @@ package com.voxelengine.worldmodel.oxel
 					li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
 				}
 				_brightness.materialFallOffFactor = $ti.lightInfo.fallOffFactor;
-				
+				_brightness.color = $ti.color;
 			}
 			
 			if ( true == $ti.lightInfo.fullBright && false == $ti.lightInfo.lightSource )
