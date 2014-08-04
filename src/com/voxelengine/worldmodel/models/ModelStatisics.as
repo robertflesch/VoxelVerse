@@ -72,8 +72,6 @@ package com.voxelengine.worldmodel.models
 				return; //empty
 				
 			var orginalPosition:int  = $ba.position;
-			if ( 8 != orginalPosition )
-				$ba.position = 8;
 			initialize();
 			_rootGrain = $rootGrain;
 			process( $version, $ba, _rootGrain );
