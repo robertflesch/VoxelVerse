@@ -1086,36 +1086,6 @@ package com.voxelengine.worldmodel.models
 			return $ba;	
 		}
 		
-		// This reads the format info and advances position on byteArray
-		static public function readFormat($ba:ByteArray):String
-		{
-			var format:String;
-			var byteRead:int = 0;
-			byteRead = $ba.readByte();
-			format = String.fromCharCode(byteRead);
-			byteRead = $ba.readByte();
-			format += String.fromCharCode(byteRead);
-			byteRead = $ba.readByte();
-			format += String.fromCharCode(byteRead);
-			
-			return format;
-		}
-		
-		// This reads the version info and advances position on byteArray
-		static public function readVersion($ba:ByteArray):String
-		{
-			var version:String;
-			var byteRead:int = 0;
-			byteRead = $ba.readByte();
-			version = String.fromCharCode(byteRead);
-			byteRead = $ba.readByte();
-			version += String.fromCharCode(byteRead);
-			byteRead = $ba.readByte();
-			version += String.fromCharCode(byteRead);
-			
-			return version;
-		}
-		
 		public function IVMLoadCompressed($ba:ByteArray):void
 		{
 			// the try catch here allows me to treat all models as compressed
@@ -1155,16 +1125,48 @@ package com.voxelengine.worldmodel.models
 		{
 			$ba.position = 0;
 			// Read off first 3 bytes, the data format
-			var format:String = VoxelModel.readFormat($ba);
+			var format:String = readFormat($ba);
 			if ("ivm" != format)
 				throw new Error("VoxelModel.readMetaInfo - Exception - unsupported format: " + format );
 			
 			var metaInfo:Object = new Object();
 			// Read off next 3 bytes, the data version
-			metaInfo.version = VoxelModel.readVersion($ba);
+			metaInfo.version = readVersion($ba);
+			Log.out("VoxelModel.readMetaInfo - version: " + metaInfo.version );
+
 			// Read off next byte, the manifest version
 			metaInfo.manifestVersion = $ba.readByte();
 			return metaInfo;
+
+			// This reads the format info and advances position on byteArray
+			function readFormat($ba:ByteArray):String
+			{
+				var format:String;
+				var byteRead:int = 0;
+				byteRead = $ba.readByte();
+				format = String.fromCharCode(byteRead);
+				byteRead = $ba.readByte();
+				format += String.fromCharCode(byteRead);
+				byteRead = $ba.readByte();
+				format += String.fromCharCode(byteRead);
+				
+				return format;
+			}
+			
+			// This reads the version info and advances position on byteArray
+			function readVersion($ba:ByteArray):String
+			{
+				var version:String;
+				var byteRead:int = 0;
+				byteRead = $ba.readByte();
+				version = String.fromCharCode(byteRead);
+				byteRead = $ba.readByte();
+				version += String.fromCharCode(byteRead);
+				byteRead = $ba.readByte();
+				version += String.fromCharCode(byteRead);
+				
+				return version;
+			}
 		}
 
 		private static const MANIFEST_VERSION:int = 100;
