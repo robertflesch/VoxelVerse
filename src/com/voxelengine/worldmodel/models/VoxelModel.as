@@ -1130,13 +1130,24 @@ package com.voxelengine.worldmodel.models
 			IVMLoadUncompressed( $ba );
 		}
 		
+		// This is the last part of reading a local model
 		public function IVMLoadUncompressed( $ba:ByteArray ):void
 		{
 			var versionInfo:Object = readMetaInfo( $ba );
 			_version = versionInfo.version;
-			if ( 0 != versionInfo.manifestVersion )
-				throw new Error("VoxelModel.IVMLoadUncompressed - Exception - manifest not supported for local format" );
+			if ( 0 != versionInfo.manifestVersion ) {
+				// this local file has manifest information
+				// so load it but throw away the embedded info
+				// how should I handle if there is a mismatch?
+				// do I use the local or the network? hm...
 				
+				// how many bytes is the modelInfo
+				var strLen:int = $ba.readInt();
+				// read off that many bytes
+				var modelInfoJson:String = $ba.readUTFBytes( strLen );
+			}
+			
+			// now just load the model like any other
 			loadOxelFromByteArray($ba);
 		}
 		
@@ -1170,50 +1181,52 @@ package com.voxelengine.worldmodel.models
 			var strLen:int = $ba.readInt();
 			// read off that many bytes
 			var modelInfoJson:String = $ba.readUTFBytes( strLen );
-			modelInfoJson = decodeURI(modelInfoJson);
 			
-			// create the modelInfo object from embedded metadata
-			var mi:ModelInfo = new ModelInfo();
-			var jsonResult:Object = JSON.parse(modelInfoJson);
-			mi.init( $fileName, jsonResult );
-			
-			// add the modelInfo to the repo
-			Globals.g_modelManager.modelInfoAdd( mi );
-			var ii:InstanceInfo = Globals.g_modelManager.instanceInfoGet( $fileName );
-			if ( ii )
-			{
-				var modelAsset:String = mi.modelClass;
-				var modelClass:Class = ModelLibrary.getAsset( modelAsset )
-				var vm:* = new modelClass( ii, mi );
-				if ( null == vm )
+			if ( null != $fileName ) {
+				// create the modelInfo object from embedded metadata
+				modelInfoJson = decodeURI(modelInfoJson);
+				var jsonResult:Object = JSON.parse(modelInfoJson);
+				var mi:ModelInfo = new ModelInfo();
+				mi.init( $fileName, jsonResult );
+				
+				// add the modelInfo to the repo
+				Globals.g_modelManager.modelInfoAdd( mi );
+				var ii:InstanceInfo = Globals.g_modelManager.instanceInfoGet( $fileName );
+				if ( ii )
 				{
-					Log.out( "VoxelModel.loadFromManifestByteArray - failed to create new instance of modelClass: " + modelClass, Log.ERROR );
+					var modelAsset:String = mi.modelClass;
+					var modelClass:Class = ModelLibrary.getAsset( modelAsset )
+					var vm:* = new modelClass( ii, mi );
+					if ( null == vm )
+					{
+						Log.out( "VoxelModel.loadFromManifestByteArray - failed to create new instance of modelClass: " + modelClass, Log.ERROR );
+						return null;
+					}
+					
+					if ( "Player" == modelAsset )
+					{
+						Globals.player = vm;
+						Globals.controlledModel = vm;
+						return null;
+					}
+					
+					vm._version = versionInfo.version;
+					Globals.g_modelManager.modelAdd( vm );
+				}
+				else
+				{
+					Log.out( "VoxelModel.loadFromManifestByteArray - No instanceInfo was found for: " + mi.fileName, Log.WARN );
 					return null;
 				}
-				
-				if ( "Player" == modelAsset )
-				{
-					Globals.player = vm;
-					Globals.controlledModel = vm;
-					return null;
-				}
-				
-				Globals.g_modelManager.modelAdd( vm );
-			}
-			else
-			{
-				Log.out( "VoxelModel.loadFromManifestByteArray - No instanceInfo was found for: " + mi.fileName, Log.ERROR );
-				return null;
 			}
 			
-			vm._version = versionInfo.version;
 
 			try {
 				vm.loadOxelFromByteArray( $ba );
-				Log.out( "VoxelModel.loadFromManifestByteArray - completed: " + $fileName );
+				//Log.out( "VoxelModel.loadFromManifestByteArray - completed: " + $fileName );
 			}
 			catch ( e:Error ) {
-				Log.out( "VoxelModel.loadFromManifestByteArray in loadOxelFromByteArray: " + $fileName );
+				Log.out( "VoxelModel.loadFromManifestByteArray in loadOxelFromByteArray: " + $fileName ? $fileName : "Uknown modelName" );
 			}
 			
 			return vm;
@@ -1221,12 +1234,15 @@ package com.voxelengine.worldmodel.models
 		
 		public function loadOxelFromByteArray($ba:ByteArray):void
 		{
-			// Read off 1 bytes, the manifestVersion 
 			// Read off 1 bytes, the root size
-			var rootGrainSize:int = -1;
-			var gct:GrainCursor = null;
-			
+			var rootGrainSize:int = $ba.readByte();
 			//Log.out( "VoxelModel.loadOxelFromByteArray - rootGrainSize:" + rootGrainSize );			
+			
+			var gct:GrainCursor = GrainCursorPool.poolGet(rootGrainSize);
+			gct.grain = rootGrainSize;
+			_statisics.gather( _version, $ba, rootGrainSize);
+			// Version specific data
+			//Log.out( "VoxelModel.loadOxelFromByteArray - modelInfo: " + modelInfo.fileName );
 			
 			oxelReset();
 			oxel = OxelPool.poolGet();
@@ -1235,16 +1251,9 @@ package com.voxelengine.worldmodel.models
 				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
 				li.setAll( instanceInfo.baseLightLevel );
 			}
+			else
+				Log.out( "VoxelModel.loadOxelFromByteArray - new root oxel does not have default light - HOW DOES THIS HAPPEN", Log.ERROR );
 			
-			
-			// begin read
-			// Read off 1 bytes, the root size
-			rootGrainSize = $ba.readByte();
-			gct = GrainCursorPool.poolGet(rootGrainSize);
-			gct.grain = rootGrainSize;
-			_statisics.gather( _version, $ba, rootGrainSize);
-			// Version specific data
-			//Log.out( "VoxelModel.loadOxelFromByteArray - modelInfo: " + modelInfo.fileName );
 			registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
 			registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
 			if (Globals.VERSION_000 == _version)
