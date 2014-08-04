@@ -84,15 +84,9 @@ package com.voxelengine.worldmodel.models
 				if ( !isNaN( key ) )
 				{
 					if ( Globals.Info[key] )
-					{
-						//if ( Globals.AIR != Globals.Info[key].type )
-						{
-							//trace( "adding to count " + _stats[key] + " of " + Globals.Info[key].name);
-							_count += _stats[key];
-						}
-					}
+						_count += _stats[key];
 					else
-						throw new Error( "ModelStatisics.gather - key not found key: " + key );
+						Log.out( "ModelStatisics.gather - key not found key: " + key, Log.WARN );
 				}
 			}
 			
