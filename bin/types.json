@@ -509,7 +509,7 @@
                 "r": 1,
                 "g": 1,
                 "b": 1,
-                "a": 1
+                "a": 0.75
             },
             "uv": {
                 "maxpix": 256,
@@ -517,13 +517,14 @@
                 "top": 1,
                 "side": 1,
                 "bottom": 1,
-                "ut": 0.25,
-                "vt": 0.375,
-                "us": 0.25,
-                "vs": 0.375,
-                "ub": 0.25,
-                "vb": 0.375
+                "ut": 0,
+                "vt": 0.125,
+                "us": 0,
+                "vs": 0.125,
+                "ub": 0,
+                "vb": 0.125
             }
+			
         },
         {
             "name": "BALLOON",
@@ -597,6 +598,19 @@
                 "g": 0.45098039215686275,
                 "b": 0.2,
                 "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
+                "ut": 0,
+                "vt": 0.125,
+                "us": 0,
+                "vs": 0.125,
+                "ub": 0,
+                "vb": 0.125
             }
         },
         {
@@ -609,8 +623,21 @@
                 "g": 0.47058823529411764,
                 "b": 0.3254901960784314,
                 "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
+                "ut": 0,
+                "vt": 0.125,
+                "us": 0,
+                "vs": 0.125,
+                "ub": 0,
+                "vb": 0.125
             }
-        },
+		},
         {
             "name": "STEEL",
             "image": "steel.png",
@@ -621,6 +648,19 @@
                 "g": 0.8745098039215686,
                 "b": 0.8588235294117647,
                 "a": 1
+            },
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
+                "ut": 0,
+                "vt": 0.125,
+                "us": 0,
+                "vs": 0.125,
+                "ub": 0,
+                "vb": 0.125
             }
         },
         {
@@ -1221,11 +1261,18 @@
             "image": "ice.png",
             "id": 148,
             "category": "LIQUID",
-            "color": {
-                "r": 0.95,
-                "g": 0.95,
-                "b": 0.99,
-                "a": 1
+            "uv": {
+                "maxpix": 256,
+                "minpix": 1,
+                "top": 1,
+                "side": 1,
+                "bottom": 1,
+                "ut": 0,
+                "vt": 0.125,
+                "us": 0,
+                "vs": 0.125,
+                "ub": 0,
+                "vb": 0.125
             }
         },
         {
@@ -1319,7 +1366,7 @@
         },
         {
             "name": "REDG",
-            "image": "invalid.png",
+            "image": "redglass.png",
             "id": 153,
             "category": "UTIL",
             "light": { "fullBright": "true" },
@@ -1327,7 +1374,7 @@
                 "r": 1,
                 "g": 0,
                 "b": 0,
-                "a": 0.8
+                "a": 0.99
             },
             "uv": {
                 "maxpix": 16,
@@ -1335,17 +1382,17 @@
                 "top": 0,
                 "side": 0,
                 "bottom": 0,
-                "ut": 0.046875,
+                "ut": 0.0234375,
                 "vt": 0.265625,
-                "us": 0.046875,
+                "us": 0.0234375,
                 "vs": 0.265625,
-                "ub": 0.046875,
+                "ub": 0.0234375,
                 "vb": 0.265625
             }
         },
                 {
             "name": "COLOR",
-            "image": "invalid.png",
+            "image": "colorWheel.png",
             "id": 154,
             "category": "EARTH",
             "solid": "false",
@@ -1372,7 +1419,7 @@
         },
 		{
             "name": "UNKNOWN",
-            "image": "invalid.png",
+            "image": "questionMark.png",
             "id": 166,
             "category": "UTIL",
             "placeable": "false",
