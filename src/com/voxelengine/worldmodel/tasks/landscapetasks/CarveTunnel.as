@@ -31,7 +31,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 		static private var _crossList:Vector.<Vector3D>;
 		static private const CROSS_LIST_SIZE:int = 26;
 		
-		static public function carveTunnelContructor( $guid:String, $start:Vector3D, $view:Vector3D, $type:int, $length:int, $radius:int, $minGrain:int = 4 ):void {
+		static public function contructor( $guid:String, $start:Vector3D, $view:Vector3D, $type:int, $length:int, $radius:int, $minGrain:int = 4 ):void {
 			
 			//public function LayerInfo( functionName:String = null, data:String = "", type:int = 0 , range:int = 0, offset:int = 0, optional1:String = "", optional2:int = 0 )
 			var layer:LayerInfo = new LayerInfo( "CarveTunnel", "", $type, $length, $radius, "", $minGrain );
@@ -45,49 +45,6 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 		
 		public function CarveTunnel( guid:String,layer:LayerInfo ):void {
 			super(guid,layer);
-		}
-		
-		static private function crossListGet():Vector3D { 
-		
-			if ( null == _crossList )
-				crossListCreate();
-			var index:int = Math.random() * CROSS_LIST_SIZE;
-			if ( CROSS_LIST_SIZE <= index )
-				index = Math.random() * CROSS_LIST_SIZE;
-				
-			trace( "CrossLIst index: " + index );
-			return _crossList[index];	
-		}
-		
-		static private function crossListCreate():void { 
-			_crossList = new Vector.<Vector3D>(CROSS_LIST_SIZE, true);
-			var index:int
-			_crossList[index++] = new Vector3D( 0, 0, 1 );
-			_crossList[index++] = new Vector3D( 0, 0, -1 );
-			_crossList[index++] = new Vector3D( 0, 1, 0 );
-			_crossList[index++] = new Vector3D( 0, -1, 0 );
-			_crossList[index++] = new Vector3D( 0, 1, 1 );
-			_crossList[index++] = new Vector3D( 0, -1, 1 );
-			_crossList[index++] = new Vector3D( 0, 1, -1 );
-			_crossList[index++] = new Vector3D( 0, -1, -1 );
-			_crossList[index++] = new Vector3D( 1, 0, 0 );
-			_crossList[index++] = new Vector3D( -1, 0, 0 );
-			_crossList[index++] = new Vector3D( 1, 0, 1 );
-			_crossList[index++] = new Vector3D( 1, 0, -1 );
-			_crossList[index++] = new Vector3D( -1, 0, 1 );
-			_crossList[index++] = new Vector3D( -1, 0, -1 );
-			_crossList[index++] = new Vector3D( 1, 1, 0 );
-			_crossList[index++] = new Vector3D( 1, -1, 0 );
-			_crossList[index++] = new Vector3D( -1, 1, 0 );
-			_crossList[index++] = new Vector3D( -1, -1, 0 );
-			_crossList[index++] = new Vector3D( 1, 1, 1 );
-			_crossList[index++] = new Vector3D( 1, 1, -1 );
-			_crossList[index++] = new Vector3D( 1, -1, 1 );
-			_crossList[index++] = new Vector3D( 1, -1, -1 );
-			_crossList[index++] = new Vector3D( -1, 1, 1 );
-			_crossList[index++] = new Vector3D( -1, 1, -1 );
-			_crossList[index++] = new Vector3D( -1, -1, 1 );
-			_crossList[index++] = new Vector3D( -1, -1, -1 );
 		}
 		
 		override public function start():void {
@@ -114,19 +71,6 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 				startLoc.x += view.x + rndOffset( tunnelRadius );
 				startLoc.y += view.y + rndOffset( tunnelRadius );
 				startLoc.z += view.z + rndOffset( tunnelRadius );
-				if ( 0.90 < Math.random() ) {
-					trace( "CarveTunnel.start - Carve SIDE TUNNEL ---------------------------------------------------------------" );					
-					var vv:Vector3D = Globals.g_modelManager.viewVectorNormalizedGet();
-					vv = vv.crossProduct( crossListGet() );
-					CarveTunnel.carveTunnelContructor( _guid
-								 , startLoc
-								 , vv
-								 , Globals.AIR
-								 , tunnelLength / 2
-								 , tunnelRadius * 0.75 );
-
-				}
-				//trace( "CarveTunnel.start - carving tunnel of type " + (Globals.Info[voxelType].name.toUpperCase()) + " next at x: " + startLoc.x + "  y: " + startLoc.y + "  z: " + startLoc.z );					
 			}
 
 			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime)  );
