@@ -2137,40 +2137,6 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 		
-		public function empty_sphere( $guid:String, cx:int, cy:int, cz:int, radius:Number, gmin:uint=0 ):void {
-			if ( true == GrainCursorUtils.is_inside_sphere( gc, cx, cy, cz, radius ))
-			{
-				write( $guid, gc, Globals.AIR );
-				return;
-			} 
-			if ( true == GrainCursorUtils.is_outside_sphere( gc, cx, cy, cz, radius ))
-			{
-				return;
-			}
-			
-			if ( gc.grain <= gmin )
-			{
-				write( $guid, gc, Globals.AIR );
-				return;	
-			}
-
-			if ( false == childrenHas() )
-			{
-				if ( type == Globals.AIR )
-					return;
-				childrenCreate();
-			}
-			
-			if ( !_children )
-				return;
-				
-			for each ( var child:Oxel in _children )
-			{
-				if ( child && child.gc )
-					child.empty_sphere( $guid, cx, cy, cz, radius, gmin );
-			}
-		}
-		
 		// pass in 8 levels of height maps.
 		public function write_height_map( $guid:String 
 		                                , $type:int
