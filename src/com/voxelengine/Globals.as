@@ -52,7 +52,8 @@ package com.voxelengine {
 		static public const VERSION_003:String = "003";
 		static public const VERSION_004:String = "004";
 		static public const VERSION_005:String = "005";
-		static public const VERSION:String = VERSION_005;
+		static public const VERSION_006:String = "006";
+		static public const VERSION:String = VERSION_006;
 		
 		static public const MANIFEST_VERSION:int = 100;
 		
@@ -262,7 +263,7 @@ package com.voxelengine {
 		public static function get muted():Boolean { return g_muted }
 		public static function set muted(val:Boolean):void { g_muted = val; }
 		
-		private static var g_sandbox:Boolean = true;
+		private static var g_sandbox:Boolean = false;
 		public static function get sandbox():Boolean { return g_sandbox }
 		public static function set sandbox(val:Boolean):void { g_sandbox = val; }
 		
@@ -274,7 +275,7 @@ package com.voxelengine {
 		public static function get mode():String { return g_mode }
 		public static function set mode(val:String):void { g_mode = val; }
 		
-		private static var g_autoFlow:Boolean = true;
+		private static var g_autoFlow:Boolean = false;
 		public static function get autoFlow():Boolean { return g_autoFlow }
 		public static function set autoFlow(val:Boolean):void { g_autoFlow = val; }
 	}
