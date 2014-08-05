@@ -192,14 +192,68 @@ package com.voxelengine
 				return;
 			}
 				
-			CarveTunnel.carveTunnelContructor( Globals.selectedModel.instanceInfo.instanceGuid
-			                                 , Globals.g_modelManager._gci.point
-			                                 , Globals.g_modelManager.viewVectorNormalizedGet()
-											 , Globals.AIR
-											 , 2048
-											 , 64 );
+			CarveTunnel.contructor( Globals.selectedModel.instanceInfo.instanceGuid
+			                      , Globals.g_modelManager._gci.point
+			                      , Globals.g_modelManager.viewVectorNormalizedGet()
+			                      , Globals.AIR
+			                      , 2048
+			                      , 64 );
 		}
 		
+		private static function carveTunnels():void
+		{
+//			Globals.g_landscapeTaskController.activeTaskLimit = 0;
+			if ( !Globals.selectedModel ) {
+				Log.out( "ConsoleCommands.CarveTunnels  No model selected" );
+				return;
+			}
+			
+			if ( !Globals.selectedModel.instanceInfo ) {
+				Log.out( "ConsoleCommands.CarveTunnels  No instanceInfo for selected model" );
+				return;
+			}
+
+			if ( !Globals.g_modelManager._gci ) {
+				Log.out( "ConsoleCommands.CarveTunnels  No location selected" );
+				return;
+			}
+				
+			CarveTunnels.contructor( Globals.selectedModel.instanceInfo.instanceGuid
+								   , Globals.g_modelManager._gci.point
+								   , Globals.g_modelManager.viewVectorNormalizedGet()
+								   , Globals.AIR
+								   , 2048
+								   , 64 );
+		}
+		
+		import flash.geom.Vector3D;
+		private static function carveSphere():void
+		{
+//			Globals.g_landscapeTaskController.activeTaskLimit = 0;
+			if ( !Globals.selectedModel ) {
+				Log.out( "ConsoleCommands.carveTunnel  No model selected" );
+				return;
+			}
+			
+			if ( !Globals.selectedModel.instanceInfo ) {
+				Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model" );
+				return;
+			}
+
+			if ( !Globals.g_modelManager._gci ) {
+				Log.out( "ConsoleCommands.carveTunnel  No location selected" );
+				return;
+			}
+				
+			var loc:Vector3D = Globals.g_modelManager._gci.point;
+			Globals.selectedModel.oxel.write_sphere( Globals.selectedModel.instanceInfo.instanceGuid
+			                                       , loc.x
+												   , loc.y
+												   , loc.z
+												   , 16
+												   , Globals.AIR
+												   , 2 );
+		}
 		
 		public static function addCommands():void
 		{
@@ -217,6 +271,7 @@ package com.voxelengine
 			DConsole.createCommand( "markers", markers );
 			DConsole.createCommand( "flow", flow );
 			DConsole.createCommand( "carveTunnel", carveTunnel );
+			DConsole.createCommand( "carveSphere", carveSphere );
 		}
 	}
 }
