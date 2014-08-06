@@ -1997,22 +1997,13 @@ package com.voxelengine.worldmodel.oxel
 			}
 			
 			if ( true == GrainCursorUtils.is_outside_sphere( gc, cx, cy, cz, radius ))
-			{
-				//trace("************ WRITE SPHERE REJECTING GRAIN: " + gc.toString() + " ");
 				return;
-			}
 			
 			if ( gc.grain <= gmin )
-			{
-				//write( gc, Globals.get_debug_type( gmin ) );
 				return;	
-			}
 
 			if ( false == childrenHas() )
-			{
-				// become octa-mom
 				childrenCreate();
-			}
 			
 			if ( false == childrenHas() )
 			{
@@ -2026,7 +2017,49 @@ package com.voxelengine.worldmodel.oxel
 				if ( child && child.gc )
 					child.write_sphere( $guid, cx, cy, cz, radius, $newType, gmin );
 			}
+		}
+		
+		public function writeHalfSphere( $guid:String, cx:int, cy:int, cz:int, radius:int, $newType:int, gmin:uint = 0 ):void {
 			
+			if ( true == GrainCursorUtils.is_inside_sphere( gc, cx, cy, cz, radius ) )
+			{
+				if ( gc.getModelY() < cy && gc.getModelY() + gc.size() > cy ) {
+					childrenCreate();
+					for each ( var newChild:Oxel in _children )
+					{
+						if ( newChild && newChild.gc )
+							newChild.writeHalfSphere( $guid, cx, cy, cz, radius, $newType, gmin );
+					}
+				} 
+				else if ( gc.getModelY() + gc.size() > cy )
+					return;
+					
+				Log.out( "writeHalfSphere gc: " + gc.toString() + "  cy: " + cy + " gc.getModelY(): " + gc.getModelY() + "  gc.size: " + gc.size() );
+				write( $guid, gc, $newType );
+				return;
+			}
+			
+			if ( true == GrainCursorUtils.is_outside_sphere( gc, cx, cy, cz, radius ))
+				return;
+			
+			if ( gc.grain <= gmin )
+				return;	
+
+			if ( false == childrenHas() )
+				childrenCreate();
+			
+			if ( false == childrenHas() )
+			{
+				throw new Error("Oxel.write_sphere - ERROR - children expected");
+				return;
+			}
+
+			for each ( var child:Oxel in _children )
+			{
+				// make sure child has not already been released.
+				if ( child && child.gc )
+					child.writeHalfSphere( $guid, cx, cy, cz, radius, $newType, gmin );
+			}
 		}
 		
 		public function writeCylinder( $guid:String, cx:int, cy:int, cz:int, radius:int, $newType:int, axis:int, gmin:uint, startTime:int, runTime:int, startingSize:int ):Boolean {

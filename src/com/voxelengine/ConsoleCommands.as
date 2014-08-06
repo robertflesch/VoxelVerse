@@ -227,31 +227,46 @@ package com.voxelengine
 		}
 		
 		import flash.geom.Vector3D;
-		private static function carveSphere():void
+		private static function lavaSpheresCarve():void
 		{
-//			Globals.g_landscapeTaskController.activeTaskLimit = 0;
-			if ( !Globals.selectedModel ) {
-				Log.out( "ConsoleCommands.carveTunnel  No model selected" );
-				return;
-			}
-			
-			if ( !Globals.selectedModel.instanceInfo ) {
-				Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model" );
-				return;
-			}
-
-			if ( !Globals.g_modelManager._gci ) {
-				Log.out( "ConsoleCommands.carveTunnel  No location selected" );
-				return;
-			}
-				
 			var loc:Vector3D = Globals.g_modelManager._gci.point;
+			lavaSphereCarve( loc );
+		}
+		
+		private static function waterSpheresCarve():void
+		{
+			var loc:Vector3D = Globals.g_modelManager._gci.point;
+			waterSphereCarve( loc );
+		}
+		
+		private static function lavaSphereCarve( $loc:Vector3D ):void
+		{
+			spheresCarve( Globals.LAVA, $loc );
+		}
+		
+		private static function waterSphereCarve( $loc:Vector3D ):void
+		{
+			spheresCarve( Globals.WATER, $loc );
+		}
+		
+		private static function spheresCarve( $type:int, $loc:Vector3D ):void {
+			if ( !Globals.selectedModel ) { Log.out( "ConsoleCommands.carveTunnel  No model selected" ); return; }
+			if ( !Globals.selectedModel.instanceInfo ) { Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model" ); return; }
+			if ( !Globals.g_modelManager._gci ) { Log.out( "ConsoleCommands.carveTunnel  No location selected" ); return; }
+				
 			Globals.selectedModel.oxel.write_sphere( Globals.selectedModel.instanceInfo.instanceGuid
-			                                       , loc.x
-												   , loc.y
-												   , loc.z
+			                                       , $loc.x
+												   , $loc.y
+												   , $loc.z
 												   , 16
 												   , Globals.AIR
+												   , 2 );
+			Globals.selectedModel.oxel.writeHalfSphere( Globals.selectedModel.instanceInfo.instanceGuid
+			                                       , $loc.x
+												   , $loc.y
+												   , $loc.z
+												   , 16 
+												   , $type
 												   , 2 );
 		}
 		
@@ -271,7 +286,8 @@ package com.voxelengine
 			DConsole.createCommand( "markers", markers );
 			DConsole.createCommand( "flow", flow );
 			DConsole.createCommand( "carveTunnel", carveTunnel );
-			DConsole.createCommand( "carveSphere", carveSphere );
+			DConsole.createCommand( "lavaSpheresCarve", lavaSpheresCarve );
+			DConsole.createCommand( "waterSpheresCarve", waterSpheresCarve );
 		}
 	}
 }
