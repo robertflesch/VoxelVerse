@@ -110,7 +110,7 @@ package com.voxelengine.worldmodel.tasks.flowtasks
 			else if ( FlowInfo.FLOW_TYPE_SPRING == ft )
 				flowStartSpring(flowOxel);
 			else
-				Log.out( "Flow.flowTerminal - NO FLOW TYPE FOUND ft: " + ft, Log.ERROR );
+				Log.out( "Flow.flowTerminal - NO FLOW TYPE FOUND ft: " + ft, Log.WARN );
 		}
 		
 		private function scale( flowOxel:Oxel ):void
