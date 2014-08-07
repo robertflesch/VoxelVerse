@@ -1034,8 +1034,13 @@ package com.voxelengine.worldmodel.oxel
 					continue;
 				else if ( no.childrenHas() )
 					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
-				else if ( no.hasAlpha && 0 < $size )
-					no.neighborsMarkDirtyFaces( $guid, $size - gc.size() );
+				//else if ( no.hasAlpha && 0 < $size ) {
+					// this seems like seriuous overkill, dont we just need to mark this ONE neighbor?
+					// I was finding that this could spread way out... 8/7/14
+					//no.neighborsMarkDirtyFaces( $guid, $size - gc.size() );
+				//}
+				else if ( no.hasAlpha && no.faceHas( Oxel.face_get_opposite( face ) ) )
+					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
 				//else if ( no.isSolid || no.childrenHas() ) {
 				else // neighbor is same size, with out alpha
 					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
@@ -1092,9 +1097,11 @@ package com.voxelengine.worldmodel.oxel
 			}
 			else
 			{
+				var ti:TypeInfo = Globals.Info[type];
 				// TODO This needs to be refactored to remove this from this function, so more likely go in the write function of the voxelModel.
-				if ( Globals.Info[type].flowable && Globals.autoFlow && EditCursor.EDIT_CURSOR != $guid )
-					Flow.addTask( $guid, gc, type, flowInfo, 1 );
+				if ( ti.flowable && Globals.autoFlow && EditCursor.EDIT_CURSOR != $guid ) {
+					Flow.addTask( $guid, gc, type, null != flowInfo ? flowInfo : ti.flowInfo.clone(), 1 );
+				}
 					
 				if ( _quads && _quads[$face] )
 					_quads[$face].dirty = 1;
