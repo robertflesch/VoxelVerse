@@ -39,10 +39,10 @@ package com.voxelengine
 			{
 				var vm:ControllableVoxelModel = Globals.controlledModel as ControllableVoxelModel;
 				vm.leaveTrail = ! vm.leaveTrail;
-				Log.out( "Trail is " + (vm.leaveTrail ? "ON" : "OFF") );
+				Log.out( "Trail is " + (vm.leaveTrail ? "ON" : "OFF"), Log.WARN );
 			}
 			else
-				Log.out( "No model is under control to use trail on" );
+				Log.out( "No model is under control to use trail on", Log.WARN );
 		}
 		
 		private static function markers():void
@@ -51,10 +51,10 @@ package com.voxelengine
 			{
 				var vm:ControllableVoxelModel = Globals.controlledModel as ControllableVoxelModel;
 				vm.collisionMarkers = ! vm.collisionMarkers;
-				Log.out( "CollisionPoints are " + (vm.collisionMarkers ? "ON" : "OFF") );
+				Log.out( "CollisionPoints are " + (vm.collisionMarkers ? "ON" : "OFF"), Log.WARN );
 			}
 			else
-				Log.out( "No model is under control to use collisionPoints on" );
+				Log.out( "No model is under control to use collisionPoints on", Log.WARN );
 		}
 		
 		private static function gravity():void
@@ -62,10 +62,10 @@ package com.voxelengine
 			if ( Globals.controlledModel )
 			{
 				Globals.controlledModel.usesGravity = ! Globals.controlledModel.usesGravity;
-				Log.out( "Gravity is " + (Globals.controlledModel.usesGravity ? "ON" : "OFF") );
+				Log.out( "Gravity is " + (Globals.controlledModel.usesGravity ? "ON" : "OFF"), Log.WARN );
 			}
 			else
-				Log.out( "No model is under control to use gravity on" );
+				Log.out( "No model is under control to use gravity on", Log.WARN );
 		}
 		
 		private static function trees():void
@@ -75,7 +75,7 @@ package com.voxelengine
 				Globals.selectedModel.oxel.growTreesOn( Globals.selectedModel.instanceInfo.instanceGuid, Globals.GRASS );
 			}
 			else
-				Log.out( "No selected model" );
+				Log.out( "No selected model", Log.WARN );
 		}
 		
 		private static function tree():void
@@ -85,14 +85,14 @@ package com.voxelengine
 				var oxel:Oxel = EditCursor.getHighlightedOxel();
 				if ( Globals.BAD_OXEL == oxel )
 				{
-					Log.out( "EditCursor.insertOxel - Invalid location" );
+					Log.out( "Invalid location", Log.WARN );
 					return;
 				}
 
 				TreeGenerator.generateTree( Globals.selectedModel.instanceInfo.instanceGuid, oxel, 1 );
 			}
 			else
-				Log.out( "No selected model" );
+				Log.out( "No selected model", Log.WARN );
 		}
 		
 		
@@ -103,7 +103,7 @@ package com.voxelengine
 				Globals.selectedModel.oxel.dirtToGrassAndSand();
 			}
 			else
-				Log.out( "No selected model" );
+				Log.out( "No selected model", Log.WARN );
 		}
 		
 		private static function vines():void
@@ -113,7 +113,7 @@ package com.voxelengine
 				Globals.selectedModel.oxel.vines( Globals.selectedModel.instanceInfo.instanceGuid );
 			}
 			else
-				Log.out( "No selected model" );
+				Log.out( "No selected model", Log.WARN );
 		}
 		
 		private static function lightingSun():void
@@ -147,7 +147,7 @@ package com.voxelengine
 				Globals.selectedModel.oxel.rebuildAll();
 			}
 			else
-				Log.out( "No selected model" );
+				Log.out( "No selected model", Log.WARN );
 		}
 		
 		private static function harvestTrees():void
@@ -157,7 +157,7 @@ package com.voxelengine
 				Globals.selectedModel.oxel.harvestTrees( Globals.selectedModel.instanceInfo.instanceGuid );
 			}
 			else
-				Log.out( "No selected model" );
+				Log.out( "No selected model", Log.WARN );
 		}
 		
 		
@@ -166,14 +166,14 @@ package com.voxelengine
 			if ( Globals.controlledModel )
 			{
 				Globals.controlledModel.instanceInfo.usesCollision = !Globals.controlledModel.instanceInfo.usesCollision;
-				Log.out( "Collide is " + (Globals.controlledModel.instanceInfo.usesCollision ? "ON" : "OFF") );
+				Log.out( "Collide is " + (Globals.controlledModel.instanceInfo.usesCollision ? "ON" : "OFF"), Log.WARN );
 			}
 		}
 		
 		private static function flow():void
 		{
 			Globals.autoFlow = !Globals.autoFlow;
-			Log.out( "autoFlow is " + (Globals.autoFlow ? "ON" : "OFF") );
+			Log.out( "autoFlow is " + (Globals.autoFlow ? "ON" : "OFF"), Log.WARN );
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -182,17 +182,17 @@ package com.voxelengine
 		{
 //			Globals.g_landscapeTaskController.activeTaskLimit = 0;
 			if ( !Globals.selectedModel ) {
-				Log.out( "ConsoleCommands.carveTunnel  No model selected" );
+				Log.out( "ConsoleCommands.carveTunnel  No model selected", Log.WARN );
 				return;
 			}
 			
 			if ( !Globals.selectedModel.instanceInfo ) {
-				Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model" );
+				Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model", Log.WARN );
 				return;
 			}
 
 			if ( !Globals.g_modelManager._gci ) {
-				Log.out( "ConsoleCommands.carveTunnel  No location selected" );
+				Log.out( "ConsoleCommands.carveTunnel  No location selected", Log.WARN );
 				return;
 			}
 				
@@ -208,17 +208,17 @@ package com.voxelengine
 		{
 //			Globals.g_landscapeTaskController.activeTaskLimit = 0;
 			if ( !Globals.selectedModel ) {
-				Log.out( "ConsoleCommands.CarveTunnels  No model selected" );
+				Log.out( "ConsoleCommands.CarveTunnels  No model selected", Log.WARN );
 				return;
 			}
 			
 			if ( !Globals.selectedModel.instanceInfo ) {
-				Log.out( "ConsoleCommands.CarveTunnels  No instanceInfo for selected model" );
+				Log.out( "ConsoleCommands.CarveTunnels  No instanceInfo for selected model", Log.WARN );
 				return;
 			}
 
 			if ( !Globals.g_modelManager._gci ) {
-				Log.out( "ConsoleCommands.CarveTunnels  No location selected" );
+				Log.out( "ConsoleCommands.CarveTunnels  No location selected", Log.WARN );
 				return;
 			}
 				
@@ -239,7 +239,7 @@ package com.voxelengine
 			var loc:Vector3D = Globals.g_modelManager._gci.point;
 			var vm:VoxelModel = Globals.selectedModel;
 			if ( !vm )
-				{ Log.out( "ConsoleCommands.lavaSpheresCarve  No model selected" ); return; }
+				{ Log.out( "ConsoleCommands.lavaSpheresCarve  No model selected", Log.WARN ); return; }
 			
 			spheresCarve( vm, loc, Globals.LAVA );
 		}
@@ -249,7 +249,7 @@ package com.voxelengine
 			var loc:Vector3D = Globals.g_modelManager._gci.point;
 			var vm:VoxelModel = Globals.selectedModel;
 			if ( !vm )
-				{ Log.out( "ConsoleCommands.waterSpheresCarve  No model selected" ); return; }
+				{ Log.out( "ConsoleCommands.waterSpheresCarve  No model selected", Log.WARN ); return; }
 
 			spheresCarve( vm, loc, Globals.WATER );
 		}
@@ -258,7 +258,7 @@ package com.voxelengine
 		{
 			var vm:VoxelModel = Globals.selectedModel;
 			if ( !vm )
-				{ Log.out( "ConsoleCommands.lavaSpheresCarve  No model selected" ); return; }
+				{ Log.out( "ConsoleCommands.lavaSpheresCarve  No model selected", Log.WARN ); return; }
 			
 			for ( var i:int; i < $count; i++ )
 				spheresCarve( vm, Oxel.locationRandomGet( vm.oxel ), Globals.LAVA );
@@ -268,7 +268,7 @@ package com.voxelengine
 		{
 			var vm:VoxelModel = Globals.selectedModel;
 			if ( !vm )
-				{ Log.out( "ConsoleCommands.waterSpheresCarve  No model selected" ); return; }
+				{ Log.out( "ConsoleCommands.waterSpheresCarve  No model selected", Log.WARN ); return; }
 
 			for ( var i:int; i < $count; i++ )
 				spheresCarve( vm, Oxel.locationRandomGet( vm.oxel ), Globals.WATER );
