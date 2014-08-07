@@ -461,9 +461,7 @@ package com.voxelengine.worldmodel.models
 			var oldType:int = oldOxel.type;
 			var oldTypeInfo:TypeInfo = Globals.Info[oldType]
 			if ( oldTypeInfo.lightInfo.lightSource )
-			{
 				var oldLightID:uint = oldOxel.brightness.lightIDGet();
-			}
 			
 			var result:Boolean;
 			var changedOxel:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
