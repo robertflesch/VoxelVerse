@@ -62,7 +62,6 @@ package com.voxelengine.worldmodel.oxel
 		
 		static private 		var _s_scratchGrain:GrainCursor 				= new GrainCursor();
 		static private 		var _s_scratchVector:Vector3D 					= null;
-		static private 		var _s_oxelIntersections:Vector.<Oxel> 			= new Vector.<Oxel>; // used to filter oxels already tested in raycast
 
 		// How do I manage this for unique values for each face?
 		static private 		var _s_nodes:int 								= 0;
@@ -652,6 +651,7 @@ package com.voxelengine.worldmodel.oxel
 		
 		private function writeInternal( $guid:String, $newType:int, $onlyChangeType:Boolean ):Oxel {
 			
+			nodes++;
 			// kill any existing family, you can be parent type OR physical type, not both
 			if ( childrenHas() )
 			{
@@ -707,7 +707,12 @@ package com.voxelengine.worldmodel.oxel
 		// if the child does not exist, it is created
 		public function write( $guid:String, $gc:GrainCursor, $newType:int, $onlyChangeType:Boolean = false ):Oxel	{
 			
-			var co:Oxel = childGetOrCreate( $gc );
+			// this finds the closest oxel, could be target oxel, could be parent
+			var co:Oxel = childFind( $gc );
+			
+			if ( co.type != $newType && !gc.is_equal( $gc ) )
+				// this gets the exact oxel we are looking for if it is different from returned type.
+				co = co.childGetOrCreate( $gc );
 				
 			if ( Globals.BAD_OXEL == co )
 			{
@@ -1027,13 +1032,13 @@ package com.voxelengine.worldmodel.oxel
 				no = neighbor(face);
 				if ( Globals.BAD_OXEL == no )
 					continue;
-				else if ( no.isSolid || no.childrenHas() ) {
-					//trace( "Oxel.neighborsMarkDirtyFaces - our face: " + Globals.Plane[face].name + " their face: " + Globals.Plane[face_get_opposite( face )].name );
+				else if ( no.childrenHas() )
 					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
-				}
-				else if ( no.hasAlpha && 0 < $size ) {
+				else if ( no.hasAlpha && 0 < $size )
 					no.neighborsMarkDirtyFaces( $guid, $size - gc.size() );
-				}
+				//else if ( no.isSolid || no.childrenHas() ) {
+				else // neighbor is same size, with out alpha
+					no.face_mark_dirty( $guid, Oxel.face_get_opposite( face ) );
 			}
 		}
 		
@@ -1758,17 +1763,17 @@ package com.voxelengine.worldmodel.oxel
 		public function lineIntersect( $msStartPoint:Vector3D, $msEndPoint:Vector3D, $msIntersections:Vector.<GrainCursorIntersection> ):void {
 			if ( Globals.AIR == type && !childrenHas() )
 				return;
-			gc.lineIntersect( $msStartPoint, $msEndPoint, $msIntersections );
+			gc.lineIntersect( this, $msStartPoint, $msEndPoint, $msIntersections );
 		}
 
 		public function lineIntersectWithChildren( $msStartPoint:Vector3D, $msEndPoint:Vector3D, $msIntersections:Vector.<GrainCursorIntersection>, $minSize:int = 2 ):void	{
 			if ( !childrenHas() )
 			{
 				if ( Globals.AIR != type )
-					gc.lineIntersect( $msStartPoint, $msEndPoint, $msIntersections );
+					gc.lineIntersect( this, $msStartPoint, $msEndPoint, $msIntersections );
 			}
 			else if ( gc.grain <=  $minSize	)			
-				gc.lineIntersect( $msStartPoint, $msEndPoint, $msIntersections );
+				gc.lineIntersect( this, $msStartPoint, $msEndPoint, $msIntersections );
 
 			// find the oxel that is closest to the start point, and is solid?
 			// first do a quick check to see if ray hits any children.
@@ -1797,37 +1802,17 @@ package com.voxelengine.worldmodel.oxel
 				// sort getting closest ones first
 				totalIntersections.sort( intersectionsSort );
 				
-				// this empties the vector
-				_s_oxelIntersections.splice( 0, _s_oxelIntersections.length );
 				for each ( var gci:GrainCursorIntersection in totalIntersections )
 				{
-					// only check each oxel once, checking the closest first.
-					//if ( !isOxelInSet( gci ) )
+					// closest child might be empty, if no intersection with this child, try the next one.
+					gci.oxel.lineIntersectWithChildren( $msStartPoint, $msEndPoint, $msIntersections, $minSize );
+					// does this bail after the first found interesection?
+					if ( 0 != $msIntersections.length )
 					{
-						// closest child might be empty, if no intersection with this child, try the next one.
-						gci.oxel.lineIntersectWithChildren( $msStartPoint, $msEndPoint, $msIntersections, $minSize );
-						// does this bail after the first found interesection?
-						if ( 0 != $msIntersections.length )
-						{
-							return;
-						}
+						return;
 					}
 				}
 			}
-		}
-		
-		// This function makes sure we dont test the same oxel multiple times
-		// HUGE time savings, not doing this almost doubles speed
-		static private function isOxelInSet( gci:GrainCursorIntersection ):Boolean	{
-			// test to see if we have already used this oxel for testing.
-			for each ( var oxel:Oxel in _s_oxelIntersections )
-			{
-				if ( gci.oxel == oxel )
-					return true;
-			}
-			// if we dont find it, add it to set.
-			_s_oxelIntersections.push( gci.oxel );
-			return false;
 		}
 		
 		private function intersectionsSort( pointModel1:GrainCursorIntersection, pointModel2:GrainCursorIntersection ):Number {
@@ -1989,7 +1974,7 @@ package com.voxelengine.worldmodel.oxel
 			return temp;
 		}
 		
-		public function write_sphere( $guid:String, cx:int, cy:int, cz:int, radius:int, $newType:int, gmin:uint=0 ):void {
+		public function write_sphere( $guid:String, cx:int, cy:int, cz:int, radius:int, $newType:int, gmin:uint = 0 ):void {
 			if ( true == GrainCursorUtils.is_inside_sphere( gc, cx, cy, cz, radius ))
 			{
 				write( $guid, gc, $newType );
@@ -2030,11 +2015,13 @@ package com.voxelengine.worldmodel.oxel
 						if ( newChild && newChild.gc )
 							newChild.writeHalfSphere( $guid, cx, cy, cz, radius, $newType, gmin );
 					}
+					// if I put a return here, the top layer stays the same, but changes occur below the surface.
+					//return;
 				} 
 				else if ( gc.getModelY() + gc.size() > cy )
 					return;
 					
-				Log.out( "writeHalfSphere gc: " + gc.toString() + "  cy: " + cy + " gc.getModelY(): " + gc.getModelY() + "  gc.size: " + gc.size() );
+//				Log.out( "writeHalfSphere gc: " + gc.toString() + "  cy: " + cy + " gc.getModelY(): " + gc.getModelY() + "  gc.size: " + gc.size() );
 				write( $guid, gc, $newType );
 				return;
 			}
@@ -2855,6 +2842,28 @@ package com.voxelengine.worldmodel.oxel
 			return 0;	
 		}
 		
+		static public function locationRandomGet( $o:Oxel ):Vector3D {
+			var extent:int = $o.gc.size();
+			var loc:Vector3D = new Vector3D();
+			loc.x = extent * Math.random();
+			loc.y = extent * Math.random();
+			loc.z = extent * Math.random();
+			return loc;
+		}
+		
+		static public function merge( $o:Oxel ):void {
+			var stillNodes:Boolean = true;
+			var timer:int;
+			while ( stillNodes )
+			{
+				timer = getTimer();
+				Oxel.nodes = 0;
+				$o.mergeRecursive();
+				if ( 50 > Oxel.nodes )
+					stillNodes = false;
+				Log.out( "LandscapeTask - merging recovered: " + Oxel.nodes + " took: " + (getTimer() - timer) );
+			}
+		}
 		
 	} // end of class Oxel
 	
