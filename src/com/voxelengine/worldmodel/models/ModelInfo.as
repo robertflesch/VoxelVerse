@@ -7,7 +7,6 @@
 ==============================================================================*/
 package com.voxelengine.worldmodel.models
 {
-	import com.furusystems.dconsole2.core.commands.IntrospectionCommand;
 	import com.voxelengine.worldmodel.animation.Animation;
 	import com.voxelengine.worldmodel.biomes.Biomes;
 	import com.voxelengine.Globals;
