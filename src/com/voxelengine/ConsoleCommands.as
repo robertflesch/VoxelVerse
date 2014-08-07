@@ -16,11 +16,13 @@ package com.voxelengine
 	import com.voxelengine.worldmodel.biomes.LayerInfo;
 	import com.voxelengine.worldmodel.models.ControllableVoxelModel;
 	import com.voxelengine.worldmodel.models.EditCursor;
+	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import com.voxelengine.worldmodel.tasks.landscapetasks.*;
 	import com.developmentarc.core.tasks.tasks.ITask;
 	import com.developmentarc.core.tasks.groups.TaskGroup;
+	import flash.utils.getTimer;
 
 	
 	public class ConsoleCommands {
@@ -174,7 +176,9 @@ package com.voxelengine
 			Log.out( "autoFlow is " + (Globals.autoFlow ? "ON" : "OFF") );
 		}
 		
-		private static function carveTunnel():void
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		private static function tunnel():void
 		{
 //			Globals.g_landscapeTaskController.activeTaskLimit = 0;
 			if ( !Globals.selectedModel ) {
@@ -200,7 +204,7 @@ package com.voxelengine
 			                      , 64 );
 		}
 		
-		private static function carveTunnels():void
+		private static function tunnelNetwork():void
 		{
 //			Globals.g_landscapeTaskController.activeTaskLimit = 0;
 			if ( !Globals.selectedModel ) {
@@ -226,48 +230,72 @@ package com.voxelengine
 								   , 64 );
 		}
 		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		import flash.geom.Vector3D;
-		private static function lavaSpheresCarve():void
+		
+		private static function lavaSphere():void
+		{
+			
+			var loc:Vector3D = Globals.g_modelManager._gci.point;
+			var vm:VoxelModel = Globals.selectedModel;
+			if ( !vm )
+				{ Log.out( "ConsoleCommands.lavaSpheresCarve  No model selected" ); return; }
+			
+			spheresCarve( vm, loc, Globals.LAVA );
+		}
+		
+		private static function waterSphere():void
 		{
 			var loc:Vector3D = Globals.g_modelManager._gci.point;
-			lavaSphereCarve( loc );
+			var vm:VoxelModel = Globals.selectedModel;
+			if ( !vm )
+				{ Log.out( "ConsoleCommands.waterSpheresCarve  No model selected" ); return; }
+
+			spheresCarve( vm, loc, Globals.WATER );
 		}
 		
-		private static function waterSpheresCarve():void
+		private static function lavaSpheres( $count:int = 10 ):void
 		{
-			var loc:Vector3D = Globals.g_modelManager._gci.point;
-			waterSphereCarve( loc );
+			var vm:VoxelModel = Globals.selectedModel;
+			if ( !vm )
+				{ Log.out( "ConsoleCommands.lavaSpheresCarve  No model selected" ); return; }
+			
+			for ( var i:int; i < $count; i++ )
+				spheresCarve( vm, Oxel.locationRandomGet( vm.oxel ), Globals.LAVA );
 		}
 		
-		private static function lavaSphereCarve( $loc:Vector3D ):void
+		private static function waterSpheres( $count:int = 10 ):void
 		{
-			spheresCarve( Globals.LAVA, $loc );
+			var vm:VoxelModel = Globals.selectedModel;
+			if ( !vm )
+				{ Log.out( "ConsoleCommands.waterSpheresCarve  No model selected" ); return; }
+
+			for ( var i:int; i < $count; i++ )
+				spheresCarve( vm, Oxel.locationRandomGet( vm.oxel ), Globals.WATER );
 		}
 		
-		private static function waterSphereCarve( $loc:Vector3D ):void
-		{
-			spheresCarve( Globals.WATER, $loc );
-		}
-		
-		private static function spheresCarve( $type:int, $loc:Vector3D ):void {
-			if ( !Globals.selectedModel ) { Log.out( "ConsoleCommands.carveTunnel  No model selected" ); return; }
-			if ( !Globals.selectedModel.instanceInfo ) { Log.out( "ConsoleCommands.carveTunnel  No instanceInfo for selected model" ); return; }
-			if ( !Globals.g_modelManager._gci ) { Log.out( "ConsoleCommands.carveTunnel  No location selected" ); return; }
-				
-			Globals.selectedModel.oxel.write_sphere( Globals.selectedModel.instanceInfo.instanceGuid
+		private static function spheresCarve( $vm:VoxelModel, $loc:Vector3D, $type:int, $radius:int = 32, $minGrain:int = 2 ):void {
+			var timer:int = getTimer();
+			Oxel.nodes = 0;
+			$vm.oxel.write_sphere( $vm.instanceInfo.instanceGuid
 			                                       , $loc.x
 												   , $loc.y
 												   , $loc.z
-												   , 16
+												   , $radius 
 												   , Globals.AIR
-												   , 2 );
-			Globals.selectedModel.oxel.writeHalfSphere( Globals.selectedModel.instanceInfo.instanceGuid
+												   , $minGrain );
+			Log.out( "ConsoleCommands.waterSpheresCarve  carve AIR time: " + (getTimer() - timer) + "  change count: " + Oxel.nodes );
+			timer = getTimer();
+			$vm.oxel.writeHalfSphere( $vm.instanceInfo.instanceGuid
 			                                       , $loc.x
 												   , $loc.y
 												   , $loc.z
-												   , 16 
+												   , $radius 
 												   , $type
-												   , 2 );
+												   , $minGrain );
+			Log.out( "ConsoleCommands.waterSpheresCarve  carve mats time: " + (getTimer() - timer) );
+			
+			Oxel.merge( $vm.oxel );
 		}
 		
 		public static function addCommands():void
@@ -285,9 +313,14 @@ package com.voxelengine
 			DConsole.createCommand( "harvestTrees", harvestTrees );
 			DConsole.createCommand( "markers", markers );
 			DConsole.createCommand( "flow", flow );
-			DConsole.createCommand( "carveTunnel", carveTunnel );
-			DConsole.createCommand( "lavaSpheresCarve", lavaSpheresCarve );
-			DConsole.createCommand( "waterSpheresCarve", waterSpheresCarve );
+			
+			DConsole.createCommand( "tunnel", tunnel );
+			DConsole.createCommand( "tunnelNetwork", tunnelNetwork );
+			
+			DConsole.createCommand( "lavaSpheres", lavaSphere );
+			DConsole.createCommand( "waterSpheres", waterSphere );
+			DConsole.createCommand( "lavaSpheresRandom", lavaSpheres );
+			DConsole.createCommand( "waterSpheresRandom", waterSpheres );
 		}
 	}
 }

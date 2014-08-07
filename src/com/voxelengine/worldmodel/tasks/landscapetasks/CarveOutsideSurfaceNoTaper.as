@@ -103,7 +103,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			GrainCursorPool.poolDispose( gct );
 			
 			trace( "CarveOutsideSurfaceNoTaper - took: " + (getTimer() - timer) ); // + " in queue for: " + (timer - _startTime) );					
-			merge( vm.oxel );			
+			Oxel.merge( vm.oxel );			
 			// Why was this in here?
 			//Globals.g_flowTaskController.emptyQueue();
 			

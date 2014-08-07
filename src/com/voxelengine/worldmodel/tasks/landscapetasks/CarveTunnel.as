@@ -74,7 +74,7 @@ package com.voxelengine.worldmodel.tasks.landscapetasks
 			}
 
 			trace( "CarveTunnel - took: " + (getTimer() - timer) + " in queue for: " + (timer - _startTime)  );
-			merge( vm.oxel );
+			Oxel.merge( vm.oxel );
             super.complete() // AbstractTask will send event
 		}
 		
