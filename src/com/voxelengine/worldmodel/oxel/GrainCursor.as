@@ -215,7 +215,7 @@ public class GrainCursor
 		//return v;
 	}
 	
-	public function lineIntersect( modelSpaceStartPoint:Vector3D, modelSpaceEndPoint:Vector3D, modelSpaceIntersections:Vector.<GrainCursorIntersection> ):Boolean
+	public function lineIntersect( $o:Oxel, modelSpaceStartPoint:Vector3D, modelSpaceEndPoint:Vector3D, modelSpaceIntersections:Vector.<GrainCursorIntersection> ):Boolean
 	{
 		var beginToEnd:Vector3D = modelSpaceEndPoint.subtract( modelSpaceStartPoint );
 		var min:Vector3D = new Vector3D(0,0,0);
@@ -263,6 +263,7 @@ public class GrainCursor
 		if (tNear >= 0 && tNear <= 1) 
 		{
 			var gciNear:GrainCursorIntersection = new GrainCursorIntersection();
+			gciNear.oxel = $o;
 			gciNear.point.copyFrom( beginToEnd );
 			gciNear.point.scaleBy( tNear );
 			gciNear.point = modelSpaceStartPoint.add( gciNear.point );
@@ -294,6 +295,7 @@ public class GrainCursor
 		if (tFar > 0 && tFar <= 32) 
 		{	
 			var gciFar:GrainCursorIntersection = new GrainCursorIntersection();
+			gciFar.oxel = $o;
 			gciFar.point.copyFrom( beginToEnd );
 			gciFar.point.scaleBy( tFar );
 			gciFar.point = modelSpaceStartPoint.add( gciFar.point );
