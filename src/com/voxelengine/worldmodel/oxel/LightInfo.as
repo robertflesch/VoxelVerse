@@ -141,19 +141,19 @@ public class LightInfo
 	}
 	
 	public function attnLevelGet( $corner:uint ):uint {
-		if (       Brightness.B000 == $corner ) 
+		if (       Lighting.B000 == $corner ) 
 			return b000;
-		else if (  Brightness.B001 == $corner ) 
+		else if (  Lighting.B001 == $corner ) 
 			return b001;
-		else if (  Brightness.B100 == $corner ) 
+		else if (  Lighting.B100 == $corner ) 
 			return b100;
-		else if (  Brightness.B101 == $corner ) 
+		else if (  Lighting.B101 == $corner ) 
 			return b101;
-		else if (  Brightness.B010 == $corner ) 
+		else if (  Lighting.B010 == $corner ) 
 			return b010;
-		else if (  Brightness.B011 == $corner ) 
+		else if (  Lighting.B011 == $corner ) 
 			return b011;
-		else if (  Brightness.B110 == $corner ) 
+		else if (  Lighting.B110 == $corner ) 
 			return b110;
 		else 
 			return b111; // if (  Brightness.B111 ) 

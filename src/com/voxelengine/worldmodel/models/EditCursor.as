@@ -9,7 +9,7 @@ package com.voxelengine.worldmodel.models
 {
 	import com.voxelengine.events.GUIEvent;
 	import com.voxelengine.GUI.QuickInventory;
-	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.LightingPool;
 	import com.voxelengine.worldmodel.oxel.GrainCursorIntersection;
 	import com.voxelengine.worldmodel.oxel.Oxel;
 	import flash.display3D.Context3D;
@@ -160,8 +160,8 @@ package com.voxelengine.worldmodel.models
 						break;
 				}
 				if ( !oxel.brightness )
-					oxel.brightness = BrightnessPool.poolGet();
-				oxel.brightness.setAll( Brightness.DEFAULT_LIGHT_ID, Brightness.MAX_LIGHT_LEVEL );
+					oxel.brightness = LightingPool.poolGet();
+				oxel.brightness.setAll( Lighting.DEFAULT_LIGHT_ID, Lighting.MAX_LIGHT_LEVEL );
 				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
 				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
 			}
@@ -171,8 +171,8 @@ package com.voxelengine.worldmodel.models
 				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
 				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
 				if ( !oxel.brightness )
-					oxel.brightness = BrightnessPool.poolGet();
-				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+					oxel.brightness = LightingPool.poolGet();
+				var li:LightInfo = oxel.brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
 				li.color = cursorColorRainbow();
 			}
 			

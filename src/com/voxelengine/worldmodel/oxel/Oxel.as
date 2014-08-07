@@ -76,7 +76,7 @@ package com.voxelengine.worldmodel.oxel
 		private var _neighbors:Vector.<Oxel>	= null;	// 8 children but 6 neighbors, created when needed
 		private var _quads:Vector.<Quad> 		= null;	// Quads that are drawn on card, created when needed
 		private var _vertMan:VertexManager 		= null;  // created when needed
-		private var _brightness:Brightness		= null;
+		private var _brightness:Lighting		= null;
 		private var _flowInfo:FlowInfo 			= null; // used to count up and out in flowing oxel ( only uses 2 bytes, down, out )
 		override public function set dirty( $isDirty:Boolean ):void { 
 			super.dirty = $isDirty;
@@ -141,8 +141,8 @@ package com.voxelengine.worldmodel.oxel
 		public function get flowInfo():FlowInfo { return _flowInfo; }
 		public function set flowInfo(value:FlowInfo):void { _flowInfo = value; }
 		
-		public function get brightness():Brightness { return _brightness; }
-		public function set brightness(value:Brightness):void { _brightness = value; }
+		public function get brightness():Lighting { return _brightness; }
+		public function set brightness(value:Lighting):void { _brightness = value; }
 		
 		public function get parent():Oxel { return _parent; }
 		
@@ -244,7 +244,7 @@ package com.voxelengine.worldmodel.oxel
 				return false;
 			
 			if ( !$o.brightness ) { // does this oxel already have a brightness?
-				$o.brightness = BrightnessPool.poolGet();
+				$o.brightness = LightingPool.poolGet();
 				$o.brightness.materialFallOffFactor = Globals.Info[$o.type].lightInfo.fallOffFactor;
 			}
 
@@ -282,7 +282,7 @@ package com.voxelengine.worldmodel.oxel
 
 			_flowInfo = null; // might need a pool for these.
 			if ( _brightness ) { 
-				BrightnessPool.poolReturn( _brightness );
+				LightingPool.poolReturn( _brightness );
 				_brightness = null;
 			}
 			
@@ -584,7 +584,7 @@ package com.voxelengine.worldmodel.oxel
 				_children[i].initializeAndMarkDirty( this, gct, type, null );
 				if ( _brightness )
 				{
-					_children[i].brightness = BrightnessPool.poolGet();
+					_children[i].brightness = LightingPool.poolGet();
 					brightness.childGetAllLights( gct.childId(), _children[i].brightness );
 					// child should attenuate light at same rate.
 					_children[i].brightness.materialFallOffFactor = brightness.materialFallOffFactor;
@@ -833,7 +833,7 @@ package com.voxelengine.worldmodel.oxel
 			/// merge the brightness data into parent.
 			if ( hasBrightnessData ) {
 				if ( null == _brightness )
-					_brightness = BrightnessPool.poolGet();
+					_brightness = LightingPool.poolGet();
 				for each ( var childForBrightness:Oxel in _children ) 
 				{
 					if ( childForBrightness._brightness ) {
@@ -1157,10 +1157,10 @@ package com.voxelengine.worldmodel.oxel
 		private function quadAmbient( $face:int, $ti:TypeInfo ):void {
 			
 			if ( !_brightness ) {
-				_brightness = BrightnessPool.poolGet();
-				if ( _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
-					var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
-					li.setAll( root_get()._brightness.lightGet( Brightness.DEFAULT_LIGHT_ID ).avg );
+				_brightness = LightingPool.poolGet();
+				if ( _brightness.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
+					li.setAll( root_get()._brightness.lightGet( Lighting.DEFAULT_LIGHT_ID ).avg );
 				}
 				_brightness.materialFallOffFactor = $ti.lightInfo.fallOffFactor;
 				_brightness.color = $ti.color;
@@ -1367,8 +1367,8 @@ package com.voxelengine.worldmodel.oxel
 			}
 			else
 			{
-				if ( _brightness && _brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
-					var li:LightInfo = _brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+				if ( _brightness && _brightness.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
 					li.setAll( $attn );
 					quadsRebuildAll();
 
@@ -1667,7 +1667,7 @@ package com.voxelengine.worldmodel.oxel
 				flowInfo.toByteArray( ba );
 				
 				if ( !brightness )
-					brightness = BrightnessPool.poolGet();
+					brightness = LightingPool.poolGet();
 				ba = brightness.toByteArray( ba );
 			}
 			else
@@ -1699,7 +1699,7 @@ package com.voxelengine.worldmodel.oxel
 				$ba = flowInfo.fromByteArray( $version, $ba );
 				
 				if ( !brightness )
-					brightness = BrightnessPool.poolGet();
+					brightness = LightingPool.poolGet();
 				$ba = brightness.fromByteArray( $version, $ba );
 				brightness.materialFallOffFactor = Globals.Info[type].lightInfo.fallOffFactor;
 			}

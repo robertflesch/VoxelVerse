@@ -11,10 +11,10 @@ package com.voxelengine.worldmodel.tasks.lighting
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
 	import com.voxelengine.events.LightEvent;
-	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.LightingPool;
 	import com.voxelengine.pools.GrainCursorPool;
 	import com.voxelengine.worldmodel.models.VoxelModel;
-	import com.voxelengine.worldmodel.oxel.Brightness;
+	import com.voxelengine.worldmodel.oxel.Lighting;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.LightInfo;
 	import com.voxelengine.worldmodel.oxel.Oxel;

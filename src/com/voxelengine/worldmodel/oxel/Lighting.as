@@ -1,5 +1,5 @@
 /*==============================================================================
-  Copyright 2011-2013 Robert Flesch
+  Copyright 2011-2014 Robert Flesch
   All rights reserved.  This product contains computer programs, screen
   displays and printed documentation which are original works of
   authorship protected under United States Copyright Act.
@@ -19,7 +19,7 @@ package com.voxelengine.worldmodel.oxel
  * ...
  * @author Robert Flesch
  */
-public class Brightness  {  // extends BrightnessData
+public class Lighting  {
 	
 	/*
 	 *           0,1,0  ___________ 1,1,0
@@ -236,7 +236,7 @@ public class Brightness  {  // extends BrightnessData
 	
 	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
-	public function Brightness():void {
+	public function Lighting():void {
 		add( DEFAULT_LIGHT_ID, DEFAULT_COLOR, 0x10, DEFAULT_BASE_LIGHT_LEVEL );
 	}
 	
@@ -328,7 +328,7 @@ public class Brightness  {  // extends BrightnessData
 		return outputString;
 	}
 	
-	public function copyFrom( $b:Brightness ):void {
+	public function copyFrom( $b:Lighting ):void {
 		
 		// Copy all of the light data from the passed in Brightness
 		for ( var i:int; i < _lights.length; i++ ) {
@@ -350,7 +350,7 @@ public class Brightness  {  // extends BrightnessData
 		if ( null == li )
 			throw new Error( "Brightness.setAll - light not defined" );
 			
-		if ( Brightness.MAX_LIGHT_LEVEL < $attn )
+		if ( Lighting.MAX_LIGHT_LEVEL < $attn )
 			throw new Error( "Brightness.setAll - attn too high" );
 
 		li.setAll( $attn );
@@ -436,7 +436,7 @@ public class Brightness  {  // extends BrightnessData
 		}
 	}
 
-	public function mergeChildren( $childID:uint, $b:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
+	public function mergeChildren( $childID:uint, $b:Lighting, $grainUnits:uint, $hasAlpha:Boolean ):void {	
 		// There is a bug in here, since it is the first three lights that get added.
 		// I should eval each child and see if its light level is higher then one of the current lights
 		var childLightCount:uint = $b._lights.length;
@@ -447,7 +447,7 @@ public class Brightness  {  // extends BrightnessData
 		}
 	}
 	
-	public function childAdd( $ID:uint, $childID:uint, $cb:Brightness, $grainUnits:uint, $hasAlpha:Boolean ):void {	
+	public function childAdd( $ID:uint, $childID:uint, $cb:Lighting, $grainUnits:uint, $hasAlpha:Boolean ):void {	
 
 		var sli:LightInfo =  $cb.lightGet( $ID );	
 		if ( null == sli )
@@ -581,7 +581,7 @@ public class Brightness  {  // extends BrightnessData
 	}
 	
 	// creates a virtual brightness(light) the light from a parent to a child brightness with all lights
-	public function childGetAllLights( $childID:int, $b:Brightness ):void {
+	public function childGetAllLights( $childID:int, $b:Lighting ):void {
 
 		for ( var i:int; i < _lights.length; i++ ) {
 			var li:LightInfo = _lights[i];
@@ -591,7 +591,7 @@ public class Brightness  {  // extends BrightnessData
 	}
 	
 	// creates a virtual brightness(light) the light from a parent to a child brightness, with only light specified
-	public function childGet( $ID:uint, $childID:int, $b:Brightness ):Boolean {
+	public function childGet( $ID:uint, $childID:int, $b:Lighting ):Boolean {
 		
 		if ( !lightHas( $ID ) )
 		{
@@ -811,7 +811,7 @@ public class Brightness  {  // extends BrightnessData
 	
 	public function lightFullBright():void {
 		
-		var li:LightInfo = lightGet( Brightness.DEFAULT_LIGHT_ID );
+		var li:LightInfo = lightGet( Lighting.DEFAULT_LIGHT_ID );
 		if ( li )
 			li.setAll( 255 );
 		else
@@ -896,7 +896,7 @@ public class Brightness  {  // extends BrightnessData
 		return true;
 	}
 	
-	public function influenceAdd( $ID:uint, $lob:Brightness, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
+	public function influenceAdd( $ID:uint, $lob:Lighting, $faceFrom:int, $faceOnly:Boolean, $grainUnits:int ):Boolean
 	{
 		// Check to make sure this FACE has values, not the whole oxel
 		if ( !$lob.valuesHasForFace( $ID, $faceFrom ) ) 
@@ -1054,7 +1054,7 @@ public class Brightness  {  // extends BrightnessData
 	}
 	
 	// Add the influcence of a virtual cube the same size
-	public function brightnessMerge( $ID:uint, $b:Brightness ):Boolean {
+	public function brightnessMerge( $ID:uint, $b:Lighting ):Boolean {
 		
 		if ( !$b.lightHas( $ID ) )
 			return false; // if there is no value for the light, it is not added
@@ -1077,62 +1077,62 @@ public class Brightness  {  // extends BrightnessData
 
 	public function cornerForFace( $face:int, $corner:uint ):uint {
 		if ( Globals.POSX == $face ) {
-			if (       Brightness.B100 == $corner ) 
+			if (       Lighting.B100 == $corner ) 
 				return posX100;
-			else if (  Brightness.B101 == $corner ) 
+			else if (  Lighting.B101 == $corner ) 
 				return posX101;
-			else if (  Brightness.B110 == $corner ) 
+			else if (  Lighting.B110 == $corner ) 
 				return posX110;
 			else 
 				return posX111;
 		}
 		else if ( Globals.NEGX == $face ) {
-			if (       Brightness.B000 == $corner ) 
+			if (       Lighting.B000 == $corner ) 
 				return negX000;
-			else if (  Brightness.B001 == $corner ) 
+			else if (  Lighting.B001 == $corner ) 
 				return negX001;
-			else if (  Brightness.B010 == $corner ) 
+			else if (  Lighting.B010 == $corner ) 
 				return negX010;
-			else if (  Brightness.B011 == $corner ) 
+			else if (  Lighting.B011 == $corner ) 
 				return negX011;
 		}
 		else if ( Globals.POSY == $face ) {
-			if (  	   Brightness.B010 == $corner ) 
+			if (  	   Lighting.B010 == $corner ) 
 				return posY010;
-			else if (  Brightness.B011 == $corner ) 
+			else if (  Lighting.B011 == $corner ) 
 				return posY011;
-			else if (  Brightness.B110 == $corner ) 
+			else if (  Lighting.B110 == $corner ) 
 				return posY110;
 			else 
 				return posY111;
 		}
 		else if ( Globals.NEGY == $face ) {
-			if (       Brightness.B000 == $corner ) 
+			if (       Lighting.B000 == $corner ) 
 				return negY000;
-			else if (  Brightness.B001 == $corner ) 
+			else if (  Lighting.B001 == $corner ) 
 				return negY001;
-			else if (  Brightness.B100 == $corner ) 
+			else if (  Lighting.B100 == $corner ) 
 				return negY100;
-			else if (  Brightness.B101 == $corner ) 
+			else if (  Lighting.B101 == $corner ) 
 				return negY101;
 		}
 		else if ( Globals.POSZ == $face ) {
-			if (  Brightness.B001 == $corner ) 
+			if (  Lighting.B001 == $corner ) 
 				return posZ001;
-			else if (  Brightness.B101 == $corner ) 
+			else if (  Lighting.B101 == $corner ) 
 				return posZ101;
-			else if (  Brightness.B011 == $corner ) 
+			else if (  Lighting.B011 == $corner ) 
 				return posZ011;
 			else 
 				return posZ111;
 		}
 		else if ( Globals.NEGZ == $face ) {
 			
-			if (       Brightness.B000 == $corner ) 
+			if (       Lighting.B000 == $corner ) 
 				return negZ000;
-			else if (  Brightness.B100 == $corner ) 
+			else if (  Lighting.B100 == $corner ) 
 				return negZ100;
-			else if (  Brightness.B010 == $corner ) 
+			else if (  Lighting.B010 == $corner ) 
 				return negZ010;
 			else 
 				return negZ110;

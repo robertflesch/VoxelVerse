@@ -9,13 +9,13 @@ package com.voxelengine.worldmodel.oxel
 {
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
-	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.LightingPool;
 	import com.voxelengine.worldmodel.oxel.*;
 /**
  * ...
  * @author Robert Flesch
  */
-public class BrightnessTests  { 
+public class LightingTests  { 
 	
 	/*
 	 *           0,1,0  ___________ 1,1,0
@@ -47,20 +47,20 @@ public class BrightnessTests  {
 
 			const ResetString:String = "  lastLightID: 1  b000: 51  b001: 51  b100: 51  b101: 51  b010: 51  b011: 51  b110: 51  b111: 51  colorCount: 1"
 			const DefaultMax:String = "  lastLightID: 1  b000: 255  b001: 255  b100: 255  b101: 255  b010: 255  b011: 255  b110: 255  b111: 255  colorCount: 1"
-			var bt:Brightness = BrightnessPool.poolGet();
+			var bt:Lighting = LightingPool.poolGet();
 			bt.reset();
 			if ( ResetString == bt.toString() )
 				Log.out( "BrightnessTests.resetTests	Pass 1" );
 			else	
 				Log.out( "BrightnessTests.resetTests	FAIL 1", Log.ERROR );
 
-			bt.setAll( 1, Brightness.MAX_LIGHT_LEVEL ); 
+			bt.setAll( 1, Lighting.MAX_LIGHT_LEVEL ); 
 			if ( DefaultMax == bt.toString() )
 				Log.out( "BrightnessTests.resetTests	Pass 2" );
 			else	
 				Log.out( "BrightnessTests.resetTests	FAIL 2", Log.ERROR );
 				
-			BrightnessPool.poolReturn( bt );
+			LightingPool.poolReturn( bt );
 			Log.out( "BrightnessTests.resetTests	END" );
 		}
 
@@ -80,13 +80,13 @@ public class BrightnessTests  {
 			// $lightId - doesnt have id
 			// $attn overvalue or 0
 
-			var bt:Brightness = BrightnessPool.poolGet();
+			var bt:Lighting = LightingPool.poolGet();
 			bt.reset();
 			// bad conditions
 			// $lightId - doesnt have id
 			var lightId:uint = 101;
 			try {
-				bt.setAll( lightId, Brightness.MAX_LIGHT_LEVEL ); 
+				bt.setAll( lightId, Lighting.MAX_LIGHT_LEVEL ); 
 			} catch (e:Error) {
 				if ( ColorNotDefined == e.message )
 					Log.out( "BrightnessTests.setAllTests	pass 1" );
@@ -96,21 +96,21 @@ public class BrightnessTests  {
 
 			bt.reset();
 			try {
-				bt.setAll( Brightness.DEFAULT_LIGHT_ID, Brightness.MAX_LIGHT_LEVEL );
+				bt.setAll( Lighting.DEFAULT_LIGHT_ID, Lighting.MAX_LIGHT_LEVEL );
 				Log.out( "BrightnessTests.setAllTests	pass 2" );
 			} catch (e:Error) {
 				Log.out( "BrightnessTests.setAllTests	FAIL 2", Log.ERROR );
 			}
 			
 			bt.reset();
-			bt.add( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
-			bt.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
+			bt.add( lightId, 0x00ff0000, Lighting.MAX_LIGHT_LEVEL );
+			bt.setAll( lightId, Lighting.MAX_LIGHT_LEVEL );
 			if ( OneOhOneMax == bt.toString() )
 				Log.out( "BrightnessTests.setAllTests	pass 3" );
 			else
 				Log.out( "BrightnessTests.setAllTests	FAIL 3", Log.ERROR );
 
-			BrightnessPool.poolReturn( bt );				
+			LightingPool.poolReturn( bt );				
 			Log.out( "BrightnessTests.setAllTests	END" );
 		}
 
@@ -125,13 +125,13 @@ public class BrightnessTests  {
 														   ,"  lastLightID: 101  b000: 255  b001: 204  b100: 255  b101: 204  b010: 255  b011: 204  b110: 255  b111: 204  colorCount: 2"
 														   ,"  lastLightID: 101  b000: 204  b001: 255  b100: 204  b101: 255  b010: 204  b011: 255  b110: 204  b111: 255  colorCount: 2" ];
 			
-			var lob:Brightness = BrightnessPool.poolGet();
+			var lob:Lighting = LightingPool.poolGet();
 			var lightId:uint = 101;
-			lob.add( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
-			lob.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
+			lob.add( lightId, 0x00ff0000, Lighting.MAX_LIGHT_LEVEL );
+			lob.setAll( lightId, Lighting.MAX_LIGHT_LEVEL );
 			var grainUnits:uint = 16;
 			
-			var bt:Brightness = BrightnessPool.poolGet();
+			var bt:Lighting = LightingPool.poolGet();
 			bt.reset();
 			var faceOnly:Boolean = false;
 			for ( var faceTest:int = Globals.POSX; faceTest <= Globals.NEGZ; faceTest++ ) {
@@ -146,7 +146,7 @@ public class BrightnessTests  {
 					Log.out( "BrightnessTests.addInfluenceTests	FAIL " + faceTest, Log.ERROR );
 			}
 			
-			BrightnessPool.poolReturn( bt );
+			LightingPool.poolReturn( bt );
 			
 			Log.out( "BrightnessTests.addInfluenceTests	END" );
 		}
@@ -154,15 +154,15 @@ public class BrightnessTests  {
 		static public function childAddTests():void {
 			
 			Log.out( "BrightnessTests.childAddTests	START - incomplete" );
-			var bt:Brightness = BrightnessPool.poolGet();
-			var btp:Brightness = BrightnessPool.poolGet();
-			bt.setAll( Brightness.DEFAULT_LIGHT_ID, Brightness.MAX_LIGHT_LEVEL );
+			var bt:Lighting = LightingPool.poolGet();
+			var btp:Lighting = LightingPool.poolGet();
+			bt.setAll( Lighting.DEFAULT_LIGHT_ID, Lighting.MAX_LIGHT_LEVEL );
 			const grainUnits:uint = 16;
 			for ( var childID:uint = 0; childID < 8; childID++ ) {	
 				btp.reset();
 				// now extend the brightness child onto its parent!
 				//public function childAdd( $ID:uint, $childID:uint, $b:Brightness, $grainUnits:uint ):void {	
-				btp.childAdd(  Brightness.DEFAULT_LIGHT_ID, childID, bt, grainUnits );
+				btp.childAdd(  Lighting.DEFAULT_LIGHT_ID, childID, bt, grainUnits );
 				//bt.copyFrom( btp );
 				//grainUnits *= 2;
 				trace( btp.toString() );
@@ -173,15 +173,15 @@ public class BrightnessTests  {
 		static public function childGetTests():void { 
 			Log.out( "BrightnessTests.childGetTests	START" );
 			
-			var lob:Brightness = BrightnessPool.poolGet();
+			var lob:Lighting = LightingPool.poolGet();
 			var lightId:uint = 101;
-			lob.add( lightId, 0x00ff0000, Brightness.MAX_LIGHT_LEVEL );
-			lob.setAll( lightId, Brightness.MAX_LIGHT_LEVEL );
+			lob.add( lightId, 0x00ff0000, Lighting.MAX_LIGHT_LEVEL );
+			lob.setAll( lightId, Lighting.MAX_LIGHT_LEVEL );
 			
-			var btp:Brightness = BrightnessPool.poolGet();
+			var btp:Lighting = LightingPool.poolGet();
 			// make the btp (parent) grain 5, and add a light to it.
 			// so each face has four children.
-			var btResult:Brightness = BrightnessPool.poolGet();
+			var btResult:Lighting = LightingPool.poolGet();
 			for ( var faceTest:int = Globals.POSX; faceTest <= Globals.NEGZ; faceTest++ ) {
 				trace( "------------------------------" );
 				btp.reset();

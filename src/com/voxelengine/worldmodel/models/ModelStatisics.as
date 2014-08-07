@@ -7,8 +7,8 @@
 ==============================================================================*/
 package com.voxelengine.worldmodel.models
 {
-	import com.voxelengine.pools.BrightnessPool;
-	import com.voxelengine.worldmodel.oxel.Brightness;
+	import com.voxelengine.pools.LightingPool;
+	import com.voxelengine.worldmodel.oxel.Lighting;
 	import com.voxelengine.worldmodel.oxel.FlowInfo;
 	import flash.utils.ByteArray;
 	
@@ -46,7 +46,7 @@ package com.voxelengine.worldmodel.models
 		public function get countInMeters():int { return _count/GRAINS_PER_SQUARE_METER };
 		
 		static private var _TempFlowInfo:FlowInfo = new FlowInfo();
-		static private var _TempBrightness:Brightness = BrightnessPool.poolGet();
+		static private var _TempBrightness:Lighting = LightingPool.poolGet();
 
 		private function initialize():void
 		{

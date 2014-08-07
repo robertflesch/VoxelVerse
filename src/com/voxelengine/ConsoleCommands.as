@@ -12,7 +12,7 @@ package com.voxelengine
 	import com.furusystems.dconsole2.DConsole;
 	import com.furusystems.logging.slf4as.Logging;
 	import com.furusystems.logging.slf4as.ILogger;
-	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.LightingPool;
 	import com.voxelengine.worldmodel.biomes.LayerInfo;
 	import com.voxelengine.worldmodel.models.ControllableVoxelModel;
 	import com.voxelengine.worldmodel.models.EditCursor;

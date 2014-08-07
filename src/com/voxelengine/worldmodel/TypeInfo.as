@@ -11,7 +11,7 @@ package com.voxelengine.worldmodel
 	import com.voxelengine.Globals;
 	import com.voxelengine.Log;
 	import com.voxelengine.utils.ColorUtils;
-	import com.voxelengine.worldmodel.oxel.Brightness;
+	import com.voxelengine.worldmodel.oxel.Lighting;
 	import com.voxelengine.worldmodel.oxel.FlowInfo;
 	import flash.geom.Vector3D;
 

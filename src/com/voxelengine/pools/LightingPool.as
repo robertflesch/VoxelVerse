@@ -11,14 +11,14 @@ package com.voxelengine.pools
 
 import flash.utils.getTimer;
 import com.voxelengine.Log;
-import com.voxelengine.worldmodel.oxel.Brightness;
+import com.voxelengine.worldmodel.oxel.Lighting;
      
-public final class BrightnessPool
+public final class LightingPool
 { 
 	private static var _currentPoolSize:uint; 
 	private static var GROWTH_VALUE:uint; 
 	private static var _counter:uint; 
-	private static var _pool:Vector.<Brightness>; 
+	private static var _pool:Vector.<Lighting>; 
 	
 	static public function remaining():uint { return _counter; }
 	static public function totalUsed():uint { return _currentPoolSize - _counter; }
@@ -32,12 +32,12 @@ public final class BrightnessPool
 		 
 		var i:uint = maxPoolSize; 
 		 
-		_pool = new Vector.<Brightness>(_currentPoolSize); 
+		_pool = new Vector.<Lighting>(_currentPoolSize); 
 		while( --i > -1 ) 
-			_pool[i] = new Brightness(); 
+			_pool[i] = new Lighting(); 
 	} 
 	 
-	public static function poolGet():Brightness 
+	public static function poolGet():Lighting 
 	{ 
 		if ( _counter > 0 ) 
 		{
@@ -49,10 +49,10 @@ public final class BrightnessPool
 
 		_currentPoolSize += GROWTH_VALUE;
 		_pool = null
-		_pool = new Vector.<Brightness>(_currentPoolSize);
+		_pool = new Vector.<Lighting>(_currentPoolSize);
 		for ( var newIndex:int = 0; newIndex < GROWTH_VALUE; newIndex++ )
 		{
-			_pool[newIndex] = new Brightness();
+			_pool[newIndex] = new Lighting();
 		}
 		_counter = newIndex - 1; 
 		
@@ -60,7 +60,7 @@ public final class BrightnessPool
 		return poolGet(); 
 	} 
 
-	public static function poolReturn( $disposedBrightness:Brightness ):void 
+	public static function poolReturn( $disposedBrightness:Lighting ):void 
 	{ 
 		if ( !$disposedBrightness )
 		{

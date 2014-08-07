@@ -8,9 +8,9 @@
 package com.voxelengine.worldmodel.models
 {
 	import com.voxelengine.events.LightEvent;
-	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.LightingPool;
 	import com.voxelengine.worldmodel.biomes.LayerInfo;
-	import com.voxelengine.worldmodel.oxel.Brightness;
+	import com.voxelengine.worldmodel.oxel.Lighting;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.GrainCursorIntersection;
 	import com.voxelengine.worldmodel.oxel.LightInfo;
@@ -1247,16 +1247,16 @@ package com.voxelengine.worldmodel.models
 			
 			oxelReset();
 			oxel = OxelPool.poolGet();
-			oxel.brightness = BrightnessPool.poolGet();
-			if ( oxel.brightness.lightHas( Brightness.DEFAULT_LIGHT_ID ) ) {
-				var li:LightInfo = oxel.brightness.lightGet( Brightness.DEFAULT_LIGHT_ID );
+			oxel.brightness = LightingPool.poolGet();
+			if ( oxel.brightness.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
+				var li:LightInfo = oxel.brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
 				li.setAll( instanceInfo.baseLightLevel );
 			}
 			else
 				Log.out( "VoxelModel.loadOxelFromByteArray - new root oxel does not have default light - HOW DOES THIS HAPPEN", Log.ERROR );
 			
 			registerClassAlias("com.voxelengine.worldmodel.oxel.FlowInfo", FlowInfo);	
-			registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Brightness);	
+			registerClassAlias("com.voxelengine.worldmodel.oxel.Brightness", Lighting);	
 			if (Globals.VERSION_000 == _version)
 			{
 				oxel.readData( null, gct, $ba, _statisics );

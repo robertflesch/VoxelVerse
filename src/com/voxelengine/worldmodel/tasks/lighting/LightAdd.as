@@ -15,13 +15,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 	import com.voxelengine.Log;
 	import com.voxelengine.Globals;
 	import com.voxelengine.events.LightEvent;
-	import com.voxelengine.pools.BrightnessPool;
+	import com.voxelengine.pools.LightingPool;
 	import com.voxelengine.pools.GrainCursorPool;
 	import com.voxelengine.worldmodel.TypeInfo;
 	import com.voxelengine.worldmodel.models.VoxelModel;
 	import com.voxelengine.worldmodel.oxel.GrainCursor;
 	import com.voxelengine.worldmodel.oxel.Oxel;
-	import com.voxelengine.worldmodel.oxel.Brightness;
+	import com.voxelengine.worldmodel.oxel.Lighting;
 //	import com.voxelengine.worldmodel.oxel.BrightnessTests;
 	import com.voxelengine.worldmodel.tasks.lighting.LightTask;
 
@@ -42,7 +42,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( Oxel.validLightable( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Brightness.MAX_LIGHT_LEVEL, ti.lightInfo.attn, true ) )
+						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Lighting.MAX_LIGHT_LEVEL, ti.lightInfo.attn, true ) )
 							throw new Error( "LightAdd.handleLightEvent - How did we get here?" );
 //						lo.brightness.fallOffPerMeter = ti.lightInfo.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
@@ -198,8 +198,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			if ( $no.childrenHas() )
 				return true; // What does this do?
-			var bt:Brightness = BrightnessPool.poolGet();
-			var btp:Brightness = BrightnessPool.poolGet();
+			var bt:Lighting = LightingPool.poolGet();
+			var btp:Lighting = LightingPool.poolGet();
 			
 			var grainUnits:uint = $lo.gc.size();
 			// project the light oxel onto the virtual brightness
@@ -227,13 +227,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
 			var changed:Boolean;
-			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas( Brightness.DEFAULT_BASE_LIGHT_LEVEL ) )
+			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas( Lighting.DEFAULT_BASE_LIGHT_LEVEL ) )
 				changed = $no.brightness.brightnessMerge( lightID, bt );
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );
 			
-			BrightnessPool.poolReturn( bt );
-			BrightnessPool.poolReturn( btp );
+			LightingPool.poolReturn( bt );
+			LightingPool.poolReturn( btp );
 			
 			if ( changed ) {
 				if ( true == $no.isSolid ) { // this is a SOLID object which does not transmit light (leaves, water are exceptions)
@@ -271,7 +271,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			return false;
 		}
 		
-		private function projectOnNeighborChildren( $no:Oxel, $lob:Brightness, $face:int ):void {
+		private function projectOnNeighborChildren( $no:Oxel, $lob:Lighting, $face:int ):void {
 			
 			// I am getting the indexes for the imaginary children that are facing the real children
 			// and a list of the real children
@@ -280,7 +280,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			var dchild:Vector.<Oxel> = $no.childrenForDirection( of );
 			//var lobTestChild:Vector.<uint> = Oxel.childIDsForDirection( of );
 
-			var bt:Brightness = BrightnessPool.poolGet();
+			var bt:Lighting = LightingPool.poolGet();
 			for ( var childIndex:int = 0; childIndex < 4; childIndex++ )
 			{
 				var noChild:Oxel = dchild[childIndex];
@@ -314,7 +314,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					}
 				}
 			}
-			BrightnessPool.poolReturn( bt );
+			LightingPool.poolReturn( bt );
 		}
 		
 		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
