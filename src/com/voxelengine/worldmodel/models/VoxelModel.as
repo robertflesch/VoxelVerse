@@ -170,7 +170,6 @@ package com.voxelengine.worldmodel.models
 			_oxel = val;
 		}
 		
-
 		
 		public function toString():String
 		{
@@ -461,7 +460,7 @@ package com.voxelengine.worldmodel.models
 			var oldType:int = oldOxel.type;
 			var oldTypeInfo:TypeInfo = Globals.Info[oldType]
 			if ( oldTypeInfo.lightInfo.lightSource )
-				var oldLightID:uint = oldOxel.brightness.lightIDGet();
+				var oldLightID:uint = oldOxel.lighting.lightIDGet();
 			
 			var result:Boolean;
 			var changedOxel:Oxel = oxel.write( instanceInfo.instanceGuid, $gc, $type, $onlyChangeType );
@@ -502,13 +501,13 @@ package com.voxelengine.worldmodel.models
 				if ( Globals.isSolid( oldType ) && Globals.hasAlpha( $type ) ) {
 					
 					// we removed a solid block, and are replacing it with air or transparent
-					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
+					if ( changedOxel.lighting && changedOxel.lighting.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.SOLID_TO_ALPHA, instanceInfo.instanceGuid, changedOxel.gc ) );
 				} 
 				else if ( Globals.isSolid( $type ) && Globals.hasAlpha( oldType ) ) {
 					
 					// we added a solid block, and are replacing the transparent block that was there
-					if ( changedOxel.brightness && changedOxel.brightness.valuesHas() )
+					if ( changedOxel.lighting && changedOxel.lighting.valuesHas() )
 						Globals.g_app.dispatchEvent( new LightEvent( LightEvent.ALPHA_TO_SOLID, instanceInfo.instanceGuid, changedOxel.gc ) );
 				}
 			}
@@ -1247,10 +1246,11 @@ package com.voxelengine.worldmodel.models
 			
 			oxelReset();
 			oxel = OxelPool.poolGet();
-			oxel.brightness = LightingPool.poolGet();
-			if ( oxel.brightness.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
-				var li:LightInfo = oxel.brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
+			oxel.lighting = LightingPool.poolGet();
+			if ( oxel.lighting.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
+				var li:LightInfo = oxel.lighting.lightGet( Lighting.DEFAULT_LIGHT_ID );
 				li.setAll( instanceInfo.baseLightLevel );
+				Lighting.defaultBaseLightAttn = instanceInfo.baseLightLevel;
 			}
 			else
 				Log.out( "VoxelModel.loadOxelFromByteArray - new root oxel does not have default light - HOW DOES THIS HAPPEN", Log.ERROR );
@@ -1273,6 +1273,7 @@ Log.out( "VoxelModel.loadOxelFromByteArray - CALCULATE CENTER" );
 			calculateCenter();
 			set_camera_data();
 			oxelLoaded();
+			
 		
 			//trace( "loadOXelFromByteArray: " + oxel );
 		}
@@ -1950,6 +1951,13 @@ Log.out( "VoxelModel.handleModelEvents - classCalled" + classCalled );
 			instanceInfo.velocityClip();
 			return changed;	
 		}
+		
+		// This should be called from voxelModel
+		public function lightSetDefault( $attn:uint ):void {
+			instanceInfo.baseLightLevel = $attn;
+			oxel.lightsStaticSetDefault( $attn );
+		}
+		
 	}
 }
 

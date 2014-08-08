@@ -68,7 +68,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
 				return false;
 			
-			if ( !$o.brightness ) // does this oxel already have a brightness?
+			if ( !$o.lighting ) // does this oxel already have a brightness?
 				return false;
 
 			return true;

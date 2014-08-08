@@ -34,7 +34,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				if ( !lor )
 					return;
 					
-				lor.brightness.remove( $le.lightID );
+				lor.lighting.remove( $le.lightID );
 				var alphaCountr:int;
 				// walk thru the neighbors, if the no has less light then remove that light (just that or all lights?)
 				for ( var facer:uint = Globals.POSX; facer <= Globals.NEGZ; facer++ ) {
@@ -42,7 +42,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( Globals.BAD_OXEL == nor )
 						continue;
 					
-					if ( nor.hasAlpha && nor.brightness ) {
+					if ( nor.hasAlpha && nor.lighting ) {
 						shineBackOnRemovedLight( lor, nor, facer, $le.lightID );
 						alphaCountr++;
 					}
@@ -50,7 +50,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				addTask( $le.instanceGuid, $le.gc, $le.lightID );
 				// Now relight the oxel that the light was removed from using the new values.
 				if ( 0 < alphaCountr ) {
-					var lights:Vector.<uint> = lor.brightness.lightIDNonDefaultUsedGet();
+					var lights:Vector.<uint> = lor.lighting.lightIDNonDefaultUsedGet();
 					for each ( var lightsOnThisOxel:uint in lights ) {
 						var le:LightEvent = new LightEvent( LightEvent.ADD, $le.instanceGuid, lor.gc, lightsOnThisOxel );
 						Globals.g_app.dispatchEvent( le );
@@ -164,7 +164,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			if ( vm ) {
 				var lo:Oxel = vm.oxel.childFind( _gc );
 				if ( LightTask.valid( lo ) ) {
-					lo.brightness.remove( lightID );
+					lo.lighting.remove( lightID );
 					removeFromNeighbors( lo );
 				}
 				else
@@ -189,7 +189,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				
 				if ( no.childrenHas() )
 					removeFromChildren( no, face );
-				else if ( no.brightness )
+				else if ( no.lighting )
 					terminalLightRemove( no, face );
 //				else
 //					Log.out( "LightRemove.spreadToNeighbors - Light doesnt exist: " + lightID );
@@ -198,13 +198,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		// This just applies to the light oxel that has been removed.
 		static private function shineBackOnRemovedLight( $lo:Oxel, $no:Oxel, $face:uint, excludedID:uint ):void {
-			var lightIDs:Vector.<uint> = $no.brightness.lightIDNonDefaultUsedGet();
+			var lightIDs:Vector.<uint> = $no.lighting.lightIDNonDefaultUsedGet();
 			// Default ID excluded
 			// Adds the light from our alpha neighbor back into the recently emptied space.
 			for each ( var oxelLightID:uint in lightIDs ) {
 				if ( excludedID == oxelLightID )
 					continue;
-				$lo.brightness.influenceAdd( oxelLightID, $no.brightness, Oxel.face_get_opposite( $face ), false, $lo.gc.size() );
+				$lo.lighting.influenceAdd( oxelLightID, $no.lighting, Oxel.face_get_opposite( $face ), false, $lo.gc.size() );
 			}
 		}
 		
@@ -224,13 +224,13 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		private function terminalLightRemove( $o:Oxel, $face:int ):void {
 			
-			if ( null == $o.brightness ) {
+			if ( null == $o.lighting ) {
 				Log.out( "LightRemove.terminalLightRemove - STOPPING NO BRIGHTNESS" );
 				return;
 			}
 				
 			//Log.out( "LightRemove.terminal gc: " + $o.gc.toString() );
-			if ( $o.brightness.remove( lightID ) ) {
+			if ( $o.lighting.remove( lightID ) ) {
 				if ( $o.quads ) // this oxel has faces which were lit
 					rebuildFaces( $o );
 					

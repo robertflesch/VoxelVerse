@@ -41,13 +41,24 @@ public class Lighting  {
 	public static const MAX_LIGHT_LEVEL:uint = 0xff;
 	public static const DEFAULT_LIGHT_ID:uint = 1;
 	//public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x00; // out of 255
-	public static const DEFAULT_BASE_LIGHT_LEVEL:uint = 0x33; // out of 255
+	private static var _defaultBaseLightAttn:uint = 0x33; // out of 255
+	
+	static public function get defaultBaseLightAttn():uint 
+	{
+		return _defaultBaseLightAttn;
+	}
+	
+	static public function set defaultBaseLightAttn(value:uint):void 
+	{
+		_defaultBaseLightAttn = value;
+	}
+	
 	
 	private static function defaultLightLevelSetter():uint { 
-		var temp:uint = DEFAULT_BASE_LIGHT_LEVEL;
-		temp = temp | (DEFAULT_BASE_LIGHT_LEVEL << 8);
-		temp = temp | (DEFAULT_BASE_LIGHT_LEVEL << 16);
-		temp = temp | (DEFAULT_BASE_LIGHT_LEVEL << 24);
+		var temp:uint = _defaultBaseLightAttn;
+		temp = temp | (_defaultBaseLightAttn << 8);
+		temp = temp | (_defaultBaseLightAttn << 16);
+		temp = temp | (_defaultBaseLightAttn << 24);
 		return temp;
 	}
 	
@@ -91,6 +102,20 @@ public class Lighting  {
 	public function get negZ100():uint { return ((_higherAmbient  & 0x00003000) >> 12 ); }
 	public function get negZ110():uint { return ((_higherAmbient  & 0x0000c000) >> 14 ); }
 	
+	public function get posX():uint { return ((_higherAmbient  & 0x00010000) >> 17 ); }
+	public function get negX():uint { return ((_higherAmbient  & 0x0002000c) >> 18 ); }
+	public function get posY():uint { return ((_higherAmbient  & 0x00040030) >> 19 ); }
+	public function get negY():uint { return ((_higherAmbient  & 0x000800c0) >> 20 ); }
+	public function get posZ():uint { return ((_higherAmbient  & 0x00100300) >> 21 ); }
+	public function get negZ():uint { return ((_higherAmbient  & 0x00200c00) >> 22 ); }
+
+	public function set posX( value:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffeffff) | value); }	
+	public function set negX( value:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffdffff) | value); }	
+	public function set posY( value:uint ):void { _higherAmbient = ((_higherAmbient & 0xfffbffff) | value); }	
+	public function set negY( value:uint ):void { _higherAmbient = ((_higherAmbient & 0xfff7ffff) | value); }	
+	public function set posZ( value:uint ):void { _higherAmbient = ((_higherAmbient & 0xffefffff) | value); }	
+	public function set negZ( value:uint ):void { _higherAmbient = ((_higherAmbient & 0xffdfffff) | value); }	
+
 	public function set posX100( value:uint ):void {
 		// if we are setting the value of posX100 to ZERO, allow it here
 		if ( 0 == value ) value = 0;
@@ -237,7 +262,7 @@ public class Lighting  {
 	//private function rnd( $val:uint ):uint { return int($val * 100) / 100; }
 	
 	public function Lighting():void {
-		add( DEFAULT_LIGHT_ID, DEFAULT_COLOR, 0x10, DEFAULT_BASE_LIGHT_LEVEL );
+		add( DEFAULT_LIGHT_ID, DEFAULT_COLOR, 0x10, _defaultBaseLightAttn );
 	}
 	
 	public function toByteArray( $ba:ByteArray ):ByteArray {
@@ -362,7 +387,7 @@ public class Lighting  {
 			var li:LightInfo = _lights[i];
 			if ( null != li ) {
 				//if ( DEFAULT_BASE_LIGHT_LEVEL + DEFAULT_SIGMA < li.avg )
-				if ( DEFAULT_BASE_LIGHT_LEVEL < li.avg )
+				if ( _defaultBaseLightAttn < li.avg )
 					return true;
 			}
 		}
@@ -380,7 +405,7 @@ public class Lighting  {
 		{
 			//const THRESHOLD:uint = DEFAULT_BASE_LIGHT_LEVEL + DEFAULT_SIGMA;
 			// Sigma was giving me hard edges
-			const THRESHOLD:uint = DEFAULT_BASE_LIGHT_LEVEL;
+			const THRESHOLD:uint = _defaultBaseLightAttn;
 			if ( Globals.POSX == $face ) {
 				
 				if ( THRESHOLD < li.b100 ) { return true }
@@ -442,7 +467,7 @@ public class Lighting  {
 		var childLightCount:uint = $b._lights.length;
 		for ( var i:int; i < childLightCount; i++ ) {
 			var li:LightInfo = $b._lights[i];
-			if ( null != li && DEFAULT_BASE_LIGHT_LEVEL < li.avg )
+			if ( null != li && _defaultBaseLightAttn < li.avg )
 				childAdd( li.ID, $childID, $b, $grainUnits, $hasAlpha );
 		}
 	}
@@ -453,7 +478,7 @@ public class Lighting  {
 		if ( null == sli )
 			return; // This is potential bug in process where child lights get 
 			//throw new Error( "Brightness.childAdd - SOURCE light not defined" );
-		if ( DEFAULT_BASE_LIGHT_LEVEL == sli.avg )
+		if ( _defaultBaseLightAttn == sli.avg )
 			return;
 			
 		// This is special case which needs to take into account attn
@@ -570,14 +595,14 @@ public class Lighting  {
 			}
 		}
 		
-		if ( li.b000 < DEFAULT_BASE_LIGHT_LEVEL ) li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b001 < DEFAULT_BASE_LIGHT_LEVEL ) li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b010 < DEFAULT_BASE_LIGHT_LEVEL ) li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b011 < DEFAULT_BASE_LIGHT_LEVEL ) li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b100 < DEFAULT_BASE_LIGHT_LEVEL ) li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b101 < DEFAULT_BASE_LIGHT_LEVEL ) li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b110 < DEFAULT_BASE_LIGHT_LEVEL ) li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
-		if ( li.b111 < DEFAULT_BASE_LIGHT_LEVEL ) li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
+		if ( li.b000 < _defaultBaseLightAttn ) li.b000 = _defaultBaseLightAttn;
+		if ( li.b001 < _defaultBaseLightAttn ) li.b001 = _defaultBaseLightAttn;
+		if ( li.b010 < _defaultBaseLightAttn ) li.b010 = _defaultBaseLightAttn;
+		if ( li.b011 < _defaultBaseLightAttn ) li.b011 = _defaultBaseLightAttn;
+		if ( li.b100 < _defaultBaseLightAttn ) li.b100 = _defaultBaseLightAttn;
+		if ( li.b101 < _defaultBaseLightAttn ) li.b101 = _defaultBaseLightAttn;
+		if ( li.b110 < _defaultBaseLightAttn ) li.b110 = _defaultBaseLightAttn;
+		if ( li.b111 < _defaultBaseLightAttn ) li.b111 = _defaultBaseLightAttn;
 	}
 	
 	// creates a virtual brightness(light) the light from a parent to a child brightness with all lights
@@ -753,7 +778,7 @@ public class Lighting  {
 	}
 	
 	public function lightBrightestGet():LightInfo {
-		var maxAttn:uint = DEFAULT_BASE_LIGHT_LEVEL;
+		var maxAttn:uint = _defaultBaseLightAttn;
 		var maxAttnIndex:uint;
 		// I need to know the average attn, but I dont know it here....
 		for ( var j:int; j < _lights.length; j++ ) {
@@ -775,7 +800,7 @@ public class Lighting  {
 			return true;
 		
 		// dont add in lights who are at base attn level
-		if ( DEFAULT_LIGHT_ID != $ID && DEFAULT_BASE_LIGHT_LEVEL == $avgAttn )
+		if ( DEFAULT_LIGHT_ID != $ID && _defaultBaseLightAttn == $avgAttn )
 			return false;
 			
 		var newLi:LightInfo = new LightInfo( $ID, $color, defaultLightLevelSetter(), $attnPerMeter, $lightIs );
@@ -853,45 +878,45 @@ public class Lighting  {
 		var li:LightInfo = lightGet( $ID );
 		if ( Globals.POSX == of ) {
 			
-			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b100 = _defaultBaseLightAttn;
+			li.b110 = _defaultBaseLightAttn;
+			li.b111 = _defaultBaseLightAttn;
+			li.b101 = _defaultBaseLightAttn;
 		}
 		else if ( Globals.NEGX == of ) {
 
-			li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b000 = _defaultBaseLightAttn;
+			li.b010 = _defaultBaseLightAttn;
+			li.b011 = _defaultBaseLightAttn;
+			li.b001 = _defaultBaseLightAttn;
 		}
 		else if ( Globals.POSY == of ) {
 
-			li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b010 = _defaultBaseLightAttn;
+			li.b110 = _defaultBaseLightAttn;
+			li.b111 = _defaultBaseLightAttn;
+			li.b011 = _defaultBaseLightAttn;
 		}
 		else if ( Globals.NEGY == of ) {
 
-			li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b000 = _defaultBaseLightAttn;
+			li.b100 = _defaultBaseLightAttn;
+			li.b101 = _defaultBaseLightAttn;
+			li.b001 = _defaultBaseLightAttn;
 		}
 		else if ( Globals.POSZ == of ) {
 
-			li.b001 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b011 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b111 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b101 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b001 = _defaultBaseLightAttn;
+			li.b011 = _defaultBaseLightAttn;
+			li.b111 = _defaultBaseLightAttn;
+			li.b101 = _defaultBaseLightAttn;
 		}
 		else if ( Globals.NEGZ == of ) {
 			
-			li.b000 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b010 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b110 = DEFAULT_BASE_LIGHT_LEVEL;
-			li.b100 = DEFAULT_BASE_LIGHT_LEVEL;
+			li.b000 = _defaultBaseLightAttn;
+			li.b010 = _defaultBaseLightAttn;
+			li.b110 = _defaultBaseLightAttn;
+			li.b100 = _defaultBaseLightAttn;
 		}
 		return true;
 	}
@@ -1161,45 +1186,45 @@ public class Lighting  {
 			if ( Globals.POSY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX110 = CORNER_BUMP_VAL;
+					an.lighting.posX110 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX111 = CORNER_BUMP_VAL;
+					an.lighting.posX111 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX100 = CORNER_BUMP_VAL;
+					an.lighting.posX100 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX101 = CORNER_BUMP_VAL;
+					an.lighting.posX101 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX101 = CORNER_BUMP_VAL;
+					an.lighting.posX101 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX111 = CORNER_BUMP_VAL;
+					an.lighting.posX111 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX100 = CORNER_BUMP_VAL;
+					an.lighting.posX100 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posX110 = CORNER_BUMP_VAL;
+					an.lighting.posX110 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 		}
@@ -1207,45 +1232,45 @@ public class Lighting  {
 			if ( Globals.POSY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX010 = CORNER_BUMP_VAL;
+					an.lighting.negX010 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX011 = CORNER_BUMP_VAL;
+					an.lighting.negX011 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			} 
 			else if ( Globals.NEGY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX000 = CORNER_BUMP_VAL;
+					an.lighting.negX000 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX001 = CORNER_BUMP_VAL;
+					an.lighting.negX001 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX001 = CORNER_BUMP_VAL;
+					an.lighting.negX001 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX011 = CORNER_BUMP_VAL;
+					an.lighting.negX011 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX000 = CORNER_BUMP_VAL;
+					an.lighting.negX000 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negX010 = CORNER_BUMP_VAL;
+					an.lighting.negX010 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 		}
@@ -1254,45 +1279,45 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY110 = CORNER_BUMP_VAL;
+					an.lighting.posY110 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY111 = CORNER_BUMP_VAL;
+					an.lighting.posY111 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY010 = CORNER_BUMP_VAL;
+					an.lighting.posY010 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY011 = CORNER_BUMP_VAL;
+					an.lighting.posY011 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY011 = CORNER_BUMP_VAL;
+					an.lighting.posY011 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY111 = CORNER_BUMP_VAL;
+					an.lighting.posY111 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY010 = CORNER_BUMP_VAL;
+					an.lighting.posY010 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posY110 = CORNER_BUMP_VAL;
+					an.lighting.posY110 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 		}
@@ -1301,45 +1326,45 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY100 = CORNER_BUMP_VAL;
+					an.lighting.negY100 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY101 = CORNER_BUMP_VAL;
+					an.lighting.negY101 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSZ);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY000 = CORNER_BUMP_VAL;
+					an.lighting.negY000 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGZ)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY001 = CORNER_BUMP_VAL;
+					an.lighting.negY001 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY001 = CORNER_BUMP_VAL;
+					an.lighting.negY001 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY101 = CORNER_BUMP_VAL;
+					an.lighting.negY101 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY000 = CORNER_BUMP_VAL;
+					an.lighting.negY000 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negY100 = CORNER_BUMP_VAL;
+					an.lighting.negY100 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 		}
@@ -1348,45 +1373,45 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ101 = CORNER_BUMP_VAL;
+					an.lighting.posZ101 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ111 = CORNER_BUMP_VAL;
+					an.lighting.posZ111 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ001 = CORNER_BUMP_VAL;
+					an.lighting.posZ001 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ011 = CORNER_BUMP_VAL;
+					an.lighting.posZ011 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.POSY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ011 = CORNER_BUMP_VAL;
+					an.lighting.posZ011 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ111 = CORNER_BUMP_VAL;
+					an.lighting.posZ111 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ001 = CORNER_BUMP_VAL;
+					an.lighting.posZ001 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.posZ101 = CORNER_BUMP_VAL;
+					an.lighting.posZ101 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 		}
@@ -1395,45 +1420,45 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ100 = CORNER_BUMP_VAL;
+					an.lighting.negZ100 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ110 = CORNER_BUMP_VAL;
+					an.lighting.negZ110 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSY);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ000 = CORNER_BUMP_VAL;
+					an.lighting.negZ000 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGY)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ010 = CORNER_BUMP_VAL;
+					an.lighting.negZ010 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.POSY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ010 = CORNER_BUMP_VAL;
+					an.lighting.negZ010 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ110 = CORNER_BUMP_VAL;
+					an.lighting.negZ110 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				an = $oxel.neighbor(Globals.POSX);
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ000 = CORNER_BUMP_VAL;
+					an.lighting.negZ000 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 					
 				an = $oxel.neighbor(Globals.NEGX)
 				if ( Oxel.validLightable( an ) ) {
-					an.brightness.negZ100 = CORNER_BUMP_VAL;
+					an.lighting.negZ100 = CORNER_BUMP_VAL;
 					an.quadRebuild( $majorFace ); }
 			}
 		}
@@ -1449,54 +1474,66 @@ public class Lighting  {
 			if ( Globals.POSY == $edgeFace ) {
 				posX110 = CORNER_BUMP_VAL;
 				posX111 = CORNER_BUMP_VAL;
+				posY = 1;
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				posX100 = CORNER_BUMP_VAL;
 				posX101 = CORNER_BUMP_VAL;
+				negY = 1;
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				posX101 = CORNER_BUMP_VAL;
 				posX111 = CORNER_BUMP_VAL;
+				posZ = 1;
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				posX110 = CORNER_BUMP_VAL;
 				posX100 = CORNER_BUMP_VAL;
+				negZ = 1;
 			}
 		}
 		else if ( Globals.NEGX == $majorFace ) {
 			if ( Globals.POSY == $edgeFace ) {
 				negX010 = CORNER_BUMP_VAL;
 				negX011 = CORNER_BUMP_VAL;
+				posY = 1;
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				negX000 = CORNER_BUMP_VAL;
 				negX001 = CORNER_BUMP_VAL;
+				negY = 1;
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				negX001 = CORNER_BUMP_VAL;
 				negX011 = CORNER_BUMP_VAL;
+				posZ = 1;
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				negX000 = CORNER_BUMP_VAL;
 				negX010 = CORNER_BUMP_VAL;
+				negZ = 1;
 			}
 		}
 		else if ( Globals.POSY == $majorFace ) {
 			if ( Globals.POSX == $edgeFace ) {
 				posY110 = CORNER_BUMP_VAL;
 				posY111 = CORNER_BUMP_VAL;
+				posX = 1;
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				posY010 = CORNER_BUMP_VAL;
 				posY011 = CORNER_BUMP_VAL;
+				negX = 1;
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				posY011 = CORNER_BUMP_VAL;
 				posY111 = CORNER_BUMP_VAL;
+				posZ = 1;
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				posY010 = CORNER_BUMP_VAL;
 				posY110 = CORNER_BUMP_VAL;
+				negZ = 1;
 			}
 		}
 		else if ( Globals.NEGY == $majorFace ) {
@@ -1504,18 +1541,22 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				negY100 = CORNER_BUMP_VAL;
 				negY101 = CORNER_BUMP_VAL;
+				posX = 1;
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				negY000 = CORNER_BUMP_VAL;
 				negY001 = CORNER_BUMP_VAL;
+				negX = 1;
 			}
 			else if ( Globals.POSZ == $edgeFace ) {
 				negY001 = CORNER_BUMP_VAL;
 				negY101 = CORNER_BUMP_VAL;
+				posZ = 1;
 			}
 			else if ( Globals.NEGZ == $edgeFace ) {
 				negY000 = CORNER_BUMP_VAL;
 				negY100 = CORNER_BUMP_VAL;
+				negZ = 1;
 			}
 		}
 		else if ( Globals.POSZ == $majorFace ) {
@@ -1523,18 +1564,22 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				posZ101 = CORNER_BUMP_VAL;
 				posZ111 = CORNER_BUMP_VAL;
+				posX = 1;
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				posZ001 = CORNER_BUMP_VAL;
 				posZ011 = CORNER_BUMP_VAL;
+				negX = 1;
 			}
 			else if ( Globals.POSY == $edgeFace ) {
 				posZ011 = CORNER_BUMP_VAL;
 				posZ111 = CORNER_BUMP_VAL;
+				posY = 1;
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				posZ001 = CORNER_BUMP_VAL;
 				posZ101 = CORNER_BUMP_VAL;
+				negY = 1;
 			}
 		}
 		else if ( Globals.NEGZ == $majorFace ) {
@@ -1542,18 +1587,22 @@ public class Lighting  {
 			if ( Globals.POSX == $edgeFace ) {
 				negZ100 = CORNER_BUMP_VAL;
 				negZ110 = CORNER_BUMP_VAL;
+				posX = 1;
 			}
 			else if ( Globals.NEGX == $edgeFace ) {
 				negZ000 = CORNER_BUMP_VAL;
 				negZ010 = CORNER_BUMP_VAL;
+				negX = 1;
 			}
 			else if ( Globals.POSY == $edgeFace ) {
 				negZ010 = CORNER_BUMP_VAL;
 				negZ110 = CORNER_BUMP_VAL;
+				posY = 1;
 			}
 			else if ( Globals.NEGY == $edgeFace ) {
 				negZ000 = CORNER_BUMP_VAL;
 				negZ100 = CORNER_BUMP_VAL;
+				negY = 1;
 			}
 		}
 	}
@@ -1747,12 +1796,12 @@ public class Lighting  {
 				edgeIncrement( $face, af );
 				// bump the count on edge of tested oxel.
 				// TODO - Could this bump it too far?
-				nno.brightness.edgeIncrement( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
+				nno.lighting.edgeIncrement( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
 				// Problem with this is it makes the next frame dirty too, which causes every frame to be dirty, not good!
 				//nno.quadMarkDirty( Oxel.face_get_opposite( af ) );
 				nno.quadRebuild( Oxel.face_get_opposite( af ) );
 				
-				nno.brightness.incrementEdgeAdjacent( nno, Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
+				nno.lighting.incrementEdgeAdjacent( nno, Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
 			}
 		}
 	}

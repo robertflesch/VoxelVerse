@@ -21,7 +21,7 @@ public class WindowChangeBaseLightLevel extends VVPopup
 			//throw new Error("Nothing here"); 
 			_vm = vm;
 			
-			super("Change Type");
+			super("Base Light Level");
 			layout.orientation = LayoutOrientation.VERTICAL;
 //            autoSize = true;
 			shadow = true;

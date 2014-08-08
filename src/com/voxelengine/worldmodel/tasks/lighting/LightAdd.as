@@ -42,7 +42,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( Oxel.validLightable( lo ) )
 					{
 						var ti:TypeInfo = Globals.Info[lo.type];
-						if ( !lo.brightness.add( $le.lightID, ti.lightInfo.color, Lighting.MAX_LIGHT_LEVEL, ti.lightInfo.attn, true ) )
+						if ( !lo.lighting.add( $le.lightID, ti.lightInfo.color, Lighting.MAX_LIGHT_LEVEL, ti.lightInfo.attn, true ) )
 							throw new Error( "LightAdd.handleLightEvent - How did we get here?" );
 //						lo.brightness.fallOffPerMeter = ti.lightInfo.attn;
 						addTask( $le.instanceGuid, $le.gc, $le.lightID, Globals.ALL_DIRS );
@@ -63,11 +63,11 @@ package com.voxelengine.worldmodel.tasks.lighting
 						// This oxel changed from solid to AIR or Translucent
 						// So I just need to rebalance it as an AIR oxel
 						var airAttn:uint = Globals.Info[ Globals.AIR ].lightInfo.attn;
-						const attnScaling:uint = co.brightness.materialFallOffFactor * airAttn * (co.gc.size() / Globals.UNITS_PER_METER);
-						co.brightness.balanceAttnAll( attnScaling );
+						const attnScaling:uint = co.lighting.materialFallOffFactor * airAttn * (co.gc.size() / Globals.UNITS_PER_METER);
+						co.lighting.balanceAttnAll( attnScaling );
 						// REVIEW - Just grabbing the ID of the brightest light, but I THINK all will spread.
 						// Did not work correctly with just brightest light in other places, replacing here with all lights
-						var lights:Vector.<uint> = co.brightness.lightIDNonDefaultUsedGet();
+						var lights:Vector.<uint> = co.lighting.lightIDNonDefaultUsedGet();
 						for each ( var lightsOnThisOxel:uint in lights )
 							addTask( $le.instanceGuid, $le.gc, lightsOnThisOxel, Globals.ALL_DIRS );						
 					}
@@ -117,7 +117,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 							Log.out ( "LightAdd.start - Didn't find child!", Log.ERROR );
 
 						//Log.out ( "LightAdd.start - gc:" + lo.gc.toString() + " br: " + lo.brightness.toString() );
-						lo.brightness.lightGet( lightID ).processed = true;
+						lo.lighting.lightGet( lightID ).processed = true;
 						spreadToNeighbors( lo );
 					}
 					else
@@ -166,22 +166,22 @@ package com.voxelengine.worldmodel.tasks.lighting
 			{
 				if ( checkIfProcessed( $no ) )
 					return true;
-				projectOnNeighborChildren( $no, $lo.brightness, $face );
+				projectOnNeighborChildren( $no, $lo.lighting, $face );
 			}					
 			else 
 			{
 				if ( true == $no.isSolid ) // this is a SOLID object which does not transmit light (leaves, water are exceptions)
 				{
-					if ( $no.brightness.influenceAdd( lightID, $lo.brightness, $face, true, $no.gc.size() ) )
+					if ( $no.lighting.influenceAdd( lightID, $lo.lighting, $face, true, $no.gc.size() ) )
 						rebuildFace( $no, $face );
 				} 
 				else if ( Globals.AIR == $no.type ) { // this oxel does not have faces OR children, and transmits light
 					// Add the influence, test for changes, if changed add this to light list
-					if ( $no.brightness.influenceAdd( lightID, $lo.brightness, $face, false, $no.gc.size() ) )
+					if ( $no.lighting.influenceAdd( lightID, $lo.lighting, $face, false, $no.gc.size() ) )
 						add( $no );
 				}
 				else { // this oxel has faces and transmits light (water and leaves)
-					if ( $no.brightness.influenceAdd( lightID, $lo.brightness, $face, false, $no.gc.size() ) )
+					if ( $no.lighting.influenceAdd( lightID, $lo.lighting, $face, false, $no.gc.size() ) )
 					{
 						rebuildFace( $no, $face );
 						add( $no );
@@ -203,7 +203,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 			
 			var grainUnits:uint = $lo.gc.size();
 			// project the light oxel onto the virtual brightness
-			bt.influenceAdd( lightID, $lo.brightness, $face, !$no.hasAlpha, grainUnits );
+			bt.influenceAdd( lightID, $lo.lighting, $face, !$no.hasAlpha, grainUnits );
 			if ( !bt.valuesHas() )
 				return false;
 
@@ -227,8 +227,8 @@ package com.voxelengine.worldmodel.tasks.lighting
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			// add the calculated brightness and color info to $no
 			var changed:Boolean;
-			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas( Lighting.DEFAULT_BASE_LIGHT_LEVEL ) )
-				changed = $no.brightness.brightnessMerge( lightID, bt );
+			if ( bt.lightHas( lightID ) && bt.lightGet( lightID ).valuesHas( Lighting.defaultBaseLightAttn ) )
+				changed = $no.lighting.brightnessMerge( lightID, bt );
 			//Log.out( "no: \n" + $no.brightness.toString() );
 			//Log.out( "LightAdd.projectOnLargerGrain ----------------------------------------------------" );
 			
@@ -260,12 +260,12 @@ package com.voxelengine.worldmodel.tasks.lighting
 					if ( !checkIfProcessed( child ) ) return false;
 				}
 				// lets mark $o as processed for this lightID
-				if ( $o.brightness && $o.brightness.lightHas( lightID ) )
-					$o.brightness.lightGet( lightID ).processed = true;
+				if ( $o.lighting && $o.lighting.lightHas( lightID ) )
+					$o.lighting.lightGet( lightID ).processed = true;
 				return true;
 			}
 			
-			if ( $o.brightness && $o.brightness.lightHas( lightID ) && true == $o.brightness.lightGet( lightID ).processed )
+			if ( $o.lighting && $o.lighting.lightHas( lightID ) && true == $o.lighting.lightGet( lightID ).processed )
 				return true;
 				
 			return false;
@@ -305,7 +305,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 							Log.out( "LightAdd.projectOnNeighborChildren - How do I get here?", Log.ERROR );
 						
 						// Project the virtual brightness object on the real child of the same size
-						if ( noChild.brightness.influenceAdd( lightID, bt, $face, !noChild.hasAlpha, noChild.gc.size() ) ) {
+						if ( noChild.lighting.influenceAdd( lightID, bt, $face, !noChild.hasAlpha, noChild.gc.size() ) ) {
 							if ( noChild.hasAlpha )
 								add( noChild )
 							else
@@ -319,7 +319,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 		
 		static private function rebuildFace( $o:Oxel, $faceFrom:int ):void {
 			
-			if ( !$o.brightness.valuesHas() )
+			if ( !$o.lighting.valuesHas() )
 				return;
 
 			if ( $o.quads && 0 < $o.quads.length )
@@ -337,7 +337,7 @@ package com.voxelengine.worldmodel.tasks.lighting
 				return;
 			}
 			
-			if ( $o.brightness.valuesHas() )
+			if ( $o.lighting.valuesHas() )
 				addTask( _guid, $o.gc, lightID, Globals.ALL_DIRS );
 		}
 	}

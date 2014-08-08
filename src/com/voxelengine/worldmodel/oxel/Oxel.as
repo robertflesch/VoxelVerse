@@ -76,7 +76,7 @@ package com.voxelengine.worldmodel.oxel
 		private var _neighbors:Vector.<Oxel>	= null;	// 8 children but 6 neighbors, created when needed
 		private var _quads:Vector.<Quad> 		= null;	// Quads that are drawn on card, created when needed
 		private var _vertMan:VertexManager 		= null;  // created when needed
-		private var _brightness:Lighting		= null;
+		private var _lighting:Lighting		= null;
 		private var _flowInfo:FlowInfo 			= null; // used to count up and out in flowing oxel ( only uses 2 bytes, down, out )
 		override public function set dirty( $isDirty:Boolean ):void { 
 			super.dirty = $isDirty;
@@ -141,8 +141,8 @@ package com.voxelengine.worldmodel.oxel
 		public function get flowInfo():FlowInfo { return _flowInfo; }
 		public function set flowInfo(value:FlowInfo):void { _flowInfo = value; }
 		
-		public function get brightness():Lighting { return _brightness; }
-		public function set brightness(value:Lighting):void { _brightness = value; }
+		public function get lighting():Lighting { return _lighting; }
+		public function set lighting(value:Lighting):void { _lighting = value; }
 		
 		public function get parent():Oxel { return _parent; }
 		
@@ -243,9 +243,9 @@ package com.voxelengine.worldmodel.oxel
 			if ( Globals.BAD_OXEL == $o ) // This is expected, if oxel is on edge of model
 				return false;
 			
-			if ( !$o.brightness ) { // does this oxel already have a brightness?
-				$o.brightness = LightingPool.poolGet();
-				$o.brightness.materialFallOffFactor = Globals.Info[$o.type].lightInfo.fallOffFactor;
+			if ( !$o.lighting ) { // does this oxel already have a brightness?
+				$o.lighting = LightingPool.poolGet();
+				$o.lighting.materialFallOffFactor = Globals.Info[$o.type].lightInfo.fallOffFactor;
 			}
 
 			return true;
@@ -281,9 +281,9 @@ package com.voxelengine.worldmodel.oxel
 			//trace( "Oxel.release" + gc.toString() );
 
 			_flowInfo = null; // might need a pool for these.
-			if ( _brightness ) { 
-				LightingPool.poolReturn( _brightness );
-				_brightness = null;
+			if ( _lighting ) { 
+				LightingPool.poolReturn( _lighting );
+				_lighting = null;
 			}
 			
 			// kill any existing family, you can be parent type OR physical type, not both
@@ -582,13 +582,13 @@ package com.voxelengine.worldmodel.oxel
 				gct.become_child( i );   
 				// this sets the RAW data, used here only sets the type
 				_children[i].initializeAndMarkDirty( this, gct, type, null );
-				if ( _brightness )
+				if ( _lighting )
 				{
-					_children[i].brightness = LightingPool.poolGet();
-					brightness.childGetAllLights( gct.childId(), _children[i].brightness );
+					_children[i].lighting = LightingPool.poolGet();
+					lighting.childGetAllLights( gct.childId(), _children[i].lighting );
 					// child should attenuate light at same rate.
-					_children[i].brightness.materialFallOffFactor = brightness.materialFallOffFactor;
-					_children[i].brightness.color = brightness.color;
+					_children[i].lighting.materialFallOffFactor = lighting.materialFallOffFactor;
+					_children[i].lighting.color = lighting.color;
 				}
 				// use the super so you dont start a flow event on flowable types.
 				if ( Globals.GRASS == type )
@@ -824,7 +824,7 @@ package com.voxelengine.worldmodel.oxel
 				if ( child.childrenHas() )
 					return false; // Dont delete parents!
 				
-				if ( null != child._brightness )
+				if ( null != child._lighting )
 					hasBrightnessData = true;
 			}
 			
@@ -832,16 +832,16 @@ package com.voxelengine.worldmodel.oxel
 			
 			/// merge the brightness data into parent.
 			if ( hasBrightnessData ) {
-				if ( null == _brightness )
-					_brightness = LightingPool.poolGet();
+				if ( null == _lighting )
+					_lighting = LightingPool.poolGet();
 				for each ( var childForBrightness:Oxel in _children ) 
 				{
-					if ( childForBrightness._brightness ) {
-						_brightness.mergeChildren( childForBrightness.gc.childId(), childForBrightness._brightness, childForBrightness.gc.size(), hasAlpha );
+					if ( childForBrightness._lighting ) {
+						_lighting.mergeChildren( childForBrightness.gc.childId(), childForBrightness._lighting, childForBrightness.gc.size(), hasAlpha );
 						// Need to set this from a valid child
 						// Parent should have same brightness attn as children did.
-						_brightness.materialFallOffFactor = childForBrightness.brightness.materialFallOffFactor;
-						_brightness.color = childForBrightness.brightness.color;
+						_lighting.materialFallOffFactor = childForBrightness.lighting.materialFallOffFactor;
+						_lighting.color = childForBrightness.lighting.color;
 					}
 				}
 			}
@@ -1106,8 +1106,8 @@ package com.voxelengine.worldmodel.oxel
 				if ( _quads && _quads[$face] )
 					_quads[$face].dirty = 1;
 
-				if ( brightness )
-					brightness.occlusionResetFace( $face );
+				if ( lighting )
+					lighting.occlusionResetFace( $face );
 
 				super.face_mark_dirty( $guid, $face );
 			}
@@ -1163,18 +1163,19 @@ package com.voxelengine.worldmodel.oxel
 		
 		private function quadAmbient( $face:int, $ti:TypeInfo ):void {
 			
-			if ( !_brightness ) {
-				_brightness = LightingPool.poolGet();
-				if ( _brightness.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
-					var li:LightInfo = _brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
-					li.setAll( root_get()._brightness.lightGet( Lighting.DEFAULT_LIGHT_ID ).avg );
+			if ( !_lighting ) {
+				_lighting = LightingPool.poolGet();
+				if ( _lighting.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _lighting.lightGet( Lighting.DEFAULT_LIGHT_ID );
+					var rootAttn:uint = root_get()._lighting.lightGet( Lighting.DEFAULT_LIGHT_ID ).avg
+					li.setAll( rootAttn );
 				}
-				_brightness.materialFallOffFactor = $ti.lightInfo.fallOffFactor;
-				_brightness.color = $ti.color;
+				_lighting.materialFallOffFactor = $ti.lightInfo.fallOffFactor;
+				_lighting.color = $ti.color;
 			}
 			
 			if ( true == $ti.lightInfo.fullBright && false == $ti.lightInfo.lightSource )
-				_brightness.lightFullBright();
+				_lighting.lightFullBright();
 			
 			//_brightness.evaluateAmbientOcculusion( this, $face );
 		}
@@ -1364,8 +1365,7 @@ package com.voxelengine.worldmodel.oxel
 			}
 		}
 		
-		// This would only be run once when model loads
-		// set the activeVoxelModelGuid before calling
+		// This should be called from voxelModel
 		public function lightsStaticSetDefault( $attn:uint ):void {
 			if ( childrenHas() )
 			{
@@ -1374,11 +1374,10 @@ package com.voxelengine.worldmodel.oxel
 			}
 			else
 			{
-				if ( _brightness && _brightness.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
-					var li:LightInfo = _brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
+				if ( _lighting && _lighting.lightHas( Lighting.DEFAULT_LIGHT_ID ) ) {
+					var li:LightInfo = _lighting.lightGet( Lighting.DEFAULT_LIGHT_ID );
 					li.setAll( $attn );
 					quadsRebuildAll();
-
 				}
 			}
 		}
@@ -1482,7 +1481,7 @@ package com.voxelengine.worldmodel.oxel
 			if ( validFace && quad ) {
 				if ( quad.dirty ) {
 					quadAmbient( $face, $ti );
-					quad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness );
+					quad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _lighting );
 				}
 				return 1;
 			}
@@ -1492,13 +1491,13 @@ package com.voxelengine.worldmodel.oxel
 				quadAmbient( $face, $ti );				
 				quad = QuadPool.poolGet();
 				if ( flowInfo && isFlowable ) {
-					if ( !quad.buildScaled( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness, flowInfo ) ) {
+					if ( !quad.buildScaled( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _lighting, flowInfo ) ) {
 						QuadPool.poolDispose( quad );
 						return 0;
 					}
 				}
 				else {
-					if ( !quad.build( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _brightness ) ) {
+					if ( !quad.build( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, $plane_facing, $scale, _lighting ) ) {
 						QuadPool.poolDispose( quad );
 						return 0;
 					}
@@ -1534,7 +1533,7 @@ package com.voxelengine.worldmodel.oxel
 			{
 				var plane_facing:int = 1;
 				var scale:uint = 1 << gc.grain;
-				quad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, plane_facing, scale, _brightness );
+				quad.rebuild( type, gc.getModelX(), gc.getModelY(), gc.getModelZ(), $face, plane_facing, scale, _lighting );
 			}
 		}
 
@@ -1663,7 +1662,7 @@ package com.voxelengine.worldmodel.oxel
 				type = Globals.AIR; 
 			}
 			
-			if ( flowInfo || ( _brightness && _brightness.valuesHas() ) )
+			if ( flowInfo || ( _lighting && _lighting.valuesHas() ) )
 			{
 				// I only have 1 bit for additional data...
 				additionalDataMark();
@@ -1673,9 +1672,9 @@ package com.voxelengine.worldmodel.oxel
 					flowInfo = new FlowInfo(); 
 				flowInfo.toByteArray( ba );
 				
-				if ( !brightness )
-					brightness = LightingPool.poolGet();
-				ba = brightness.toByteArray( ba );
+				if ( !lighting )
+					lighting = LightingPool.poolGet();
+				ba = lighting.toByteArray( ba );
 			}
 			else
 				ba.writeInt( maskTempData() );
@@ -1705,10 +1704,26 @@ package com.voxelengine.worldmodel.oxel
 					flowInfo = new FlowInfo();
 				$ba = flowInfo.fromByteArray( $version, $ba );
 				
-				if ( !brightness )
-					brightness = LightingPool.poolGet();
-				$ba = brightness.fromByteArray( $version, $ba );
-				brightness.materialFallOffFactor = Globals.Info[type].lightInfo.fallOffFactor;
+				// hack warning
+				// the baseLightLevel gets overridden by data from byte array.
+				// so if there is no parent, I need to save off the baseLightLevel
+				// and restore it after the data has been read.
+				if ( null == $parent )
+					var baseLightLevel:uint = lighting.avg;
+				if ( !lighting )
+					lighting = LightingPool.poolGet();
+				$ba = lighting.fromByteArray( $version, $ba );
+				
+				if ( $parent ) {
+					// override the stored data with the baseLightLevel set in the instance.
+					var li:LightInfo = lighting.lightGet( Lighting.DEFAULT_LIGHT_ID );
+					var avgLight:uint = root_get().lighting.avg;
+					li.setAll( avgLight );
+				}
+				else {
+					lighting.lightGet( Lighting.DEFAULT_LIGHT_ID ).setAll( baseLightLevel );
+				}
+				lighting.materialFallOffFactor = Globals.Info[type].lightInfo.fallOffFactor;
 			}
 			
 			if ( OxelData.data_is_parent( oxelData ) )
@@ -2659,9 +2674,9 @@ package com.voxelengine.worldmodel.oxel
 					child.lightingReset();
 				}
 			}
-			else if ( _brightness )
+			else if ( _lighting )
 			{
-				_brightness.reset();
+				_lighting.reset();
 			}
 		}
 		
