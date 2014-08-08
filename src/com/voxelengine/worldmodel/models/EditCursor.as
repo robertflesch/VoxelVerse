@@ -136,6 +136,9 @@ package com.voxelengine.worldmodel.models
 			oxel.faces_clear_all();
 			oxel.faces_mark_all_clean();
 			var gcCursor:GrainCursor = GrainCursorPool.poolGet( oxel.gc.bound );
+			if ( !oxel.lighting )
+				oxel.lighting = LightingPool.poolGet();
+			var li:LightInfo = oxel.lighting.lightGet( Lighting.DEFAULT_LIGHT_ID );
 			if ( CURSOR_OP_INSERT == cursorOperation ) {
 				
 				var pl:PlacementLocation = getPlacementLocation( gciData.model );
@@ -159,9 +162,8 @@ package com.voxelengine.worldmodel.models
 						oxel.face_set( Globals.NEGZ );
 						break;
 				}
-				if ( !oxel.brightness )
-					oxel.brightness = LightingPool.poolGet();
-				oxel.brightness.setAll( Lighting.DEFAULT_LIGHT_ID, Lighting.MAX_LIGHT_LEVEL );
+				oxel.lighting.setAll( Lighting.DEFAULT_LIGHT_ID, Lighting.MAX_LIGHT_LEVEL );
+				li.color = 0xffffffff;
 				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
 				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
 			}
@@ -170,9 +172,6 @@ package com.voxelengine.worldmodel.models
 				oxel.faces_set_all();
 				gcCursor.set_values( 0, 0, 0, oxel.gc.grain )
 				oxel.write( EditCursor.EDIT_CURSOR, gcCursor, selectedCursor, true );
-				if ( !oxel.brightness )
-					oxel.brightness = LightingPool.poolGet();
-				var li:LightInfo = oxel.brightness.lightGet( Lighting.DEFAULT_LIGHT_ID );
 				li.color = cursorColorRainbow();
 			}
 			
