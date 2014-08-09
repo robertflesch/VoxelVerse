@@ -1,0 +1,46 @@
+{
+    "region": [
+        {
+             "model": {
+                "fileName": "GenerateCube",
+				"grainSize": 8,
+                "location": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "transforms": [
+                    {
+                        "delta": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        },
+                        "time": 1,
+                        "type": "rotation"
+                    }
+				]
+            }
+		}
+    ]
+	,
+	"skyColor": {
+                    "r": 192,
+                    "g": 172,
+                    "b": 238
+                },
+	"gravity": false,
+	"playerPosition": {
+                    "x": -56,
+                    "y": 40,
+                    "z": 380
+                },
+	"playerRotation": 0,
+	"name": "Cube Test",
+	"desc": ""
+}

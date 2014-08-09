@@ -1,0 +1,56 @@
+{
+    "region": [
+        {
+            "model": {
+                "script": "",
+                "name": "Default Name",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "location": {
+                    "x": -128,
+                    "y": -128,
+                    "z": -238.71166287710884
+                },
+                "instanceGuid": "0A55FA91-4992-2C30-8744-A38C1F610AB3",
+                "fileName": "GunPlatform",
+                "grainSize": 8,
+                "collidable": true,
+                "transforms": [],
+                "critical": true
+            }
+        },
+        {
+            "model": {
+                "script": "",
+                "name": "Default Name",
+                "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "location": {
+                    "x": -128,
+                    "y": -128,
+                    "z": -573.7642159309584
+                },
+                "instanceGuid": "E98D6A2B-9378-1DF7-493B-8CC72FCC078C",
+                "fileName": "GunPlatform",
+                "grainSize": 8,
+                "collidable": true,
+                "transforms": [],
+                "critical": false
+            }
+        }
+    ],
+    "skyColor": {
+        "r": 92,
+        "g": 172,
+        "b": 238
+    },
+    "gravity": true,
+	"name": "Two Platforms",
+	"desc": "Two Ships with guns"
+}
