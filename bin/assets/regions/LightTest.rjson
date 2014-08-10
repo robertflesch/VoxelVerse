@@ -3,7 +3,7 @@
         {
             "model": {
                 "fileName": "LightTest",
-				"baseLightLevel": 150,
+				"baseLightLevel": 100,
                 "location": {
                     "x": 0,
                     "y": 0,
