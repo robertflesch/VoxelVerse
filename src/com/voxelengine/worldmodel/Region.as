@@ -11,6 +11,7 @@ package com.voxelengine.worldmodel
 	import com.voxelengine.events.LoadingEvent;
 	import com.voxelengine.events.ModelEvent;
 	import com.voxelengine.events.RegionEvent;
+	import com.voxelengine.events.RegionLoadedEvent;
 	import com.voxelengine.server.Persistance;
 	import com.voxelengine.server.Network;
 	import flash.geom.Vector3D;
@@ -192,65 +193,15 @@ package com.voxelengine.worldmodel
 		public function request( $regionId:String ):void
 		{
 			_regionId = $regionId;
-			if ( Globals.isGuid( $regionId ) )
-			{
-				Log.out( "Region.request - loading from DB: " + regionId );
-				Persistance.loadObject( Persistance.DB_TABLE_REGIONS
-								, regionId
-								, successHandlerDBO
-								, errorHandlerDBO );					
-			}
-			else
-			{
-				var _urlLoader:URLLoader = new URLLoader();
-				var fileNameWithExt:String = $regionId + ".rjson"
-				Log.out( "Region.request - loading: " + Globals.regionPath + fileNameWithExt );
-				_urlLoader.load(new URLRequest( Globals.regionPath + fileNameWithExt ));
-				_urlLoader.addEventListener(Event.COMPLETE, onRegionLoadedAction);
-				_urlLoader.addEventListener(IOErrorEvent.IO_ERROR, errorAction);			
-				_urlLoader.addEventListener(ProgressEvent.PROGRESS, onProgressAction);
-			}
+			var _urlLoader:URLLoader = new URLLoader();
+			var fileNameWithExt:String = $regionId + ".rjson"
+			Log.out( "Region.request - loading: " + Globals.regionPath + fileNameWithExt );
+			_urlLoader.load(new URLRequest( Globals.regionPath + fileNameWithExt ));
+			_urlLoader.addEventListener(Event.COMPLETE, onRegionLoadedAction);
+			_urlLoader.addEventListener(IOErrorEvent.IO_ERROR, errorAction);			
+			_urlLoader.addEventListener(ProgressEvent.PROGRESS, onProgressAction);
 		}
 
-		static private 	function successHandlerDBO(o:DatabaseObject):void 
-		{ 
-			Log.out( "Region.successHandler - e: " + o );
-			var newRegion:Region = new Region();
-			loadFromDBO( newRegion, o );
-		}	
-		
-		static private function errorHandlerDBO(e:PlayerIOError):void
-		{  
-			Log.out( "Region.errorHandler - e: " + e, Log.ERROR );
-		}					
-		
-		static public function loadFromDBO( newRegion:Region, dbo:DatabaseObject):void
-		{
-			//var regionGuid:String = dbo.key;
-			newRegion.databaseObject = dbo;
-			newRegion._name = dbo.name;
-			newRegion._desc = dbo.description;
-			newRegion._worldId = dbo.world;
-			newRegion._regionId = dbo.region;
-			newRegion._template = dbo.template;
-			newRegion._owner = dbo.owner
-			//newRegion.editors	: GetEditorsList(),
-			//newRegion.admin: GetAdminList(),
-			newRegion._created = dbo.created;
-			newRegion._modified = dbo.modified;
-			
-			var $ba:ByteArray = dbo.data as ByteArray;
-			//$ba.uncompress();
-			$ba.position = 0;
-			// how many bytes is the modelInfo
-			var strLen:int = $ba.readInt();
-			// read off that many bytes
-			var regionJson:String = $ba.readUTFBytes( strLen );
-			Log.out( "Region.loadFromDBO - regionJson: " + regionJson );
-			//regionJson = decodeURI(regionJson);
-			newRegion.processRegionJson( regionJson );
-		}
-		
 		private function onRegionLoadedAction(event:Event):void
 		{
 			trace( "Region.onRegionLoadedAction" );
@@ -289,7 +240,10 @@ package com.voxelengine.worldmodel
 			if ( _regionObject.playerRotation )
 				_playerRotation.setTo( 0, _regionObject.playerRotation, 0 );
 				
-			Globals.g_app.dispatchEvent( new RegionEvent( RegionEvent.REGION_CACHE_COMPLETE, regionId ) );
+			if ( Globals.online )
+				Globals.g_app.dispatchEvent( new RegionLoadedEvent( RegionLoadedEvent.REGION_EVENT_LOADED, this ) );
+			else
+				Globals.g_app.dispatchEvent( new RegionEvent( RegionEvent.REGION_CACHE_COMPLETE, regionId ) );
 		}
 		
 		private function handleRegionModified( $re:RegionEvent ):void {

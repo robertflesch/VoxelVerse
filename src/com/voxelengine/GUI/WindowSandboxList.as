@@ -3,6 +3,7 @@ package com.voxelengine.GUI
 {
 import com.voxelengine.events.LoginEvent;
 import com.voxelengine.events.RegionEvent;
+import com.voxelengine.events.RegionLoadedEvent;
 import com.voxelengine.server.VVServer;
 import com.voxelengine.worldmodel.Region;
 import org.flashapi.swing.*;
@@ -90,6 +91,7 @@ public class WindowSandboxList extends VVPopup
 		eventCollector.addEvent( this, UIMouseEvent.PRESS, pressWindow );
 		
 		Globals.g_app.addEventListener( RegionEvent.REGION_CACHE_COMPLETE, regionCacheComplete );
+		Globals.g_app.addEventListener( RegionLoadedEvent.REGION_EVENT_LOADED, regionLoadedEvent );
 		
 		if ( bar )
 		{
@@ -165,7 +167,8 @@ public class WindowSandboxList extends VVPopup
 		if ( li && li.data )
 		{
 			if ( Globals.MODE_LOCAL != Globals.mode )
-				VVServer.joinRoom( li.data );
+				VVServer.joinRoom( li.value );
+//				VVServer.joinRoom( li.data );
 			else	
 				new WindowRegionDetail( li.data );	
 		}
@@ -215,5 +218,12 @@ public class WindowSandboxList extends VVPopup
 		var region:Region = Globals.g_regionManager.getRegion( e.regionId );
 		_listbox1.addItem( region.name, region.regionId );
 	}
+	
+	private function regionLoadedEvent( e: RegionLoadedEvent ):void
+	{
+		Log.out( "WindowSandboxList.regionLoadedEvent - adding regionId: " + e.region.name );
+		_listbox1.addItem( e.region.name, e.region.regionId );
+	}
+	
 }
 }

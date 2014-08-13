@@ -10,6 +10,7 @@ package com.voxelengine.worldmodel
 import com.voxelengine.events.PersistanceEvent;
 import com.voxelengine.events.LoginEvent;
 import com.voxelengine.events.RegionEvent;
+import com.voxelengine.events.RegionLoadedEvent;
 import com.voxelengine.Globals;
 import com.voxelengine.GUI.WindowRegionNew;
 import com.voxelengine.GUI.WindowSandboxList;
@@ -56,6 +57,9 @@ public class RegionManager
 		Globals.g_app.addEventListener( RegionEvent.REGION_PERSISTANCE_LOAD, loadBigDB ); 
 		//static public const REGION_PERSISTANCE_UPDATE:String		= "REGION_PERSISTANCE_UPDATE";
 		//static public const REGION_PERSISTANCE_DELETE:String		= "REGION_PERSISTANCE_DELETE";
+		
+		Globals.g_app.addEventListener( RegionLoadedEvent.REGION_EVENT_LOADED, persistanceRegionLoaded ); 
+		
 	}
 	
 	public function get size():int { return _regions.length; }
@@ -70,35 +74,27 @@ public class RegionManager
 	
 	public function cacheRequestPrivate( e:RegionEvent ):void
 	{
-		cacheRequest( Network.userId );
+		Persistance.loadRegions( Network.userId );
 	}
 	public function cacheRequestPublic( e:RegionEvent ):void
 	{
-		cacheRequest( "public" )
-	}
-	public function cacheRequest( userName:String ):void
-	{
-		Persistance.loadRange( Persistance.DB_TABLE_REGIONS
-					 , "regionOwner"
-					 , [userName]
-					 , null
-					 , null
-					 , 100
-					, loadKeysSuccessHandler
-					, function (e:PlayerIOError):void {  Log.out( "Region.errorHandler - e: " + e ); } );
+		Persistance.loadRegions( "public" );
 	}
 	
-	private function loadKeysSuccessHandler( dba:Array ):void
-	{
-		trace( "RegionManager.loadKeysSuccessHandler - regions loaded: " + dba.length );
-		for each ( var dbo:DatabaseObject in dba )
-		{
-			var newRegion:Region = new Region();
-			_regions.push( newRegion );
-			Region.loadFromDBO( newRegion, dbo );
-		}
-	}
+	private function persistanceRegionLoaded( e:RegionLoadedEvent ):void {
 
+		_regions.push( e.region );
+	}
+	
+	//private function regionsRetrivedEventHandler( dba:Array ):void
+	//{
+		//for each ( var dbo:DatabaseObject in dba )
+		//{
+			//var newRegion:Region = new Region();
+			//_regions.push( newRegion );
+			//loadFromDBO( newRegion, dbo );
+		//}
+	//}
 	
 	public function cacheRequestLocal( e:RegionEvent ):void
 	{
@@ -254,17 +250,26 @@ public class RegionManager
 	*/
 	public function save():void
 	{
+		Log.out( "RegionManager.save" );
 		for each ( var region:Region in _regions )
 		{
-			if ( region && "" != region.regionId  )
+			if ( region && "" != region.regionId  ) {
 				if ( region.changed ) {
-					if ( region.databaseObject )
+					if ( region.databaseObject ) {
+						Log.out( "RegionManager.save - network save of region: " + region.name );
 						region.saveBigDB();
+					}
 					else
 						//region.saveLocal();
-						Log.out( "RegionManager.save - AUTOMATIC local saves are disabled" );
+						Log.out( "RegionManager.save - AUTOMATIC local saves are disabled for: " + region.name );
 				}
+				else
+					Log.out( "RegionManager.save - not changed region: + " + region.name );
+			}
+			else
+				Log.out( "RegionManager.save - region && '' != region.regionId" );
 		}
+		Log.out( "RegionManager.save - END" );
 	}
 } // RegionManager
 } // Package
