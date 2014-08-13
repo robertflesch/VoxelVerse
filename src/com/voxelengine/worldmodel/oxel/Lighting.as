@@ -1774,37 +1774,56 @@ public class Lighting  {
 	public function evaluateAmbientOcculusion( $o:Oxel, $face:int ):void {
 		
 		var no:Oxel = $o.neighbor( $face );
-		var childId:uint = $o.gc.childId();
 		if ( Globals.BAD_OXEL == no )
 			return;
-		var nno:Oxel;
+		if ( false == no.hasAlpha )
+			return;
+			
+//		var childId:uint = $o.gc.childId();
 		var afs:Array = Globals.adjacentFaces( $face );
 		
+		var nno:Oxel;
 		for ( var index:int = 0; index < 5; index++ ) {
 			var af:int = afs[index];
 			nno = no.neighbor( af );
 			if ( !Oxel.validLightable( nno ) )
 				continue;
-			// FIX - if nno is larger, then, how do I evaluate?
-			// FIX - if nno is larger, then, how do I evaluate?
-			// FIX - if nno is larger, then, how do I evaluate?
-			if ( nno.childrenHas() ) {
-				//Log.out( "evaluateAmbientOcculusion - neighbor has faces" );
-			}
-			else if ( nno.faceHas( Oxel.face_get_opposite( af ) ) ) {
-				// bump the count on edge of tested oxel.
-				edgeIncrement( $face, af );
-				// bump the count on edge of tested oxel.
-				// TODO - Could this bump it too far?
-				nno.lighting.edgeIncrement( Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
-				// Problem with this is it makes the next frame dirty too, which causes every frame to be dirty, not good!
-				//nno.quadMarkDirty( Oxel.face_get_opposite( af ) );
-				nno.quadRebuild( Oxel.face_get_opposite( af ) );
+			// no perpendicular face to cast shadow
+			if ( Globals.AIR == nno.type && !nno.childrenHas() )
+				continue;
 				
-				nno.lighting.incrementEdgeAdjacent( nno, Oxel.face_get_opposite( af ), Oxel.face_get_opposite( $face ) );
-			}
+			if ( nno.gc.grain > $o.gc.grain )  // implies it has no children.
+				projectOnLargerGrain( $o, nno, $face, af );
+			else if ( no.gc.grain == $o.gc.grain ) // equal grain can have children
+				projectOnEqualGrain( $o, nno, $face, af );
+			else
+				Log.out( "LightAdd.evaluateAmbientOcculusion - invalid condition - neighbor is smaller: ", Log.ERROR );
 		}
 	}
+	
+	public function projectOnLargerGrain( $o:Oxel, $nno:Oxel, $face:int, $af:int ):void {
+		// So I am evaluating a larger grain next to me.
+		// depending on my child location I may or may not have a face that effects me.
+		// yuck...
+	}
+	
+	public function projectOnEqualGrain( $o:Oxel, $nno:Oxel, $face:int, $af:int ):void {
+
+		if ( $nno.faceHas( Oxel.face_get_opposite( $af ) ) ) {
+			// bump the count on edge of tested oxel.
+			$o.lighting.edgeIncrement( $face, $af );
+			// bump the count on edge of tested oxel.
+			// TODO - Could this bump it too far?
+			$nno.lighting.edgeIncrement( Oxel.face_get_opposite( $af ), Oxel.face_get_opposite( $face ) );
+			// Problem with this is it makes the next frame dirty too, which causes every frame to be dirty, not good!
+			//nno.quadMarkDirty( Oxel.face_get_opposite( af ) );
+			$nno.quadRebuild( Oxel.face_get_opposite( $af ) );
+			
+			$nno.lighting.incrementEdgeAdjacent( $nno, Oxel.face_get_opposite( $af ), Oxel.face_get_opposite( $face ) );
+		}
+	}
+	
+	
 	
 } // end of class Brightness
 } // end of package
