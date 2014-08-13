@@ -123,18 +123,24 @@ package com.voxelengine.GUI
 		
 		private function populateModels():void
 		{
-			var models:Dictionary = Globals.g_modelManager.modelInfoGetDictionary();
-			for each ( var mi:ModelInfo in models )
-			{
-				if ( mi && "Player" != mi.modelClass && "EditCursor" != mi.modelClass )
-					_listbox1.addItem( mi.fileName + " - " + mi.modelClass, mi );
+			if ( Globals.online ) {
+				
 			}
-			//var models:Dictionary = Globals.g_modelManager.instanceInfo;
-			//for each ( var mi:InstanceInfo in models )
-			//{
-				//if ( mi && "Player" != mi.modelClass && "EditCursor" != mi.modelClass )
-					//_listbox1.addItem( mi.modelGuid + " - " + mi.instanceGuid, mi );
-			//}
+			else 
+			{
+				var models:Dictionary = Globals.g_modelManager.modelInfoGetDictionary();
+				for each ( var mi:ModelInfo in models )
+				{
+					if ( mi && "Player" != mi.modelClass && "EditCursor" != mi.modelClass )
+						_listbox1.addItem( mi.fileName + " - " + mi.modelClass, mi );
+				}
+				//var models:Dictionary = Globals.g_modelManager.instanceInfo;
+				//for each ( var mi:InstanceInfo in models )
+				//{
+					//if ( mi && "Player" != mi.modelClass && "EditCursor" != mi.modelClass )
+						//_listbox1.addItem( mi.modelGuid + " - " + mi.instanceGuid, mi );
+				//}
+			}
 		}
 	}
 }
