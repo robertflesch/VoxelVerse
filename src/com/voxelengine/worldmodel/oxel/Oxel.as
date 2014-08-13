@@ -330,6 +330,13 @@ package com.voxelengine.worldmodel.oxel
 			
 			if ( facesHas() )
 				dirty = true;
+			
+			//try {
+				//Globals.Info[type].flowable
+			//}
+			//catch ( e:Error ) {
+				//type = Globals.AIR;
+			//}
 				
 			if ( Globals.Info[type].flowable )
 			{
@@ -1177,7 +1184,7 @@ package com.voxelengine.worldmodel.oxel
 			if ( true == $ti.lightInfo.fullBright && false == $ti.lightInfo.lightSource )
 				_lighting.lightFullBright();
 			
-			//_brightness.evaluateAmbientOcculusion( this, $face );
+			_lighting.evaluateAmbientOcculusion( this, $face );
 		}
 
 		protected function faces_build_terminal():void {
@@ -1718,7 +1725,8 @@ package com.voxelengine.worldmodel.oxel
 					// override the stored data with the baseLightLevel set in the instance.
 					var li:LightInfo = lighting.lightGet( Lighting.DEFAULT_LIGHT_ID );
 					var avgLight:uint = root_get().lighting.avg;
-					li.setAll( avgLight );
+					if ( li )
+						li.setAll( avgLight );
 				}
 				else {
 					lighting.lightGet( Lighting.DEFAULT_LIGHT_ID ).setAll( baseLightLevel );
