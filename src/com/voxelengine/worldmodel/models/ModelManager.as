@@ -1094,6 +1094,8 @@ Log.out( "ModelManager.create - instance.templateName: " + instance.templateName
 			{
 				if ( instance )
 				{
+					if ( instance is Player )
+						continue;
 					outString += instance.getJSON();
 					count--;
 					// add commas to all but the last model
