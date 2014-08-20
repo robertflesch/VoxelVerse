@@ -100,6 +100,14 @@ package com.voxelengine.server
 											   , connectSuccess
 											   , connectFailure );
 			trace("WindowLogin.loginButtonHandler - Trying to establish connection to server");
+			/*
+			PlayerIO.quickConnect.simpleConnect( Globals.g_app.stage
+			                , "servertestgame-co3lwnb10a4ytwvxddjtq"
+							, "public"
+							, "testuser"
+							, connectSuccess
+							, connectFailure );// connection established
+				*/			
 		}
 		
 		private function registerButtonHandler(event:UIMouseEvent):void 
@@ -118,9 +126,6 @@ package com.voxelengine.server
 		public function connectSuccess( $client:Client):void
 		{
 			trace("WindowLogin.connectSuccess - connection to server established");
-			
-			//Set developmentsever (Comment out to connect to your server online)
-			$client.multiplayer.developmentServer = "localhost:8184";
 			Network.userId = $client.connectUserId;
 			Network.client = $client
 

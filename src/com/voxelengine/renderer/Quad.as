@@ -1,5 +1,5 @@
 /*==============================================================================
-  Copyright 2011-2013 Robert Flesch
+  Copyright 2011-2014 Robert Flesch
   All rights reserved.  This product contains computer programs, screen
   displays and printed documentation which are original works of
   authorship protected under United States Copyright Act.
@@ -30,15 +30,21 @@ public class Quad {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//     Static Variables
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	static private const QUAD_UV_COUNT:int = 5;
 	
-	static private var _s_textureScale:int = 256;
-	static private var _s_numArgs:Vector.<Number> = new Vector.<Number>(3, true);
-	static private var _s_intArgs:Vector.<int> = new Vector.<int>(3, true);
+	static private var 		_s_textureScale:int = 256;
+	static private var 		_s_numArgs:Vector.<Number> = new Vector.<Number>(3, true);
+	static private var 		_s_intArgs:Vector.<int> = new Vector.<int>(3, true);
+	static private const 	_s_flowScaling:FlowScaling = new FlowScaling();
 	
-	static public const COMPONENT_COUNT:int = 5;
-	static public const VERTEX_PER_QUAD:int = 4;
-	static public const INDICES:int = 6;
+	static private const 	QUAD_UV_COUNT:int = 5;
+	static public const 	COMPONENT_COUNT:int = 5;
+	static public const 	VERTEX_PER_QUAD:int = 4;
+	static public const 	INDICES:int = 6;
+	
+	private static const	ROTATE_000:int = 0;
+	private static const	ROTATE_090:int = 1;
+	private static const	ROTATE_180:int = 2;
+	private static const	ROTATE_270:int = 3;
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//     Static Functions
@@ -68,7 +74,7 @@ public class Quad {
 						     $scale:Number,                  // the world size of the quad 
 						     $lighting:Lighting ):void			
 	{
-		add( $type, $x, $y, $z, $face, $$planeFacing, $scale, Globals.Info[$type], $lighting );
+		addScaled( $type, $x, $y, $z, $face, $$planeFacing, $scale, Globals.Info[$type], $lighting, null );
 		dirty = 0;
 	}
 	
@@ -83,7 +89,8 @@ public class Quad {
 		if ( !calculateUV( typeInfo, $face, $scale, null, $lighting ) )
 			return false;
 			
-		add( $type, $x, $y, $z, $face, $$planeFacing, $scale, typeInfo, $lighting );
+		addScaled( $type, $x, $y, $z, $face, $$planeFacing, $scale, typeInfo, $lighting, null );
+		//add( $type, $x, $y, $z, $face, $$planeFacing, $scale, typeInfo, $lighting );
 		return true;
 	}
 	
@@ -103,24 +110,6 @@ public class Quad {
 		return true;
 	}
 	
-	public function print():void 
-	{
-		var output:String;
-		var index:int = 0;
-		// replace with components
-		//for each ( var v:Number in _vertices )
-		//{
-			//Log.out( "vert[" + index + "]: " + v );
-			//index++;
-		//}
-		index = 0;
-		for each ( var i:Number in _indices )
-		{
-			Log.out( "indi[" + index + "]: " + i );
-			index++;
-		}
-	}
-	
 	public function copyUV( rhs:Quad ):void {
 		
 		for ( var vindex:int = 0; vindex < QUAD_UV_COUNT; vindex++ )
@@ -134,8 +123,7 @@ public class Quad {
 		}
 	}
 	
-	private function randomTextureOffset( maxpix:int, scale:Number ):Number
-	{
+	private function randomTextureOffset( maxpix:int, scale:Number ):Number	{
 		// if the requested texture is larger then the size that can return a random texture
 		// then return 0. So for a 256x256 texture, the largest random texture is 128x128
 		var result:int = 0;
@@ -153,16 +141,14 @@ public class Quad {
 	}
 	
 	private const GLASS:String = "GLASS";
-	private function calculateGlassOffset( typeInfo:TypeInfo, face:int, scale:Number, $lighting:Lighting ):void
-	{
+	private function calculateGlassOffset( typeInfo:TypeInfo, face:int, scale:Number, $lighting:Lighting ):void	{
 			// count the number of corners that have ambient
-			var count:int;
-			if ( 0 == count )
-				_v[0] += 0.0078125;
+			//var count:int;
+			//if ( 0 == count )
+				//_v[0] += 0.0078125;
 	}
 	
-	private function calculateUV( typeInfo:TypeInfo, face:int, scale:Number, $flowInfo:FlowInfo, $lighting:Lighting ):Boolean
-	{
+	private function calculateUV( typeInfo:TypeInfo, face:int, scale:Number, $flowInfo:FlowInfo, $lighting:Lighting ):Boolean {
 		resetUV();
 		
 		const maxpix:int = typeInfo.maxpix;
@@ -329,11 +315,6 @@ public class Quad {
 		return true;
 	}
 	
-	private static const ROTATE_000:int = 0;
-	private static const ROTATE_090:int = 1;
-	private static const ROTATE_180:int = 2;
-	private static const ROTATE_270:int = 3;
-	
 	private function rotateTexture( rotation:int ):void {  
 		var i:int = 0;
 		var j:int = 0;
@@ -449,7 +430,12 @@ public class Quad {
 		
 		var normal:int = 1;
 		var vertexIndex:int = 0;
-		var fs:FlowScaling = $flowInfo.flowScaling;
+		var fs:FlowScaling;
+		if ( $flowInfo )
+			fs = $flowInfo.flowScaling;
+		else
+			fs = _s_flowScaling;
+			
 		var tint:uint = $lighting.color;
 		switch ( $face ) 
 		{
@@ -513,7 +499,7 @@ public class Quad {
 			
 		buildIndices( normal );
 	}
-	
+	/*
 	private function add( $type:int, $x:Number, $y:Number, $z:Number, $face:int, $planeFacing:int, $scale:Number, $ti:TypeInfo, $lighting:Lighting ):void
 	{
 		//Log.out( "Quad.addStraightVerticesNew temp: " + brightness );
@@ -585,6 +571,25 @@ public class Quad {
 			
 		buildIndices( normal );
 	}
+	*/
+	
+	public function print():void {
+		var output:String;
+		var index:int = 0;
+		// replace with components
+		//for each ( var v:Number in _vertices )
+		//{
+			//Log.out( "vert[" + index + "]: " + v );
+			//index++;
+		//}
+		index = 0;
+		for each ( var i:Number in _indices )
+		{
+			Log.out( "indi[" + index + "]: " + i );
+			index++;
+		}
+	}
+	
 }
 }
 

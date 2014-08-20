@@ -275,7 +275,7 @@ package com.voxelengine {
 		public static function get mode():String { return g_mode }
 		public static function set mode(val:String):void { g_mode = val; }
 		
-		private static var g_autoFlow:Boolean = false;
+		private static var g_autoFlow:Boolean = true;
 		public static function get autoFlow():Boolean { return g_autoFlow }
 		public static function set autoFlow(val:Boolean):void { g_autoFlow = val; }
 	}
