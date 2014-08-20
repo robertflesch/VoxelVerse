@@ -286,7 +286,7 @@
                 "r": 1,
                 "g": 1,
                 "b": 1,
-                "a": 0.8
+                "a": 0.3
             },
             "uv": {
                 "maxpix": 16,
@@ -667,26 +667,26 @@
             "name": "GLASS",
             "image": "glass.png",
             "id": 124,
-            "category": "UTIL",
+            "category": "GLASS",
             "color": {
                 "r": 1,
                 "g": 1,
                 "b": 1,
                 "a": 0.99
             },
-            "uv": {
-                "maxpix": 16,
-                "minpix": 16,
-                "top": 0,
-                "side": 0,
-                "bottom": 0,
-                "ut": 0.0546875,
-                "vt": 0.265625,
-                "us": 0.0546875,
-                "vs": 0.265625,
-                "ub": 0.0546875,
-                "vb": 0.265625
-            }
+			"uv": {
+				"maxpix": 32,
+				"minpix": 32,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+				"ut": 0.09375,
+				"vt": 0.28125,
+				"us": 0.09375,
+				"vs": 0.28125,
+				"ub": 0.09375,
+				"vb": 0.28125
+			}
         },
         {
             "name": "BRAND",
@@ -1368,7 +1368,7 @@
             "name": "REDG",
             "image": "redglass.png",
             "id": 153,
-            "category": "UTIL",
+            "category": "GLASS",
             "light": { "fullBright": "true" },
             "color": {
                 "r": 1,
@@ -1376,24 +1376,75 @@
                 "b": 0,
                 "a": 0.99
             },
-            "uv": {
-                "maxpix": 16,
-                "minpix": 16,
-                "top": 0,
-                "side": 0,
-                "bottom": 0,
-                "ut": 0.0234375,
-                "vt": 0.265625,
-                "us": 0.0234375,
-                "vs": 0.265625,
-                "ub": 0.0234375,
-                "vb": 0.265625
-            }
+			"uv": {
+				"maxpix": 32,
+				"minpix": 32,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+				"ut": 0.09375,
+				"vt": 0.28125,
+				"us": 0.09375,
+				"vs": 0.28125,
+				"ub": 0.09375,
+				"vb": 0.28125
+			}
         },
-                {
+        {
+            "name": "GREENG",
+            "image": "greenGlass.png",
+            "id": 154,
+            "category": "GLASS",
+            "light": { "fullBright": "true" },
+            "color": {
+                "r": 0,
+                "g": 1,
+                "b": 0,
+                "a": 0.99
+            },
+			"uv": {
+				"maxpix": 32,
+				"minpix": 32,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+				"ut": 0.09375,
+				"vt": 0.28125,
+				"us": 0.09375,
+				"vs": 0.28125,
+				"ub": 0.09375,
+				"vb": 0.28125
+			}
+        },
+        {
+            "name": "COLORG",
+            "image": "colorWheelG.png",
+            "id": 167,
+            "category": "GLASS",
+            "color": {
+                "r": 1,
+                "g": 1,
+                "b": 1,
+                "a": 0.99
+            },
+			"uv": {
+				"maxpix": 32,
+				"minpix": 32,
+				"top": 0,
+				"side": 0,
+				"bottom": 0,
+				"ut": 0.09375,
+				"vt": 0.28125,
+				"us": 0.09375,
+				"vs": 0.28125,
+				"ub": 0.09375,
+				"vb": 0.28125
+			}
+        },
+        {
             "name": "COLOR",
             "image": "colorWheel.png",
-            "id": 154,
+            "id": 165,
             "category": "EARTH",
             "solid": "false",
             "light": { "fullBright": "true" },
@@ -1668,12 +1719,12 @@
                 "top": 0,
                 "side": 0,
                 "bottom": 0,
-                "ut": 0.0546875,
-                "vt": 0.25,
-                "us": 0.0546875,
-                "vs": 0.25,
-                "ub": 0.0546875,
-                "vb": 0.25
+                "ut": 0.078125,
+                "vt": 0.265625,
+                "us": 0.078125,
+                "vs": 0.265625,
+                "ub": 0.078125,
+                "vb": 0.265625
             }
         },
         {
@@ -1726,11 +1777,11 @@
                 "top": 0,
                 "side": 0,
                 "bottom": 0,
-                "ut": 0.0703125,
+                "ut": 0.078125,
                 "vt": 0.25,
-                "us": 0.0703125,
+                "us": 0.078125,
                 "vs": 0.25,
-                "ub": 0.0703125,
+                "ub": 0.078125,
                 "vb": 0.25
             }
         },
