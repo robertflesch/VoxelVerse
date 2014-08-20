@@ -2,7 +2,8 @@
     "region": [
 		{
              "model": {
-                "fileName": "PlayerHeadNew"
+                "fileName": "Blank",
+				"baseLightLevel": "128"
             }
 
 		}
@@ -14,9 +15,10 @@
                     "b": 238
                 },
 	"gravity": false,
+	"collide": false,
 	"playerPosition": {
                     "x": 0,
                     "y": 0,
-                    "z": -100
+                    "z": 300
                 }
 }
